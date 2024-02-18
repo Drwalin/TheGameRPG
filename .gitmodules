@@ -1,0 +1,3 @@
+[submodule "ICon7-godot-client"]
+	path = ICon7-godot-client
+	url = https://github.com/Drwalin/ICon7-godot-client.git
