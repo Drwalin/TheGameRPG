@@ -30,8 +30,8 @@ public:
 	
 	void _enter_tree() override
 	{
-		if (godot::Engine::get_singleton()->is_editor_hint())
-			set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
+// 		if (godot::Engine::get_singleton()->is_editor_hint())
+// 			set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
 	}
 	
 	void _process(double_t dt) override
