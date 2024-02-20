@@ -32,13 +32,13 @@ class Entity
 {
 public:
 	
-	Entity();
-	~Entity();
+	inline Entity();
+	inline ~Entity();
 	
 	void Init(Realm *realm, uint64_t entityId);
 	
 	void ConnectPeer(icon7::Peer *peer);
-	void DisconnectPeer();
+	inline void DisconnectPeer();
 	
 	void Update(uint64_t currentTick);
 	
@@ -95,3 +95,35 @@ public:
 		return s;
 	}
 };
+
+inline Entity::Entity()
+{
+	realm = nullptr;
+
+	vel = {0, 0, 0};
+	pos = {0.5, 100, 0.5};
+	forward = {0, 0, 1};
+	height = 1.75;
+	width = 0.6;
+	onFloor = false;
+
+	maxMovementSpeedHorizontal = 5;
+	movable = false;
+}
+
+#include "PeerData.hpp"
+
+inline void Entity::DisconnectPeer()
+{
+	if (peer) {
+		// TODO: safe entity to database
+		((PeerData *)(peer->userPointer))->realm = nullptr;
+		((PeerData *)(peer->userPointer))->entityId = 0;
+		peer = nullptr;
+	}
+}
+
+inline Entity::~Entity()
+{
+	DisconnectPeer();
+}

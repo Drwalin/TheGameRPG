@@ -12,48 +12,9 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 
-#define METHOD_NO_ARGS(CLASS, NAME)                                            \
-	godot::ClassDB::bind_method(godot::D_METHOD(#NAME), &CLASS::NAME);
+#include "../../../../ICon7-godot-client/include/icon7-godot-client/Connections.hpp"
 
-#define METHOD_ARGS(CLASS, NAME, ...)                                          \
-	godot::ClassDB::bind_method(godot::D_METHOD(#NAME, __VA_ARGS__),           \
-								&CLASS::NAME);
-
-class TestClassGaming : public godot::Node
-{
-	GDCLASS(TestClassGaming, Node)
-public:
-	static void _bind_methods()
-	{
-		METHOD_ARGS(TestClassGaming, Func, "a", "b");
-	}
-	
-	void _enter_tree() override
-	{
-// 		if (godot::Engine::get_singleton()->is_editor_hint())
-// 			set_process_mode(Node::ProcessMode::PROCESS_MODE_DISABLED);
-	}
-	
-	void _process(double_t dt) override
-	{
-		t += dt;
-		if (t > 0.25) {
-			godot::UtilityFunctions::print("Printing");
-			t -= 0.25;
-		}
-	}
-	
-	int64_t Func(int64_t a, int64_t b)
-	{
-		return a+b;
-	}
-	
-private:
-	float t=0;
-};
-
-
-
+#include "../include/ClientConnection.hpp"
 
 void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
@@ -62,7 +23,7 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		return;
 	}
 
-	godot::ClassDB::register_class<TestClassGaming>();
+	godot::ClassDB::register_class<ClientConnection>();
 	// REGISTER CLASSES HERE LATER
 }
 

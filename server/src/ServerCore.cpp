@@ -92,6 +92,8 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 	data->entityId = 0;
 	data->userName = "";
 	peer->userPointer = data;
+	
+	((ServerCore *)(peer->host->userPointer))->RequestRealms(peer);
 }
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)

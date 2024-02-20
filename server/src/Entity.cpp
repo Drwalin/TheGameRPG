@@ -4,31 +4,11 @@
 #include "Entity.hpp"
 #include "Realm.hpp"
 
-Entity::Entity()
-{
-	realm = nullptr;
-
-	vel = {0, 0, 0};
-	pos = {0.5, 100, 0.5};
-	forward = {0, 0, 1};
-	height = 1.75;
-	width = 0.6;
-	onFloor = false;
-
-	maxMovementSpeedHorizontal = 5;
-	movable = false;
-}
-
 void Entity::Init(Realm *realm, uint64_t entityId)
 {
 	this->realm = realm;
 	this->entityId = entityId;
 	lastUpdateTick = realm->GetCurrentTick();
-}
-
-Entity::~Entity()
-{
-	DisconnectPeer();
 }
 
 void Entity::Update(uint64_t currentTick)
@@ -105,16 +85,6 @@ void Entity::ConnectPeer(icon7::Peer *peer)
 	userName = ((PeerData *)(peer->userPointer))->userName;
 	this->peer = peer->shared_from_this();
 	// TODO: load data from database
-}
-
-void Entity::DisconnectPeer()
-{
-	if (peer) {
-		// TODO: safe entity to database
-		((PeerData *)(peer->userPointer))->realm = nullptr;
-		((PeerData *)(peer->userPointer))->entityId = 0;
-		peer = nullptr;
-	}
 }
 
 void Entity::SetModel(const std::string &modelName, float height, float width)
