@@ -58,27 +58,27 @@ bool TerrainMap::GetHeightAndDeltas(glm::vec3 pos, float *height,
 	}
 	
 	int x = pos.x;
-	int y = pos.y;
+	int z = pos.z;
 	
 	float hs[2][2];
-	hs[0][0] = GetHeight(x, y);
-	hs[0][1] = GetHeight(x, y+1);
-	hs[1][0] = GetHeight(x+1, y);
-	hs[1][1] = GetHeight(x+1, y+1);
+	hs[0][0] = GetHeight(x, z);
+	hs[0][1] = GetHeight(x, z+1);
+	hs[1][0] = GetHeight(x+1, z);
+	hs[1][1] = GetHeight(x+1, z+1);
 	
 	float fx = pos.x - x;
-	float fy = pos.y - y;
+	float fz = pos.z - z;
 	
 	float dx1 = hs[0][0] * (1-fx) + hs[1][0] * fx;
 	float dx2 = hs[0][1] * (1-fx) + hs[1][1] * fx;
 	
 	if (height) {
-		*height = dx1 * (1-fy) + dx2 * fy;
+		*height = dx1 * (1-fz) + dx2 * fz;
 	}
 	
 	if (dx && dy) {
-		float dy1 = hs[0][0] * (1-fy) + hs[0][1] * fy;
-		float dy2 = hs[1][0] * (1-fy) + hs[1][1] * fy;
+		float dy1 = hs[0][0] * (1-fz) + hs[0][1] * fz;
+		float dy2 = hs[1][0] * (1-fz) + hs[1][1] * fz;
 		
 		*dx = dx2-dx1;
 		*dy = dy2-dy1;
@@ -89,7 +89,7 @@ bool TerrainMap::GetHeightAndDeltas(glm::vec3 pos, float *height,
 
 void TerrainMap::SetHeight(int x, int z, float height)
 {
-	if (x < 0 || z < 0 || x >= width-1 || z >= depth-1) {
+	if (x < 0 || z < 0 || x >= width || z >= depth) {
 		return;
 	}
 	heights.data()[x+(z*width)] = height;
@@ -130,20 +130,20 @@ void PerlinGenerator::Generate(TerrainMap *dstMap, uint32_t width,
 	for (; currentSize<maxDimension;) {
 		currentMaxHeight *= lacunarity;
 		
-		currentSize = (currentSize<<1)-1;
+		currentSize = ((currentSize*27)/10)-1;
 		
-		next->Init(currentSize, currentSize, 2);
+		next->Init(currentSize, currentSize, 2.7);
 		
 		if (currentSize >= maxDimension) {
 			next = dstMap;
 		}
 		
-		for (int x=0; x<next->width-1; ++x) {
-			for (int y=0; y<next->depth-1; ++y) {
+		for (int x=0; x<next->width; ++x) {
+			for (int z=0; z<next->depth; ++z) {
 				float h = 0;
-				prev->GetHeight({x, 0, y}, &h);
+				prev->GetHeight({x, 0, z}, &h);
 				h += heightDistribution(mt) * currentMaxHeight;
-				next->SetHeight(x, y, h);
+				next->SetHeight(x, z, h);
 			}
 		}
 		

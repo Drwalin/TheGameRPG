@@ -18,8 +18,8 @@ Realm::~Realm() {}
 
 void Realm::Init()
 {
-	terrain.Init(100, 100, 1.0f);
-	terrain.Generate(8, 0.8, 500);
+	terrain.Init(500, 500, 1.0f);
+	terrain.Generate(5, 0.8, 350);
 }
 
 void Realm::RunAsync()
