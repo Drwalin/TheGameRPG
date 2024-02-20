@@ -32,5 +32,6 @@ func _process(delta:float)->void:
 			sent += 1;
 		else:
 			if time > 1.0:
-				get_tree().quit();
+				pass;
+				#get_tree().quit();
 	pass;

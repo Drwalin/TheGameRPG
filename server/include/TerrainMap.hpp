@@ -14,7 +14,12 @@
 class TerrainMap
 {
 public:
-	TerrainMap();
+	TerrainMap()
+	{
+		width = 0;
+		depth = 0;
+		horizontalScale = 1;
+	}
 
 	void Init(uint32_t width, uint32_t depth, float horizontalScale);
 	void Generate(int octaves, float lacunarity, float maxHeight);
@@ -26,6 +31,12 @@ public:
 							float *dx, float *dy) const;
 	
 	void SetHeight(int x, int z, float height);
+	
+	inline float GetHeight(int x, int z) const {
+		return heights.data()[x+(z*width)];
+	}
+
+	friend class PerlinGenerator;
 	
 public:
 
@@ -42,12 +53,7 @@ public:
 		return s;
 	}
 	
-private:
-	float GetHeight(int x, int z) const;
-
-	friend class PerlinGenerator;
-	
-private:
+public:
 	uint32_t width, depth;
 	std::vector<float> heights;
 	float horizontalScale;

@@ -32,6 +32,9 @@ namespace ClientRemoteFunctions
 	
 	// void SetModel(entityId, modelName, height, width)
 	inline const std::string SetModel = "SetModel";
+	
+	// void DeleteEntities({entityId}, ...)
+	inline const std::string DeleteEntities = "DeleteEntities";
 }
 
 class ServerCore

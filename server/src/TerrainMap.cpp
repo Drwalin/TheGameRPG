@@ -4,15 +4,6 @@
 
 #include <TerrainMap.hpp>
 
-
-
-TerrainMap::TerrainMap()
-{
-	width = 0;
-	depth = 0;
-	horizontalScale = 1;
-}
-
 void TerrainMap::Init(uint32_t width, uint32_t depth, float horizontalScale)
 {
 	this->width = width;
@@ -26,11 +17,6 @@ void TerrainMap::Generate(int octaves, float lacunarity, float maxHeight)
 {
 	PerlinGenerator generator;
 	generator.Generate(this, width, depth, 5, 0.3f, 100.0f);
-}
-
-float TerrainMap::GetHeight(int x, int z) const
-{
-	return heights.data()[x+(z*width)];
 }
 
 bool TerrainMap::GetHeight(glm::vec3 pos, float *height) const
