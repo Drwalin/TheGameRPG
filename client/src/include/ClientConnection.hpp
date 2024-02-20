@@ -58,7 +58,10 @@ public:
 	void RefreshRealms();
 	void SetUsername(const godot::String &userName);
 	void EnterRealm(const godot::String &realmName);
-	void SetRpcClient(RpcClient *peer);
+	
+	void Connect(const godot::String &realmName, int64_t port);
+	
+	void _OnConnected(RpcClient *client);
 
 public:
 	std::vector<std::string> realms;
@@ -67,6 +70,13 @@ public:
 	RpcHost *rpcHost = nullptr;
 	icon7::RPCEnvironment *rpc = nullptr;
 	RpcClient *peer = nullptr;
+	std::string username;
+	uint64_t playerEntityId = 0;
+	
+	RpcClient *GetClient();
+	void SetClient(RpcClient *peer);
+	RpcHost *GetHost();
+	void SetHost(RpcHost *peer);
 
 private:
 	void RegisterMessages();
@@ -85,4 +95,5 @@ private:
 				  float width);
 
 	void DeleteEntities(icon7::ByteReader *reader);
+	void SetPlayerEntityId(uint64_t playerEntityId);
 };

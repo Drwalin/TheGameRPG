@@ -11,6 +11,6 @@ class PeerData
 public:
 	std::string userName;
 	std::shared_ptr<icon7::Peer> peer;
-	Realm *realm;
-	uint64_t entityId;
+	Realm *realm = nullptr;
+	uint64_t entityId = 0;
 };
