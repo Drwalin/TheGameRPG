@@ -23,7 +23,7 @@ void ClientConnection::_enter_tree()
 		godot::UtilityFunctions::print(rpcHost);
 		RegisterMessages();
 	}
-// }
+}
 
 
 godot::Array ClientConnection::GetRealms()
