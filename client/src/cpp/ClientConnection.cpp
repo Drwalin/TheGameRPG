@@ -2,36 +2,79 @@
 #include "icon7/Flags.hpp"
 #include "icon7/RPCEnvironment.hpp"
 
-#include "../include/ClientConnection.hpp"
-
 #include "../../../server/include/TerrainMap.hpp"
 #include "../../../server/include/Entity.hpp"
+
+#include "../include/ClientConnection.hpp"
 
 void ClientConnection::_bind_methods()
 {
 	METHOD_NO_ARGS(ClientConnection, GetRealms);
 	METHOD_NO_ARGS(ClientConnection, RefreshRealms);
 	METHOD_ARGS(ClientConnection, SetUsername, "username");
-	METHOD_ARGS(ClientConnection,  EnterRealm, "realmName");
-	METHOD_ARGS(ClientConnection,  SetRpcClient, "rpcClient");
+	METHOD_ARGS(ClientConnection, EnterRealm, "realmName");
+
+	METHOD_ARGS(ClientConnection, Connect, "address", "port");
+	METHOD_ARGS(ClientConnection, _OnConnected, "client");
+
+	METHOD_ARGS(ClientConnection, SetClient, "client");
+	METHOD_NO_ARGS(ClientConnection, GetClient);
+	godot::ClassDB::add_property(
+		"ClientConnection",
+		godot::PropertyInfo(godot::Variant::OBJECT, "client"), "SetClient",
+		"GetClient");
+
+	METHOD_ARGS(ClientConnection, SetHost, "host");
+	METHOD_NO_ARGS(ClientConnection, GetHost);
+	godot::ClassDB::add_property(
+		"ClientConnection", godot::PropertyInfo(godot::Variant::OBJECT, "host"),
+		"SetHost", "GetHost");
+	
+	godot::ClassDB::add_signal("ClientConnection", godot::MethodInfo("_ReceivedRealmsList"));
 }
+
+void ClientConnection::Connect(const godot::String &address, int64_t port)
+{
+	rpcHost->Connect(address, port, godot::Callable(this, "_OnConnected"));
+}
+
+void ClientConnection::_OnConnected(RpcClient *client)
+{
+	if (client) {
+		if (peer) {
+			peer->Disconnect();
+		}
+
+		SetClient(client);
+		RefreshRealms();
+	}
+}
+
+RpcClient *ClientConnection::GetClient() { return peer; }
+
+void ClientConnection::SetClient(RpcClient *peer)
+{
+	this->peer = peer;
+}
+
+RpcHost *ClientConnection::GetHost() { return rpcHost; }
+
+void ClientConnection::SetHost(RpcHost *rpcHost) { this->rpcHost = rpcHost; }
 
 void ClientConnection::_enter_tree()
 {
 	rpcHost = this->get_node<RpcHost>("/root/rpcHost");
 	if (rpcHost) {
-		godot::UtilityFunctions::print(rpcHost);
 		RegisterMessages();
 	}
 }
-
 
 godot::Array ClientConnection::GetRealms()
 {
 	godot::Array ar;
 	for (const auto &r : realms) {
-		godot::String str;
-		str.utf8(r.c_str(), r.size());
+		godot::String str = godot::String::utf8(r.c_str(), r.size());
+		DEBUG("adding realm to godot::Array: `%s`", r.c_str());
 		ar.append(str);
 	}
 	return ar;
@@ -39,8 +82,9 @@ godot::Array ClientConnection::GetRealms()
 
 void ClientConnection::RefreshRealms()
 {
-	if (peer) {
-		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE, ServerRemoteFunctions::GetRealms);
+	if (peer && rpc) {
+		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
+				  ServerRemoteFunctions::GetRealms);
 	}
 }
 
@@ -48,7 +92,9 @@ void ClientConnection::SetUsername(const godot::String &userName)
 {
 	if (peer) {
 		std::string str = userName.utf8().ptr();
-		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE, ServerRemoteFunctions::SetUsername, str);
+		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
+				  ServerRemoteFunctions::SetUsername, str);
+		username = str;
 	}
 }
 
@@ -56,32 +102,42 @@ void ClientConnection::EnterRealm(const godot::String &realmName)
 {
 	if (peer) {
 		std::string str = realmName.utf8().ptr();
-		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE, ServerRemoteFunctions::JoinRealm, str);
+		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
+				  ServerRemoteFunctions::JoinRealm, str);
+// 		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
+// 				  ServerRemoteFunctions::GetTerrain);
 	}
 }
-
-void ClientConnection::SetRpcClient(RpcClient *peer)
-{
-	this->peer = peer;
-}
-
 
 void ClientConnection::RegisterMessages()
 {
 	rpc = &rpcHost->rpc;
 
-	rpc->RegisterObjectMessage("UpdateTerrain", this, &ClientConnection::UpdateTerrain, &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SetRealms", this, &ClientConnection::SetRealms, &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SpawnEntities", this,&ClientConnection::SpawnEntities, &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("UpdateEntities", this, &ClientConnection::UpdateEntities, &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SetModel", this, &ClientConnection::SetModel, &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("DeleteEntities", this, &ClientConnection::DeleteEntities, &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("UpdateTerrain", this,
+							   &ClientConnection::UpdateTerrain,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("SetRealms", this, &ClientConnection::SetRealms,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("SpawnEntities", this,
+							   &ClientConnection::SpawnEntities,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("UpdateEntities", this,
+							   &ClientConnection::UpdateEntities,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("SetModel", this, &ClientConnection::SetModel,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("DeleteEntities", this,
+							   &ClientConnection::DeleteEntities,
+							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("SetPlayerEntityId", this,
+							   &ClientConnection::SetPlayerEntityId,
+							   &rpcHost->executionQueue);
 }
 
 void ClientConnection::SetRealms(std::vector<std::string> &realms)
 {
 	this->realms = realms;
-	// TODO: notify realms updated
+	this->emit_signal("_ReceivedRealmsList");
 }
 
 void ClientConnection::SpawnEntities(icon7::ByteReader *reader)
@@ -121,4 +177,9 @@ void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 void ClientConnection::DeleteEntities(icon7::ByteReader *reader)
 {
 	// TODO: erase entity
+}
+
+void ClientConnection::SetPlayerEntityId(uint64_t playerEntityId)
+{
+	this->playerEntityId = playerEntityId;
 }

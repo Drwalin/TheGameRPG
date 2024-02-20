@@ -75,6 +75,7 @@ public:
 
 	std::string realmName;
 	icon7::RPCEnvironment *rpc;
+	icon7::CommandExecutionQueue executionQueue;
 
 	void RequestSpawnEntities(icon7::Peer *peer, icon7::ByteReader *reader);
 	void BroadcastSpawnEntity(Entity *entity);
@@ -98,10 +99,9 @@ private:
 	void Update();
 
 private:
-	icon7::CommandExecutionQueue executionQueue;
 
 	uint64_t currentTick;
-	uint64_t maxDeltaTicks;
+	uint64_t maxDeltaTicks=100;
 
 	std::unordered_map<uint64_t, Entity> entities;
 	std::unordered_set<icon7::Peer *> peers;

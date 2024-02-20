@@ -80,9 +80,14 @@ void Entity::SolvePlayerInput(uint64_t tick, glm::vec3 pos, glm::vec3 vel,
 
 void Entity::ConnectPeer(icon7::Peer *peer)
 {
-	DisconnectPeer();
-	((PeerData *)(peer->userPointer))->entityId = entityId;
-	userName = ((PeerData *)(peer->userPointer))->userName;
+	PeerData *data = (PeerData *)(peer->userPointer);
+	if (data->realm) {
+		DEBUG("Error: Entity::ConnectPeer cannot be executed before "
+			  "disconnecting from old realm.");
+	}
+
+	data->entityId = entityId;
+	userName = data->userName;
 	this->peer = peer->shared_from_this();
 	// TODO: load data from database
 }
