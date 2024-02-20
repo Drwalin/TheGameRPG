@@ -15,9 +15,9 @@ int main()
 	
 	ServerCore serverCore;
 	serverCore.BindRpc();
-// 	serverCore.CreateRealm("World1");
+	serverCore.CreateRealm("World1");
 	serverCore.CreateRealm("Middle Earth");
-// 	serverCore.CreateRealm("Heaven");
+	serverCore.CreateRealm("Heaven");
 	
 	DEBUG("Starting to listen...");
 	
