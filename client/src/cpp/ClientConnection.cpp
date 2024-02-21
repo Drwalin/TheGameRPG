@@ -1,11 +1,13 @@
 #include "godot_cpp/variant/utility_functions.hpp"
+
 #include "icon7/Flags.hpp"
 #include "icon7/RPCEnvironment.hpp"
 
-#include "../../../server/include/TerrainMap.hpp"
-#include "../../../server/include/Entity.hpp"
-
 #include "../include/ClientConnection.hpp"
+
+ClientConnection::ClientConnection() : entities(this)
+{
+}
 
 void ClientConnection::_bind_methods()
 {
@@ -74,7 +76,6 @@ godot::Array ClientConnection::GetRealms()
 	godot::Array ar;
 	for (const auto &r : realms) {
 		godot::String str = godot::String::utf8(r.c_str(), r.size());
-		DEBUG("adding realm to godot::Array: `%s`", r.c_str());
 		ar.append(str);
 	}
 	return ar;
@@ -107,79 +108,4 @@ void ClientConnection::EnterRealm(const godot::String &realmName)
 // 		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
 // 				  ServerRemoteFunctions::GetTerrain);
 	}
-}
-
-void ClientConnection::RegisterMessages()
-{
-	rpc = &rpcHost->rpc;
-
-	rpc->RegisterObjectMessage("UpdateTerrain", this,
-							   &ClientConnection::UpdateTerrain,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SetRealms", this, &ClientConnection::SetRealms,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SpawnEntities", this,
-							   &ClientConnection::SpawnEntities,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("UpdateEntities", this,
-							   &ClientConnection::UpdateEntities,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SetModel", this, &ClientConnection::SetModel,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("DeleteEntities", this,
-							   &ClientConnection::DeleteEntities,
-							   &rpcHost->executionQueue);
-	rpc->RegisterObjectMessage("SetPlayerEntityId", this,
-							   &ClientConnection::SetPlayerEntityId,
-							   &rpcHost->executionQueue);
-}
-
-void ClientConnection::SetRealms(std::vector<std::string> &realms)
-{
-	this->realms = realms;
-	this->emit_signal("_ReceivedRealmsList");
-}
-
-void ClientConnection::SpawnEntities(icon7::ByteReader *reader)
-{
-	Entity entity;
-	while (reader->has_any_more() && reader->is_valid()) {
-		reader->op(entity);
-		if (reader->is_valid()) {
-			// TODO: update full or spawn entity
-		}
-	}
-}
-
-// 	{entityId, lastUpdateTick, vel, pos, forward}, ...)
-void ClientConnection::UpdateEntities(icon7::ByteReader *reader)
-{
-	while (reader->has_any_more() && reader->is_valid()) {
-		uint64_t entityId, lastUpdateTick;
-		float vel[3], pos[3], forward[3];
-		reader->op(entityId);
-		reader->op(lastUpdateTick);
-		reader->op(vel, 3);
-		reader->op(pos, 3);
-		reader->op(forward, 3);
-		if (reader->is_valid()) {
-			// TODO: update entity
-		}
-	}
-}
-
-void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
-								float height, float width)
-{
-	// TODO: set model
-}
-
-void ClientConnection::DeleteEntities(icon7::ByteReader *reader)
-{
-	// TODO: erase entity
-}
-
-void ClientConnection::SetPlayerEntityId(uint64_t playerEntityId)
-{
-	this->playerEntityId = playerEntityId;
 }
