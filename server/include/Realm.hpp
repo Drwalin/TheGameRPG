@@ -10,12 +10,13 @@
 
 #include <icon7/Peer.hpp>
 #include <icon7/CommandExecutionQueue.hpp>
+#include "icon7/RPCEnvironment.hpp"
 
 #include "Entity.hpp"
 #include "TerrainMap.hpp"
 #include "ServerCore.hpp"
 #include "PeerData.hpp"
-#include "icon7/RPCEnvironment.hpp"
+#include "Timer.hpp"
 
 class ServerCore;
 
@@ -58,7 +59,7 @@ public:
 
 	uint64_t GenerateNewEntityId();
 
-	inline uint64_t GetCurrentTick() const { return currentTick; }
+	inline uint64_t GetCurrentTick() const { return timer.currentTick; }
 
 	void SetUpdateDeltaTicks(uint64_t ticks);
 
@@ -90,6 +91,8 @@ public:
 	void ExecuteOnRealmThread(icon7::Peer *peer, icon7::ByteReader *reader, void(*function)(icon7::Peer *, std::vector<uint8_t> &, void *));
 
 	friend class ServerCore;
+	
+	Timer timer;
 
 public:
 	TerrainMap terrain;
@@ -100,7 +103,6 @@ private:
 
 private:
 
-	uint64_t currentTick;
 	uint64_t maxDeltaTicks=100;
 
 	std::unordered_map<uint64_t, Entity> entities;

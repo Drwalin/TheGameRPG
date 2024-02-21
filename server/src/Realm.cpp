@@ -10,7 +10,6 @@
 Realm::Realm()
 {
 	lastEntityIdUsed = 0;
-	currentTick = 0;
 	maxDeltaTicks = 100;
 }
 
@@ -31,8 +30,7 @@ void Realm::RunSync()
 {
 	const uint32_t MAX_EVENTS = 128;
 	icon7::Command commands[MAX_EVENTS];
-	const auto startTime = std::chrono::steady_clock::now();
-	auto lastUpdateTime = startTime;
+	timer.Start();
 
 	while (true) {
 		const uint32_t dequeued =
@@ -44,16 +42,10 @@ void Realm::RunSync()
 			commands[i].~Command();
 		}
 
-		const auto currentTime = std::chrono::steady_clock::now();
+		uint64_t deltaTicks = 0;
+		timer.Update(maxDeltaTicks, &deltaTicks, nullptr);
 
-		auto diff = std::chrono::duration_cast<std::chrono::milliseconds>(
-			currentTime - lastUpdateTime);
-		
-		if (diff.count() >= maxDeltaTicks) {
-			lastUpdateTime= currentTime;
-			diff = std::chrono::duration_cast<std::chrono::milliseconds>(
-				currentTime - startTime);
-			currentTick = diff.count();
+		if (deltaTicks >= maxDeltaTicks) {
 			Update();
 		} else if (dequeued == 0) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -69,7 +61,8 @@ void Realm::ConnectToPeer(icon7::Peer *peer)
 	entity.Init(this, entityId);
 	entity.ConnectPeer(peer);
 	peers.insert(peer);
-	rpc->Send(peer, icon7::FLAG_RELIABLE, ClientRemoteFunctions::SetPlayerEntityId, entityId);
+	rpc->Send(peer, icon7::FLAG_RELIABLE,
+			  ClientRemoteFunctions::SetPlayerEntityId, entityId);
 	BroadcastSpawnEntity(&entity);
 	serverCore->GetTerrain(peer);
 }
@@ -106,7 +99,7 @@ void Realm::SetUpdateDeltaTicks(uint64_t ticks)
 void Realm::Update()
 {
 	for (auto &it : entities) {
-		it.second.Update(currentTick);
+		it.second.Update(timer.currentTick);
 	}
 }
 

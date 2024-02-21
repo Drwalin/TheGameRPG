@@ -38,6 +38,12 @@ inline const std::string DeleteEntities = "DeleteEntities";
 
 // void SetPlayerEntityId(uint64_t)
 inline const std::string SetPlayerEntityId = "SetPlayerEntityId";
+
+// void SetCurrentTick(uint64_t)
+inline const std::string SetCurrentTick = "SetCurrentTick";
+
+// void Pong(uint64_t)
+inline const std::string Pong = "Pong";
 } // namespace ClientRemoteFunctions
 
 class ServerCore
@@ -66,6 +72,7 @@ public:
 									 icon7::ByteReader *reader);
 	static void GetTerrain(icon7::Peer *peer);
 	void RequestRealms(icon7::Peer *peer);
+	void GetCurrentTick(icon7::Peer *peer, icon7::Flags flags);
 
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
