@@ -88,6 +88,7 @@ offset_left = 401.0
 offset_top = 417.0
 offset_right = 774.0
 offset_bottom = 448.0
+text = "Bilbo Baggins"
 
 [node name="ButtonLogin" type="Button" parent="."]
 layout_mode = 0

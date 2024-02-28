@@ -31,13 +31,14 @@ void Realm::RunSync()
 	const uint32_t MAX_EVENTS = 128;
 	icon7::Command commands[MAX_EVENTS];
 	timer.Start();
+	Timer updateEntitiesTimer;
+	updateEntitiesTimer.Start();
 
 	while (true) {
 		const uint32_t dequeued =
 			executionQueue.TryDequeueBulkAny(commands, MAX_EVENTS);
 
 		for (uint32_t i = 0; i < dequeued; ++i) {
-			DEBUG("Executing commands on realm thread");
 			commands[i].Execute();
 			commands[i].~Command();
 		}
@@ -47,8 +48,13 @@ void Realm::RunSync()
 
 		if (deltaTicks >= maxDeltaTicks) {
 			Update();
+			uint64_t dt = 0;
+			updateEntitiesTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
+			if (dt >= sendUpdateDeltaTicks) {
+				SendUpdateAllEntities();
+			}
 		} else if (dequeued == 0) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 	}
 }
@@ -162,7 +168,7 @@ void Realm::SendUpdateEntities(icon7::Peer *peer)
 	}
 }
 
-void Realm::UpdateAllEntities()
+void Realm::SendUpdateAllEntities()
 {
 	const static uint32_t singleEntitySize = 8 + 8 + 12 + 12 + 12;
 

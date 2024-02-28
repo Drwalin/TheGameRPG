@@ -3,13 +3,12 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
-
 #include <gdextension_interface.h>
 #include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/engine_ptrcall.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
-
+#include "godot_cpp/classes/resource_preloader.hpp"
+#include "godot_cpp/classes/resource_loader.hpp"
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
@@ -36,6 +35,7 @@ public: // Godot bound functions
 	static void _bind_methods();
 
 	void _enter_tree() override;
+	void _process(double dt) override;
 	
 	RpcClient *GetClient();
 	void SetClient(RpcClient *peer);
@@ -48,6 +48,8 @@ public: // Godot bound functions
 	void EnterRealm(const godot::String &realmName);
 	
 	void Connect(const godot::String &realmName, int64_t port);
+	
+	void RequestEntityData(uint64_t entityId);
 	
 private: // Godot callbacks
 	void _OnConnected(RpcClient *client);
@@ -63,17 +65,19 @@ public: // variables
 	
 	Entities entities;
 	
+	glm::vec3 gravity;
+	
 private: //rpc code
 	void RegisterMessages();
 
 	void UpdateTerrain(TerrainMap &map);
 	void SetRealms(std::vector<std::string> &realms);
 
-	// 	{entityId, lastUpdateTick, vel, pos, forward, height,
+	// 	{entityId, lastUpdateTick, vel, pos, rot, height,
 	// 	width, maxMovementHorizontalSpeer, movable, modelName, userName}, ...)
 	void SpawnEntities(icon7::ByteReader *reader);
 
-	// 	{entityId, lastUpdateTick, vel, pos, forward}, ...)
+	// 	{entityId, lastUpdateTick, vel, pos, rot}, ...)
 	void UpdateEntities(icon7::ByteReader *reader);
 
 	void SetModel(uint64_t entityId, std::string_view modelName, float height,
@@ -81,4 +85,7 @@ private: //rpc code
 
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t playerEntityId);
+	
+	void SetGravity(float gravity);
+	void UpdateTimer(uint64_t currentTick);
 };

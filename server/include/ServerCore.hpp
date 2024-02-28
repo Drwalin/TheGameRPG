@@ -23,8 +23,7 @@ inline const std::string UpdateTerrain = "UpdateTerrain";
 // void SetRealms(std::vector<std::string>)
 inline const std::string SetRealms = "SetRealms";
 
-// void SpawnEntities({entityId, lastUpdateTick, vel, pos, forward, height,
-// width, maxMovementHorizontalSpeer, movable, modelName, userName}, ...)
+// void SpawnEntities({entityId, EntityMovementState, EntityLongState}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
 // void UpdateEntities({entityId, lastUpdateTick, vel, pos, forward}, ...)
@@ -44,6 +43,12 @@ inline const std::string SetCurrentTick = "SetCurrentTick";
 
 // void Pong(uint64_t)
 inline const std::string Pong = "Pong";
+
+// void SetGravity(float)
+inline const std::string SetGravity = "SetGravity";
+
+// void UpdateTimer(uint64_t)
+inline const std::string UpdateTimer = "UpdateTimer";
 } // namespace ClientRemoteFunctions
 
 class ServerCore
