@@ -9,22 +9,48 @@
 
 #include <icon7/Peer.hpp>
 
-namespace bitscpp {
-	template<>
-	inline ByteReader<true>& op<glm::vec3>(ByteReader<true>& s, glm::vec3& v) {
-		s.op(v.x);
-		s.op(v.y);
-		s.op(v.z);
+#include "GlmSerialization.hpp"
+
+struct EntityMovementState
+{
+	uint64_t timestamp = 0;
+	glm::vec3 pos = {10,100,10};
+	glm::vec3 vel = {0,0,0};
+	glm::vec3 rot = {0,0,0};
+	
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(timestamp);
+		s.op(pos);
+		s.op(vel);
+		s.op(rot);
 		return s;
 	}
-	template<>
-	inline ByteWriter& op<glm::vec3>(ByteWriter& s, const glm::vec3& v) {
-		s.op(v.x);
-		s.op(v.y);
-		s.op(v.z);
+};
+
+struct EntityLongState
+{
+	float height = 1.75;
+	float width = 0.6;
+	
+	float maxMovementSpeedHorizontal = 5;
+	bool movable = false;
+	
+	std::string modelName;
+	std::string userName;
+	
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(height);
+		s.op(width);
+		s.op(maxMovementSpeedHorizontal);
+		s.op(movable);
+		s.op(modelName);
+		s.op(userName);
 		return s;
 	}
-}
+};
+
 
 class Realm;
 
@@ -43,7 +69,7 @@ public:
 	void Update(uint64_t currentTick);
 	
 	void SolvePlayerInput(uint64_t tick, glm::vec3 pos, glm::vec3 vel,
-						  glm::vec3 forward);
+						  glm::vec3 rot);
 	
 	void SetModel(const std::string &modelName, float height, float width);
 	
@@ -52,46 +78,40 @@ public:
 	
 	uint64_t entityId;
 	
-	uint64_t lastUpdateTick;
+	EntityMovementState lastAuthoritativeState;
+	EntityMovementState currentState;
 	
-	glm::vec3 vel;
-	glm::vec3 pos;
-	glm::vec3 forward;
-	float height;
-	float width;
-	
-	float maxMovementSpeedHorizontal;
-	bool movable;
-	bool onFloor;
-	
-	std::string modelName;
-	std::string userName;
+	EntityLongState longState;
 	
 	std::shared_ptr<icon7::Peer> peer;
+	
+	static void SimulateMovement(Entity *entity);
 	
 public:
 	void GetUpdateData(bitscpp::ByteWriter &writer)
 	{
 		writer.op(entityId);
-		writer.op(lastUpdateTick);
-		writer.op(vel);
-		writer.op(pos);
-		writer.op(forward);
+		if (currentState.timestamp > lastAuthoritativeState.timestamp+500) {
+			writer.op(currentState);
+		} else {
+			writer.op(lastAuthoritativeState);
+		}
 	}
 	
 	template <typename S> S &__ByteStream_op(S &s)
 	{
 		s.op(entityId);
-		s.op(lastUpdateTick);
-		s.op(vel);
-		s.op(pos);
-		s.op(forward);
-		s.op(height);
-		s.op(width);
-		s.op(maxMovementSpeedHorizontal);
-		s.op(movable);
-		s.op(modelName);
-		s.op(userName);
+		if constexpr (std::is_same_v<S, bitscpp::ByteWriter>) {
+			if (lastAuthoritativeState.timestamp > currentState.timestamp) {
+				s.op(lastAuthoritativeState);
+			} else {
+				s.op(currentState);
+			}
+		} else {
+			s.op(lastAuthoritativeState);
+			currentState = lastAuthoritativeState;
+		}
+		s.op(longState);
 		return s;
 	}
 };
@@ -99,16 +119,6 @@ public:
 inline Entity::Entity()
 {
 	realm = nullptr;
-
-	vel = {0, 0, 0};
-	pos = {0.5, 100, 0.5};
-	forward = {0, 0, 1};
-	height = 1.75;
-	width = 0.6;
-	onFloor = false;
-
-	maxMovementSpeedHorizontal = 5;
-	movable = false;
 }
 
 #include "PeerData.hpp"

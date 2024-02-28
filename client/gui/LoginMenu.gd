@@ -13,6 +13,10 @@ func UpdateRealmsListUI()->void:
 	$RealmList.clear();
 	for realm in realms:
 		$RealmList.add_item(realm);
+	if realms.size() > 0:
+		$RealmList.deselect_all();
+		$RealmList.select(0);
+		_OnSelectedRealm(0);
 
 func _OnSelectedRealm(index: int):
 	realmName = $RealmList.get_item_text(index);

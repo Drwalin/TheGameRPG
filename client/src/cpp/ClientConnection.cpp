@@ -1,3 +1,4 @@
+#include "godot_cpp/classes/resource_preloader.hpp"
 #include "godot_cpp/variant/utility_functions.hpp"
 
 #include "icon7/Flags.hpp"
@@ -71,6 +72,11 @@ void ClientConnection::_enter_tree()
 	}
 }
 
+void ClientConnection::_process(double dt)
+{
+	entities.Update();
+}
+
 godot::Array ClientConnection::GetRealms()
 {
 	godot::Array ar;
@@ -105,7 +111,12 @@ void ClientConnection::EnterRealm(const godot::String &realmName)
 		std::string str = realmName.utf8().ptr();
 		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
 				  ServerRemoteFunctions::JoinRealm, str);
-// 		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE,
-// 				  ServerRemoteFunctions::GetTerrain);
+	}
+}
+
+void ClientConnection::RequestEntityData(uint64_t entityId)
+{
+	if (peer) {
+		rpc->Send(peer->peer.get(), icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK, ServerRemoteFunctions::GetEntitiesData, entityId);
 	}
 }

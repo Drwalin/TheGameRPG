@@ -149,7 +149,12 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer,
 		com.function = [](icon7::Peer *peer, std::vector<uint8_t> &fname,
 						  void *ptr) {
 			DEBUG("Connecting peer to realm, stage final");
-			((Realm *)ptr)->ConnectToPeer(peer);
+			Realm *realm = ((Realm *)ptr);
+			peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK,
+					ClientRemoteFunctions::UpdateTimer, realm->timer.CalcCurrentTick());
+			realm->ConnectToPeer(peer);
+			peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK,
+					ClientRemoteFunctions::SetGravity, realm->gravity);
 		};
 
 		newRealm->executionQueue.EnqueueCommand(std::move(com));

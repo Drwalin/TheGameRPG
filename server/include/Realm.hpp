@@ -81,7 +81,7 @@ public:
 	void RequestSpawnEntities(icon7::Peer *peer, icon7::ByteReader *reader);
 	void BroadcastSpawnEntity(Entity *entity);
 	void SendUpdateEntities(icon7::Peer *peer);
-	void UpdateAllEntities();
+	void SendUpdateAllEntities();
 
 	void UpdateModelOf(uint64_t entityId, const std::string &modelName,
 					   float height, float width);
@@ -96,7 +96,7 @@ public:
 
 public:
 	TerrainMap terrain;
-	float gravity;
+	float gravity = 9.81;
 
 private:
 	void Update();
@@ -104,6 +104,7 @@ private:
 private:
 
 	uint64_t maxDeltaTicks=100;
+	uint64_t sendUpdateDeltaTicks=250;
 
 	std::unordered_map<uint64_t, Entity> entities;
 	std::unordered_set<icon7::Peer *> peers;

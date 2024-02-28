@@ -15,6 +15,7 @@
 #include "../../../../ICon7-godot-client/include/icon7-godot-client/Connections.hpp"
 
 #include "../include/ClientConnection.hpp"
+#include "../include/EntityPrefabScript.hpp"
 
 void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
@@ -22,8 +23,8 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-
 	godot::ClassDB::register_class<ClientConnection>();
+	godot::ClassDB::register_class<EntityPrefabScript>();
 	// REGISTER CLASSES HERE LATER
 }
 

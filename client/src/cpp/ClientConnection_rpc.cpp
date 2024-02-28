@@ -3,6 +3,7 @@
 
 #include "../include/ClientConnection.hpp"
 #include "Rpc.hpp"
+#include "godot_cpp/variant/utility_functions.hpp"
 #include "icon7/Flags.hpp"
 
 void ClientConnection::RegisterMessages()
@@ -28,6 +29,9 @@ void ClientConnection::RegisterMessages()
 	rpc->RegisterObjectMessage("SetPlayerEntityId", this,
 							   &ClientConnection::SetPlayerEntityId,
 							   &rpcHost->executionQueue);
+	rpc->RegisterObjectMessage("SetGravity", this, &ClientConnection::SetGravity);
+	rpc->RegisterObjectMessage("UpdateTimer", this, &ClientConnection::UpdateTimer);
+	
 }
 
 void ClientConnection::SetRealms(std::vector<std::string> &realms)
@@ -38,11 +42,15 @@ void ClientConnection::SetRealms(std::vector<std::string> &realms)
 
 void ClientConnection::SpawnEntities(icon7::ByteReader *reader)
 {
-	Entity entity;
+	uint64_t entityId;
+	EntityMovementState movementState;
+	EntityLongState longState;
 	while (reader->has_any_more() && reader->is_valid()) {
-		reader->op(entity);
+		reader->op(entityId);
+		reader->op(movementState);
+		reader->op(longState);
 		if (reader->is_valid()) {
-			entities.AddEntity(&entity);
+			entities.AddEntity(entityId, movementState, longState);
 		}
 	}
 }
@@ -51,16 +59,15 @@ void ClientConnection::UpdateEntities(icon7::ByteReader *reader)
 {
 	std::vector<uint64_t> notPresentEntities;
 	while (reader->has_any_more() && reader->is_valid()) {
-		uint64_t entityId, lastUpdateTick;
-		float vel[3], pos[3], forward[3];
+		uint64_t entityId;
+		EntityMovementState movementState;
 		reader->op(entityId);
-		reader->op(lastUpdateTick);
-		reader->op(vel, 3);
-		reader->op(pos, 3);
-		reader->op(forward, 3);
+		reader->op(movementState);
 		if (reader->is_valid()) {
-			if (entities.UpdateEntity(entityId, lastUpdateTick, vel, pos, forward) == false) {
-				notPresentEntities.emplace_back(entityId);
+			if (playerEntityId != entityId) {
+				if (entities.UpdateEntity(entityId, movementState) == false) {
+					notPresentEntities.emplace_back(entityId);
+				}
 			}
 		}
 	}
@@ -94,4 +101,14 @@ void ClientConnection::DeleteEntities(icon7::ByteReader *reader)
 void ClientConnection::SetPlayerEntityId(uint64_t playerEntityId)
 {
 	this->playerEntityId = playerEntityId;
+}
+
+void ClientConnection::SetGravity(float gravity)
+{
+	this->gravity = {0, -gravity, 0};
+}
+
+void ClientConnection::UpdateTimer(uint64_t currentTick)
+{
+	entities.SetCurrentTick(currentTick);
 }

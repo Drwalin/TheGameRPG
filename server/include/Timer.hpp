@@ -4,6 +4,8 @@
 
 #include <chrono>
 
+#include <icon7/Host.hpp>
+
 class Timer
 {
 public:
@@ -12,18 +14,22 @@ public:
 		currentTick = 0;
 		startTickCountingTime = std::chrono::steady_clock::now();
 		lastTickCountingTime = startTickCountingTime;
+		DEBUG("Init old timer !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	inline void Start(uint64_t currentTick)
 	{
 		Start();
 		this->currentTick = currentTick;
+		startTickCountingTime -= std::chrono::milliseconds(currentTick);
+		DEBUG("Init new timer !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG(" received current %li VVV calc current %li", currentTick, CalcCurrentTick());
 	}
 
 	inline uint64_t CalcCurrentTick() const
 	{
 		const auto currentTime = std::chrono::steady_clock::now();
-		return TicksBetween(currentTime, startTickCountingTime);
+		return TicksBetween(startTickCountingTime, currentTime);
 	}
 
 	inline static uint64_t
@@ -35,17 +41,22 @@ public:
 			.count();
 	}
 
+	/*
+	 * return old value of currentTime if delta time is not sufficient
+	 * otherwise return true current tick
+	 */
 	uint64_t Update(uint64_t maxDeltaTicks, uint64_t *deltaTicks,
 					uint64_t *trueCurrentTick)
 	{
 		const auto currentTime = std::chrono::steady_clock::now();
-		*deltaTicks = TicksBetween(currentTime, lastTickCountingTime);
+		*deltaTicks = TicksBetween(lastTickCountingTime, currentTime);
 		if (trueCurrentTick) {
-			*trueCurrentTick = TicksBetween(currentTime, startTickCountingTime);
+			*trueCurrentTick = TicksBetween(startTickCountingTime, currentTime);
 		}
 
 		if (*deltaTicks >= maxDeltaTicks) {
-			currentTick = TicksBetween(currentTime, startTickCountingTime);
+			currentTick = TicksBetween(startTickCountingTime, currentTime);
+			lastTickCountingTime = currentTime;
 		}
 		return currentTick;
 	}
