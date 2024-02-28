@@ -52,6 +52,7 @@ void Entities::UpdateToCurrentTick(Entity *entity)
 {
 	uint64_t currentTick = timer.CalcCurrentTick();
 	if (entity->lastUpdateTick + 5 < currentTick) {
-		entity->Update(currentTick);
+		// TODO: create client side update
+// 		entity->Update(currentTick);
 	}
 }
