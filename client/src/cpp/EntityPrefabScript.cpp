@@ -88,6 +88,7 @@ void EntityPrefabScript::_ready()
 	
 	if (physicsBody) {
 		collisionShape = (godot::CollisionShape3D *)(physicsBody->get_node<godot::Node>("CollisionShape"));
+		meshInstance = (godot::MeshInstance3D *)(physicsBody->get_node<godot::MeshInstance3D>("MeshInstance3D"));
 	}
 	
 	DEBUG("physics body: %p", physicsBody);

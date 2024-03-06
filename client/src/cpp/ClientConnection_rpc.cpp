@@ -2,6 +2,9 @@
 #include "../../../server/include/Entity.hpp"
 
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/classes/capsule_shape3d.hpp>
+#include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/classes/capsule_mesh.hpp>
 
 #include <icon7/Flags.hpp>
 
@@ -9,7 +12,6 @@
 
 #include "../include/ClientConnection.hpp"
 #include "../include/EntityPrefabScript.hpp"
-#include "godot_cpp/classes/capsule_shape3d.hpp"
 #include "icon7/Command.hpp"
 
 void ClientConnection::RegisterMessages()
@@ -94,7 +96,9 @@ void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 	if (entity) {
 		if (entity->godotNode) {
 			if (entity->godotNode->collisionShape) {
-				valid = true;
+				if (entity->godotNode->meshInstance) {
+					valid = true;
+				}
 			}
 		}
 	}
@@ -115,6 +119,14 @@ void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 				entity->godotNode->capsuleShape->set_height(height);
 				entity->godotNode->capsuleShape->set_radius(width*0.5);
 				entity->godotNode->collisionShape->set_position({0, height*0.5f, 0});
+				
+				godot::MeshInstance3D *meshInstance = entity->godotNode->meshInstance;
+// 				if (meshInstance) {
+					meshInstance->set_position({0, height*0.5f, 0});
+					godot::CapsuleMesh *mesh = (godot::CapsuleMesh *)(meshInstance->get_mesh().ptr());
+					mesh->set_height(height);
+					mesh->set_radius(width*0.5);
+// 				}
 				// TODO: set model by name
 			}
 		}

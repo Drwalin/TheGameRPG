@@ -31,6 +31,9 @@ void ClientConnection::UpdateTerrain(TerrainMap &map)
 		
 	float scale = map.horizontalScale;
 	
+	float CFX = scale*(map.width*0.5f - 0.5f);
+	float CFZ = scale*(map.depth*0.5f - 0.5f);
+	
 	{
 		godot::PackedFloat32Array heights;
 		heights.resize(map.heights.size());
@@ -45,6 +48,7 @@ void ClientConnection::UpdateTerrain(TerrainMap &map)
 		shape->set_map_data(heights);
 		collisionShape->set_shape(shape);
 		collisionShape->scale_object_local({scale, 1, scale});
+		collisionShape->set_position({CFX, 0, CFZ});
 // 		terrainPhysics->shape_owner_add_shape(
 // 				terrainPhysics->create_shape_owner(terrainPhysics), shape);
 	}
@@ -56,9 +60,6 @@ void ClientConnection::UpdateTerrain(TerrainMap &map)
 		surf.begin(godot::Mesh::PRIMITIVE_TRIANGLES);
 		surf.set_material(mat);
 		
-		float CFX = scale*(map.width*0.5f - 0.5f);
-		float CFZ = scale*(map.depth*0.5f - 0.5f);
-		
 		godot::PackedVector3Array vertices;
 		godot::PackedColorArray colors;
 		for (int x=0; x<map.width-1; ++x) {
@@ -68,9 +69,9 @@ void ClientConnection::UpdateTerrain(TerrainMap &map)
 				
 				{
 				color = {0.1f, 0.6f * map.GetHeight(x,y) / 100.0f, 0.05f};
-				dx=0; dy=0; godot::Vector3 a{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFX};
-				dx=1; dy=0; godot::Vector3 b{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFX};
-				dx=1; dy=1; godot::Vector3 c{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFX};
+				dx=0; dy=0; godot::Vector3 a{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
+				dx=1; dy=0; godot::Vector3 b{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
+				dx=1; dy=1; godot::Vector3 c{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
 				godot::Vector3 normal = (a-b).cross(c-b).normalized();
 				surf.set_color(color); surf.set_normal(normal); surf.add_vertex(a);
 				surf.set_color(color); surf.set_normal(normal); surf.add_vertex(b);
@@ -79,9 +80,9 @@ void ClientConnection::UpdateTerrain(TerrainMap &map)
 				
 				{
 				color = {0.1f, 0.6f * map.GetHeight(x,y) / 100.0f, 0.05f};
-				dx=0; dy=0; godot::Vector3 a{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFZ};
-				dx=1; dy=1; godot::Vector3 b{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFZ};
-				dx=0; dy=1; godot::Vector3 c{(x+dx)*scale - CFX, map.GetHeight(x+dx, y+dy), (y+dy)*scale - CFZ};
+				dx=0; dy=0; godot::Vector3 a{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
+				dx=1; dy=1; godot::Vector3 b{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
+				dx=0; dy=1; godot::Vector3 c{(x+dx)*scale, map.GetHeight(x+dx, y+dy), (y+dy)*scale};
 				godot::Vector3 normal = (a-b).cross(c-b).normalized();
 				surf.set_color(color); surf.set_normal(normal); surf.add_vertex(a);
 				surf.set_color(color); surf.set_normal(normal); surf.add_vertex(b);
