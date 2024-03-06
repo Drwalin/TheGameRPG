@@ -67,7 +67,7 @@ public: // variables
 	
 	glm::vec3 gravity;
 	
-private: //rpc code
+private: // rpc code
 	void RegisterMessages();
 
 	void UpdateTerrain(TerrainMap &map);
@@ -80,12 +80,13 @@ private: //rpc code
 	// 	{entityId, lastUpdateTick, vel, pos, rot}, ...)
 	void UpdateEntities(icon7::ByteReader *reader);
 
-	void SetModel(uint64_t entityId, std::string_view modelName, float height,
-				  float width);
-
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t playerEntityId);
 	
 	void SetGravity(float gravity);
 	void UpdateTimer(uint64_t currentTick);
+
+public: // rpc shared code
+	void SetModel(uint64_t entityId, std::string_view modelName, float height,
+				  float width);
 };

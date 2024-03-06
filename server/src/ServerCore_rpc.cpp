@@ -15,6 +15,8 @@ void ServerCore::BindRpc()
 	rpc.RegisterMessage("SetUsername", &ServerCore::SetUsername);
 	rpc.RegisterMessage("UpdatePlayer", &ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueue);
+	rpc.RegisterMessage("UpdatePlayerRot", &ServerCore::UpdatePlayerRot,
+						nullptr, SelectExecutionQueue);
 
 	rpc.RegisterObjectMessage("GetRealms", this, &ServerCore::RequestRealms);
 	rpc.RegisterObjectMessage("JoinRealm", this,
@@ -97,6 +99,15 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer, icon7::ByteReader *reader)
 
 		realm->entities[data->entityId].SolvePlayerInput(tick, pos, vel,
 														 forward);
+	}
+}
+
+void ServerCore::UpdatePlayerRot(icon7::Peer *peer, glm::vec3 forward)
+{
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	Realm *realm = data->realm;
+	if (realm) {
+		realm->entities[data->entityId].currentState.rot = forward;
 	}
 }
 

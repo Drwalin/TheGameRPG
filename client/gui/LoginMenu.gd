@@ -28,6 +28,7 @@ func _OnLoginPressed():
 		connectionClient.SetUsername(userName);
 		connectionClient.EnterRealm(realmName);
 		print("Entering realm: '", realmName, "', as '", userName, "'");
+		hide();
 	else:
 		print("_OnLoginPressed");
 

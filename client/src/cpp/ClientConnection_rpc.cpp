@@ -1,10 +1,16 @@
 #include "../../../server/include/TerrainMap.hpp"
 #include "../../../server/include/Entity.hpp"
 
+#include <godot_cpp/variant/utility_functions.hpp>
+
+#include <icon7/Flags.hpp>
+
+#include <Rpc.hpp>
+
 #include "../include/ClientConnection.hpp"
-#include "Rpc.hpp"
-#include "godot_cpp/variant/utility_functions.hpp"
-#include "icon7/Flags.hpp"
+#include "../include/EntityPrefabScript.hpp"
+#include "godot_cpp/classes/capsule_shape3d.hpp"
+#include "icon7/Command.hpp"
 
 void ClientConnection::RegisterMessages()
 {
@@ -83,7 +89,36 @@ void ClientConnection::UpdateEntities(icon7::ByteReader *reader)
 void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 								float height, float width)
 {
-	// TODO: set model
+	auto entity = entities.GetEntity(entityId);
+	bool valid = false;
+	if (entity) {
+		if (entity->godotNode) {
+			if (entity->godotNode->collisionShape) {
+				valid = true;
+			}
+		}
+	}
+	if (valid == false) {
+		icon7::commands::ExecuteFunction com;
+		com.function = std::bind(&ClientConnection::SetModel, this, entityId, (std::string)modelName, height, width);
+		rpcHost->executionQueue.EnqueueCommand(std::move(com));
+	} else {
+		if (entity) {
+			entity->longState.height = height;
+			entity->longState.width = width;
+			if (entity->godotNode) {
+				if (entity->godotNode->capsuleShape == nullptr) {
+					auto capsule = new godot::CapsuleShape3D();
+					entity->godotNode->capsuleShape = capsule;
+					entity->godotNode->collisionShape->set_shape(capsule);
+				}
+				entity->godotNode->capsuleShape->set_height(height);
+				entity->godotNode->capsuleShape->set_radius(width*0.5);
+				entity->godotNode->collisionShape->set_position({0, height*0.5f, 0});
+				// TODO: set model by name
+			}
+		}
+	}
 }
 
 void ClientConnection::DeleteEntities(icon7::ByteReader *reader)

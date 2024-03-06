@@ -10,6 +10,7 @@
 script = ExtResource("1_d4ei3")
 
 [node name="PhysicsBody" type="StaticBody3D" parent="."]
+collision_layer = 2
 
 [node name="CollisionShape" type="CollisionShape3D" parent="PhysicsBody"]
 shape = SubResource("CapsuleShape3D_0s2yy")
@@ -17,3 +18,11 @@ shape = SubResource("CapsuleShape3D_0s2yy")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PhysicsBody"]
 mesh = SubResource("CapsuleMesh_f1gji")
 skeleton = NodePath("")
+
+[node name="Label3D" type="Label3D" parent="PhysicsBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+billboard = 2
+fixed_size = true
+text = "Placeholder"
+font_size = 8
+outline_size = 4
