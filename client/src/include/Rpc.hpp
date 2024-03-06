@@ -15,6 +15,9 @@ inline const std::string SetUsername = "SetUsername";
 // void UpdatePlayer(tick, pos, vel, forward)
 inline const std::string UpdatePlayer = "UpdatePlayer";
 
+// void UpdatePlayerRot(forward)
+inline const std::string UpdatePlayerRot = "UpdatePlayerRot";
+
 // void GetRealms(void)
 inline const std::string GetRealms = "GetRealms";
 

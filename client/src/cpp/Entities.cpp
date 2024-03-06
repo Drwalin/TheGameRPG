@@ -40,6 +40,8 @@ void Entities::AddEntity(uint64_t entityId, EntityMovementState &movementState,
 		e2->godotNode->Init(entityId);
 		entitiesNode->add_child(e2->godotNode);
 		DEBUG("END");
+		
+		clientConnection->SetModel(entityId, e2->longState.modelName, e2->longState.height, e2->longState.width);
 	}
 }
 
@@ -51,7 +53,7 @@ bool Entities::UpdateEntity(uint64_t entityId, EntityMovementState &movementStat
 	}
 	entity->movementState = movementState;
 	DEBUG("Updated entity at time %lu with pos: {%4.8f, %4.8f, %4.8f}", movementState.timestamp, movementState.pos.x, movementState.pos.y, movementState.pos.z);
-	godot::UtilityFunctions::print("Updated entity with pos: ", movementState.pos.x, " ", movementState.pos.y, " ", movementState.pos.z, " ; at time: ", movementState.timestamp);
+// 	godot::UtilityFunctions::print("Updated entity with pos: ", movementState.pos.x, " ", movementState.pos.y, " ", movementState.pos.z, " ; at time: ", movementState.timestamp);
 	// TODO: maybe? do Update to current tick here?
 	return true;
 }

@@ -40,11 +40,26 @@ public: // Godot bound functions
 	void _exit_tree() override;
 	void _ready() override;
 	void _process(double dt) override;
+	void _my_internal_process(double dt);
 	void _physics_process(double dt) override;
 	
 	void Init(uint64_t entityId);
 	
 private: // Godot callbacks
+	godot::Camera3D *GetCamera();
+	void SetCamera(godot::Camera3D *cam);
+	bool IsPlayer();
+	RpcHost *GetHost();
+	RpcClient *GetClient();
+	ClientConnection *GetClientConnection();
+	
+	void AddInputMovement(const godot::Vector3 &movement);
+	void SetRotation(const godot::Vector3 &euler);
+	godot::Vector3 GetRotation();
+	
+	double GetMovementSpeed();
+	
+	void Jump();
 
 public: // variables
 	uint64_t entityId = 0;
@@ -55,12 +70,12 @@ public: // variables
 	Entities *entities = nullptr;
 	
 	godot::PhysicsBody3D *physicsBody = nullptr;
-// 	godot::RigidBody3D *rigidBody = nullptr;
-// 	godot::StaticBody3D *staticBody = nullptr;
 	
 	godot::CollisionShape3D *collisionShape = nullptr;
 	godot::CapsuleShape3D *capsuleShape = nullptr;
 	
 	godot::Camera3D *playerCamera = nullptr;
 	bool requestedEntity = false;
+	
+	glm::vec3 playerInputMovement = {0,0,0};
 };

@@ -73,6 +73,7 @@ public:
 
 	static void SetUsername(icon7::Peer *peer, std::string_view userName);
 	static void UpdatePlayer(icon7::Peer *peer, icon7::ByteReader *reader);
+	static void UpdatePlayerRot(icon7::Peer *peer, glm::vec3 forward);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
 	static void GetTerrain(icon7::Peer *peer);
