@@ -6,10 +6,10 @@ func Rotate(x: float, y: float)->void:
 	var rot = GetRotation();
 	rot.y += y;
 	rot.x += x;
-#	if rot.x < -3.141592*0.5:
-#		rot.x = -3.141592*0.5
-#	if rot.x > 3.141592*0.5:
-#		rot.x = 3.141592*0.5
+	if rot.x < -3.141592*0.5:
+		rot.x = -3.141592*0.5
+	if rot.x > 3.141592*0.5:
+		rot.x = 3.141592*0.5
 	SetRotation(rot);
 
 var isDraggingCameraRotationButton: bool = false;

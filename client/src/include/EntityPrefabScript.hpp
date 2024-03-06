@@ -9,6 +9,7 @@
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/engine_ptrcall.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/mesh_instance3d.hpp>
 
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -73,6 +74,8 @@ public: // variables
 	
 	godot::CollisionShape3D *collisionShape = nullptr;
 	godot::CapsuleShape3D *capsuleShape = nullptr;
+	
+	godot::MeshInstance3D *meshInstance = nullptr;
 	
 	godot::Camera3D *playerCamera = nullptr;
 	bool requestedEntity = false;
