@@ -1,12 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://m0gckaqqjvd4"]
 
 [ext_resource type="PackedScene" uid="uid://4k5megwckldt" path="res://gui/LoginMenu.tscn" id="1_800s2"]
+[ext_resource type="AudioStream" uid="uid://cvnaebqi1yo4t" path="res://assets/audio/ambient/Ambient 1.ogg" id="2_wl60s"]
 
 [sub_resource type="HeightMapShape3D" id="HeightMapShape3D_x6h8b"]
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_vslrs"]
-top_radius = 0.1
-bottom_radius = 0.4
 
 [sub_resource type="BoxMesh" id="BoxMesh_aglti"]
 
@@ -17,6 +14,11 @@ bottom_radius = 0.4
 [node name="UI" type="Node" parent="."]
 
 [node name="LoginMenu" parent="UI" instance=ExtResource("1_800s2")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="UI"]
+stream = ExtResource("2_wl60s")
+volume_db = -5.973
+autoplay = true
 
 [node name="Terrain" type="Node" parent="."]
 
@@ -35,10 +37,6 @@ transform = Transform3D(0.638177, 0.637161, -0.432153, 0, 0.561318, 0.8276, 0.76
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-0.649185, 0.0934647, -0.754866, -0.000607168, 0.992358, 0.123392, 0.76063, 0.0805627, -0.644167, -41.704, 100, -32.225)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -1)
-mesh = SubResource("CylinderMesh_vslrs")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(600, 0, 0, 0, 10, 0, 0, 0, 600, 250, -50, 250)

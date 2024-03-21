@@ -56,7 +56,7 @@ void Entity::Update(uint64_t currentTick)
 		next.vel = vel;
 		next.rot = prev.rot;
 		
-		DEBUG("Update player pos: %f %f %f", pos.x, pos.y, pos.z);
+// 		DEBUG("Update player pos: %f %f %f", pos.x, pos.y, pos.z);
 		
 		
 		
