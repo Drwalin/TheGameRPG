@@ -22,24 +22,24 @@ void Entities::AddEntity(uint64_t entityId, EntityMovementState &movementState,
 	// TODO: maybe? do Update to current tick here?
 	
 	if (e2->godotNode == nullptr) {
-		DEBUG("START");
+// 		DEBUG("START");
 		if (prefab==nullptr) {
 			auto x =
 				godot::ResourceLoader::get_singleton()->load("res://prefabs/MovingEntity.tscn", "PackedScene");
 			DEBUG(" x = %p", x.ptr());
 			prefab = x;
 		}
-		DEBUG("A");
+// 		DEBUG("A");
 		e2->godotNode = (EntityPrefabScript *)(prefab->instantiate());
-		DEBUG("B, godotNode = %lu", e2->godotNode);
+// 		DEBUG("B, godotNode = %lu", e2->godotNode);
 		e2->entityId = entityId;
-		DEBUG("C");
+// 		DEBUG("C");
 		auto *entitiesNode = clientConnection->get_node<godot::Node>("/root/SceneRoot/Entities");
-		DEBUG("D");
+// 		DEBUG("D");
 		godot::UtilityFunctions::print("Godot node: ", e2->godotNode, " ; ptr: ", (uint64_t)(void*)(e2->godotNode));
 		e2->godotNode->Init(entityId);
 		entitiesNode->add_child(e2->godotNode);
-		DEBUG("END");
+// 		DEBUG("END");
 		
 		clientConnection->SetModel(entityId, e2->longState.modelName, e2->longState.height, e2->longState.width);
 	}
@@ -52,7 +52,7 @@ bool Entities::UpdateEntity(uint64_t entityId, EntityMovementState &movementStat
 		return false;
 	}
 	entity->movementState = movementState;
-	DEBUG("Updated entity at time %lu with pos: {%4.8f, %4.8f, %4.8f}", movementState.timestamp, movementState.pos.x, movementState.pos.y, movementState.pos.z);
+// 	DEBUG("Updated entity at time %lu with pos: {%4.8f, %4.8f, %4.8f}", movementState.timestamp, movementState.pos.x, movementState.pos.y, movementState.pos.z);
 // 	godot::UtilityFunctions::print("Updated entity with pos: ", movementState.pos.x, " ", movementState.pos.y, " ", movementState.pos.z, " ; at time: ", movementState.timestamp);
 	// TODO: maybe? do Update to current tick here?
 	return true;

@@ -93,10 +93,10 @@ void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 {
 	auto entity = entities.GetEntity(entityId);
 	bool valid = false;
-	if (entity) {
-		if (entity->godotNode) {
-			if (entity->godotNode->collisionShape) {
-				if (entity->godotNode->meshInstance) {
+	if (entity != nullptr) {
+		if (entity->godotNode != nullptr) {
+			if (entity->godotNode->collisionShape != nullptr) {
+				if (entity->godotNode->meshInstance != nullptr) {
 					valid = true;
 				}
 			}
@@ -121,13 +121,10 @@ void ClientConnection::SetModel(uint64_t entityId, std::string_view modelName,
 				entity->godotNode->collisionShape->set_position({0, height*0.5f, 0});
 				
 				godot::MeshInstance3D *meshInstance = entity->godotNode->meshInstance;
-// 				if (meshInstance) {
-					meshInstance->set_position({0, height*0.5f, 0});
-					godot::CapsuleMesh *mesh = (godot::CapsuleMesh *)(meshInstance->get_mesh().ptr());
-					mesh->set_height(height);
-					mesh->set_radius(width*0.5);
-// 				}
-				// TODO: set model by name
+				meshInstance->set_position({0, height*0.5f, 0});
+				godot::CapsuleMesh *mesh = (godot::CapsuleMesh *)(meshInstance->get_mesh().ptr());
+				mesh->set_height(height);
+				mesh->set_radius(width*0.5);
 			}
 		}
 	}
