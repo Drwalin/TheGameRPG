@@ -86,9 +86,19 @@ void EntityPrefabScript::_ready()
 	}
 	godot::UtilityFunctions::print("End ready prefab");
 	
-	if (physicsBody) {
+	if (physicsBody != nullptr) {
+		godot::UtilityFunctions::print("Begin ready prefab for physicsBody!=nullptr");
+		auto c = physicsBody->get_children();
+		for (int i=0; i<c.size(); ++i) {
+			auto x = c[i];
+			auto ob = ((godot::Object *)(c[i]));
+			auto n = (godot::Node *)ob;
+			godot::UtilityFunctions::print("Ready with child: ", c[i], " of name: `", n->get_name(), "`");
+		}
+		godot::UtilityFunctions::print("End ready prefab for physicsBody!=nullptr");
 		collisionShape = (godot::CollisionShape3D *)(physicsBody->get_node<godot::Node>("CollisionShape"));
-		meshInstance = (godot::MeshInstance3D *)(physicsBody->get_node<godot::MeshInstance3D>("MeshInstance3D"));
+		meshInstance =     (godot::MeshInstance3D *)(physicsBody->get_node<godot::Node>("MeshInstance3D"));
+		godot::UtilityFunctions::print("physics body is not null, setting collisionShape(", (uint64_t)(collisionShape),") and meshInstance(", (uint64_t)(meshInstance), ")");
 	}
 	
 	DEBUG("physics body: %p", physicsBody);
