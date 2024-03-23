@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(../ICon7-godot-client/godot-cpp/include)
@@ -52,3 +54,4 @@ add_custom_command(TARGET game_client POST_BUILD
 	${PROJECT_SOURCE_DIR}/bin/libgame_client.so
 	COMMENT "dummy"
 )
+

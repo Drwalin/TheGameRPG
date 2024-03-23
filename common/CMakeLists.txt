@@ -11,6 +11,7 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(include)
+include_directories(../common/include)
 
 # Library compilation
 
@@ -21,4 +22,5 @@ add_executable(server
 	${include_files}
 )
 target_link_libraries(server PUBLIC icon7)
+target_link_libraries(server PUBLIC common)
 
