@@ -10,6 +10,8 @@
 
 int main()
 {
+	printf("glm::vec3 size: %lu\n", sizeof(glm::vec3));
+	
 	icon7::Initialize();
 	{
 	
