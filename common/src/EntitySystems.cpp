@@ -2,7 +2,9 @@
 
 #include "../include/EntitySystems.hpp"
 
-void EntitySystems::UpdateMovement(
+namespace EntitySystems
+{
+void UpdateMovement(
 	Realm *realm, flecs::entity entity, const EntityShape shape,
 	EntityMovementState &currentState,
 	const EntityLastAuthoritativeMovementState &_lastAuthoritativeState,
@@ -121,3 +123,4 @@ void EntitySystems::UpdateMovement(
 
 	realm->collisionWorld.UpdateEntityBvh(entity.id(), shape, currentState.pos);
 }
+} // namespace EntitySystems
