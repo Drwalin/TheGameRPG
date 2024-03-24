@@ -1,15 +1,16 @@
-
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/Peer.hpp>
+#include <icon7/Flags.hpp>
+
+#include "../include/ClientRpcProxy.hpp"
 
 #include "../include/RealmServer.hpp"
-#include "icon7/Flags.hpp"
 
 RealmServer::RealmServer() {}
 
 RealmServer::~RealmServer() {}
 
-void RealmServer::InitByRealmName(const std::string &realmName)
+void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load from database
 	// TODO: add to cyclic buffer/queue of realms ; or think about better place
@@ -17,7 +18,7 @@ void RealmServer::InitByRealmName(const std::string &realmName)
 	sendEntitiesToClientsTimer.Start();
 }
 
-void RealmServer::Update()
+void RealmServer::OneEpoch()
 {
 	const uint32_t MAX_EVENTS = 128;
 	icon7::Command commands[MAX_EVENTS];
@@ -28,35 +29,33 @@ void RealmServer::Update()
 		commands[i].Execute();
 		commands[i].~Command();
 	}
-
-	uint64_t deltaTicks = 0;
-	timer.Update(maxDeltaTicks, &deltaTicks, nullptr);
-
-	if (deltaTicks >= maxDeltaTicks) {
-		UpdateAllEntities();
-		uint64_t dt = 0;
-		sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
-		if (dt >= sendUpdateDeltaTicks) {
-			BroadcastEntitiesMovementState();
-		}
+	
+	Realm::OneEpoch();
+	// TODO: here do other server updates, AI, other mechanics and logic
+	
+	uint64_t dt = 0;
+	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
+	if (dt >= sendUpdateDeltaTicks) {
+		BroadcastEntitiesMovementState();
 	}
 }
 
-void RealmServer::UpdateAllEntities()
+void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
-	entityStorage.ForEach(
-		[this](EntityServer *e) { e->Update(timer.currentTick); });
-}
-
-void RealmServer::AddPeer(icon7::Peer *peer)
-{
-	((PeerData *)(peer->userPointer))->realm = this;
-
-	uint64_t entityId = AddEntity();
-	EntityServer *entity = entityStorage.Get(entityId);
-	entity->ConnectPeer(peer);
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	data->realm = this;
+	
+	uint64_t entityId = NewEntity();
+	data->entityId = entityId;
+	// TODO: load player from database
+	SetComponent<EntityName>(entityId, {data->userName});
+	
+	this->EmplaceComponent<EntityPlayerConnectionPeer>(entityId,
+			peer->shared_from_this());
 	peers.insert(peer);
+	
 	// TODO: send this player entity controlled id, send realm data
+	ClientRpcProxy::SetPlayerEntityId(this, peer, entityId);
 	rpc->Send(peer, icon7::FLAG_RELIABLE,
 			  ClientRemoteFunctions::SetPlayerEntityId, entityId);
 }
@@ -83,13 +82,6 @@ void RealmServer::ExecuteOnRealmThread(
 	com.function = function;
 
 	executionQueue.EnqueueCommand(std::move(com));
-}
-
-uint64_t RealmServer::_InternalAddEntity()
-{
-	uint64_t entityId = entityStorage.Add(this);
-	BroadcastEntityLongState(entityId);
-	return entityId;
 }
 
 EntityBase *RealmServer::GetEntity(uint64_t entityId)

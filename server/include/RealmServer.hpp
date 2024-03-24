@@ -6,35 +6,27 @@
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/Peer.hpp>
 
-#include "../../common/include/EntityStorage.hpp"
+#include "PeerData.hpp"
+#include "EntityDataServer.hpp"
 
-#include "EntityServer.hpp"
+#include "../../common/include/Realm.hpp"
 
-#include "../../common/include/RealmBase.hpp"
-
-class RealmServer : public RealmBase
+class RealmServer : public Realm
 {
 public:
 	RealmServer();
 	virtual ~RealmServer() override;
 
-	virtual void InitByRealmName(const std::string &realmName) override;
+	virtual void Init(const std::string &realmName) override;
 
-	void Update();
-	void UpdateAllEntities();
+	virtual void OneEpoch() override;
 
-	void AddPeer(icon7::Peer *peer);
+	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);
 
 	void ExecuteOnRealmThread(icon7::Peer *peer, icon7::ByteReader *reader,
 							  void (*function)(icon7::Peer *,
 											   std::vector<uint8_t> &, void *));
-	
-	virtual EntityBase *GetEntity(uint64_t entityId) override;
-
-protected:
-	virtual uint64_t _InternalAddEntity() override;
-	virtual uint64_t _InternalDestroyEntity(uint64_t entityId) override;
 
 public:
 	void BroadcastEntitiesMovementState();
@@ -47,9 +39,6 @@ public:
 
 	template <typename... Args>
 	void BroadcastReliable(const std::string &functionName, Args... args);
-	
-public:
-	void RequestLongEntitiesData(icon7::Peer *peer, icon7::ByteReader *reader);
 
 public:
 	Timer sendEntitiesToClientsTimer;
@@ -58,7 +47,6 @@ public:
 	icon7::CommandExecutionQueue executionQueue;
 
 	std::unordered_set<icon7::Peer *> peers;
-	EntityStorage<EntityServer> entityStorage;
 
 	uint64_t sendUpdateDeltaTicks = 250;
 };

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <flecs.h>
+
 #include <icon7/Peer.hpp>
 
 class RealmServer;

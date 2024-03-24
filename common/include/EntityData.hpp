@@ -27,7 +27,7 @@ struct EntityMovementState {
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;
-	
+
 	template <typename S> S &__ByteStream_op(S &s)
 	{
 		s.op(timestamp);

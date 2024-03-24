@@ -16,6 +16,8 @@ class Realm
 {
 public:
 	Realm();
+	virtual ~Realm();
+	
 	void Destroy();
 
 	virtual void Init(const std::string &realmName);
@@ -30,7 +32,7 @@ public:
 
 public:
 	Timer timer;
-	uint64_t minDeltaTicks = 30;
+	uint64_t minDeltaTicks = 50;
 	uint64_t maxDeltaTicks = 200;
 	uint64_t ticksBeforeIgnoringInputMovement = 500;
 	
@@ -52,6 +54,10 @@ public: // accessors
 		Entity(entity).add<T>(std::move(value));
 	}
 	
+	template <typename T> void SetComponent(uint64_t entity, T &&value)
+	{
+		Entity(entity).set<T>(std::move(value));
+	}
 	template <typename T> bool HasComponent(uint64_t entity) const
 	{
 		return Entity(entity).has<T>();
