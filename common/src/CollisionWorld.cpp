@@ -1,16 +1,16 @@
 #include <icon7/Debug.hpp>
 
+#include <bullet/LinearMath/btVector3.h>
+#include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
-#define COLLISION_WORLD_IMPL
+#include "../include/Realm.hpp"
+
 #include "../include/CollisionWorld.hpp"
 
-CollisionWorld *CollisionWorld::Allocate() { return new CollisionWorld(); }
-
-void CollisionWorld::Free(CollisionWorld *world) { delete world; }
-
-CollisionWorld::CollisionWorld()
+CollisionWorld::CollisionWorld(Realm *realm)
 {
+	this->realm = realm;
 	broadphase = new btDbvtBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -96,14 +96,15 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 			  entityId);
 		return false;
 	}
-	btCapsuleShape *_shape = new btCapsuleShape(shape.width*0.5, shape.height);
+	btCapsuleShape *_shape =
+		new btCapsuleShape(shape.width * 0.5, shape.height);
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
 	entities[entityId] = object;
 	object->setWorldTransform(
 		btTransform(btQuaternion(), {pos.x, pos.y, pos.z}));
-	object->setUserIndex2(((uint32_t)(entityId))&0xFFFFFFFF);
-	object->setUserIndex3(((uint32_t)(entityId>>32))&0xFFFFFFFF);
+	object->setUserIndex2(((uint32_t)(entityId)) & 0xFFFFFFFF);
+	object->setUserIndex3(((uint32_t)(entityId >> 32)) & 0xFFFFFFFF);
 	collisionWorld->addCollisionObject(object, FILTER_GROUP_ENTITY,
 									   FILTER_MASK_ENTITY);
 	updateWorldBvh = true;
@@ -132,11 +133,12 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 	entities.erase(it);
 }
 
-bool CollisionWorld::TestCollisionMovement(
-	EntityShape shape, glm::vec3 start, glm::vec3 end,
-	glm::vec3 *finalCorrectedPosition, bool *isOnGround) const
+bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
+										   glm::vec3 end,
+										   glm::vec3 *finalCorrectedPosition,
+										   bool *isOnGround) const
 {
-	btCapsuleShape _shape(shape.width*0.5, shape.height);
+	btCapsuleShape _shape(shape.width * 0.5, shape.height);
 	btCollisionWorld::ClosestConvexResultCallback cb(
 		{start.x, start.y, start.z}, {end.x, end.y, end.z});
 	cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
@@ -144,7 +146,7 @@ bool CollisionWorld::TestCollisionMovement(
 	collisionWorld->convexSweepTest(
 		&_shape, btTransform{btQuaternion{}, {start.x, start.y, start.z}},
 		btTransform{btQuaternion{}, {end.x, end.y, end.z}}, cb, 0);
-	
+
 	if (isOnGround) {
 		*isOnGround = false;
 	}
@@ -152,18 +154,19 @@ bool CollisionWorld::TestCollisionMovement(
 	if (cb.m_hitCollisionObject != nullptr) {
 		btVector3 v = cb.m_convexToWorld;
 		*finalCorrectedPosition = glm::vec3{v.x(), v.y(), v.z()};
-		
+
 		if (isOnGround) {
 			glm::vec3 hp, normal;
-			if (RayTestFirstHitTerrain(*finalCorrectedPosition+glm::vec3{0.0f,0.1f,0.0f},
-						*finalCorrectedPosition-glm::vec3{0.0f,0.1f,0.0f},
-						&hp, &normal, nullptr)) {
+			if (RayTestFirstHitTerrain(
+					*finalCorrectedPosition + glm::vec3{0.0f, 0.1f, 0.0f},
+					*finalCorrectedPosition - glm::vec3{0.0f, 0.1f, 0.0f}, &hp,
+					&normal, nullptr)) {
 				if (fabs(normal.y) > 0.7) {
 					*isOnGround = true;
 				}
 			}
 		}
-		
+
 		return true;
 	}
 	return false;
@@ -218,28 +221,33 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 			*entityId = 0;
 		return false;
 	}
-	
+
 	if (hitPosition)
-		*hitPosition = {cb.m_hitPointWorld.x(), cb.m_hitPointWorld.y(), cb.m_hitPointWorld.z()};
+		*hitPosition = {cb.m_hitPointWorld.x(), cb.m_hitPointWorld.y(),
+						cb.m_hitPointWorld.z()};
 	if (hitNormal) {
-		*hitNormal = {cb.m_hitNormalWorld.x(), cb.m_hitNormalWorld.y(), cb.m_hitNormalWorld.z()};
+		*hitNormal = {cb.m_hitNormalWorld.x(), cb.m_hitNormalWorld.y(),
+					  cb.m_hitNormalWorld.z()};
 		*hitNormal = glm::normalize(*hitNormal);
 	}
-	
+
 	const btCollisionObject *hitObject = cb.m_collisionObject;
 	if (entityId)
-		*entityId = ((uint64_t)(hitObject->getUserIndex2())) | (((uint64_t)(hitObject->getUserIndex3()))<<32);
-	
+		*entityId = ((uint64_t)(hitObject->getUserIndex2())) |
+					(((uint64_t)(hitObject->getUserIndex3())) << 32);
+
 	if (travelFactor)
 		*travelFactor = cb.m_closestHitFraction;
 	if (hasNormal)
 		*hasNormal = ((*entityId) == 0);
-	
+
 	return true;
 }
 
-bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
-					 glm::vec3 *hitNormal, float *travelFactor) const
+bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
+											glm::vec3 *hitPosition,
+											glm::vec3 *hitNormal,
+											float *travelFactor) const
 {
 	btCollisionWorld::ClosestRayResultCallback cb({}, {});
 	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
@@ -250,16 +258,45 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end, glm:
 			*travelFactor = 1;
 		return false;
 	}
-	
+
 	if (hitPosition)
-		*hitPosition = {cb.m_hitPointWorld.x(), cb.m_hitPointWorld.y(), cb.m_hitPointWorld.z()};
+		*hitPosition = {cb.m_hitPointWorld.x(), cb.m_hitPointWorld.y(),
+						cb.m_hitPointWorld.z()};
 	if (hitNormal) {
-		*hitNormal = {cb.m_hitNormalWorld.x(), cb.m_hitNormalWorld.y(), cb.m_hitNormalWorld.z()};
+		*hitNormal = {cb.m_hitNormalWorld.x(), cb.m_hitNormalWorld.y(),
+					  cb.m_hitNormalWorld.z()};
 		*hitNormal = glm::normalize(*hitNormal);
 	}
-	
+
 	if (travelFactor)
 		*travelFactor = cb.m_closestHitFraction;
-	
+
 	return true;
 }
+
+void CollisionWorld::RegisterObservers(Realm *realm)
+{
+	auto &ecs = realm->ecs;
+	ecs.observer<EntityShape, EntityMovementState>()
+		.event(flecs::OnAdd)
+		.each([this](flecs::entity entity, const EntityShape &shape,
+					 const EntityMovementState &state) {
+			this->AddEntity(entity.id(), shape, state.pos);
+		});
+	ecs.observer<EntityShape, EntityMovementState>()
+		.event(flecs::OnRemove)
+		.each([this](flecs::entity entity, const EntityShape &shape,
+					 const EntityMovementState &state) {
+			this->DeleteEntity(entity.id());
+		});
+	ecs.observer<EntityShape>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity, const EntityShape &shape) {
+			const EntityMovementState *state = entity.get<EntityMovementState>();
+			if (entity.has<EntityMovementState>()) {
+				this->UpdateEntityBvh(entity.id(), shape, state->pos);
+			}
+		});
+}
+
+void CollisionWorld::RegisterSystems(Realm *realm) { return; }
