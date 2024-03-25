@@ -8,38 +8,26 @@
 
 namespace ClientRpcProxy
 {
-// void SpawnEntities({entityId, EntityMovementState, EntityLongState}, ...)
-inline const std::string SpawnEntities = "SpawnEntities";
-
-// void UpdateEntities({entityId, lastUpdateTick, vel, pos, forward}, ...)
-inline const std::string UpdateEntities = "UpdateEntities";
-
-// void DeleteEntities({entityId}, ...)
-inline const std::string DeleteEntities = "DeleteEntities";
-
-
-
-inline const std::string _SetRealms = "SetRealms";
 void SetRealms(RealmServer *realm, icon7::Peer *peer,
-		const std::vector<std::string> &realmNames);
-
-inline const std::string _SetModel = "SetModel";
-void SetModel(RealmServer *realm, icon7::Peer *peer, uint64_t entityId,
-		const std::string &modelName, EntityShape shape);
-
-inline const std::string _SetPlayerEntityId = "SetPlayerEntityId";
+			   const std::vector<std::string> &realmNames);
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
-		uint64_t playerEntityId);
-
-inline const std::string _SetCurrentTick = "SetCurrentTick";
+					   uint64_t playerEntityId);
 void SetCurrentTick(RealmServer *realm, icon7::Peer *peer,
-		uint64_t playerEntityId);
+					uint64_t playerEntityId);
+void Ping(RealmServer *realm, icon7::Peer *peer);
+void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
 
-inline const std::string _Ping = "Ping";
-void Ping(RealmServer *realm, icon7::Peer *peer,
-		uint64_t playerEntityId);
+void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
+						  uint64_t entityId);
+void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 
-inline const std::string _SetGravity = "SetGravity";
-void SetGravity(RealmServer *realm, icon7::Peer *peer,
-		uint64_t playerEntityId);
-}
+void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
+						const std::string &modelName, EntityShape shape);
+void Broadcast_SpawnEntity(RealmServer *realm, flecs::entity entity,
+						   const EntityMovementState &state,
+						   const EntityShape &shape,
+						   const EntityModelName &entityModelName,
+						   const EntityName &entityName);
+void Broadcast_UpdateEntities(RealmServer *realm);
+void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
+} // namespace ClientRpcProxy

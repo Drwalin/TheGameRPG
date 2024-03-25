@@ -9,12 +9,19 @@ class RealmServer;
 namespace EntityNetworkingSystems
 {
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
-							 EntityPlayerConnectionPeer &peer,
+							 const EntityPlayerConnectionPeer &peer,
 							 const EntityName &entityName);
+
+void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
+						const EntityMovementState &state,
+						const EntityShape &shape,
+						const EntityModelName &entityModelName,
+						const EntityName &entityName);
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						EntityPlayerConnectionPeer &peer,
 						const EntityName &entityName);
 
-void InitObservers(RealmServer *realm);
+void RegisterObservers(RealmServer *realm);
+void RegisterSystems(RealmServer *realm);
 }; // namespace EntityNetworkingSystems

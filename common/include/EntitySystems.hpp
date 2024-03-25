@@ -8,7 +8,7 @@ class Realm;
 
 namespace EntitySystems
 {
-static void UpdateMovement(
+void UpdateMovement(
 	Realm *realm, flecs::entity entity, const EntityShape shape,
 	EntityMovementState &currentState,
 	const EntityLastAuthoritativeMovementState &lastAuthoritativeState,
