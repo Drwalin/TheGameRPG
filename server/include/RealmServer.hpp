@@ -28,6 +28,9 @@ public:
 							  void (*function)(icon7::Peer *,
 											   std::vector<uint8_t> &, void *));
 
+	virtual void RegisterObservers() override;
+	virtual void RegisterSystems() override;
+
 public:
 	void BroadcastEntitiesMovementState();
 	void BroadcastEntityChangeModel(uint64_t entityId);
@@ -41,14 +44,19 @@ public:
 	void BroadcastReliable(const std::string &functionName, Args... args);
 
 public:
-	Timer sendEntitiesToClientsTimer;
-
 	icon7::RPCEnvironment *rpc;
 	icon7::CommandExecutionQueue executionQueue;
 
 	std::unordered_set<icon7::Peer *> peers;
 
+	Timer sendEntitiesToClientsTimer;
 	uint64_t sendUpdateDeltaTicks = 250;
+	flecs::query<const EntityLastAuthoritativeMovementState>
+		queryLastAuthoritativeState;
+	
+	flecs::query<const EntityLastAuthoritativeMovementState, const EntityName,
+				 const EntityModelName, const EntityShape, const EntityMovementParameters>
+		queryEntityLongState;
 };
 
 template <typename... Args>

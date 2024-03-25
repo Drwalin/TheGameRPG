@@ -42,6 +42,20 @@ public:
 	std::vector<flecs::system> systemsRunPeriodicallyByTimer;
 	
 	CollisionWorld collisionWorld;
+	
+public:
+	
+	template<typename ...TArgs>
+	auto GetObserver(std::function<void(flecs::entity, TArgs...)> func)
+	{
+		return ecs.observer<TArgs...>();
+	}
+	
+	template<typename Fun>
+	void RegisterObserver(flecs::entity_t event, Fun &&func)
+	{
+		GetObserver(func).event(event).each(func);
+	}
 
 public: // accessors
 	template <typename T, typename... Args>

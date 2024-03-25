@@ -3,6 +3,7 @@
 #include <icon7/Flags.hpp>
 
 #include "../include/ClientRpcProxy.hpp"
+#include "../include/EntityNetworkingSystems.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -29,10 +30,10 @@ void RealmServer::OneEpoch()
 		commands[i].Execute();
 		commands[i].~Command();
 	}
-	
+
 	Realm::OneEpoch();
 	// TODO: here do other server updates, AI, other mechanics and logic
-	
+
 	uint64_t dt = 0;
 	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
 	if (dt >= sendUpdateDeltaTicks) {
@@ -44,31 +45,25 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	data->realm = this;
-	
+
 	uint64_t entityId = NewEntity();
 	data->entityId = entityId;
 	// TODO: load player from database
 	SetComponent<EntityName>(entityId, {data->userName});
-	
-	this->EmplaceComponent<EntityPlayerConnectionPeer>(entityId,
-			peer->shared_from_this());
+
+	this->EmplaceComponent<EntityPlayerConnectionPeer>(
+		entityId, peer->shared_from_this());
 	peers.insert(peer);
-	
-	// TODO: send this player entity controlled id, send realm data
-	ClientRpcProxy::SetPlayerEntityId(this, peer, entityId);
-	rpc->Send(peer, icon7::FLAG_RELIABLE,
-			  ClientRemoteFunctions::SetPlayerEntityId, entityId);
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
-	// TODO: safe entity to database
-	uint64_t entityId = ((PeerData *)(peer->userPointer))->entityId;
-	EntityServer *entity = (EntityServer *)GetEntity(entityId);
-	if (entity) {
-		entity->DisconnectPeer();
-	}
+	// TODO: store player in database
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	uint64_t entityId = data->entityId;
 	peers.erase(peer);
+	RemoveEntity(entityId);
+	data->realm = nullptr;
 }
 
 void RealmServer::ExecuteOnRealmThread(
@@ -82,20 +77,6 @@ void RealmServer::ExecuteOnRealmThread(
 	com.function = function;
 
 	executionQueue.EnqueueCommand(std::move(com));
-}
-
-EntityBase *RealmServer::GetEntity(uint64_t entityId)
-{
-	return entityStorage.Get(entityId);
-}
-
-uint64_t RealmServer::_InternalDestroyEntity(uint64_t entityId)
-{
-	EntityServer *entity = entityStorage.Get(entityId);
-	entity->DisconnectPeer();
-	// TODO: propagate entity destruction
-	entityStorage.Destroy(entityId);
-	BroadcastEntityErase(entityId);
 }
 
 void RealmServer::BroadcastEntitiesMovementState()
@@ -142,7 +123,8 @@ void RealmServer::BroadcastEntityLongState(uint64_t entityId)
 	if (entity == nullptr) {
 		return;
 	}
-	BroadcastReliable(ClientRemoteFunctions::EntityLongState, entity->longState);
+	BroadcastReliable(ClientRemoteFunctions::EntityLongState,
+					  entity->longState);
 }
 
 void RealmServer::BroadcastEntityErase(uint64_t entityId)
@@ -165,7 +147,8 @@ void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,
 	}
 }
 
-void RealmServer::RequestLongEntitiesData(icon7::Peer *peer, icon7::ByteReader *reader)
+void RealmServer::RequestLongEntitiesData(icon7::Peer *peer,
+										  icon7::ByteReader *reader)
 {
 	std::vector<uint8_t> buffer;
 	{
@@ -182,4 +165,26 @@ void RealmServer::RequestLongEntitiesData(icon7::Peer *peer, icon7::ByteReader *
 	}
 	peer->Send(std::move(buffer),
 			   icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK);
+}
+
+void RealmServer::RegisterObservers()
+{
+	Realm::RegisterObservers();
+
+	EntityNetworkingSystems::RegisterObservers(this);
+}
+
+void RealmServer::RegisterSystems()
+{
+	Realm::RegisterSystem();
+
+	EntityNetworkingSystems::RegisterSystems(this);
+
+	queryLastAuthoritativeState =
+		ecs.query<const EntityLastAuthoritativeMovementState>();
+
+	queryEntityLongState =
+		ecs->query<const EntityLastAuthoritativeMovementState, const EntityName,
+				   const EntityModelName, const EntityShape,
+				   const EntityMovementParameters>();
 }
