@@ -28,7 +28,8 @@ public:
 	virtual void RegisterObservers();
 	virtual void RegisterSystems();
 
-	virtual void OneEpoch();
+	// returns false if was not busy
+	virtual bool OneEpoch();
 
 public:
 	Timer timer;
@@ -42,6 +43,8 @@ public:
 	std::vector<flecs::system> systemsRunPeriodicallyByTimer;
 	
 	CollisionWorld collisionWorld;
+	
+	std::string realmName;
 	
 public:
 	

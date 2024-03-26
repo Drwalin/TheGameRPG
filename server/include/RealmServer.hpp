@@ -19,7 +19,8 @@ public:
 
 	virtual void Init(const std::string &realmName) override;
 
-	virtual void OneEpoch() override;
+	// returns false if was not busy
+	virtual bool OneEpoch() override;
 
 	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);

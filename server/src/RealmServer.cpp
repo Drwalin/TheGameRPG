@@ -19,25 +19,30 @@ void RealmServer::Init(const std::string &realmName)
 	sendEntitiesToClientsTimer.Start();
 }
 
-void RealmServer::OneEpoch()
+bool RealmServer::OneEpoch()
 {
+	bool busy = false;
 	const uint32_t MAX_EVENTS = 128;
 	icon7::Command commands[MAX_EVENTS];
 	const uint32_t dequeued =
 		executionQueue.TryDequeueBulkAny(commands, MAX_EVENTS);
 
+	busy |= dequeued != 0;
 	for (uint32_t i = 0; i < dequeued; ++i) {
 		commands[i].Execute();
 		commands[i].~Command();
 	}
 
-	Realm::OneEpoch();
+	busy |= Realm::OneEpoch();
 	// TODO: here do other server updates, AI, other mechanics and logic
 
 	uint64_t dt = 0;
 	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
 	if (dt >= sendUpdateDeltaTicks) {
 		ClientRpcProxy::Broadcast_UpdateEntities(this);
+		return true;
+	} else {
+		return busy;
 	}
 }
 
