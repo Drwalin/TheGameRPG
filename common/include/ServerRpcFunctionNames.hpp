@@ -7,7 +7,7 @@ namespace ServerRpcFunctionNames
 // void SetUsername(std::string)
 inline const std::string SetUsername = "SetUsername";
 
-// void UpdatePlayer(tick, pos, vel, forward)
+// void UpdatePlayer(EntityLastAuthoritativeMovementState)
 inline const std::string UpdatePlayer = "UpdatePlayer";
 
 // void UpdatePlayerRot(forward)
@@ -21,9 +21,6 @@ inline const std::string JoinRealm = "JoinRealm";
 
 // void GetEntitiesData({uint64_t entityId}, ...)
 inline const std::string GetEntitiesData = "GetEntitiesData";
-
-// void GetTerrain(void)
-inline const std::string GetTerrain = "GetTerrain";
 
 // void GetCurrentTick(void)
 inline const std::string GetCurrentTick = "GetCurrentTick";

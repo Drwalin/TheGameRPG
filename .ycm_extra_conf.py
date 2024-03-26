@@ -10,5 +10,5 @@ def Settings( **kwargs ):
     '-I./common/include',
     '-I./server/include',
     '-I./client/src/include',
-    '-I./common/flecs/include'],
+    '-I./common/flecs'],
   }

@@ -51,7 +51,7 @@ public:
 public:
 	
 	template<typename ...TArgs>
-	auto GetObserver(std::function<void(flecs::entity, TArgs...)> func)
+	auto GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
 	{
 		return ecs.observer<TArgs...>();
 	}
@@ -59,18 +59,19 @@ public:
 	template<typename Fun>
 	void RegisterObserver(flecs::entity_t event, Fun &&func)
 	{
-		GetObserver(func).event(event).each(func);
+		decltype(std::function(*&func)) f;
+		GetObserver(f).event(event).each(std::move(func));
 	}
 
 public: // accessors
 	template <typename T, typename... Args>
 	void EmplaceComponent(uint64_t entity, Args &&...args)
 	{
-		Entity(entity).emplace(args...);
+		Entity(entity).emplace<T>(args...);
 	}
-	template <typename T> void AddComponent(uint64_t entity, T &&value)
+	template <typename T> void AssureComponent(uint64_t entity)
 	{
-		Entity(entity).add<T>(std::move(value));
+		Entity(entity).add<T>();
 	}
 	
 	template <typename T> void SetComponent(uint64_t entity, T &&value)

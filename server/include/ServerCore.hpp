@@ -37,10 +37,9 @@ public:
 	void BindRpc();
 
 	static void SetUsername(icon7::Peer *peer, std::string_view userName);
-	static void UpdatePlayer(icon7::Peer *peer, uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
+	static void UpdatePlayer(icon7::Peer *peer, const EntityLastAuthoritativeMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
-	static void GetTerrain(icon7::Peer *peer);
 	void RequestRealms(icon7::Peer *peer);
 	void GetCurrentTick(icon7::Peer *peer, icon7::Flags flags);
 

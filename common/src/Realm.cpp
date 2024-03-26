@@ -4,6 +4,11 @@
 
 Realm::Realm() : collisionWorld(this) {}
 
+Realm::~Realm()
+{
+	Destroy();
+}
+
 void Realm::Destroy()
 {
 	ecs.defer_begin();
@@ -46,6 +51,7 @@ void Realm::RegisterObservers()
 			if (shape == nullptr)
 				return;
 			int64_t dt = timer.currentTick - lastState.oldState.timestamp;
+			// TODO: check if simulation happens
 			if (dt >= minDeltaTicks) {
 				EntityMovementState currentState = lastState.oldState;
 				auto movementParams = entity.get<EntityMovementParameters>();
@@ -68,7 +74,7 @@ void Realm::RegisterSystems()
 				   const EntityLastAuthoritativeMovementState,
 				   const EntityMovementParameters>(
 			   "EntityMovementPhysicsUpdateSystem")
-			.iter([this](flecs::entity entity, const EntityShape shape,
+			.each([this](flecs::entity entity, const EntityShape shape,
 						 EntityMovementState &currentState,
 						 const EntityLastAuthoritativeMovementState
 							 &lastAuthoritativeState,
@@ -91,5 +97,15 @@ bool Realm::OneEpoch()
 		return true;
 	} else {
 		return false;
+	}
+}
+
+void Realm::UpdateEntityAuthoritativeState(uint64_t entityId, const EntityLastAuthoritativeMovementState &state)
+{
+	flecs::entity entity = Entity(entityId);
+	if (entity.is_alive()) {
+		entity.set<EntityLastAuthoritativeMovementState>(state);
+		entity.set<EntityMovementState>(state.oldState);
+		// TODO: or update simulation??
 	}
 }
