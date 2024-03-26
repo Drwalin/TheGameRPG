@@ -32,16 +32,13 @@ public:
 	virtual void RegisterSystems() override;
 
 public:
-	void BroadcastEntitiesMovementState();
-	void BroadcastEntityChangeModel(uint64_t entityId);
-	void BroadcastEntityLongState(uint64_t entityId);
-	void BroadcastEntityErase(uint64_t entityId);
-
 	void Broadcast(const std::vector<uint8_t> &buffer, icon7::Flags flags,
 				   uint64_t exceptEntityId);
 
 	template <typename... Args>
 	void BroadcastReliable(const std::string &functionName, Args... args);
+	template <typename... Args>
+	void BroadcastUnreliable(const std::string &functionName, Args... args);
 
 public:
 	icon7::RPCEnvironment *rpc;
@@ -65,6 +62,20 @@ void RealmServer::BroadcastReliable(const std::string &functionName,
 {
 	std::vector<uint8_t> buffer;
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	{
+		bitscpp::ByteWriter writer(buffer);
+		icon7::RPCEnvironment::SerializeSend(writer, flags, functionName,
+											 args...);
+	}
+	Broadcast(buffer, flags, 0);
+}
+
+template <typename... Args>
+void RealmServer::BroadcastUnreliable(const std::string &functionName,
+									Args... args)
+{
+	std::vector<uint8_t> buffer;
+	icon7::Flags flags = icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	{
 		bitscpp::ByteWriter writer(buffer);
 		icon7::RPCEnvironment::SerializeSend(writer, flags, functionName,
