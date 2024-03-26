@@ -30,6 +30,8 @@ public:
 
 	// returns false if was not busy
 	virtual bool OneEpoch();
+	
+	virtual void UpdateEntityAuthoritativeState(uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
 
 public:
 	Timer timer;

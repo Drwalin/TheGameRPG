@@ -26,8 +26,8 @@ inline const std::string SetPlayerEntityId = "SetPlayerEntityId";
 inline const std::string SetCurrentTick = "SetCurrentTick";
 
 // void Pong(uint64_t)
-inline const std::string Ping = "Ping";
+inline const std::string Pong = "Pong";
 
 // void SetGravity(float)
 inline const std::string SetGravity = "SetGravity";
-} // namespace ClientRemoteFunctions
+} // namespace ClientRpcFunctionNames

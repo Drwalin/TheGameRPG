@@ -8,7 +8,6 @@
 #include <icon7/Flags.hpp>
 
 #include "../include/ServerCore.hpp"
-#include "../include/Realm.hpp"
 
 ServerCore::ServerCore() { host = nullptr; }
 
@@ -19,27 +18,20 @@ ServerCore::~ServerCore()
 	host->WaitStopRunning();
 	delete host;
 	host = nullptr;
-	for (auto it : realms) {
-		delete it.second;
-	}
 }
 
 void ServerCore::CreateRealm(std::string realmName)
 {
-	Realm *realm = new Realm();
-	realm->realmName = realmName;
-	realm->Init();
-	// TODO: add map entities to Realm
-	realms[realmName] = realm;
-	realmNames.push_back(realmName);
+	RealmServer *realm = new RealmServer();
 	realm->serverCore = this;
 	realm->rpc = &rpc;
-	realm->RunAsync();
+	realm->Init(realmName);
+	realmManager.AddNewRealm(realm);
 }
 
 void ServerCore::Disconnect(icon7::Peer *peer)
 {
-	Realm *realm = ((PeerData *)(peer->userPointer))->realm;
+	RealmServer *realm = ((PeerData *)(peer->userPointer))->realm;
 	if (realm) {
 		realm->DisconnectPeer(peer);
 	}

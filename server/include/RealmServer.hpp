@@ -11,6 +11,8 @@
 
 #include "../../common/include/Realm.hpp"
 
+class ServerCore;
+
 class RealmServer : public Realm
 {
 public:
@@ -42,6 +44,7 @@ public:
 	void BroadcastUnreliable(const std::string &functionName, Args... args);
 
 public:
+	ServerCore *serverCore;
 	icon7::RPCEnvironment *rpc;
 	icon7::CommandExecutionQueue executionQueue;
 
