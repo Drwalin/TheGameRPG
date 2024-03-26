@@ -5,11 +5,13 @@
 #include "icon7/Flags.hpp"
 #include "icon7/RPCEnvironment.hpp"
 
-void SetRealms(RealmServer *realm, icon7::Peer *peer,
-			   const std::vector<std::string> &realmNames)
+namespace ClientRpcProxy
 {
-	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
-					 ClientRpcFunctionNames::SetRealms, realmNames);
+void SetRealms(icon7::Peer *peer, const std::vector<std::string> &realmNames)
+{
+	peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE,
+										  ClientRpcFunctionNames::SetRealms,
+										  realmNames);
 }
 
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
@@ -26,10 +28,10 @@ void SetCurrentTick(RealmServer *realm, icon7::Peer *peer)
 					 realm->timer.currentTick);
 }
 
-void Ping(RealmServer *realm, icon7::Peer *peer)
+void Pong(icon7::Peer *peer, uint64_t data)
 {
-	realm->rpc->Send(peer, icon7::FLAG_RELIABLE, ClientRpcFunctionNames::Ping,
-					 realm->timer.currentTick);
+	peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE,
+										  ClientRpcFunctionNames::Pong, data);
 }
 
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
@@ -64,6 +66,39 @@ void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 				writer.op(shape);
 				writer.op(movementParams);
 			});
+	}
+	peer->Send(std::move(buffer),
+			   icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK);
+}
+
+void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+								icon7::ByteReader &reader)
+{
+	std::vector<uint8_t> buffer;
+	{
+		bitscpp::ByteWriter writer(buffer);
+		writer.op(ClientRpcFunctionNames::SpawnEntities);
+		while (reader.get_remaining_bytes() >= 8) {
+			uint64_t entityId = 0;
+			reader.op(entityId);
+			flecs::entity entity = realm->Entity(entityId);
+			if (entity.is_alive()) {
+				if (entity.has<EntityLastAuthoritativeMovementState>() &&
+					entity.has<EntityName>() && entity.has<EntityModelName>() &&
+					entity.has<EntityShape>() &&
+					entity.has<EntityMovementParameters>()) {
+
+					writer.op(entityId);
+
+					writer.op(
+						*entity.get<EntityLastAuthoritativeMovementState>());
+					writer.op(*entity.get<EntityName>());
+					writer.op(*entity.get<EntityModelName>());
+					writer.op(*entity.get<EntityShape>());
+					writer.op(*entity.get<EntityMovementParameters>());
+				}
+			}
+		}
 	}
 	peer->Send(std::move(buffer),
 			   icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK);
@@ -127,4 +162,5 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::DeleteEntities, entityId);
+}
 }

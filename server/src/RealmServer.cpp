@@ -56,8 +56,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	// TODO: load player from database
 	SetComponent<EntityName>(entityId, {data->userName});
 
-	this->EmplaceComponent<EntityPlayerConnectionPeer>(
-		entityId, peer->shared_from_this());
+	this->EmplaceComponent<EntityPlayerConnectionPeer>(entityId, peer);
 	peers.insert(peer);
 }
 

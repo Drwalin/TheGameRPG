@@ -19,7 +19,7 @@ void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
 						const EntityName &entityName);
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
-						EntityPlayerConnectionPeer &peer,
+						const EntityPlayerConnectionPeer &peer,
 						const EntityName &entityName);
 
 void RegisterObservers(RealmServer *realm);

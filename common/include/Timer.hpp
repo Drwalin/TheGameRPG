@@ -14,7 +14,6 @@ public:
 		currentTick = 0;
 		startTickCountingTime = std::chrono::steady_clock::now();
 		lastTickCountingTime = startTickCountingTime;
-		DEBUG("Init old timer !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 	}
 
 	inline void Start(uint64_t currentTick)
@@ -22,8 +21,6 @@ public:
 		Start();
 		this->currentTick = currentTick;
 		startTickCountingTime -= std::chrono::milliseconds(currentTick);
-		DEBUG("Init new timer !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG(" received current %li VVV calc current %li", currentTick, CalcCurrentTick());
 	}
 
 	inline uint64_t CalcCurrentTick() const
