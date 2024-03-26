@@ -3,13 +3,14 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <atomic>
 #include <thread>
 #include <memory>
 #include <mutex>
 
-#include "RealmServer.hpp"
+class RealmServer;
 
 class RealmWorkThreadedManager final
 {
@@ -27,6 +28,9 @@ public:
 	void WaitStopRunning();
 	bool IsRunning();
 	
+	RealmServer *GetRealm(const std::string &realmName);
+	void GetRealmNames(std::vector<std::string> &realmNames);
+	
 private:
 	void SingleRunner();
 	
@@ -34,7 +38,6 @@ private:
 	std::mutex mutex;
 	std::queue<RealmServer *> realmsQueue;
 	std::unordered_map<std::string, RealmServer *> realms;
-	std::vector<std::string> realmNames;
 	std::unordered_set<std::string> realmsToDestroy;
 	
 	std::atomic<bool> requestStopRunning;

@@ -7,34 +7,35 @@
 #include <icon7/Command.hpp>
 #include <icon7/Flags.hpp>
 
+#include "../../common/include/ServerRpcFunctionNames.hpp"
+#include "../../common/include/ClientRpcFunctionNames.hpp"
+
 #include "../include/ServerCore.hpp"
-#include "../include/Realm.hpp"
 
 void ServerCore::BindRpc()
 {
-	rpc.RegisterMessage("SetUsername", &ServerCore::SetUsername);
-	rpc.RegisterMessage("UpdatePlayer", &ServerCore::UpdatePlayer, nullptr,
+	rpc.RegisterMessage(ServerRpcFunctionNames::SetUsername,
+			&ServerCore::SetUsername);
+	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer, &ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueue);
-	rpc.RegisterMessage("UpdatePlayerRot", &ServerCore::UpdatePlayerRot,
-						nullptr, SelectExecutionQueue);
 
-	rpc.RegisterObjectMessage("GetRealms", this, &ServerCore::RequestRealms);
-	rpc.RegisterObjectMessage("JoinRealm", this,
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::GetRealms, this, &ServerCore::RequestRealms);
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::JoinRealm, this,
 							  &ServerCore::ConnectPeerToRealm, nullptr,
 							  SelectExecutionQueueForJoinRealm);
-	rpc.RegisterObjectMessage("GetCurrentTick", this,
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::GetCurrentTick, this,
 							  &ServerCore::GetCurrentTick);
 
-	rpc.RegisterMessage("GetEntitiesData", &ServerCore::RequestSpawnEntities,
+	rpc.RegisterMessage(ServerRpcFunctionNames::GetEntitiesData, &ServerCore::RequestSpawnEntities,
 						nullptr, SelectExecutionQueue);
-	rpc.RegisterMessage("GetTerrain", &ServerCore::GetTerrain, nullptr,
+	rpc.RegisterMessage(ServerRpcFunctionNames::GetTerrain, &ServerCore::GetTerrain, nullptr,
 						SelectExecutionQueue);
 
 	rpc.RegisterMessage(
-		"Ping",
+		ServerRpcFunctionNames::Ping,
 		[](icon7::Peer *peer, icon7::Flags flags, uint64_t payload) {
 			peer->host->GetRpcEnvironment()->Send(
-				peer, flags, ClientRemoteFunctions::Pong, payload);
+				peer, flags, ClientRpcFunctionNames::Pong, payload);
 		},
 		nullptr, nullptr);
 }
@@ -45,7 +46,7 @@ ServerCore::SelectExecutionQueue(icon7::MessageConverter *messageConverter,
 								 icon7::Flags flags)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
+	RealmServer *realm = data->realm;
 	if (realm) {
 		return &realm->executionQueue;
 	}
@@ -62,15 +63,14 @@ icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueForJoinRealm(
 
 	auto core = ((ServerCore *)(peer->host->userPointer));
 
-	auto it = core->realms.find((std::string)realmName);
-	if (it == core->realms.end()) {
-		DEBUG("Invalid realm");
-		return nullptr;
-	}
-	Realm *newRealm = it->second;
+	
+	RealmServer *newRealm = core->realmManager.GetRealm(realmName);
 	if (newRealm) {
 		DEBUG("Choosing queue for join realm: %p", &newRealm->executionQueue);
 		return &newRealm->executionQueue;
+	} else {
+		DEBUG("Invalid realm name");
+		return nullptr;
 	}
 	DEBUG("Choosing queue for join realm: null");
 	return nullptr;
@@ -82,57 +82,38 @@ void ServerCore::SetUsername(icon7::Peer *peer, std::string_view userName)
 	((PeerData *)(peer->userPointer))->userName = userName;
 }
 
-void ServerCore::UpdatePlayer(icon7::Peer *peer, icon7::ByteReader *reader)
+void ServerCore::UpdatePlayer(icon7::Peer *peer, uint64_t entityId, const EntityLastAuthoritativeMovementState &state)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
+	RealmServer *realm = data->realm;
 	if (realm) {
-		uint64_t tick;
-		glm::vec3 pos;
-		glm::vec3 vel;
-		glm::vec3 forward;
-
-		reader->op(tick);
-		reader->op(pos);
-		reader->op(vel);
-		reader->op(forward);
-
-		realm->entities[data->entityId].SolvePlayerInput(tick, pos, vel,
-														 forward);
-	}
-}
-
-void ServerCore::UpdatePlayerRot(icon7::Peer *peer, glm::vec3 forward)
-{
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
-	if (realm) {
-		realm->entities[data->entityId].currentState.rot = forward;
+		realm->UpdateEntityAuthoritativeState(entityId, state);
 	}
 }
 
 void ServerCore::RequestRealms(icon7::Peer *peer)
 {
-	rpc.Send(peer, icon7::FLAG_RELIABLE, ClientRemoteFunctions::SetRealms,
+	std::vector<std::string> realmNames;
+	realmManager.GetRealmNames(realmNames);
+	rpc.Send(peer, icon7::FLAG_RELIABLE, ClientRpcFunctionNames::SetRealms,
 			 realmNames);
 }
 
 void ServerCore::ConnectPeerToRealm(icon7::Peer *peer,
-									std::string_view realmName)
+									std::string realmName)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		DEBUG("Invalid usernamne");
 		return;
 	}
-	auto it = realms.find((std::string)realmName);
-	if (it == realms.end()) {
+	RealmServer *newRealm = realmManager.GetRealm(realmName);
+	if (newRealm == nullptr) {
 		DEBUG("Invalid realm");
 		return;
 	}
-	Realm *newRealm = it->second;
 
-	Realm *oldRealm = data->realm;
+	RealmServer *oldRealm = data->realm;
 	if (oldRealm) {
 		oldRealm->DisconnectPeer(peer);
 
@@ -160,7 +141,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer,
 		com.function = [](icon7::Peer *peer, std::vector<uint8_t> &fname,
 						  void *ptr) {
 			DEBUG("Connecting peer to realm, stage final");
-			Realm *realm = ((Realm *)ptr);
+			RealmServer *realm = ((RealmServer *)ptr);
 			peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK,
 					ClientRemoteFunctions::UpdateTimer, realm->timer.CalcCurrentTick());
 			realm->ConnectToPeer(peer);
@@ -175,7 +156,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer,
 void ServerCore::GetCurrentTick(icon7::Peer *peer, icon7::Flags flags)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
+	RealmServer *realm = data->realm;
 	if (realm) {
 		uint64_t tick = realm->timer.CalcCurrentTick();
 		;
@@ -187,7 +168,7 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 									  icon7::ByteReader *reader)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
+	RealmSerer *realm = data->realm;
 	if (realm) {
 		realm->RequestSpawnEntities(peer, reader);
 	}
@@ -196,7 +177,7 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 void ServerCore::GetTerrain(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Realm *realm = data->realm;
+	RealmServer *realm = data->realm;
 	if (realm) {
 		DEBUG("Sending terrain");
 		realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
