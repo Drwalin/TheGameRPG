@@ -13,6 +13,7 @@ void Realm::Destroy()
 
 void Realm::Init(const std::string &realmName)
 {
+	this->realmName = realmName;
 	RegisterSystems();
 	RegisterObservers();
 }
@@ -78,7 +79,7 @@ void Realm::RegisterSystems()
 			}));
 }
 
-void Realm::OneEpoch()
+bool Realm::OneEpoch()
 {
 	uint64_t deltaTicks = 0;
 	timer.Update(maxDeltaTicks, &deltaTicks, nullptr);
@@ -87,5 +88,8 @@ void Realm::OneEpoch()
 		for (auto &sys : systemsRunPeriodicallyByTimer) {
 			sys.run();
 		}
+		return true;
+	} else {
+		return false;
 	}
 }
