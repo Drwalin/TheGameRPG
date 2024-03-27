@@ -18,9 +18,15 @@ CollisionWorld::CollisionWorld(Realm *realm)
 		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
 }
 
-CollisionWorld::~CollisionWorld() { Destroy(); }
+CollisionWorld::~CollisionWorld() {
+	Clear();
+	delete collisionWorld;
+	delete dispatcher;
+	delete collisionConfiguration;
+	delete broadphase;
+}
 
-void CollisionWorld::Destroy()
+void CollisionWorld::Clear()
 {
 	while (entities.empty() == false) {
 		DeleteEntity(entities.begin()->first);

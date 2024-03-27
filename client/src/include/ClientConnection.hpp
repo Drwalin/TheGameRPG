@@ -7,16 +7,15 @@
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/core/engine_ptrcall.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
-#include "godot_cpp/classes/resource_preloader.hpp"
-#include "godot_cpp/classes/resource_loader.hpp"
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 
+#include <glm/glm.hpp>
+
 #include "../../../ICon7-godot-client/include/icon7-godot-client/Connections.hpp"
 
-#include "Rpc.hpp"
-#include "Entities.hpp"
+#include <RealmClient.hpp>
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
 	godot::ClassDB::bind_method(godot::D_METHOD(#NAME), &CLASS::NAME);
@@ -25,13 +24,12 @@
 	godot::ClassDB::bind_method(godot::D_METHOD(#NAME, __VA_ARGS__),           \
 								&CLASS::NAME);
 
-class TerrainMap;
-
 class ClientConnection : public godot::Node
 {
 	GDCLASS(ClientConnection, Node)
 public: // Godot bound functions
 	ClientConnection();
+	
 	static void _bind_methods();
 
 	void _enter_tree() override;
@@ -63,14 +61,11 @@ public: // variables
 	
 	std::vector<std::string> realms;
 	
-	Entities entities;
-	
-	glm::vec3 gravity;
+	RealmClient realm;
 	
 private: // rpc code
 	void RegisterMessages();
 
-	void UpdateTerrain(TerrainMap &map);
 	void SetRealms(std::vector<std::string> &realms);
 
 	// 	{entityId, lastUpdateTick, vel, pos, rot, height,

@@ -1,12 +1,10 @@
 #pragma once
 
-#include <cstdio>
-#include <cinttypes>
-
 #include <string>
 #include <vector>
+#include <functional>
 
-#include <flecs.h>
+#include "../flecs/flecs.h"
 #include <glm/glm.hpp>
 
 #include "Timer.hpp"
@@ -18,7 +16,7 @@ public:
 	Realm();
 	virtual ~Realm();
 	
-	void Destroy();
+	virtual void Clear();
 
 	virtual void Init(const std::string &realmName);
 

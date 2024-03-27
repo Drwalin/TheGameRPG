@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdio>
-#include <cinttypes>
-
 #include <vector>
 #include <unordered_map>
 
@@ -29,6 +26,8 @@ public:
 	CollisionWorld(Realm *realm);
 	~CollisionWorld();
 
+	void Clear();
+	
 	struct EntityInfo {
 		EntityShape shape;
 		glm::vec3 pos;
@@ -74,8 +73,6 @@ private:
 
 	inline const static int32_t FILTER_GROUP_ENTITY = 2;
 	inline const static int32_t FILTER_MASK_ENTITY = -1 & (~2);
-
-	void Destroy();
 
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
 	class btCollisionObject *AllocateNewCollisionObject();

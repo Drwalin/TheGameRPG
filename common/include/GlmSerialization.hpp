@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 
-#include <bitscpp/ByteReader.hpp>
-#include <bitscpp/ByteWriter.hpp>
+#include "../../ICon7-godot-client/ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
+#include "../../ICon7-godot-client/ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
 
 namespace bitscpp {
 	template<>
