@@ -1,4 +1,3 @@
-#include "Rpc.hpp"
 #include "godot_cpp/classes/static_body3d.hpp"
 #include "godot_cpp/classes/camera3d.hpp"
 #include "godot_cpp/classes/input.hpp"

@@ -6,14 +6,17 @@ Realm::Realm() : collisionWorld(this) {}
 
 Realm::~Realm()
 {
-	Destroy();
+	// TODO: how to use clear here?
+	Realm::Clear();
 }
 
-void Realm::Destroy()
+void Realm::Clear()
 {
 	ecs.defer_begin();
 	ecs.each([](flecs::entity entity) { entity.destruct(); });
 	ecs.defer_end();
+	
+	collisionWorld.Clear();
 }
 
 void Realm::Init(const std::string &realmName)

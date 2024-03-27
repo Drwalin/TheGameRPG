@@ -13,7 +13,7 @@ RealmServer::~RealmServer() {}
 
 void RealmServer::Init(const std::string &realmName)
 {
-	// TODO: load from database
+	// TODO: load from database/disk
 	// TODO: add to cyclic buffer/queue of realms ; or think about better place
 	timer.Start();
 	sendEntitiesToClientsTimer.Start();

@@ -4,8 +4,6 @@
 
 #include <chrono>
 
-#include <icon7/Host.hpp>
-
 class Timer
 {
 public:

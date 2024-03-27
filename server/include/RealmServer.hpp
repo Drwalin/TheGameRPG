@@ -1,13 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
 
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Peer.hpp>
+#include "../../ICon7-godot-client/ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7-godot-client/ICon7/include/icon7/Peer.hpp"
+
+#include <flecs.h>
 
 #include "PeerData.hpp"
-#include "EntityDataServer.hpp"
 
 #include "../../common/include/Realm.hpp"
 
