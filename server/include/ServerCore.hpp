@@ -1,10 +1,6 @@
 #pragma once
 
-#include <cstdio>
-#include <cinttypes>
-
 #include <unordered_map>
-#include <chrono>
 
 #include <icon7/Command.hpp>
 #include <icon7/Peer.hpp>
@@ -40,7 +36,6 @@ public:
 	static void UpdatePlayer(icon7::Peer *peer, const EntityLastAuthoritativeMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
-	void RequestRealms(icon7::Peer *peer);
 	void GetCurrentTick(icon7::Peer *peer, icon7::Flags flags);
 
 private:
@@ -64,4 +59,6 @@ public:
 
 	icon7::RPCEnvironment rpc;
 	icon7::Host *host;
+	
+	std::string spawnRealm;
 };

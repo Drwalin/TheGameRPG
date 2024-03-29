@@ -13,9 +13,8 @@ RealmServer::~RealmServer() {}
 
 void RealmServer::Init(const std::string &realmName)
 {
-	// TODO: load from database/disk
-	// TODO: add to cyclic buffer/queue of realms ; or think about better place
-	timer.Start();
+	// TODO: load static realm data from database/disk
+	Realm::Init(realmName);
 	sendEntitiesToClientsTimer.Start();
 }
 
@@ -53,7 +52,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 	uint64_t entityId = NewEntity();
 	data->entityId = entityId;
-	// TODO: load player from database
+	// TODO: load player entity from database
 	SetComponent<EntityName>(entityId, {data->userName});
 
 	this->EmplaceComponent<EntityPlayerConnectionPeer>(entityId, peer);
@@ -62,7 +61,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
-	// TODO: store player in database
+	// TODO: store player entity into database
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	uint64_t entityId = data->entityId;
 	peers.erase(peer);
@@ -71,13 +70,13 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 }
 
 void RealmServer::ExecuteOnRealmThread(
-	icon7::Peer *peer, icon7::ByteReader *reader,
+	icon7::Peer *peer, std::vector<uint8_t> &customData,
 	void (*function)(icon7::Peer *, std::vector<uint8_t> &, void *))
 {
 	icon7::commands::ExecuteOnPeer com;
-	std::swap(com.data, reader->_data);
+	std::swap(com.data, customData);
 	com.peer = peer->shared_from_this();
-	com.userPointer = (void *)(size_t)(reader->get_offset());
+	com.userPointer = this;
 	com.function = function;
 
 	executionQueue.EnqueueCommand(std::move(com));
@@ -112,6 +111,6 @@ void RealmServer::RegisterSystems()
 
 	queryEntityLongState =
 		ecs.query<const EntityLastAuthoritativeMovementState, const EntityName,
-				   const EntityModelName, const EntityShape,
-				   const EntityMovementParameters>();
+				  const EntityModelName, const EntityShape,
+				  const EntityMovementParameters>();
 }

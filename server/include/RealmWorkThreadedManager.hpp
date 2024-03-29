@@ -7,7 +7,6 @@
 #include <string>
 #include <atomic>
 #include <thread>
-#include <memory>
 #include <mutex>
 
 class RealmServer;
@@ -29,7 +28,6 @@ public:
 	bool IsRunning();
 	
 	RealmServer *GetRealm(const std::string &realmName);
-	void GetRealmNames(std::vector<std::string> &realmNames);
 	
 private:
 	void SingleRunner();

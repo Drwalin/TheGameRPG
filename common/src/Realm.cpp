@@ -24,6 +24,7 @@ void Realm::Init(const std::string &realmName)
 	this->realmName = realmName;
 	RegisterSystems();
 	RegisterObservers();
+	timer.Start();
 }
 
 uint64_t Realm::NewEntity()
@@ -54,7 +55,6 @@ void Realm::RegisterObservers()
 			if (shape == nullptr)
 				return;
 			int64_t dt = timer.currentTick - lastState.oldState.timestamp;
-			// TODO: check if simulation happens
 			if (dt >= minDeltaTicks) {
 				EntityMovementState currentState = lastState.oldState;
 				auto movementParams = entity.get<EntityMovementParameters>();
@@ -109,6 +109,5 @@ void Realm::UpdateEntityAuthoritativeState(uint64_t entityId, const EntityLastAu
 	if (entity.is_alive()) {
 		entity.set<EntityLastAuthoritativeMovementState>(state);
 		entity.set<EntityMovementState>(state.oldState);
-		// TODO: or update simulation??
 	}
 }
