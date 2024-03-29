@@ -8,8 +8,6 @@
 
 namespace ClientRpcProxy
 {
-void SetRealms(icon7::Peer *peer,
-			   const std::vector<std::string> &realmNames);
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId);
 void SetCurrentTick(RealmServer *realm, icon7::Peer *peer);

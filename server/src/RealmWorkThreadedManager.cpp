@@ -48,17 +48,6 @@ RealmServer *RealmWorkThreadedManager::GetRealm(const std::string &realmName)
 	return it->second;
 }
 
-void RealmWorkThreadedManager::GetRealmNames(std::vector<std::string> &realmNames)
-{
-	std::lock_guard lock(mutex);
-	realmNames.clear();
-	for (auto it : realms) {
-		if (realmsToDestroy.count(it.first) == 0) {
-			realmNames.push_back(it.first);
-		}
-	}
-}
-
 void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 {
 	requestStopRunning = false;

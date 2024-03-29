@@ -27,6 +27,7 @@ void ServerCore::CreateRealm(std::string realmName)
 	realm->rpc = &rpc;
 	realm->Init(realmName);
 	realmManager.AddNewRealm(realm);
+	spawnRealm = realmName;
 }
 
 void ServerCore::Disconnect(icon7::Peer *peer)
@@ -71,27 +72,24 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 	data->userName = "";
 	peer->userPointer = data;
 
-	DEBUG("New peer connected: %p", peer);
-
-	((ServerCore *)(peer->host->userPointer))->RequestRealms(peer);
-
-	int count = 0;
-	peer->host->ForEachPeer([&](auto p) { count++; });
-	DEBUG("Total peers count on connect: %i", count);
+	auto core = ((ServerCore *)(peer->host->userPointer));
+	// TODO: get player data from database and call core->ConnectPeerToRealm
+	core->ConnectPeerToRealm(peer, core->spawnRealm);
 }
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm) {
-		data->realm->DisconnectPeer(peer);
+		std::vector<uint8_t> v;
+		data->realm->ExecuteOnRealmThread(peer, v,
+				[](icon7::Peer *peer, std::vector<uint8_t> &, void *realm)
+				{
+					((RealmServer *)realm)->DisconnectPeer(peer);
+				});
 		data->peer = nullptr;
 		data->userName = "";
 	}
 	delete data;
 	peer->userPointer = nullptr;
-
-	int count = 0;
-	peer->host->ForEachPeer([&](auto p) { count++; });
-	DEBUG("Total peers count on disconnect: %i", count);
 }

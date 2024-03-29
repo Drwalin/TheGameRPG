@@ -1,19 +1,15 @@
+#include <icon7/Flags.hpp>
+#include <icon7/RPCEnvironment.hpp>
+
+#include <ClientRpcFunctionNames.hpp>
+#include <CommonRpcFunctionNames.hpp>
+
 #include "../include/RealmServer.hpp"
-#include "../include/ClientRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
-#include "icon7/Flags.hpp"
-#include "icon7/RPCEnvironment.hpp"
 
 namespace ClientRpcProxy
 {
-void SetRealms(icon7::Peer *peer, const std::vector<std::string> &realmNames)
-{
-	peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE,
-										  ClientRpcFunctionNames::SetRealms,
-										  realmNames);
-}
-
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId)
 {
@@ -31,7 +27,7 @@ void SetCurrentTick(RealmServer *realm, icon7::Peer *peer)
 void Pong(icon7::Peer *peer, uint64_t data)
 {
 	peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE,
-										  ClientRpcFunctionNames::Pong, data);
+										  CommonRpcFunctionNames::Pong, data);
 }
 
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)

@@ -1,13 +1,10 @@
-
-#include <chrono>
-#include <thread>
-
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
 #include <icon7/Command.hpp>
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
+#include "../../common/include/CommonRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 
@@ -21,11 +18,6 @@ void ServerCore::BindRpc()
 						&ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueue);
 
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::GetRealms, this,
-							  &ServerCore::RequestRealms);
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::JoinRealm, this,
-							  &ServerCore::ConnectPeerToRealm, nullptr,
-							  SelectExecutionQueueForJoinRealm);
 	rpc.RegisterObjectMessage(ServerRpcFunctionNames::GetCurrentTick, this,
 							  &ServerCore::GetCurrentTick);
 
@@ -34,7 +26,7 @@ void ServerCore::BindRpc()
 						SelectExecutionQueue);
 
 	rpc.RegisterMessage(
-		ServerRpcFunctionNames::Ping,
+		CommonRpcFunctionNames::Pong,
 		[](icon7::Peer *peer, icon7::Flags flags, uint64_t payload) {
 			ClientRpcProxy::Pong(peer, payload);
 		},
@@ -93,13 +85,6 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 			entity.set<EntityLastAuthoritativeMovementState>(state);
 		}
 	}
-}
-
-void ServerCore::RequestRealms(icon7::Peer *peer)
-{
-	std::vector<std::string> realmNames;
-	realmManager.GetRealmNames(realmNames);
-	ClientRpcProxy::SetRealms(peer, realmNames);
 }
 
 void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
