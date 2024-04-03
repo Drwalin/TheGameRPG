@@ -1,7 +1,4 @@
 
-#include <chrono>
-#include <thread>
-
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
 #include <icon7/Command.hpp>
@@ -50,15 +47,6 @@ void ServerCore::StartListening(uint16_t port, int useIpv4)
 
 	host->SetRpcEnvironment(&rpc);
 	host->ListenOnPort(port, useIpv4 ? icon7::IPv4 : icon7::IPv6);
-}
-
-void ServerCore::RunNetworkLoopSync()
-{
-	RunNetworkLoopAsync();
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-	while (host->IsRunningAsync()) {
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
 }
 
 void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }

@@ -1,5 +1,4 @@
 #include <chrono>
-#include <thread>
 
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
@@ -8,11 +7,11 @@
 
 #include "../include/ServerRpcProxy.hpp"
 
-#include "../include/ClientCore.hpp"
+#include "../include/GameClient.hpp"
 
-ClientCore::ClientCore() { host = nullptr; }
+GameClient::GameClient() { host = nullptr; }
 
-ClientCore::~ClientCore()
+GameClient::~GameClient()
 {
 	host->DisconnectAllAsync();
 	host->StopListening();
@@ -21,20 +20,11 @@ ClientCore::~ClientCore()
 	host = nullptr;
 }
 
-void ClientCore::RunNetworkLoopSync()
-{
-	RunNetworkLoopAsync();
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-	while (host->IsRunningAsync()) {
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
-}
+void GameClient::RunNetworkLoopAsync() { host->RunAsync(); }
 
-void ClientCore::RunNetworkLoopAsync() { host->RunAsync(); }
+void GameClient::DisconnectRealmPeer() {}
 
-void ClientCore::DisconnectRealmPeer() {}
-
-bool ClientCore::ConnectToRealmServer(const std::string &ip, uint16_t port)
+bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 {
 	DisconnectRealmPeer();
 	
@@ -51,4 +41,4 @@ bool ClientCore::ConnectToRealmServer(const std::string &ip, uint16_t port)
 	return true;
 }
 
-void ClientCore::RunOneEpoch() { realm.OneEpoch(); }
+void GameClient::RunOneEpoch() { realm.OneEpoch(); }

@@ -83,6 +83,8 @@ void RealmWorkThreadedManager::SingleRunner()
 {
 	int notBusyCount = 0;
 	++runningThreads;
+	int sleepMilliseconds = 1;
+	uint32_t countBusySinceLastSleep = 0;
 	while (requestStopRunning == false) {
 		bool destroyRealm = false;
 		RealmServer *realm = nullptr;
@@ -97,6 +99,7 @@ void RealmWorkThreadedManager::SingleRunner()
 				}
 			}
 		}
+		
 		if (destroyRealm) {
 			delete realm;
 			realm = nullptr;
@@ -106,10 +109,26 @@ void RealmWorkThreadedManager::SingleRunner()
 				notBusyCount++;
 			} else {
 				notBusyCount = 0;
+				countBusySinceLastSleep++;
 			}
+			
+			{
+				std::lock_guard lock(mutex);
+				realmsQueue.push(realm);
+			}
+			realm = nullptr;
+		} else {
+			notBusyCount++;
 		}
-		if (notBusyCount == 10) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if (notBusyCount >= 6) {
+			if (countBusySinceLastSleep > 5) {
+				sleepMilliseconds = std::max(sleepMilliseconds-1, 1);
+			} else if (countBusySinceLastSleep == 0) {
+				sleepMilliseconds = std::min(sleepMilliseconds+1, 10);
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(sleepMilliseconds));
+			notBusyCount = 0;
+			countBusySinceLastSleep = 0;
 		}
 	}
 	--runningThreads;

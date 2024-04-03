@@ -5,25 +5,24 @@
 
 #include "RealmClient.hpp"
 
-class ClientCore
+class GameClient
 {
 public:
-	ClientCore();
-	virtual ~ClientCore();
+	GameClient();
+	virtual ~GameClient();
 	
-	void SetUsername();
-
-	void RunNetworkLoopSync();
-	void RunNetworkLoopAsync();
-
 	void BindRpc();
-
-	bool ConnectToRealmServer(const std::string &ip, uint16_t port);
+	void RunNetworkLoopAsync();
+	
+	bool ConnectToServer(const std::string &ip, uint16_t port);
 	void DisconnectRealmPeer();
+	
+	void SetCredentials(const std::string &login, const std::string &password);
+	void PerformLogin();
+	
+	virtual void RunOneEpoch();
 
-	void RunOneEpoch();
-
-public: // player output api
+public: // game output api
 	virtual void OnEntityAdd(uint64_t entityId) = 0;
 	virtual void OnEntityRemove(uint64_t entityId) = 0;
 	virtual void OnEntityShape(uint64_t entityId, const EntityShape &shape) = 0;
@@ -33,10 +32,11 @@ public: // player output api
 	OnEntityCurrentMovementStateUpdate(uint64_t entityId,
 									 const EntityMovementState &state) = 0;
 	
-	virtual void OnRealmNames(std::vector<std::string> realmNames);
+	virtual void OnEnterRealm(const std::string &realmName) = 0;
 	
-public: // player input api
+public: // client input api
 
+	void SetRotation(glm::vec3 rotation);
 	void ProvideMovementInputDirection(glm::vec2 horizontalDirection);
 	void TryPerformJump();
 	

@@ -27,7 +27,6 @@ public:
 
 	void StartListening(uint16_t port, int useIpv4);
 
-	void RunNetworkLoopSync();
 	void RunNetworkLoopAsync();
 
 	void BindRpc();

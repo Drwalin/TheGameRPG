@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdio>
-#include <cinttypes>
-
 #include <string>
 
 #include <glm/glm.hpp>

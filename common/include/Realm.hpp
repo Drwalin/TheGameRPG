@@ -15,7 +15,7 @@ class Realm
 public:
 	Realm();
 	virtual ~Realm();
-	
+
 	virtual void Clear();
 
 	virtual void Init(const std::string &realmName);
@@ -23,38 +23,38 @@ public:
 	uint64_t NewEntity();
 	void RemoveEntity(uint64_t entity);
 
-	virtual void RegisterObservers();
-	virtual void RegisterSystems();
+	void RegisterObservers();
+	void RegisterSystems();
 
 	// returns false if was not busy
 	virtual bool OneEpoch();
-	
-	virtual void UpdateEntityAuthoritativeState(uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
+
+	virtual void UpdateEntityAuthoritativeState(
+		uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
 
 public:
 	Timer timer;
 	uint64_t minDeltaTicks = 50;
 	uint64_t maxDeltaTicks = 200;
 	uint64_t ticksBeforeIgnoringInputMovement = 500;
-	
+
 	float gravity = -9.81f;
 
 	flecs::world ecs;
 	std::vector<flecs::system> systemsRunPeriodicallyByTimer;
-	
+
 	CollisionWorld collisionWorld;
-	
+
 	std::string realmName;
-	
+
 public:
-	
-	template<typename ...TArgs>
+	template <typename... TArgs>
 	auto GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
 	{
 		return ecs.observer<TArgs...>();
 	}
-	
-	template<typename Fun>
+
+	template <typename Fun>
 	void RegisterObserver(flecs::entity_t event, Fun &&func)
 	{
 		decltype(std::function(*&func)) f;
@@ -71,7 +71,7 @@ public: // accessors
 	{
 		Entity(entity).add<T>();
 	}
-	
+
 	template <typename T> void SetComponent(uint64_t entity, T &&value)
 	{
 		Entity(entity).set<T>(std::move(value));

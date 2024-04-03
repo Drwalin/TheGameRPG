@@ -5,7 +5,7 @@
 
 #include "../../common/include/Realm.hpp"
 
-class ClientCore;
+class GameClient;
 
 class RealmClient : public Realm
 {
@@ -20,11 +20,11 @@ public:
 	// returns false if was not busy
 	virtual bool OneEpoch() override;
 
-	virtual void RegisterObservers() override;
-	virtual void RegisterSystems() override;
+	void RegisterObservers();
+	void RegisterSystems();
 
 public:
-	ClientCore *clientCore;
+	GameClient *gameClient;
 	icon7::RPCEnvironment *rpc;
 	std::shared_ptr<icon7::Peer> peer;
 };
