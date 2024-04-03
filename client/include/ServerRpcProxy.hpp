@@ -5,17 +5,17 @@
 
 #include "../../common/include/EntityData.hpp"
 
-class ClientCore;
+class GameClient;
 
 namespace ServerRpcProxy
 {
-void SetUsername(ClientCore *clientCore, std::string username);
+void SetUsername(GameClient *gameClient, std::string username);
 
-void UpdatePlayer(ClientCore *clientCore, EntityLastAuthoritativeMovementState &state);
+void UpdatePlayer(GameClient *gameClient, EntityLastAuthoritativeMovementState &state);
 
-void GetEntitiesData(ClientCore *clientCore, const std::vector<uint64_t> &entities);
+void GetEntitiesData(GameClient *gameClient, const std::vector<uint64_t> &entities);
 
-void GetCurrentTick(ClientCore *clientCore);
+void GetCurrentTick(GameClient *gameClient);
 
-void Ping(ClientCore *clientCore, uint64_t data);
+void Ping(GameClient *gameClient, uint64_t data);
 }

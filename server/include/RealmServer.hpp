@@ -31,8 +31,8 @@ public:
 							  void (*function)(icon7::Peer *,
 											   std::vector<uint8_t> &, void *));
 
-	virtual void RegisterObservers() override;
-	virtual void RegisterSystems() override;
+	void RegisterObservers();
+	void RegisterSystems();
 
 public:
 	void Broadcast(const std::vector<uint8_t> &buffer, icon7::Flags flags,

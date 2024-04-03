@@ -18,7 +18,8 @@ CollisionWorld::CollisionWorld(Realm *realm)
 		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
 }
 
-CollisionWorld::~CollisionWorld() {
+CollisionWorld::~CollisionWorld()
+{
 	Clear();
 	delete collisionWorld;
 	delete dispatcher;
@@ -298,7 +299,8 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 	ecs.observer<EntityShape>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const EntityShape &shape) {
-			const EntityMovementState *state = entity.get<EntityMovementState>();
+			const EntityMovementState *state =
+				entity.get<EntityMovementState>();
 			if (entity.has<EntityMovementState>()) {
 				this->UpdateEntityBvh(entity.id(), shape, state->pos);
 			}

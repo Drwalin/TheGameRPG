@@ -7,7 +7,10 @@
 
 #include "../include/RealmServer.hpp"
 
-RealmServer::RealmServer() {}
+RealmServer::RealmServer() {
+	RealmServer::RegisterSystems();
+	RealmServer::RegisterObservers();
+}
 
 RealmServer::~RealmServer() {}
 
@@ -95,15 +98,11 @@ void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,
 
 void RealmServer::RegisterObservers()
 {
-	Realm::RegisterObservers();
-
 	EntityNetworkingSystems::RegisterObservers(this);
 }
 
 void RealmServer::RegisterSystems()
 {
-	Realm::RegisterSystems();
-
 	EntityNetworkingSystems::RegisterSystems(this);
 
 	queryLastAuthoritativeState =

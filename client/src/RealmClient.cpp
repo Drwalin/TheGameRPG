@@ -1,4 +1,4 @@
-#include "../include/ClientCore.hpp"
+#include "../include/GameClient.hpp"
 
 #include "../include/RealmClient.hpp"
 
@@ -6,6 +6,8 @@ RealmClient::RealmClient()
 {
 	this->minDeltaTicks = 3;
 	this->maxDeltaTicks = 16;
+	RealmClient::RegisterSystems();
+	RealmClient::RegisterObservers();
 }
 
 RealmClient::~RealmClient() { peer = nullptr; }
@@ -44,22 +46,22 @@ void RealmClient::RegisterObservers()
 							const EntityLastAuthoritativeMovementState &,
 							const EntityName, const EntityModelName,
 							const EntityShape, const EntityName &name) {
-						 clientCore->OnEntityAdd(entity.id());
+						 gameClient->OnEntityAdd(entity.id());
 					 });
 
 	RegisterObserver(flecs::OnRemove,
 					 [this](flecs::entity entity, const EntityMovementState &) {
-						 clientCore->OnEntityRemove(entity.id());
+						 gameClient->OnEntityRemove(entity.id());
 					 });
 
 	RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
 										  const EntityModelName &model) {
-		clientCore->OnEntityModel(entity.id(), model);
+		gameClient->OnEntityModel(entity.id(), model);
 	});
 
 	RegisterObserver(flecs::OnSet,
 					 [this](flecs::entity entity, const EntityShape &shape) {
-						 clientCore->OnEntityShape(entity.id(), shape);
+						 gameClient->OnEntityShape(entity.id(), shape);
 					 });
 }
 
@@ -72,7 +74,7 @@ void RealmClient::RegisterSystems()
 				   const EntityMovementParameters>("UpdateEntityCurrentState")
 			.each(
 				[this](flecs::entity entity, const EntityMovementState &state) {
-					clientCore->OnEntityCurrentMovementStateUpdate(entity.id(),
+					gameClient->OnEntityCurrentMovementStateUpdate(entity.id(),
 																   state);
 				}));
 }

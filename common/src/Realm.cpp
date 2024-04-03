@@ -1,8 +1,14 @@
+#include "../../ICon7-godot-client/ICon7/include/icon7/Debug.hpp"
+
 #include "../include/EntitySystems.hpp"
 
 #include "../include/Realm.hpp"
 
-Realm::Realm() : collisionWorld(this) {}
+Realm::Realm() : collisionWorld(this)
+{
+	Realm::RegisterSystems();
+	Realm::RegisterObservers();
+}
 
 Realm::~Realm()
 {
@@ -15,15 +21,13 @@ void Realm::Clear()
 	ecs.defer_begin();
 	ecs.each([](flecs::entity entity) { entity.destruct(); });
 	ecs.defer_end();
-	
+
 	collisionWorld.Clear();
 }
 
 void Realm::Init(const std::string &realmName)
 {
 	this->realmName = realmName;
-	RegisterSystems();
-	RegisterObservers();
 	timer.Start();
 }
 
@@ -47,6 +51,7 @@ void Realm::RemoveEntity(uint64_t entity) { Entity(entity).destruct(); }
 
 void Realm::RegisterObservers()
 {
+	collisionWorld.RegisterObservers(this);
 	ecs.observer<EntityLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
@@ -72,6 +77,7 @@ void Realm::RegisterObservers()
 
 void Realm::RegisterSystems()
 {
+	collisionWorld.RegisterSystems(this);
 	systemsRunPeriodicallyByTimer.push_back(
 		ecs.system<const EntityShape, EntityMovementState,
 				   const EntityLastAuthoritativeMovementState,
@@ -103,7 +109,8 @@ bool Realm::OneEpoch()
 	}
 }
 
-void Realm::UpdateEntityAuthoritativeState(uint64_t entityId, const EntityLastAuthoritativeMovementState &state)
+void Realm::UpdateEntityAuthoritativeState(
+	uint64_t entityId, const EntityLastAuthoritativeMovementState &state)
 {
 	flecs::entity entity = Entity(entityId);
 	if (entity.is_alive()) {
