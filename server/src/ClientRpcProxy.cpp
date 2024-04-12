@@ -2,7 +2,6 @@
 #include <icon7/RPCEnvironment.hpp>
 
 #include <ClientRpcFunctionNames.hpp>
-#include <CommonRpcFunctionNames.hpp>
 
 #include "../include/RealmServer.hpp"
 
@@ -10,6 +9,12 @@
 
 namespace ClientRpcProxy
 {
+void JoinRealm(RealmServer *realm, icon7::Peer *peer)
+{
+	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
+					 ClientRpcFunctionNames::JoinRealm, realm->realmName);
+}
+
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId)
 {
@@ -17,17 +22,19 @@ void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					 ClientRpcFunctionNames::SetPlayerEntityId, playerEntityId);
 }
 
-void SetCurrentTick(RealmServer *realm, icon7::Peer *peer)
+void Pong(icon7::Peer *peer, icon7::Flags flags, uint64_t data)
 {
-	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
-					 ClientRpcFunctionNames::SetCurrentTick,
-					 realm->timer.currentTick);
-}
+	// TODO: correct
+	PeerData *peerData = ((PeerData *)(peer->userPointer));
+	uint64_t currentTick = 0;
+	if (peerData) {
+		if (peerData->realm) {
+			currentTick = peerData->realm->timer.CalcCurrentTick();
+		}
+	}
 
-void Pong(icon7::Peer *peer, uint64_t data)
-{
-	peer->host->GetRpcEnvironment()->Send(peer, icon7::FLAG_RELIABLE,
-										  CommonRpcFunctionNames::Pong, data);
+	peer->host->GetRpcEnvironment()->Send(
+		peer, flags, ClientRpcFunctionNames::Pong, data, currentTick);
 }
 
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
@@ -107,15 +114,14 @@ void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 							 modelName, shape);
 }
 
-void Broadcast_SpawnEntity(RealmServer *realm, flecs::entity entity,
+void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 						   const EntityMovementState &state,
 						   const EntityShape &shape,
 						   const EntityModelName &entityModelName,
 						   const EntityName &entityName)
 {
-	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnEntities,
-							 (uint64_t)entity.id(), state, shape,
-							 entityModelName, entityName);
+	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnEntities, entityId,
+							 state, shape, entityModelName, entityName);
 }
 
 void Broadcast_UpdateEntities(RealmServer *realm)
@@ -159,4 +165,18 @@ void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::DeleteEntities, entityId);
 }
+
+void LoginSuccessfull(icon7::Peer *peer)
+{
+	peer->host->GetRpcEnvironment()->Send(
+		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
+		ClientRpcFunctionNames::LoginSuccessfull);
 }
+
+void LoginFailed(icon7::Peer *peer)
+{
+	peer->host->GetRpcEnvironment()->Send(
+		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
+		ClientRpcFunctionNames::LoginFailed);
+}
+} // namespace ClientRpcProxy

@@ -5,7 +5,7 @@
 namespace ClientRpcFunctionNames
 {
 // void JoinRealm(std::string)
-inline const std::string JointRealm = "JoinRealm";
+inline const std::string JoinRealm = "JoinRealm";
 
 // void SpawnEntities({entityId, EntityMovementState, EntityName, EntityModel,
 // EntityShape, EntityMovementParams}, ...)
@@ -23,9 +23,15 @@ inline const std::string DeleteEntities = "DeleteEntities";
 // void SetPlayerEntityId(uint64_t)
 inline const std::string SetPlayerEntityId = "SetPlayerEntityId";
 
-// void SetCurrentTick(uint64_t)
-inline const std::string SetCurrentTick = "SetCurrentTick";
-
 // void SetGravity(float)
 inline const std::string SetGravity = "SetGravity";
+
+// void LoginFailed()
+inline const std::string LoginFailed = "LoginFailed";
+
+// void LoginSuccessfull()
+inline const std::string LoginSuccessfull = "LoginSuccessfull";
+
+// void Pong(uint64_t internal, uint64_t serverMostCurrentTick)
+inline const std::string Pong = "Pong";
 } // namespace ClientRpcFunctionNames

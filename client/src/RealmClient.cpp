@@ -5,7 +5,7 @@
 RealmClient::RealmClient()
 {
 	this->minDeltaTicks = 3;
-	this->maxDeltaTicks = 16;
+	this->maxDeltaTicks = 9;
 	RealmClient::RegisterSystems();
 	RealmClient::RegisterObservers();
 }
@@ -69,12 +69,15 @@ void RealmClient::RegisterSystems()
 {
 	Realm::RegisterSystems();
 	systemsRunPeriodicallyByTimer.push_back(
-		ecs.system<const EntityShape, EntityMovementState,
+		ecs.system<EntityMovementState, const EntityShape,
 				   const EntityLastAuthoritativeMovementState,
-				   const EntityMovementParameters>("UpdateEntityCurrentState")
-			.each(
-				[this](flecs::entity entity, const EntityMovementState &state) {
-					gameClient->OnEntityCurrentMovementStateUpdate(entity.id(),
-																   state);
-				}));
+				   const EntityMovementParameters>(
+			   "UpdateFrontendEntityCurrentState")
+			.each([this](flecs::entity entity, const EntityMovementState &state,
+						 const EntityShape &,
+						 const EntityLastAuthoritativeMovementState &,
+						 const EntityMovementParameters &) {
+				gameClient->OnEntityCurrentMovementStateUpdate(entity.id(),
+															   state);
+			}));
 }

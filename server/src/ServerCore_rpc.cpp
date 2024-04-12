@@ -4,7 +4,7 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
-#include "../../common/include/CommonRpcFunctionNames.hpp"
+#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 
@@ -12,23 +12,19 @@
 
 void ServerCore::BindRpc()
 {
-	rpc.RegisterMessage(ServerRpcFunctionNames::SetUsername,
-						&ServerCore::SetUsername);
+	rpc.RegisterMessage(ServerRpcFunctionNames::Login, &ServerCore::Login);
 	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer,
 						&ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueue);
-
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::GetCurrentTick, this,
-							  &ServerCore::GetCurrentTick);
 
 	rpc.RegisterMessage(ServerRpcFunctionNames::GetEntitiesData,
 						&ServerCore::RequestSpawnEntities, nullptr,
 						SelectExecutionQueue);
 
 	rpc.RegisterMessage(
-		CommonRpcFunctionNames::Pong,
+		ClientRpcFunctionNames::Pong,
 		[](icon7::Peer *peer, icon7::Flags flags, uint64_t payload) {
-			ClientRpcProxy::Pong(peer, payload);
+			ClientRpcProxy::Pong(peer, flags, payload);
 		},
 		nullptr, nullptr);
 }
@@ -46,32 +42,12 @@ ServerCore::SelectExecutionQueue(icon7::MessageConverter *messageConverter,
 	return nullptr;
 }
 
-icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueForJoinRealm(
-	icon7::MessageConverter *messageConverter, icon7::Peer *peer,
-	icon7::ByteReader &reader, icon7::Flags flags)
-{
-	bitscpp::ByteReader<true> r2(reader);
-	std::string realmName;
-	r2.op(realmName);
-
-	auto core = ((ServerCore *)(peer->host->userPointer));
-
-	RealmServer *newRealm = core->realmManager.GetRealm(realmName);
-	if (newRealm) {
-		DEBUG("Choosing queue for join realm: %p", &newRealm->executionQueue);
-		return &newRealm->executionQueue;
-	} else {
-		DEBUG("Invalid realm name");
-		return nullptr;
-	}
-	DEBUG("Choosing queue for join realm: null");
-	return nullptr;
-}
-
-void ServerCore::SetUsername(icon7::Peer *peer, std::string_view userName)
+void ServerCore::Login(icon7::Peer *peer, const std::string &userName,
+					   const std::string &password)
 {
 	// TODO: add login with password verification
 	((PeerData *)(peer->userPointer))->userName = userName;
+	ClientRpcProxy::LoginSuccessfull(peer);
 }
 
 void ServerCore::UpdatePlayer(icon7::Peer *peer,
@@ -133,15 +109,6 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 		};
 
 		newRealm->executionQueue.EnqueueCommand(std::move(com));
-	}
-}
-
-void ServerCore::GetCurrentTick(icon7::Peer *peer, icon7::Flags flags)
-{
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	RealmServer *realm = data->realm;
-	if (realm) {
-		ClientRpcProxy::SetCurrentTick(realm, peer);
 	}
 }
 
