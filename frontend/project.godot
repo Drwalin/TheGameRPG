@@ -10,14 +10,15 @@ config_version=5
 
 [application]
 
-config/name="TestGdExtension"
+config/name="TheGameRPG"
 run/main_scene="res://world/WorldScene.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
+run/max_fps=60
+boot_splash/show_image=false
 
 [autoload]
 
-rpcHost="*res://scripts/RpcHost.gd"
-connectionClient="*res://scripts/GodotClientConnection.gd"
+gameFrontend="*res://scripts/GameFrontendScript.gd"
 
 [input]
 
@@ -47,6 +48,15 @@ movement_jump={
 ]
 }
 
+[physics]
+
+common/physics_ticks_per_second=30
+common/max_physics_steps_per_frame=1
+common/physics_jitter_fix=0.0
+3d/solver/solver_iterations=1
+
 [rendering]
 
 renderer/rendering_method="mobile"
+camera/depth_of_field/depth_of_field_bokeh_shape=0
+camera/depth_of_field/depth_of_field_bokeh_quality=0

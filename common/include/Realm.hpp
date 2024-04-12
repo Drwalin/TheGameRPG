@@ -98,4 +98,8 @@ public: // accessors
 	{
 		return flecs::entity(ecs.get_world(), entity);
 	}
+	inline bool IsEntityAlive(uint64_t entity) const
+	{
+		return flecs::entity(ecs.get_world(), entity).is_alive();
+	}
 };

@@ -1,13 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://m0gckaqqjvd4"]
+[gd_scene load_steps=4 format=3 uid="uid://m0gckaqqjvd4"]
 
 [ext_resource type="PackedScene" uid="uid://4k5megwckldt" path="res://gui/LoginMenu.tscn" id="1_800s2"]
 [ext_resource type="AudioStream" uid="uid://cvnaebqi1yo4t" path="res://assets/audio/ambient/Ambient 1.ogg" id="2_wl60s"]
 
-[sub_resource type="HeightMapShape3D" id="HeightMapShape3D_x6h8b"]
-
 [sub_resource type="BoxMesh" id="BoxMesh_aglti"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_6a8xp"]
 
 [node name="SceneRoot" type="Node3D"]
 
@@ -24,27 +20,16 @@ autoplay = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain"]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Terrain/MeshInstance3D"]
-collision_mask = 3
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Terrain/MeshInstance3D/StaticBody3D"]
-shape = SubResource("HeightMapShape3D_x6h8b")
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.638177, 0.637161, -0.432153, 0, 0.561318, 0.8276, 0.76989, -0.528155, 0.35822, 0, 0, 0)
 
-[node name="Entities" type="Node" parent="."]
+[node name="EntitiesContainer" type="Node" parent="."]
+unique_name_in_owner = true
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="PlayerCamera3D" type="Camera3D" parent="."]
+unique_name_in_owner = true
 transform = Transform3D(-0.649185, 0.0934647, -0.754866, -0.000607168, 0.992358, 0.123392, 0.76063, 0.0805627, -0.644167, -41.704, 100, -32.225)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
-transform = Transform3D(600, 0, 0, 0, 10, 0, 0, 0, 600, 250, -50, 250)
-collision_mask = 3
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(120, 0, 0, 0, 2, 0, 0, 0, 120, 0, -1, 0)
 mesh = SubResource("BoxMesh_aglti")
-skeleton = NodePath("../..")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("BoxShape3D_6a8xp")
