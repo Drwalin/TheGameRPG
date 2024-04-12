@@ -31,11 +31,12 @@ public:
 
 	void BindRpc();
 
-	static void SetUsername(icon7::Peer *peer, std::string_view userName);
-	static void UpdatePlayer(icon7::Peer *peer, const EntityLastAuthoritativeMovementState &state);
+	static void Login(icon7::Peer *peer, const std::string &userName,
+					  const std::string &password);
+	static void UpdatePlayer(icon7::Peer *peer,
+							 const EntityLastAuthoritativeMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
-	void GetCurrentTick(icon7::Peer *peer, icon7::Flags flags);
 
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
@@ -43,11 +44,6 @@ private:
 
 	static icon7::CommandExecutionQueue *
 	SelectExecutionQueue(icon7::MessageConverter *messageConverter,
-						 icon7::Peer *peer, icon7::ByteReader &reader,
-						 icon7::Flags flags);
-	
-	static icon7::CommandExecutionQueue *
-	SelectExecutionQueueForJoinRealm(icon7::MessageConverter *messageConverter,
 						 icon7::Peer *peer, icon7::ByteReader &reader,
 						 icon7::Flags flags);
 
@@ -58,6 +54,6 @@ public:
 
 	icon7::RPCEnvironment rpc;
 	icon7::Host *host;
-	
+
 	std::string spawnRealm;
 };

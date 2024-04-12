@@ -9,13 +9,13 @@ class GameClient;
 
 namespace ServerRpcProxy
 {
-void SetUsername(GameClient *gameClient, std::string username);
+void Login(GameClient *gameClient, std::string username, std::string password);
 
-void UpdatePlayer(GameClient *gameClient, EntityLastAuthoritativeMovementState &state);
+void UpdatePlayer(GameClient *gameClient,
+				  const EntityLastAuthoritativeMovementState &state);
 
-void GetEntitiesData(GameClient *gameClient, const std::vector<uint64_t> &entities);
+void GetEntitiesData(GameClient *gameClient,
+					 const std::vector<uint64_t> &entities);
 
-void GetCurrentTick(GameClient *gameClient);
-
-void Ping(GameClient *gameClient, uint64_t data);
-}
+void Ping(GameClient *gameClient, bool reliable);
+} // namespace ServerRpcProxy

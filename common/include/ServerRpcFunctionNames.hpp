@@ -4,8 +4,8 @@
 
 namespace ServerRpcFunctionNames
 {
-// void SetUsername(std::string)
-inline const std::string SetUsername = "SetUsername";
+// bool Login(string, string)
+inline const std::string Login = "Login";
 
 // void UpdatePlayer(EntityLastAuthoritativeMovementState)
 inline const std::string UpdatePlayer = "UpdatePlayer";
@@ -13,6 +13,6 @@ inline const std::string UpdatePlayer = "UpdatePlayer";
 // void GetEntitiesData({uint64_t entityId}, ...)
 inline const std::string GetEntitiesData = "GetEntitiesData";
 
-// void GetCurrentTick(void)
-inline const std::string GetCurrentTick = "GetCurrentTick";
+// void Ping(uint64_t internal)
+inline const std::string Ping = "Ping";
 } // namespace ServerRpcFunctionNames

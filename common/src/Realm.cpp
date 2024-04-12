@@ -1,5 +1,3 @@
-#include "../../ICon7-godot-client/ICon7/include/icon7/Debug.hpp"
-
 #include "../include/EntitySystems.hpp"
 
 #include "../include/Realm.hpp"
@@ -29,6 +27,19 @@ void Realm::Init(const std::string &realmName)
 {
 	this->realmName = realmName;
 	timer.Start();
+	
+	TerrainCollisionData col;
+	col.vertices.push_back({-100, 0, -100});
+	col.vertices.push_back({100, 0, -100});
+	col.vertices.push_back({-100, 0, 100});
+	col.vertices.push_back({100, 0, 100});
+	col.indices.push_back(0);
+	col.indices.push_back(1);
+	col.indices.push_back(2);
+	col.indices.push_back(1);
+	col.indices.push_back(2);
+	col.indices.push_back(3);
+	collisionWorld.LoadStaticCollision(&col);
 }
 
 uint64_t Realm::NewEntity()

@@ -72,17 +72,13 @@ public: // accessors
 		Entity(entity).add<T>();
 	}
 
-	template <typename T> void SetComponent(uint64_t entity, T &&value)
+	template <typename T> void SetComponent(uint64_t entity, const T &value)
 	{
-		Entity(entity).set<T>(std::move(value));
+		Entity(entity).set<T>(value);
 	}
 	template <typename T> bool HasComponent(uint64_t entity) const
 	{
 		return Entity(entity).has<T>();
-	}
-	template <typename T> T *GetComponent(uint64_t entity)
-	{
-		return Entity(entity).get<T>();
 	}
 	template <typename T> const T *GetComponent(uint64_t entity) const
 	{
