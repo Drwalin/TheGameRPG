@@ -1,2 +1,0 @@
-extends ClientConnection;
-class_name GdscriptClientConnection;

@@ -51,9 +51,6 @@ public: // game output api
 	virtual void OnEntityShape(uint64_t localId, const EntityShape &shape) = 0;
 	virtual void OnEntityModel(uint64_t localId,
 							   const EntityModelName &model) = 0;
-	virtual void
-	OnEntityCurrentMovementStateUpdate(uint64_t localId,
-									   const EntityMovementState &state) = 0;
 
 	virtual void OnEnterRealm(const std::string &realmName) = 0;
 
@@ -64,6 +61,7 @@ public: // client input api
 	void SetRotation(glm::vec3 rotation);
 	void ProvideMovementInputDirection(glm::vec2 horizontalDirection);
 	void TryPerformJump();
+	glm::vec3 GetRotation();
 
 	void PerformSendPlayerMovementInput();
 

@@ -1,4 +1,5 @@
 #include <chrono>
+#include <thread>
 
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
@@ -11,22 +12,35 @@
 
 GameClient::GameClient()
 {
-	host = nullptr;
+	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
+	_host->Init();
+	host = _host;
+	host->SetRpcEnvironment(&rpc);
+	host->userPointer = this;
+
+	// host->SetOnDisconnect();
 	pingTimer.Start();
 }
 
 GameClient::~GameClient()
 {
-	host->DisconnectAllAsync();
-	host->StopListening();
-	host->WaitStopRunning();
-	delete host;
-	host = nullptr;
+	if (host) {
+		host->DisconnectAllAsync();
+		host->StopListening();
+		host->WaitStopRunning();
+		delete host;
+		host = nullptr;
+	}
 }
 
 void GameClient::RunNetworkLoopAsync() { host->RunAsync(); }
 
-void GameClient::DisconnectRealmPeer() { realmConnectionPeer->Disconnect(); }
+void GameClient::DisconnectRealmPeer()
+{
+	if (realmConnectionPeer) {
+		realmConnectionPeer->Disconnect();
+	}
+}
 
 bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 {
@@ -34,10 +48,11 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
 		host->ConnectPromise(ip, port);
-	peerFuture.wait_for(std::chrono::seconds(5));
-	if (peerFuture.valid() == false) {
-		return false;
-	}
+// 	std::this_thread::sleep_for(std::chrono::seconds(5));
+// 	peerFuture.wait_for(std::chrono::seconds(5));
+// 	if (peerFuture.valid() == false) {
+// 		return false;
+// 	}
 	realmConnectionPeer = peerFuture.get();
 
 	ServerRpcProxy::Ping(this, true);
@@ -66,6 +81,17 @@ void GameClient::PerformSendPlayerMovementInput()
 	ServerRpcProxy::UpdatePlayer(this, *state);
 
 	needSendPlayerMovementInput = false;
+}
+
+glm::vec3 GameClient::GetRotation()
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return {};
+	}
+	flecs::entity player = realm.Entity(localPlayerEntityId);
+	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
+	return oldState.oldState.rot;
 }
 
 void GameClient::SetRotation(glm::vec3 rotation)

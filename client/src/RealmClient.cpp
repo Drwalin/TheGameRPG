@@ -68,16 +68,4 @@ void RealmClient::RegisterObservers()
 void RealmClient::RegisterSystems()
 {
 	Realm::RegisterSystems();
-	systemsRunPeriodicallyByTimer.push_back(
-		ecs.system<EntityMovementState, const EntityShape,
-				   const EntityLastAuthoritativeMovementState,
-				   const EntityMovementParameters>(
-			   "UpdateFrontendEntityCurrentState")
-			.each([this](flecs::entity entity, const EntityMovementState &state,
-						 const EntityShape &,
-						 const EntityLastAuthoritativeMovementState &,
-						 const EntityMovementParameters &) {
-				gameClient->OnEntityCurrentMovementStateUpdate(entity.id(),
-															   state);
-			}));
 }

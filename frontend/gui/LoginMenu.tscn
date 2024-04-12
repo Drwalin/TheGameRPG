@@ -29,10 +29,10 @@ text = "Server address:"
 
 [node name="Address" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 386.0
-offset_top = 91.0
-offset_right = 759.0
-offset_bottom = 122.0
+offset_left = 406.0
+offset_top = 98.0
+offset_right = 779.0
+offset_bottom = 129.0
 text = "127.0.0.1"
 
 [node name="LabelPortNumber" type="Label" parent="."]
@@ -59,45 +59,49 @@ offset_right = 655.0
 offset_bottom = 279.0
 text = "Connect to server"
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = 109.0
-offset_top = 207.0
-offset_right = 271.0
-offset_bottom = 234.0
-text = "Realms:"
-
-[node name="RealmList" type="ItemList" parent="."]
-layout_mode = 0
-offset_left = 67.0
-offset_top = 251.0
-offset_right = 323.0
-offset_bottom = 535.0
-
 [node name="LabelUsername" type="Label" parent="."]
 layout_mode = 0
-offset_left = 552.0
-offset_top = 373.0
-offset_right = 672.0
-offset_bottom = 396.0
+offset_left = 539.0
+offset_top = 310.0
+offset_right = 659.0
+offset_bottom = 333.0
 text = "Username:"
 
 [node name="Username" type="LineEdit" parent="."]
 layout_mode = 0
-offset_left = 401.0
-offset_top = 417.0
-offset_right = 774.0
-offset_bottom = 448.0
+offset_left = 399.0
+offset_top = 346.0
+offset_right = 772.0
+offset_bottom = 377.0
 text = "Bilbo Baggins"
+placeholder_text = "login"
+
+[node name="LabelPassword" type="Label" parent="."]
+layout_mode = 0
+offset_left = 540.0
+offset_top = 400.0
+offset_right = 660.0
+offset_bottom = 423.0
+text = "Password:"
+
+[node name="Password" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 395.0
+offset_top = 450.0
+offset_right = 768.0
+offset_bottom = 481.0
+placeholder_text = "password"
+clear_button_enabled = true
+selecting_enabled = false
+secret = true
 
 [node name="ButtonLogin" type="Button" parent="."]
 layout_mode = 0
-offset_left = 543.0
-offset_top = 496.0
-offset_right = 657.0
-offset_bottom = 533.0
+offset_left = 538.0
+offset_top = 521.0
+offset_right = 652.0
+offset_bottom = 558.0
 text = "Login"
 
 [connection signal="pressed" from="Button" to="." method="_on_connect_to_server_pressed"]
-[connection signal="item_selected" from="RealmList" to="." method="_OnSelectedRealm"]
 [connection signal="pressed" from="ButtonLogin" to="." method="_OnLoginPressed"]

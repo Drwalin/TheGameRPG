@@ -11,7 +11,9 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 include_directories(common/flecs)
 
 add_subdirectory(ICon7-godot-client)
+
 add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(client)
+add_subdirectory(frontend)
 

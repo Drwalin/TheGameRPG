@@ -12,32 +12,18 @@ include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(../ICon7-godot-client/godot-cpp/include)
 include_directories(../common/include)
-include_directories(src/include)
+include_directories(game_frontend)
 
-# Library compilation
-add_custom_command(OUTPUT
-		${PROJECT_SOURCE_DIR}/bin/libicon7_godot_client.so
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:icon7_godot_client>
-		${PROJECT_SOURCE_DIR}/bin/
-    DEPENDS icon7_godot_client
-)
-# Create target which consume the command via DEPENDS.
-add_custom_target(copy_files ALL
-    DEPENDS ${PROJECT_SOURCE_DIR}/bin/libicon7_godot_client.so
-)
-
-
-
-aux_source_directory(./game_client src_files)
-add_library(game_client SHARED
+aux_source_directory(./game_frontend src_files)
+add_library(game_frontend SHARED
 	${src_files}
 )
-target_link_libraries(game_client PUBLIC icon7_godot_client)
-target_link_libraries(game_client PUBLIC client)
+target_link_libraries(game_frontend PUBLIC client)
+target_link_libraries(game_frontend PUBLIC godot::cpp)
 
-add_custom_command(TARGET game_client POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:game_client>
-	${PROJECT_SOURCE_DIR}/bin/libgame_client.so
+add_custom_command(TARGET game_frontend POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:game_frontend>
+	${PROJECT_SOURCE_DIR}/bin/libgame_frontend.so
 	COMMENT "dummy"
 )
 
