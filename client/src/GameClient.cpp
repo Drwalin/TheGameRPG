@@ -10,7 +10,7 @@
 
 #include "../include/GameClient.hpp"
 
-GameClient::GameClient()
+GameClient::GameClient() : realm(this)
 {
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();
@@ -45,23 +45,86 @@ void GameClient::DisconnectRealmPeer()
 bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 {
 	DisconnectRealmPeer();
+	
+	icon7::commands::ExecuteOnPeer com{};
+	
+	struct X {
+		std::shared_ptr<icon7::Peer> sp;
+		std::atomic<icon7::Peer *> rp;
+		std::atomic<int> s;
+	};
+	
+	using _T = std::shared_ptr<X>;
+	_T state(new X{nullptr, nullptr, 0});
+	
+	com.data.resize(sizeof(_T));
+	new(com.data.data()) _T(state);
+	com.function = [](auto peer, auto bytes, auto ptr) {
+		_T *v = (_T*)bytes.data();
+		if (peer) {
+			(*v)->sp = peer->shared_from_this();
+			(*v)->rp.store(peer);
+			(*v)->s.store(1);
+		} else {
+			(*v)->s.store(-1);
+		}
+		v->~shared_ptr();
+	};
+	
+	host->Connect(ip, port, std::move(com));
+	
+	auto end = std::chrono::steady_clock::now()+std::chrono::seconds(5);
+	while(end > std::chrono::steady_clock::now()) {
+		if (state->s != 0) {
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+	}
+	if (state->rp.load() == nullptr) {
+		return false;
+	}
+	
+	realmConnectionPeer = state->sp;
+	ServerRpcProxy::Ping(this, true);
+	return true;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
-	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
-		host->ConnectPromise(ip, port);
+// 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
+// 		host->ConnectPromise(ip, port);
 // 	std::this_thread::sleep_for(std::chrono::seconds(5));
 // 	peerFuture.wait_for(std::chrono::seconds(5));
 // 	if (peerFuture.valid() == false) {
 // 		return false;
 // 	}
-	realmConnectionPeer = peerFuture.get();
-
-	ServerRpcProxy::Ping(this, true);
-
-	return true;
+// 	realmConnectionPeer = peerFuture.get();
+// 
+// 	ServerRpcProxy::Ping(this, true);
+// 
+// 	return true;
 }
 
 void GameClient::RunOneEpoch()
 {
+	const uint32_t MAX_EVENTS = 128;
+	icon7::Command commands[MAX_EVENTS];
+	const uint32_t dequeued =
+		executionQueue.TryDequeueBulkAny(commands, MAX_EVENTS);
+
+	for (uint32_t i = 0; i < dequeued; ++i) {
+		commands[i].Execute();
+		commands[i].~Command();
+	}
+
+	
 	PerformSendPlayerMovementInput();
 	realm.OneEpoch();
 	PerformSendPlayerMovementInput();

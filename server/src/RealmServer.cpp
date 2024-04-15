@@ -58,18 +58,24 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	// TODO: load player entity from database
 	SetComponent<EntityName>(entityId, {data->userName});
 
-	this->EmplaceComponent<EntityPlayerConnectionPeer>(entityId, peer);
-	peers.insert(peer);
+	peers[peer] = entityId;
+	this->SetComponent<EntityPlayerConnectionPeer>(entityId, EntityPlayerConnectionPeer(peer->shared_from_this()));
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
 	// TODO: store player entity into database
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	uint64_t entityId = data->entityId;
-	peers.erase(peer);
-	RemoveEntity(entityId);
-	data->realm = nullptr;
+	if (data) {
+		data->realm = nullptr;
+	}
+	
+	auto it = peers.find(peer);
+	if (it != peers.end()) {
+		uint64_t entityId = it->second;
+		peers.erase(peer);
+		RemoveEntity(entityId);
+	}
 }
 
 void RealmServer::ExecuteOnRealmThread(
@@ -89,9 +95,11 @@ void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,
 							icon7::Flags flags, uint64_t exceptEntityId)
 {
 	for (auto it : peers) {
-		if (((PeerData *)(it->userPointer))->entityId != exceptEntityId) {
-			std::vector<uint8_t> buf = buffer;
-			it->Send(std::move(buf), flags);
+		if (it.second != exceptEntityId) {
+			if (((PeerData *)(it.first->userPointer))->entityId != exceptEntityId) {
+				std::vector<uint8_t> buf = buffer;
+				it.first->Send(std::move(buf), flags);
+			}
 		}
 	}
 }

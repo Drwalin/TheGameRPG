@@ -1,3 +1,5 @@
+#include <godot_cpp/classes/window.hpp>
+
 #include "GodotGlm.hpp"
 
 #include "GameFrontend.hpp"
@@ -41,8 +43,10 @@ void GameFrontend::_ready()
 {
 	gameClientFrontend = new GameClientFrontend(this);
 	gameClientFrontend->Init();
-	playerCamera = (Camera3D *)(this->get_node_or_null("%PlayerCamera3D"));
-	entitiesContainer = (Node *)(this->get_node_or_null("%EntitiesContainer"));
+	playerCamera = (Camera3D *)(this->get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
+	entitiesContainer = (Node *)(this->get_node_or_null("/root/SceneRoot/EntitiesContainer"));
+	DEBUG("Entities container: %p", entitiesContainer);
+	DEBUG("Camera: %p", playerCamera);
 }
 
 void GameFrontend::InternalProcess()

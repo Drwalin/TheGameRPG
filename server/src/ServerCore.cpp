@@ -35,7 +35,7 @@ void ServerCore::Disconnect(icon7::Peer *peer)
 	}
 }
 
-void ServerCore::StartListening(uint16_t port, int useIpv4)
+void ServerCore::StartService()
 {
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();
@@ -44,9 +44,13 @@ void ServerCore::StartListening(uint16_t port, int useIpv4)
 
 	host->SetOnConnect(_OnPeerConnect);
 	host->SetOnDisconnect(_OnPeerDisconnect);
-
+	
 	host->SetRpcEnvironment(&rpc);
-	host->ListenOnPort(port, useIpv4 ? icon7::IPv4 : icon7::IPv6);
+}
+
+void ServerCore::Listen(const std::string &addressInterface, uint16_t port, int useIpv4)
+{
+	host->ListenOnPort(addressInterface, port, useIpv4 ? icon7::IPv4 : icon7::IPv6);
 }
 
 void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }
@@ -74,10 +78,11 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 				[](icon7::Peer *peer, std::vector<uint8_t> &, void *realm)
 				{
 					((RealmServer *)realm)->DisconnectPeer(peer);
+					PeerData *data = ((PeerData *)(peer->userPointer));
+					data->peer = nullptr;
+					data->userName = "";
+					delete data;
+					peer->userPointer = nullptr;
 				});
-		data->peer = nullptr;
-		data->userName = "";
 	}
-	delete data;
-	peer->userPointer = nullptr;
 }

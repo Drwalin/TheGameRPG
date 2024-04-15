@@ -30,9 +30,14 @@ void Pong(icon7::Peer *peer, icon7::Flags flags, uint64_t data)
 	if (peerData) {
 		if (peerData->realm) {
 			currentTick = peerData->realm->timer.CalcCurrentTick();
+		} else {
+			DEBUG("Peer has no realm");
 		}
+	} else {
+		DEBUG("No peer data");
 	}
 
+	DEBUG("Pong %lu %lu", data, currentTick);
 	peer->host->GetRpcEnvironment()->Send(
 		peer, flags, ClientRpcFunctionNames::Pong, data, currentTick);
 }

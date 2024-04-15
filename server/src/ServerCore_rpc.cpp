@@ -4,7 +4,6 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
-#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 
@@ -22,7 +21,7 @@ void ServerCore::BindRpc()
 						SelectExecutionQueue);
 
 	rpc.RegisterMessage(
-		ClientRpcFunctionNames::Pong,
+		ServerRpcFunctionNames::Ping,
 		[](icon7::Peer *peer, icon7::Flags flags, uint64_t payload) {
 			ClientRpcProxy::Pong(peer, flags, payload);
 		},
@@ -68,7 +67,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		DEBUG("Invalid usernamne");
-		return;
+// 		return;
 	}
 	RealmServer *newRealm = realmManager.GetRealm(realmName);
 	if (newRealm == nullptr) {
@@ -79,8 +78,6 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 	RealmServer *oldRealm = data->realm;
 	if (oldRealm) {
 		oldRealm->DisconnectPeer(peer);
-
-		DEBUG("Connecting peer to realm stage 1");
 
 		icon7::commands::ExecuteOnPeer com;
 		com.data.resize(realmName.size() + 1);
@@ -96,14 +93,11 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 
 		newRealm->executionQueue.EnqueueCommand(std::move(com));
 	} else {
-		DEBUG("Connecting peer to realm, stage 2");
-
 		icon7::commands::ExecuteOnPeer com;
 		com.peer = peer->shared_from_this();
 		com.userPointer = newRealm;
 		com.function = [](icon7::Peer *peer, std::vector<uint8_t> &fname,
 						  void *ptr) {
-			DEBUG("Connecting peer to realm, stage final");
 			RealmServer *realm = ((RealmServer *)ptr);
 			realm->ConnectPeer(peer);
 		};

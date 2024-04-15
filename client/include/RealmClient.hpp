@@ -10,7 +10,7 @@ class GameClient;
 class RealmClient : public Realm
 {
 public:
-	RealmClient();
+	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
 
 	virtual void Init(const std::string &realmName) override;

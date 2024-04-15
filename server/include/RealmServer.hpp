@@ -48,7 +48,7 @@ public:
 	icon7::RPCEnvironment *rpc;
 	icon7::CommandExecutionQueue executionQueue;
 
-	std::unordered_set<icon7::Peer *> peers;
+	std::unordered_map<icon7::Peer *, uint64_t> peers;
 
 	Timer sendEntitiesToClientsTimer;
 	uint64_t sendUpdateDeltaTicks = 250;

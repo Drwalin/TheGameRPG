@@ -7,12 +7,12 @@
 namespace EntityNetworkingSystems
 {
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
-							 const EntityPlayerConnectionPeer &peer,
-							 const EntityName &entityName)
+							 const EntityPlayerConnectionPeer &peer)
 {
-	ClientRpcProxy::SetPlayerEntityId(realm, peer.peer, entity.id());
-	ClientRpcProxy::SetGravity(realm, peer.peer, realm->gravity);
-	ClientRpcProxy::JoinRealm(realm, peer.peer);
+	DEBUG("Created entity");
+	ClientRpcProxy::SetPlayerEntityId(realm, peer.peer.get(), entity.id());
+	ClientRpcProxy::SetGravity(realm, peer.peer.get(), realm->gravity);
+	ClientRpcProxy::JoinRealm(realm, peer.peer.get());
 }
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
@@ -30,7 +30,7 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						const EntityName &entityName)
 {
 	ClientRpcProxy::Broadcast_DeleteEntity(realm, entity.id());
-	realm->peers.erase(peer.peer);
+	realm->peers.erase(peer.peer.get());
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));
 	data->realm = nullptr;
 	data->entityId = 0;
@@ -39,10 +39,9 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 void RegisterObservers(RealmServer *realm)
 {
 	realm->RegisterObserver(
-		flecs::OnAdd,
-		[realm](flecs::entity entity, const EntityPlayerConnectionPeer &peer,
-				const EntityName &name) {
-			OnPlayerEntityConnected(realm, entity, peer, name);
+		flecs::OnSet,
+		[realm](flecs::entity entity, const EntityPlayerConnectionPeer &peer) {
+			OnPlayerEntityConnected(realm, entity, peer);
 		});
 
 	realm->RegisterObserver(flecs::OnAdd,
