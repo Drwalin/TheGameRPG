@@ -1,8 +1,15 @@
 #pragma once
 
 #include "PeerData.hpp"
-#include "../../ICon7-godot-client/ICon7/include/icon7/Debug.hpp"
 
 struct EntityPlayerConnectionPeer {
-	icon7::Peer *peer;
+	std::shared_ptr<icon7::Peer> peer;
+	inline EntityPlayerConnectionPeer() = default;
+	EntityPlayerConnectionPeer(EntityPlayerConnectionPeer &) = default;
+	EntityPlayerConnectionPeer(EntityPlayerConnectionPeer &&) = default;
+	EntityPlayerConnectionPeer(const EntityPlayerConnectionPeer &) = default;
+	EntityPlayerConnectionPeer &operator=(EntityPlayerConnectionPeer &) = default;
+	EntityPlayerConnectionPeer &operator=(EntityPlayerConnectionPeer &&) = default;
+	EntityPlayerConnectionPeer &operator=(const EntityPlayerConnectionPeer &) = default;
+	inline EntityPlayerConnectionPeer(std::shared_ptr<icon7::Peer> peer) : peer(peer) {}
 };

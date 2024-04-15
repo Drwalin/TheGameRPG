@@ -133,13 +133,16 @@ void GameClient::Pong(uint64_t localTick, uint64_t remoteTick)
 {
 	uint64_t currentTick = pingTimer.CalcCurrentTick();
 	pingMs = currentTick - localTick;
+	DEBUG("ping = %ld ms", pingMs);
 	if (remoteTick != 0) {
 		// TODO: consider not adding latency?
 		uint64_t newCurrentTick = remoteTick + pingMs / 2;
 		if (newCurrentTick < realm.timer.currentTick) {
 			// TODO: time error??
+			DEBUG("Ping/Pong received time invalid");
 		} else {
 			realm.timer.Start(newCurrentTick);
+			DEBUG("current tick = %lu", newCurrentTick);
 		}
 	}
 }

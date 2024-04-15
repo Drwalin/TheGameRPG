@@ -3,7 +3,7 @@
 
 #include "../include/ServerCore.hpp"
 
-int main()
+int main(int argc, char **argv)
 {
 	icon7::Initialize();
 	{
@@ -15,7 +15,13 @@ int main()
 		
 		DEBUG("Starting to listen...");
 		
-		serverCore.StartListening(25369, true);
+		serverCore.StartService();
+		serverCore.Listen("localhost", 25369, true);
+		serverCore.Listen("127.0.0.1", 25369, true);
+		serverCore.Listen("::1", 25369, true);
+		for (int i=1; i<argc; ++i) {
+			serverCore.Listen(argv[i], 25369, true);
+		}
 		
 		DEBUG("Running async thread...");
 		

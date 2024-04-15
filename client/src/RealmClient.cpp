@@ -2,7 +2,7 @@
 
 #include "../include/RealmClient.hpp"
 
-RealmClient::RealmClient()
+RealmClient::RealmClient(GameClient *gameClient) : gameClient(gameClient)
 {
 	this->minDeltaTicks = 3;
 	this->maxDeltaTicks = 9;

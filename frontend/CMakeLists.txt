@@ -26,4 +26,3 @@ add_custom_command(TARGET game_frontend POST_BUILD
 	${PROJECT_SOURCE_DIR}/bin/libgame_frontend.so
 	COMMENT "dummy"
 )
-
