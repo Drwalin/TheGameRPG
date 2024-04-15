@@ -67,7 +67,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		DEBUG("Invalid usernamne");
-// 		return;
+		// 		return;
 	}
 	RealmServer *newRealm = realmManager.GetRealm(realmName);
 	if (newRealm == nullptr) {

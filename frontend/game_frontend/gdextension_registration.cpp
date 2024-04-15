@@ -33,8 +33,8 @@ extern "C" {
 
 GDExtensionBool GDE_EXPORT
 game_frontend_library_init(GDExtensionInterfaceGetProcAddress p_interface,
-				   GDExtensionClassLibraryPtr p_library,
-				   GDExtensionInitialization *r_initialization)
+						   GDExtensionClassLibraryPtr p_library,
+						   GDExtensionInitialization *r_initialization)
 {
 	godot::GDExtensionBinding::InitObject init_object(p_interface, p_library,
 													  r_initialization);

@@ -13,15 +13,21 @@ namespace ServerRpcProxy
 {
 void Login(GameClient *gameClient, std::string username, std::string password)
 {
-	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(), icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK, ServerRpcFunctionNames::Login, username, password);
+	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(),
+						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
+						 ServerRpcFunctionNames::Login, username, password);
 }
 
-void UpdatePlayer(GameClient *gameClient, const EntityLastAuthoritativeMovementState &state)
+void UpdatePlayer(GameClient *gameClient,
+				  const EntityLastAuthoritativeMovementState &state)
 {
-	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(), icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK, ServerRpcFunctionNames::UpdatePlayer, state);
+	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(),
+						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
+						 ServerRpcFunctionNames::UpdatePlayer, state);
 }
 
-void GetEntitiesData(GameClient *gameClient, const std::vector<uint64_t> &entities)
+void GetEntitiesData(GameClient *gameClient,
+					 const std::vector<uint64_t> &entities)
 {
 	std::vector<uint8_t> buffer;
 	{
@@ -29,15 +35,19 @@ void GetEntitiesData(GameClient *gameClient, const std::vector<uint64_t> &entiti
 		writer.op(ServerRpcFunctionNames::GetEntitiesData);
 		writer.op(entities.data(), entities.size());
 	}
-	
-	gameClient->realmConnectionPeer->Send(std::move(buffer), icon7::FLAG_RELIABLE|icon7::FLAGS_CALL_NO_FEEDBACK);
+
+	gameClient->realmConnectionPeer->Send(std::move(buffer),
+										  icon7::FLAG_RELIABLE |
+											  icon7::FLAGS_CALL_NO_FEEDBACK);
 }
 
 void Ping(GameClient *gameClient, bool reliable)
 {
 	uint64_t currentTick = gameClient->pingTimer.CalcCurrentTick();
-	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(), 
-			(reliable?icon7::FLAG_RELIABLE:icon7::FLAG_UNRELIABLE)
-			|icon7::FLAGS_CALL_NO_FEEDBACK, ServerRpcFunctionNames::Ping, currentTick);
+	gameClient->rpc.Send(
+		gameClient->realmConnectionPeer.get(),
+		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |
+			icon7::FLAGS_CALL_NO_FEEDBACK,
+		ServerRpcFunctionNames::Ping, currentTick);
 }
-}
+} // namespace ServerRpcProxy

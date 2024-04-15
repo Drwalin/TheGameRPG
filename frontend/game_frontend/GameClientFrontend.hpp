@@ -20,21 +20,22 @@ class GameClientFrontend : public GameClient
 public:
 	GameClientFrontend(class GameFrontend *gameFrontend);
 	virtual ~GameClientFrontend() override;
-	
+
 	void Init();
-	
+
 public: // callbacks
 	virtual void OnEnterRealm(const std::string &realmName) override;
-	
+
 	virtual void OnEntityAdd(uint64_t localId) override;
 	virtual void OnEntityRemove(uint64_t localId) override;
-	virtual void OnEntityShape(uint64_t localId, const EntityShape &shape) override;
+	virtual void OnEntityShape(uint64_t localId,
+							   const EntityShape &shape) override;
 	virtual void OnEntityModel(uint64_t localId,
 							   const EntityModelName &model) override;
 
 	virtual void OnSetPlayerId(uint64_t localId) override;
 	virtual void OnPlayerIdUnset() override;
-	
+
 public:
 	class GameFrontend *gameFrontend;
 };

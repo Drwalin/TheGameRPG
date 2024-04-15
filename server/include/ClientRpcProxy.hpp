@@ -21,7 +21,7 @@ void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 
 void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
-		icon7::ByteReader &reader);
+								icon7::ByteReader &reader);
 
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, EntityShape shape);

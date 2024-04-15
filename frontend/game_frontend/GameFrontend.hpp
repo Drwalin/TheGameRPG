@@ -27,33 +27,33 @@ public: // Godot bound functions
 	GameFrontend(GameFrontend &&) = delete;
 	GameFrontend(const GameFrontend &) = delete;
 	virtual ~GameFrontend() override;
-	
+
 	static void _bind_methods();
 
 	void _ready() override;
-	
+
 	// call it from within _process script-overriden method
 	void InternalProcess();
-	
+
 	void Connect(const String &ip, int64_t port);
 	void Login(const String &username, const String &password);
 	void Disconnect();
-	
+
 	Node *GetNodeToAddEntities();
-	
+
 private: // Godot callbacks
 	void SetPlayerDirectionMovement(const Vector2 &dir);
 	void PlayerTryJump();
 	void SetPlayerRotation(const Vector3 &rot);
 	Vector3 GetPlayerRotation();
 	Camera3D *GetPlayerCamera();
-	
+
 	bool IsConnected();
 	bool IsConnecting();
 
 public: // variables
 	GameClientFrontend *gameClientFrontend;
 	Camera3D *playerCamera = nullptr;
-	
+
 	Node *entitiesContainer = nullptr;
 };

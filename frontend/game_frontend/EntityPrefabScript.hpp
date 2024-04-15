@@ -32,23 +32,23 @@ public: // Godot bound functions
 	EntityPrefabScript();
 	static void _bind_methods();
 
-// 	void _enter_tree() override;
-// 	void _exit_tree() override;
+	// 	void _enter_tree() override;
+	// 	void _exit_tree() override;
 	void _ready() override;
 	void _process(double dt) override;
-// 	void _my_internal_process(double dt);
-// 	void _physics_process(double dt) override;
-	
+	// 	void _my_internal_process(double dt);
+	// 	void _physics_process(double dt) override;
+
 	void Init(uint64_t localEntityId);
-	
+
 public:
 	void SetModel(const EntityModelName &model);
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
-	
+
 private: // Godot callbacks
 	inline GameFrontend *GetGameFrontend() { return gameFrontend; }
-	
+
 	bool IsPlayer() const;
 	int64_t GetLocalEntityId() const;
 	Vector3 GetRotation() const;
@@ -58,10 +58,9 @@ private: // Godot callbacks
 public: // variables
 	uint64_t localEntityId = 0;
 	GameFrontend *gameFrontend = nullptr;
-	
+
 	MeshInstance3D *meshInstance = nullptr;
-	
+
 public:
-	
 	static EntityPrefabScript *CreateNew();
 };

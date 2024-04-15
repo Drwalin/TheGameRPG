@@ -44,13 +44,15 @@ void ServerCore::StartService()
 
 	host->SetOnConnect(_OnPeerConnect);
 	host->SetOnDisconnect(_OnPeerDisconnect);
-	
+
 	host->SetRpcEnvironment(&rpc);
 }
 
-void ServerCore::Listen(const std::string &addressInterface, uint16_t port, int useIpv4)
+void ServerCore::Listen(const std::string &addressInterface, uint16_t port,
+						int useIpv4)
 {
-	host->ListenOnPort(addressInterface, port, useIpv4 ? icon7::IPv4 : icon7::IPv6);
+	host->ListenOnPort(addressInterface, port,
+					   useIpv4 ? icon7::IPv4 : icon7::IPv6);
 }
 
 void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }
@@ -74,15 +76,15 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm) {
 		std::vector<uint8_t> v;
-		data->realm->ExecuteOnRealmThread(peer, v,
-				[](icon7::Peer *peer, std::vector<uint8_t> &, void *realm)
-				{
-					((RealmServer *)realm)->DisconnectPeer(peer);
-					PeerData *data = ((PeerData *)(peer->userPointer));
-					data->peer = nullptr;
-					data->userName = "";
-					delete data;
-					peer->userPointer = nullptr;
-				});
+		data->realm->ExecuteOnRealmThread(
+			peer, v,
+			[](icon7::Peer *peer, std::vector<uint8_t> &, void *realm) {
+				((RealmServer *)realm)->DisconnectPeer(peer);
+				PeerData *data = ((PeerData *)(peer->userPointer));
+				data->peer = nullptr;
+				data->userName = "";
+				delete data;
+				peer->userPointer = nullptr;
+			});
 	}
 }

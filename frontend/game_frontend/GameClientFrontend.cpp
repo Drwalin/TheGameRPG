@@ -11,9 +11,7 @@ GameClientFrontend::GameClientFrontend(GameFrontend *gameFrontend)
 	this->gameFrontend = gameFrontend;
 }
 
-GameClientFrontend::~GameClientFrontend()
-{
-}
+GameClientFrontend::~GameClientFrontend() {}
 
 void GameClientFrontend::Init()
 {
@@ -40,23 +38,27 @@ void GameClientFrontend::OnEntityRemove(uint64_t localId)
 	if (realm.HasComponent<EntityGodotNode>(localId) == false) {
 		return;
 	}
-	EntityPrefabScript *node = realm.GetComponent<EntityGodotNode>(localId)->node;
+	EntityPrefabScript *node =
+		realm.GetComponent<EntityGodotNode>(localId)->node;
 	node->localEntityId = 0;
 	node->get_parent()->remove_child(node);
 	node->queue_free();
 	realm.SetComponent<EntityGodotNode>(localId, EntityGodotNode{nullptr});
 	realm.RemoveComponent<EntityGodotNode>(localId);
 }
-void GameClientFrontend::OnEntityShape(uint64_t localId, const EntityShape &shape)
+void GameClientFrontend::OnEntityShape(uint64_t localId,
+									   const EntityShape &shape)
 {
 	// TODO: ???
 }
-void GameClientFrontend::OnEntityModel(uint64_t localId, const EntityModelName &model)
+void GameClientFrontend::OnEntityModel(uint64_t localId,
+									   const EntityModelName &model)
 {
 	if (realm.HasComponent<EntityGodotNode>(localId) == false) {
 		return;
 	}
-	EntityPrefabScript *node = realm.GetComponent<EntityGodotNode>(localId)->node;
+	EntityPrefabScript *node =
+		realm.GetComponent<EntityGodotNode>(localId)->node;
 	node->SetModel(model);
 }
 void GameClientFrontend::OnSetPlayerId(uint64_t localId)

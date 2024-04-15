@@ -45,22 +45,22 @@ void GameClient::DisconnectRealmPeer()
 bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 {
 	DisconnectRealmPeer();
-	
+
 	icon7::commands::ExecuteOnPeer com{};
-	
+
 	struct X {
 		std::shared_ptr<icon7::Peer> sp;
 		std::atomic<icon7::Peer *> rp;
 		std::atomic<int> s;
 	};
-	
+
 	using _T = std::shared_ptr<X>;
 	_T state(new X{nullptr, nullptr, 0});
-	
+
 	com.data.resize(sizeof(_T));
-	new(com.data.data()) _T(state);
+	new (com.data.data()) _T(state);
 	com.function = [](auto peer, auto bytes, auto ptr) {
-		_T *v = (_T*)bytes.data();
+		_T *v = (_T *)bytes.data();
 		if (peer) {
 			(*v)->sp = peer->shared_from_this();
 			(*v)->rp.store(peer);
@@ -70,11 +70,11 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 		}
 		v->~shared_ptr();
 	};
-	
+
 	host->Connect(ip, port, std::move(com));
-	
-	auto end = std::chrono::steady_clock::now()+std::chrono::seconds(5);
-	while(end > std::chrono::steady_clock::now()) {
+
+	auto end = std::chrono::steady_clock::now() + std::chrono::seconds(5);
+	while (end > std::chrono::steady_clock::now()) {
 		if (state->s != 0) {
 			break;
 		}
@@ -83,33 +83,23 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 	if (state->rp.load() == nullptr) {
 		return false;
 	}
-	
+
 	realmConnectionPeer = state->sp;
 	ServerRpcProxy::Ping(this, true);
 	return true;
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-// 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
-// 		host->ConnectPromise(ip, port);
-// 	std::this_thread::sleep_for(std::chrono::seconds(5));
-// 	peerFuture.wait_for(std::chrono::seconds(5));
-// 	if (peerFuture.valid() == false) {
-// 		return false;
-// 	}
-// 	realmConnectionPeer = peerFuture.get();
-// 
-// 	ServerRpcProxy::Ping(this, true);
-// 
-// 	return true;
+	// 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
+	// 		host->ConnectPromise(ip, port);
+	// 	std::this_thread::sleep_for(std::chrono::seconds(5));
+	// 	peerFuture.wait_for(std::chrono::seconds(5));
+	// 	if (peerFuture.valid() == false) {
+	// 		return false;
+	// 	}
+	// 	realmConnectionPeer = peerFuture.get();
+	//
+	// 	ServerRpcProxy::Ping(this, true);
+	//
+	// 	return true;
 }
 
 void GameClient::RunOneEpoch()
@@ -124,7 +114,6 @@ void GameClient::RunOneEpoch()
 		commands[i].~Command();
 	}
 
-	
 	PerformSendPlayerMovementInput();
 	realm.OneEpoch();
 	PerformSendPlayerMovementInput();

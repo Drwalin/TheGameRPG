@@ -24,9 +24,10 @@ public:
 	void ConnectPeerToRealm(icon7::Peer *peer, std::string realmName);
 
 	void Disconnect(icon7::Peer *peer);
-	
+
 	void StartService();
-	void Listen(const std::string &addressInterface, uint16_t port, int useIpv4);
+	void Listen(const std::string &addressInterface, uint16_t port,
+				int useIpv4);
 
 	void RunNetworkLoopAsync();
 

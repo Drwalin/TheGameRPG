@@ -27,7 +27,8 @@ public:
 	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);
 
-	void ExecuteOnRealmThread(icon7::Peer *peer, std::vector<uint8_t> &customData,
+	void ExecuteOnRealmThread(icon7::Peer *peer,
+							  std::vector<uint8_t> &customData,
 							  void (*function)(icon7::Peer *,
 											   std::vector<uint8_t> &, void *));
 
@@ -54,9 +55,10 @@ public:
 	uint64_t sendUpdateDeltaTicks = 250;
 	flecs::query<const EntityLastAuthoritativeMovementState>
 		queryLastAuthoritativeState;
-	
+
 	flecs::query<const EntityLastAuthoritativeMovementState, const EntityName,
-				 const EntityModelName, const EntityShape, const EntityMovementParameters>
+				 const EntityModelName, const EntityShape,
+				 const EntityMovementParameters>
 		queryEntityLongState;
 };
 
@@ -76,7 +78,7 @@ void RealmServer::BroadcastReliable(const std::string &functionName,
 
 template <typename... Args>
 void RealmServer::BroadcastUnreliable(const std::string &functionName,
-									Args... args)
+									  Args... args)
 {
 	std::vector<uint8_t> buffer;
 	icon7::Flags flags = icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
