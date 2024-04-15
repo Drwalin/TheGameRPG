@@ -7,7 +7,8 @@
 
 #include "../include/RealmServer.hpp"
 
-RealmServer::RealmServer() {
+RealmServer::RealmServer()
+{
 	RealmServer::RegisterSystems();
 	RealmServer::RegisterObservers();
 }
@@ -59,7 +60,8 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	SetComponent<EntityName>(entityId, {data->userName});
 
 	peers[peer] = entityId;
-	this->SetComponent<EntityPlayerConnectionPeer>(entityId, EntityPlayerConnectionPeer(peer->shared_from_this()));
+	this->SetComponent<EntityPlayerConnectionPeer>(
+		entityId, EntityPlayerConnectionPeer(peer->shared_from_this()));
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
@@ -69,7 +71,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	if (data) {
 		data->realm = nullptr;
 	}
-	
+
 	auto it = peers.find(peer);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
@@ -96,7 +98,8 @@ void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,
 {
 	for (auto it : peers) {
 		if (it.second != exceptEntityId) {
-			if (((PeerData *)(it.first->userPointer))->entityId != exceptEntityId) {
+			if (((PeerData *)(it.first->userPointer))->entityId !=
+				exceptEntityId) {
 				std::vector<uint8_t> buf = buffer;
 				it.first->Send(std::move(buf), flags);
 			}

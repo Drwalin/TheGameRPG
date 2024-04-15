@@ -27,7 +27,7 @@ void Realm::Init(const std::string &realmName)
 {
 	this->realmName = realmName;
 	timer.Start();
-	
+
 	TerrainCollisionData col;
 	col.vertices.push_back({-100, 0, -100});
 	col.vertices.push_back({100, 0, -100});

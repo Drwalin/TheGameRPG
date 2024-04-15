@@ -27,7 +27,7 @@ public:
 	~CollisionWorld();
 
 	void Clear();
-	
+
 	struct EntityInfo {
 		EntityShape shape;
 		glm::vec3 pos;

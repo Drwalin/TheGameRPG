@@ -2,7 +2,6 @@
 
 class EntityPrefabScript;
 
-struct EntityGodotNode
-{
+struct EntityGodotNode {
 	EntityPrefabScript *node;
 };

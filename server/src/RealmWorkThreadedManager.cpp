@@ -5,10 +5,7 @@
 
 #include "../include/RealmWorkThreadedManager.hpp"
 
-RealmWorkThreadedManager::RealmWorkThreadedManager()
-{
-	runningThreads = 0;
-}
+RealmWorkThreadedManager::RealmWorkThreadedManager() { runningThreads = 0; }
 
 RealmWorkThreadedManager::~RealmWorkThreadedManager()
 {
@@ -52,12 +49,10 @@ void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 {
 	requestStopRunning = false;
 	std::lock_guard lock(mutex);
-	for (int i=threads.size(); i<workerThreadsCount; ++i) {
+	for (int i = threads.size(); i < workerThreadsCount; ++i) {
 		threads.push_back(std::thread(
-					+[](RealmWorkThreadedManager *manager) {
-						manager->SingleRunner();
-					}, this
-					));
+			+[](RealmWorkThreadedManager *manager) { manager->SingleRunner(); },
+			this));
 	}
 }
 
@@ -69,15 +64,12 @@ void RealmWorkThreadedManager::RequestStopRunning()
 void RealmWorkThreadedManager::WaitStopRunning()
 {
 	RequestStopRunning();
-	while(runningThreads > 0) {
+	while (runningThreads > 0) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(4));
 	}
 }
 
-bool RealmWorkThreadedManager::IsRunning()
-{
-	return runningThreads > 0;
-}
+bool RealmWorkThreadedManager::IsRunning() { return runningThreads > 0; }
 
 void RealmWorkThreadedManager::SingleRunner()
 {
@@ -99,7 +91,7 @@ void RealmWorkThreadedManager::SingleRunner()
 				}
 			}
 		}
-		
+
 		if (destroyRealm) {
 			delete realm;
 			realm = nullptr;
@@ -111,7 +103,7 @@ void RealmWorkThreadedManager::SingleRunner()
 				notBusyCount = 0;
 				countBusySinceLastSleep++;
 			}
-			
+
 			{
 				std::lock_guard lock(mutex);
 				realmsQueue.push(realm);
@@ -122,11 +114,12 @@ void RealmWorkThreadedManager::SingleRunner()
 		}
 		if (notBusyCount >= 6) {
 			if (countBusySinceLastSleep > 5) {
-				sleepMilliseconds = std::max(sleepMilliseconds-1, 1);
+				sleepMilliseconds = std::max(sleepMilliseconds - 1, 1);
 			} else if (countBusySinceLastSleep == 0) {
-				sleepMilliseconds = std::min(sleepMilliseconds+1, 10);
+				sleepMilliseconds = std::min(sleepMilliseconds + 1, 10);
 			}
-			std::this_thread::sleep_for(std::chrono::milliseconds(sleepMilliseconds));
+			std::this_thread::sleep_for(
+				std::chrono::milliseconds(sleepMilliseconds));
 			notBusyCount = 0;
 			countBusySinceLastSleep = 0;
 		}

@@ -11,16 +11,13 @@
 
 #include "EntityPrefabScript.hpp"
 
-
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
 	ClassDB::bind_method(D_METHOD(#NAME), &CLASS::NAME);
 
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
-	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__),           \
-								&CLASS::NAME);
+	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
-EntityPrefabScript::EntityPrefabScript() {
-}
+EntityPrefabScript::EntityPrefabScript() {}
 
 void EntityPrefabScript::_bind_methods()
 {
@@ -32,14 +29,15 @@ void EntityPrefabScript::_ready()
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
-	
-// 	gameFrontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null("gameFrontend"));
-// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
-// 	gameFrontend = (GameFrontend *)(get_node_or_null("/root/gameFrontend"));
-// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
-// 	gameFrontend = (GameFrontend *)(get_node_or_null("/gameFrontend"));
-// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
-	
+
+	// 	gameFrontend = (GameFrontend
+	// *)(get_tree()->get_root()->get_node_or_null("gameFrontend"));
+	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
+	// 	gameFrontend = (GameFrontend *)(get_node_or_null("/root/gameFrontend"));
+	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
+	// 	gameFrontend = (GameFrontend *)(get_node_or_null("/gameFrontend"));
+	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
+
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
@@ -53,8 +51,9 @@ void EntityPrefabScript::_process(double dt)
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
-	
-	flecs::entity entity = gameFrontend->gameClientFrontend->realm.Entity(localEntityId);
+
+	flecs::entity entity =
+		gameFrontend->gameClientFrontend->realm.Entity(localEntityId);
 	if (entity.is_alive() == false) {
 		return;
 	}
@@ -90,17 +89,16 @@ void EntityPrefabScript::SetModel(const EntityModelName &model)
 
 bool EntityPrefabScript::IsPlayer() const
 {
-	return localEntityId == gameFrontend->gameClientFrontend->localPlayerEntityId;
+	return localEntityId ==
+		   gameFrontend->gameClientFrontend->localPlayerEntityId;
 }
 
-int64_t EntityPrefabScript::GetLocalEntityId() const
-{
-	return localEntityId;
-}
+int64_t EntityPrefabScript::GetLocalEntityId() const { return localEntityId; }
 
 Vector3 EntityPrefabScript::GetRotation() const
 {
-	auto state = gameFrontend->gameClientFrontend->realm.GetComponent<EntityMovementState>(localEntityId);
+	auto state = gameFrontend->gameClientFrontend->realm
+					 .GetComponent<EntityMovementState>(localEntityId);
 	if (state) {
 		return ToGodot(state->rot);
 	}
@@ -110,7 +108,8 @@ Vector3 EntityPrefabScript::GetRotation() const
 
 Vector3 EntityPrefabScript::GetPosition() const
 {
-	auto state = gameFrontend->gameClientFrontend->realm.GetComponent<EntityMovementState>(localEntityId);
+	auto state = gameFrontend->gameClientFrontend->realm
+					 .GetComponent<EntityMovementState>(localEntityId);
 	if (state) {
 		return ToGodot(state->pos);
 	}
@@ -120,7 +119,8 @@ Vector3 EntityPrefabScript::GetPosition() const
 
 Vector3 EntityPrefabScript::GetVelocity() const
 {
-	auto state = gameFrontend->gameClientFrontend->realm.GetComponent<EntityMovementState>(localEntityId);
+	auto state = gameFrontend->gameClientFrontend->realm
+					 .GetComponent<EntityMovementState>(localEntityId);
 	if (state) {
 		return ToGodot(state->vel);
 	}
