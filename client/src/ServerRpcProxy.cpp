@@ -19,7 +19,7 @@ void Login(GameClient *gameClient, std::string username, std::string password)
 }
 
 void UpdatePlayer(GameClient *gameClient,
-				  const EntityLastAuthoritativeMovementState &state)
+				  const EntityMovementState &state)
 {
 	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(),
 						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,

@@ -17,35 +17,29 @@ void UpdateMovement(
 	int64_t currentTick = realm->timer.currentTick;
 	EntityMovementState prev = lastAuthoritativeState;
 	if (currentState.timestamp >
-		prev.timestamp + 10) {//realm->ticksBeforeIgnoringInputMovement) {
+		prev.timestamp + 10) { // < realm->ticksBeforeIgnoringInputMovement) {
 		prev = currentState;
 	}
 	auto &next = currentState;
 	bool onGround = next.onGround;
-	
+
 	int64_t _dt = currentTick - prev.timestamp;
 	if (_dt < realm->minDeltaTicks) {
 		return;
 	}
 
 	float dt = _dt * 0.001f;
-	
+
 	{
 		glm::vec3 vel = prev.vel;
-		DEBUG("Vel = (%f, %f, %f),   dt: %li >= %i", vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks);
+		glm::vec3 pos = prev.pos;
+		DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
+			  "%f %f)",
+			  entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks,
+			  pos.x, pos.y, pos.z);
 	}
 
-	if (onGround == true && prev.vel.y < 0.4) {
-// 		if (lastAuthoritativeState.timestamp +
-// 				realm->ticksBeforeIgnoringInputMovement <
-// 			next.timestamp) {
-// 			if (lastAuthoritativeState.timestamp +
-// 					realm->ticksBeforeIgnoringInputMovement <
-// 				currentTick) {
-// 				return;
-// 			}
-// 		}
-
+	if (onGround == true && prev.vel.y < 0.1) {
 		glm::vec3 vel = prev.vel;
 		vel.y = 0;
 		if (fabs(vel.x) + fabs(vel.z) < 0.005) {
@@ -78,12 +72,11 @@ void UpdateMovement(
 		newPos =
 			oldPos - glm::vec3(0, heightDiff + movementParams.stepHeight, 0);
 		bool isOnGround = false;
-		if (realm->collisionWorld.TestCollisionMovement(shape, oldPos, newPos,
-														&pos, &isOnGround, nullptr)) {
+		if (realm->collisionWorld.TestCollisionMovement(
+				shape, oldPos, newPos, &pos, &isOnGround, nullptr)) {
 			onGround = isOnGround;
 		}
 
-		vel = (pos - prev.pos) / dt;
 		if (onGround) {
 			vel.y = 0;
 		}
@@ -93,16 +86,17 @@ void UpdateMovement(
 		next.vel = vel;
 		next.rot = prev.rot;
 		next.onGround = onGround;
-		
+
 		glm::vec3 p1 = prev.pos, p2 = next.pos;
-		
-		DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)", entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+
+		DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)",
+			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
 	} else {
 		glm::vec3 acc = {0, realm->gravity, 0};
 
-		glm::vec3 vel = prev.vel;// + acc * dt;
-		
-// 		DEBUG("Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
+		glm::vec3 vel = prev.vel; // + acc * dt;
+
+		// 		DEBUG("Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
 
 		if (vel.y < -50) {
 			vel.y = -50;
@@ -112,25 +106,25 @@ void UpdateMovement(
 		}
 
 		glm::vec3 oldPos = prev.pos;
-		glm::vec3 movement = prev.vel * dt;// + acc * (dt * dt * 0.5f);
+		glm::vec3 movement = prev.vel * dt; // + acc * (dt * dt * 0.5f);
 		glm::vec3 newPos = oldPos + movement;
-		
-// 		{
-// 			glm::vec3 m = movement;
-// 			DEBUG("movement = (%f, %f, %f)", m.x, m.y, m.z);
-// 		}
-// 		
-// 		{
-// 			glm::vec3 m = acc;
-// 			DEBUG("acc = (%f, %f, %f)", m.x, m.y, m.z);
-// 		}
+
+		// 		{
+		// 			glm::vec3 m = movement;
+		// 			DEBUG("movement = (%f, %f, %f)", m.x, m.y, m.z);
+		// 		}
+		//
+		// 		{
+		// 			glm::vec3 m = acc;
+		// 			DEBUG("acc = (%f, %f, %f)", m.x, m.y, m.z);
+		// 		}
 
 		// test collision here:
 		glm::vec3 pos;
 		bool isOnGround = false;
 		glm::vec3 normal;
-		if (realm->collisionWorld.TestCollisionMovement(shape, oldPos, newPos,
-														&pos, &isOnGround, &normal)) {
+		if (realm->collisionWorld.TestCollisionMovement(
+				shape, oldPos, newPos, &pos, &isOnGround, &normal)) {
 			if (vel.y <= 1) {
 				onGround = isOnGround;
 			}
@@ -144,24 +138,25 @@ void UpdateMovement(
 		} else {
 			vel = prev.vel + acc * dt;
 		}
-		
 
 		next.timestamp = currentTick;
 		next.pos = pos;
 		next.vel = vel;
 		next.rot = prev.rot;
 		next.onGround = onGround;
-		
+
 		glm::vec3 p1 = prev.pos, p2 = next.pos;
-		
+
 		DEBUG("new Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
-		DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)", entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+		DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)",
+			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
 		printf("\n");
 	}
 
 	glm::vec3 d = currentState.pos - prev.pos;
 	if (glm::dot(d, d) > 0.00001) {
-		realm->collisionWorld.UpdateEntityBvh(entity.id(), shape, currentState.pos);
+		realm->collisionWorld.UpdateEntityBvh(entity.id(), shape,
+											  currentState.pos);
 	}
 }
 } // namespace EntitySystems

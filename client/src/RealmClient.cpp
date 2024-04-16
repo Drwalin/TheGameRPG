@@ -65,4 +65,6 @@ void RealmClient::RegisterObservers()
 					 });
 }
 
-void RealmClient::RegisterSystems() { Realm::RegisterSystems(); }
+void RealmClient::RegisterSystems() {
+	Realm::RegisterSystems();
+}

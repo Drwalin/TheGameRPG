@@ -67,6 +67,7 @@ public: // client input api
 	EntityShape GetShape();
 
 	void PerformSendPlayerMovementInput();
+	void UpdatePlayerAuthoritativeState();
 
 public:
 	RealmClient realm;
@@ -81,10 +82,11 @@ public:
 	uint64_t serverPlayerEntityId = 0;
 	std::string username;
 
+	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput;
 	Timer authoritativePlayerSendTimer;
 	Timer pingTimer;
-	int64_t pingMs = 0;
+	int64_t pingMs = 10;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;
 	std::unordered_map<uint64_t, uint64_t> mapLocalEntityIdToServerEntityId;

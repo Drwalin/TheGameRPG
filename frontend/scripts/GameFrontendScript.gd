@@ -58,6 +58,13 @@ func _process(delta: float)->void:
 	var rot = gameFrontend.GetPlayerRotation();
 	camera.set_rotation(rot);
 	var d = camera.basis * Vector3(0, 5, 0);
-	camera.position = pos - d;
+	camera.position = pos + d;
+	print("");
+	print("pos: ", pos);
+	
+	var ent = GetNodeToAddEntities();
+	for c in ent.get_children():
+		if c.IsPlayer():
+			print("Player pos: ", c.get_node("MeshInstance3D").position, " === ", c.GetPosition(), " =?= ", pos);
 	
 	pass;

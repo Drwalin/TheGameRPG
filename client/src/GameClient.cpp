@@ -20,6 +20,7 @@ GameClient::GameClient() : realm(this)
 
 	// host->SetOnDisconnect();
 	pingTimer.Start();
+	authoritativePlayerSendTimer.Start();
 }
 
 GameClient::~GameClient()
@@ -85,7 +86,6 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 	}
 
 	realmConnectionPeer = state->sp;
-	ServerRpcProxy::Ping(this, true);
 	return true;
 
 	// 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
@@ -116,19 +116,32 @@ void GameClient::RunOneEpoch()
 
 	PerformSendPlayerMovementInput();
 	realm.OneEpoch();
+	UpdatePlayerAuthoritativeState();
 	PerformSendPlayerMovementInput();
+}
+
+void GameClient::UpdatePlayerAuthoritativeState()
+{
+	if (localPlayerEntityId == 0) {
+		return;
+	}
+	flecs::entity playerEntity = realm.Entity(localPlayerEntityId);
+	auto state = playerEntity.get<EntityMovementState>();
+// 	playerEntity.set<EntityLastAuthoritativeMovementState>({*state});
 }
 
 void GameClient::PerformSendPlayerMovementInput()
 {
-	if (needSendPlayerMovementInput == false) {
-		return;
-	}
 	if (localPlayerEntityId == 0) {
 		return;
 	}
+	int64_t dt = 0;
+	authoritativePlayerSendTimer.Update(authdauthoritativePlayerSendDelay, &dt, nullptr);
+	if (dt <= authdauthoritativePlayerSendDelay && needSendPlayerMovementInput == false) {
+		return;
+	}
 
-	auto state = realm.GetComponent<EntityLastAuthoritativeMovementState>(
+	auto state = realm.GetComponent<EntityMovementState>(
 		localPlayerEntityId);
 	ServerRpcProxy::UpdatePlayer(this, *state);
 
@@ -142,8 +155,8 @@ glm::vec3 GameClient::GetRotation()
 		return {0,0,0};
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	return oldState.oldState.rot;
+	auto oldState = *player.get<EntityMovementState>();
+	return oldState.rot;
 }
 
 glm::vec3 GameClient::GetPosition()
@@ -153,8 +166,8 @@ glm::vec3 GameClient::GetPosition()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	return oldState.oldState.pos;
+	auto oldState = *player.get<EntityMovementState>();
+	return oldState.pos;
 }
 
 glm::vec3 GameClient::GetVelocity()
@@ -164,8 +177,8 @@ glm::vec3 GameClient::GetVelocity()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	return oldState.oldState.vel;
+	auto oldState = *player.get<EntityMovementState>();
+	return oldState.vel;
 }
 
 EntityShape GameClient::GetShape()
@@ -186,8 +199,8 @@ void GameClient::SetRotation(glm::vec3 rotation)
 		return;
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	oldState.oldState.rot = rotation;
+	auto oldState = *player.get<EntityMovementState>();
+	oldState.rot = rotation;
 	player.set(oldState);
 	needSendPlayerMovementInput = true;
 }
@@ -199,7 +212,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 		return;
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
+	auto oldState = *player.get<EntityMovementState>();
 // 	if (oldState.oldState.onGround == false) {
 // 		DEBUG("Trying to move in the air");
 // 		// TODO: no air control implemented
@@ -212,7 +225,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	vel.y = 0;
 	vel *= player.get<EntityMovementParameters>()->maxMovementSpeedHorizontal;
 
-	oldState.oldState.vel = vel;
+	oldState.vel = vel;
 
 	player.set(oldState);
 	needSendPlayerMovementInput = true;
@@ -225,17 +238,17 @@ void GameClient::TryPerformJump()
 		return;
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	if (oldState.oldState.onGround == false) {
+	auto oldState = *player.get<EntityMovementState>();
+	if (oldState.onGround == false) {
 		// TODO: no air jumps
 		return;
 	}
 
-	glm::vec3 vel = oldState.oldState.vel;
+	glm::vec3 vel = oldState.vel;
 	// TODO: use some true jump velocity
 	vel.y = 5;
 
-	oldState.oldState.vel = vel;
+	oldState.vel = vel;
 
 	player.set(oldState);
 	needSendPlayerMovementInput = true;

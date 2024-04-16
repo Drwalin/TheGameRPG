@@ -23,6 +23,12 @@ EntityPrefabScript::EntityPrefabScript() {}
 void EntityPrefabScript::_bind_methods()
 {
 	METHOD_NO_ARGS(EntityPrefabScript, GetGameFrontend);
+	
+	METHOD_NO_ARGS(EntityPrefabScript, IsPlayer);
+	METHOD_NO_ARGS(EntityPrefabScript, GetLocalEntityId);
+	METHOD_NO_ARGS(EntityPrefabScript, GetRotation);
+	METHOD_NO_ARGS(EntityPrefabScript, GetPosition);
+	METHOD_NO_ARGS(EntityPrefabScript, GetVelocity);
 }
 
 void EntityPrefabScript::_ready()
@@ -53,12 +59,11 @@ void EntityPrefabScript::_process(double dt)
 	if (entity.is_alive() == false) {
 		return;
 	}
-	auto *state = entity.get<EntityMovementState>();
+	auto state = entity.get<EntityMovementState>();
 	if (state) {
 		SetRotation(state->rot);
 		SetPosition(state->pos);
 	}
-	// TODO: update mesh instance transform
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)

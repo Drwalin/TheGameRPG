@@ -1,3 +1,4 @@
+#include <chrono>
 #include <icon7/Debug.hpp>
 
 #include <bullet/LinearMath/btVector3.h>
@@ -10,7 +11,7 @@
 
 #include "../include/CollisionWorld.hpp"
 
-void CollisionWorld::Debug()
+void CollisionWorld::Debug() const
 {
 	auto objs = collisionWorld->getCollisionObjectArray();
 	for (int i = 0; i < objs.size(); ++i) {
@@ -203,93 +204,64 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 	if (isOnGround) {
 		*isOnGround = false;
 	}
-	const int ITERATIONS = 1;
-	for (int i = 0; i < ITERATIONS; ++i) {
-		btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
+	btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
+													 ToBullet(end));
+// 	auto A = std::chrono::steady_clock::now();
+	for (int i=0; i<1; ++i) {
+		btCollisionWorld::ClosestConvexResultCallback _cb(ToBullet(start),
 														 ToBullet(end));
+		cb = _cb;
 		cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
 		cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
 		collisionWorld->convexSweepTest(
 			&_shape, btTransform{btQuaternion{}, ToBullet(start)},
-			btTransform{btQuaternion{}, ToBullet(end)}, cb, 0);
-
-		if (cb.m_hitCollisionObject != nullptr) {
-// 			glm::vec3 relHitpoint = ToGlm(cb.m_hitPointWorld) - start;
-// 			{
-// 				glm::vec3 m = ToGlm(cb.m_hitPointWorld);
-// 				DEBUG("hitpoint = (%f, %f, %f)", m.x, m.y, m.z);
-// 			}
-
-			glm::vec3 dm = (end - start);
-			glm::vec3 n = ToGlm(cb.m_hitNormalWorld);
-			if (glm::dot(n, dm) > 0)
-				n = -n;
-			if (normal)
-				*normal = n;
-			
-			*finalCorrectedPosition = start + dm * cb.m_closestHitFraction;
-
-			/*
-			glm::vec3 sup =
-				ToGlm(_shape.localGetSupportingVertex(ToBullet(relHitpoint)));
-			{
-				glm::vec3 m = sup;
-				DEBUG("sup = (%f, %f, %f)", m.x, m.y, m.z);
-			}
-
-			glm::vec3 newDeltaMoveSupport = relHitpoint - sup;
-
-			float ddm = glm::dot(dm, dm);
-			float dndms = glm::dot(newDeltaMoveSupport, newDeltaMoveSupport);
-			if (ddm > 0.001 && dndms > 0.001) {
-				glm::vec3 moveDir = glm::normalize(dm);
-				float d = glm::dot(newDeltaMoveSupport, moveDir);
-				if (d > 0) {
-					glm::vec3 newMove = moveDir * d;
-					end = newMove * 0.99f + start;
-					*finalCorrectedPosition = end;
-					if (i < ITERATIONS - 1) {
-						continue;
-					}
-				} else {
-					*finalCorrectedPosition = start;
-				}
-				
-				
-
-// 				float p = glm::dot(dm, newDeltaMoveSupport);
-// 				if (p < 0) {
-// 					// TODO: what to do?
-// 				} else {
-// 					glm::vec3 c = dm * (p / ddm);
-// 					end = c + start;
-// 					*finalCorrectedPosition = end;
-// 					if (i != ITERATIONS-1) {
-// 						continue;
-// 					}
-// 				}
-			} else {
-				btVector3 v = cb.m_convexToWorld;
-				*finalCorrectedPosition = ToGlm(v);
-			}
-			*/
-
-			if (isOnGround) {
-				glm::vec3 hp, _normal;
-				if (RayTestFirstHitTerrain(
-						*finalCorrectedPosition - center + glm::vec3{0.0f, 0.1f, 0.0f},
-						*finalCorrectedPosition - center - glm::vec3{0.0f, 0.1f, 0.0f},
-						&hp, &_normal, nullptr)) {
-					if (fabs(_normal.y) > 0.7) {
-						*isOnGround = true;
-					}
-				}
-			}
-			*finalCorrectedPosition -= center;
-			return true;
-		}
-		break;
+			btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.01);
 	}
+// 	auto B = std::chrono::steady_clock::now();
+// 	auto C = std::chrono::duration_cast<std::chrono::nanoseconds>(B-A).count();
+// 	DEBUG("Time sweep: %f ns", ((double)C)/100.0);
+
+	DEBUG("Test: %f %f %f   ->   %f %f %f", start.x, start.y - center.y,
+		  start.z, end.x, end.y - center.y, end.z);
+
+	if (cb.hasHit()) {
+		const glm::vec3 dm = (end - start);
+		glm::vec3 n = ToGlm(cb.m_hitNormalWorld);
+		if (glm::dot(n, dm) > 0)
+			n = -n;
+		if (normal)
+			*normal = n;
+
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+		*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
+
+		if (isOnGround) {
+			glm::vec3 hp, _normal;
+			if (RayTestFirstHitTerrain(
+					*finalCorrectedPosition + glm::vec3{0.0f, 0.1f, 0.0f},
+					*finalCorrectedPosition - glm::vec3{0.0f, 0.1f, 0.0f}, &hp,
+					&_normal, nullptr)) {
+				if (fabs(_normal.y) > 0.7) {
+					*isOnGround = true;
+				}
+			}
+		}
+		return true;
+	} else {
+		glm::vec3 a = ToGlm(cb.m_convexFromWorld),
+				  b = ToGlm(cb.m_convexToWorld);
+		printf("sweep MISS: %f %f %f   ->   %f %f %f\n", a.x, a.y, a.z, b.x, b.y,
+			   b.z);
+	}
+	DEBUG("FALSE ............................................");
 	*finalCorrectedPosition = end - center;
 	return false;
 }
@@ -385,7 +357,7 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 	if (hitNormal) {
 		*hitNormal = ToGlm(cb.m_hitNormalWorld);
 		*hitNormal = glm::normalize(*hitNormal);
-		if (glm::dot(*hitNormal, end-start) > 0) {
+		if (glm::dot(*hitNormal, end - start) > 0) {
 			*hitNormal = -*hitNormal;
 		}
 	}
