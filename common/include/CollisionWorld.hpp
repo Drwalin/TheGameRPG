@@ -33,7 +33,7 @@ public:
 		glm::vec3 pos;
 	};
 	
-	void Debug();
+	void Debug() const;
 
 	void LoadStaticCollision(const TerrainCollisionData *data);
 

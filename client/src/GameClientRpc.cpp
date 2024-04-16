@@ -35,6 +35,7 @@ void GameClient::BindRpc()
 void GameClient::JoinRealm(const std::string &realmName)
 {
 	realm.Reinit(realmName);
+	ServerRpcProxy::Ping(this, true);
 }
 
 void GameClient::SpawnEntities(icon7::ByteReader *reader)

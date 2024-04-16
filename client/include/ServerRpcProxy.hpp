@@ -12,7 +12,7 @@ namespace ServerRpcProxy
 void Login(GameClient *gameClient, std::string username, std::string password);
 
 void UpdatePlayer(GameClient *gameClient,
-				  const EntityLastAuthoritativeMovementState &state);
+				  const EntityMovementState &state);
 
 void GetEntitiesData(GameClient *gameClient,
 					 const std::vector<uint64_t> &entities);
