@@ -34,9 +34,9 @@ public:
 
 public:
 	Timer timer;
-	uint64_t minDeltaTicks = 50;
-	uint64_t maxDeltaTicks = 200;
-	uint64_t ticksBeforeIgnoringInputMovement = 500;
+	int64_t minDeltaTicks = 50;
+	int64_t maxDeltaTicks = 200;
+	int64_t ticksBeforeIgnoringInputMovement = 500;
 
 	float gravity = -9.81f;
 

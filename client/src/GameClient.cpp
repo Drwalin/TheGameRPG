@@ -139,11 +139,44 @@ glm::vec3 GameClient::GetRotation()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		return {};
+		return {0,0,0};
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
 	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
 	return oldState.oldState.rot;
+}
+
+glm::vec3 GameClient::GetPosition()
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return {0, 0, 0};
+	}
+	flecs::entity player = realm.Entity(localPlayerEntityId);
+	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
+	return oldState.oldState.pos;
+}
+
+glm::vec3 GameClient::GetVelocity()
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return {0, 0, 0};
+	}
+	flecs::entity player = realm.Entity(localPlayerEntityId);
+	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
+	return oldState.oldState.vel;
+}
+
+EntityShape GameClient::GetShape()
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return {0, 0};
+	}
+	flecs::entity player = realm.Entity(localPlayerEntityId);
+	auto shape = *player.get<EntityShape>();
+	return shape;
 }
 
 void GameClient::SetRotation(glm::vec3 rotation)
@@ -167,10 +200,11 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
 	auto oldState = *player.get<EntityLastAuthoritativeMovementState>();
-	if (oldState.oldState.onGround == false) {
-		// TODO: no air control implemented
-		return;
-	}
+// 	if (oldState.oldState.onGround == false) {
+// 		DEBUG("Trying to move in the air");
+// 		// TODO: no air control implemented
+// 		return;
+// 	}
 
 	glm::vec3 vel;
 	vel.x = horizontalDirection.x;

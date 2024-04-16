@@ -22,7 +22,7 @@ void ServerCore::BindRpc()
 
 	rpc.RegisterMessage(
 		ServerRpcFunctionNames::Ping,
-		[](icon7::Peer *peer, icon7::Flags flags, uint64_t payload) {
+		[](icon7::Peer *peer, icon7::Flags flags, int64_t payload) {
 			ClientRpcProxy::Pong(peer, flags, payload);
 		},
 		nullptr, nullptr);

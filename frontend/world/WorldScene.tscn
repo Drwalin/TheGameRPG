@@ -21,15 +21,14 @@ autoplay = true
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.638177, 0.637161, -0.432153, 0, 0.561318, 0.8276, 0.76989, -0.528155, 0.35822, 0, 0, 0)
+transform = Transform3D(0.638177, 0.637161, -0.432153, 0, 0.561318, 0.8276, 0.76989, -0.528155, 0.35822, 0, 6.83921, 0)
 
 [node name="EntitiesContainer" type="Node" parent="."]
-unique_name_in_owner = true
 
 [node name="PlayerCamera3D" type="Camera3D" parent="."]
-unique_name_in_owner = true
 transform = Transform3D(-0.649185, 0.0934647, -0.754866, -0.000607168, 0.992358, 0.123392, 0.76063, 0.0805627, -0.644167, -41.704, 100, -32.225)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(120, 0, 0, 0, 2, 0, 0, 0, 120, 0, -1, 0)
+gi_lightmap_scale = 3
 mesh = SubResource("BoxMesh_aglti")

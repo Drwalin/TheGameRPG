@@ -1,9 +1,13 @@
 extends GameFrontend;
 class_name GameFrontendScript;
 
-
+var camera:Camera3D;
 
 var SENSITIVITY:float = 0.01;
+
+func _ready():
+	InternalReady();
+	camera = GetPlayerCamera();
 
 func Rotate(x: float, y: float)->void:
 	var rot = GetPlayerRotation();
@@ -36,17 +40,24 @@ func _input(event)->void:
 
 func _process(delta: float)->void:
 	InternalProcess();
-	var cam:Camera3D = GetPlayerCamera();
-	if cam != null:
+	
+	if camera != null:
 		var mov:Vector3 = Vector3.ZERO;
 		var dir = Input.get_vector("movement_left", "movement_right", "movement_forward", "movement_backward");
-		if dir != Vector2.ZERO:
+		if dir.length_squared() > 0.01:
 			var d = Vector3(dir.x, 0, dir.y).normalized();
 			var rot = GetPlayerRotation();
 			mov += d.rotated(Vector3(0,1,0), rot.y);
-		if Input.is_action_just_pressed("movement_jump"):
+		if Input.is_action_pressed("movement_jump"): #.is_action_just_pressed("movement_jump"):
 			PlayerTryJump();
 		SetPlayerDirectionMovement(Vector2(mov.x, mov.z));
 	else:
 		SetPlayerDirectionMovement(Vector2(0,0));
+	
+	var pos = gameFrontend.GetPlayerPosition();
+	var rot = gameFrontend.GetPlayerRotation();
+	camera.set_rotation(rot);
+	var d = camera.basis * Vector3(0, 5, 0);
+	camera.position = pos - d;
+	
 	pass;

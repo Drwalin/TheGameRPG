@@ -32,6 +32,8 @@ public:
 		EntityShape shape;
 		glm::vec3 pos;
 	};
+	
+	void Debug();
 
 	void LoadStaticCollision(const TerrainCollisionData *data);
 
@@ -42,7 +44,7 @@ public:
 	// returns true if any collision happens
 	bool TestCollisionMovement(EntityShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
-							   bool *isOnGround) const;
+							   bool *isOnGround, glm::vec3 *normal) const;
 	bool RayTestFirstHit(glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
 						 glm::vec3 *hitNormal, uint64_t *entityId,
 						 float *travelFactor, bool *hasNormal,

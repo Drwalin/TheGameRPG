@@ -6,8 +6,9 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include "godot_cpp/variant/utility_functions.hpp"
 
-#include "GodotGlm.hpp"
 #include "GameFrontend.hpp"
+
+#include "GodotGlm.hpp"
 
 #include "EntityPrefabScript.hpp"
 
@@ -30,13 +31,8 @@ void EntityPrefabScript::_ready()
 		return;
 	}
 
-	// 	gameFrontend = (GameFrontend
-	// *)(get_tree()->get_root()->get_node_or_null("gameFrontend"));
-	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
-	// 	gameFrontend = (GameFrontend *)(get_node_or_null("/root/gameFrontend"));
-	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
-	// 	gameFrontend = (GameFrontend *)(get_node_or_null("/gameFrontend"));
-	// 	DEBUG("gameFrontend from singleton: %p", gameFrontend);
+	gameFrontend =
+		(GameFrontend *)(get_tree()->get_root()->get_node_or_null("gameFrontend"));
 
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;

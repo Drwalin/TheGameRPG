@@ -39,7 +39,7 @@ bool RealmServer::OneEpoch()
 	busy |= Realm::OneEpoch();
 	// TODO: here do other server updates, AI, other mechanics and logic
 
-	uint64_t dt = 0;
+	int64_t dt = 0;
 	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
 	if (dt >= sendUpdateDeltaTicks) {
 		ClientRpcProxy::Broadcast_UpdateEntities(this);
