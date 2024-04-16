@@ -6,6 +6,15 @@
 
 #include "GlmSerialization.hpp"
 
+#include <random>
+
+static inline float R() {
+	static std::random_device rd;
+	static std::mt19937_64 mt(rd());
+	static std::uniform_real_distribution<float> dist(-50, 50);
+	return dist(mt);
+}
+
 struct EntityShape {
 	float height = 1.75f;
 	float width = 0.5f;
@@ -19,8 +28,8 @@ struct EntityShape {
 };
 
 struct EntityMovementState {
-	uint64_t timestamp = 0;
-	glm::vec3 pos = {10, 100, 10};
+	int64_t timestamp = 0;
+	glm::vec3 pos = {R(), 10, R()};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;

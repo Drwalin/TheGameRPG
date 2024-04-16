@@ -14,20 +14,20 @@ public:
 		lastTickCountingTime = startTickCountingTime;
 	}
 
-	inline void Start(uint64_t currentTick)
+	inline void Start(int64_t currentTick)
 	{
 		Start();
 		this->currentTick = currentTick;
 		startTickCountingTime -= std::chrono::milliseconds(currentTick);
 	}
 
-	inline uint64_t CalcCurrentTick() const
+	inline int64_t CalcCurrentTick() const
 	{
 		const auto currentTime = std::chrono::steady_clock::now();
 		return TicksBetween(startTickCountingTime, currentTime);
 	}
 
-	inline static uint64_t
+	inline static int64_t
 	TicksBetween(std::chrono::steady_clock::time_point start,
 				 std::chrono::steady_clock::time_point end)
 	{
@@ -40,8 +40,8 @@ public:
 	 * return old value of currentTime if delta time is not sufficient
 	 * otherwise return true current tick
 	 */
-	uint64_t Update(uint64_t maxDeltaTicks, uint64_t *deltaTicks,
-					uint64_t *trueCurrentTick)
+	int64_t Update(int64_t maxDeltaTicks, int64_t *deltaTicks,
+					int64_t *trueCurrentTick)
 	{
 		const auto currentTime = std::chrono::steady_clock::now();
 		*deltaTicks = TicksBetween(lastTickCountingTime, currentTime);
@@ -59,5 +59,5 @@ public:
 public:
 	std::chrono::steady_clock::time_point startTickCountingTime;
 	std::chrono::steady_clock::time_point lastTickCountingTime;
-	uint64_t currentTick;
+	int64_t currentTick;
 };

@@ -31,7 +31,7 @@ private: // rpc methods
 	void SetGravity(float gravity);
 	void LoginFailed();
 	void LoginSuccessfull();
-	void Pong(uint64_t localTick, uint64_t remoteTick);
+	void Pong(int64_t localTick, int64_t remoteTick);
 
 	void SpawnEntity(uint64_t serverId,
 					 const EntityLastAuthoritativeMovementState state,
@@ -62,6 +62,9 @@ public: // client input api
 	void ProvideMovementInputDirection(glm::vec2 horizontalDirection);
 	void TryPerformJump();
 	glm::vec3 GetRotation();
+	glm::vec3 GetPosition();
+	glm::vec3 GetVelocity();
+	EntityShape GetShape();
 
 	void PerformSendPlayerMovementInput();
 
@@ -81,7 +84,7 @@ public:
 	bool needSendPlayerMovementInput;
 	Timer authoritativePlayerSendTimer;
 	Timer pingTimer;
-	uint64_t pingMs = 0;
+	int64_t pingMs = 0;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;
 	std::unordered_map<uint64_t, uint64_t> mapLocalEntityIdToServerEntityId;

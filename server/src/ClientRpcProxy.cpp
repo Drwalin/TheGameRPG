@@ -22,11 +22,11 @@ void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					 ClientRpcFunctionNames::SetPlayerEntityId, playerEntityId);
 }
 
-void Pong(icon7::Peer *peer, icon7::Flags flags, uint64_t data)
+void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data)
 {
 	// TODO: correct
 	PeerData *peerData = ((PeerData *)(peer->userPointer));
-	uint64_t currentTick = 0;
+	int64_t currentTick = 0;
 	if (peerData) {
 		if (peerData->realm) {
 			currentTick = peerData->realm->timer.CalcCurrentTick();
@@ -158,6 +158,7 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 
 				writer.op((uint64_t)entity.id());
 				writer.op(state);
+				written++;
 			});
 	}
 	if (written > 0) {

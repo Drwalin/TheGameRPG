@@ -33,12 +33,14 @@ void Realm::Init(const std::string &realmName)
 	col.vertices.push_back({100, 0, -100});
 	col.vertices.push_back({-100, 0, 100});
 	col.vertices.push_back({100, 0, 100});
-	col.indices.push_back(0);
-	col.indices.push_back(1);
+	
 	col.indices.push_back(2);
 	col.indices.push_back(1);
+	col.indices.push_back(0);
 	col.indices.push_back(2);
 	col.indices.push_back(3);
+	col.indices.push_back(1);
+	
 	collisionWorld.LoadStaticCollision(&col);
 }
 
@@ -54,6 +56,11 @@ uint64_t Realm::NewEntity()
 	entity.add<EntityName>();
 	entity.add<EntityMovementParameters>();
 	entity.add<EntityModelName>();
+	
+	auto s = *entity.get<EntityLastAuthoritativeMovementState>();
+	s.oldState.timestamp = timer.currentTick;
+	entity.set<EntityLastAuthoritativeMovementState>(s);
+	entity.set<EntityMovementState>(s.oldState);
 
 	return entity.id();
 }
@@ -107,7 +114,7 @@ void Realm::RegisterSystems()
 
 bool Realm::OneEpoch()
 {
-	uint64_t deltaTicks = 0;
+	int64_t deltaTicks = 0;
 	timer.Update(maxDeltaTicks, &deltaTicks, nullptr);
 
 	if (deltaTicks >= maxDeltaTicks) {

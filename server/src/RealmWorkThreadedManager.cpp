@@ -116,7 +116,7 @@ void RealmWorkThreadedManager::SingleRunner()
 			if (countBusySinceLastSleep > 5) {
 				sleepMilliseconds = std::max(sleepMilliseconds - 1, 1);
 			} else if (countBusySinceLastSleep == 0) {
-				sleepMilliseconds = std::min(sleepMilliseconds + 1, 10);
+				sleepMilliseconds = std::min(sleepMilliseconds + 1, 35);
 			}
 			std::this_thread::sleep_for(
 				std::chrono::milliseconds(sleepMilliseconds));

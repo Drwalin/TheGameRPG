@@ -11,7 +11,7 @@ func _on_connect_to_server_pressed():
 func _OnLoginPressed():
 	username = $Username.text;
 	password = $Password.text;
-	if username != "" && password != "":
+	if username != "":
 		gameFrontend.Login(username, password);
 		hide();
 	else:

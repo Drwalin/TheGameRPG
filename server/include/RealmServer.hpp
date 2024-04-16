@@ -52,7 +52,7 @@ public:
 	std::unordered_map<icon7::Peer *, uint64_t> peers;
 
 	Timer sendEntitiesToClientsTimer;
-	uint64_t sendUpdateDeltaTicks = 250;
+	int64_t sendUpdateDeltaTicks = 250;
 	flecs::query<const EntityLastAuthoritativeMovementState>
 		queryLastAuthoritativeState;
 

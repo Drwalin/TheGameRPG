@@ -4,9 +4,58 @@
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
+#include "../include/GlmBullet.hpp"
+
 #include "../include/Realm.hpp"
 
 #include "../include/CollisionWorld.hpp"
+
+void CollisionWorld::Debug()
+{
+	auto objs = collisionWorld->getCollisionObjectArray();
+	for (int i = 0; i < objs.size(); ++i) {
+		auto o = objs.at(i);
+
+		auto shape = o->getCollisionShape();
+
+		if (auto *s = dynamic_cast<btCylinderShape *>(shape)) {
+			DEBUG("shape cylinder");
+		} else if (auto *s = dynamic_cast<btCapsuleShape *>(shape)) {
+			DEBUG("shape capsule");
+		} else if (auto *s = dynamic_cast<btSphereShape *>(shape)) {
+			DEBUG("shape sphere");
+		} else if (auto *s = dynamic_cast<btBvhTriangleMeshShape *>(shape)) {
+			auto a = o->getWorldTransform().getOrigin();
+			DEBUG("shape triangles: %f %f %f", a.x(), a.y(), a.z());
+			auto m = s->getMeshInterface();
+			class Cb : public btInternalTriangleIndexCallback
+			{
+			public:
+				virtual void internalProcessTriangleIndex(btVector3 *triangle,
+														  int partId,
+														  int triangleIndex)
+				{
+					processTriangle(triangle, partId, triangleIndex);
+				}
+
+				virtual void processTriangle(btVector3 *t, int partId,
+											 int triangleIndex)
+				{
+					DEBUG("partId: %i, triangleIndex: %i", partId,
+						  triangleIndex);
+
+					DEBUG("Triangle: (%f %f %f) (%f %f %f) (%f %f %f)",
+						  t[0].x(), t[0].y(), t[0].z(), t[1].x(), t[1].y(),
+						  t[1].z(), t[2].x(), t[2].y(), t[2].z());
+				}
+
+			} cb;
+
+			m->InternalProcessAllTriangles(&cb, {-100000, -100000, -100000},
+										   {100000, 100000, 100000});
+		}
+	}
+}
 
 CollisionWorld::CollisionWorld(Realm *realm)
 {
@@ -16,6 +65,7 @@ CollisionWorld::CollisionWorld(Realm *realm)
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	collisionWorld =
 		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
+	updateWorldBvh = true;
 }
 
 CollisionWorld::~CollisionWorld()
@@ -98,9 +148,11 @@ void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data)
 bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 							   glm::vec3 pos)
 {
-	if (entities.count(entityId) != 0) {
+	auto it = entities.find(entityId);
+	if (it != entities.end()) {
 		DEBUG("Error: entity with ID=%lu already exists in CollisionWorld.",
 			  entityId);
+		UpdateEntityBvh(entityId, shape, pos);
 		return false;
 	}
 	btCapsuleShape *_shape =
@@ -108,8 +160,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
 	entities[entityId] = object;
-	object->setWorldTransform(
-		btTransform(btQuaternion(), {pos.x, pos.y, pos.z}));
+	object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
 	object->setUserIndex2(((uint32_t)(entityId)) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entityId >> 32)) & 0xFFFFFFFF);
 	collisionWorld->addCollisionObject(object, FILTER_GROUP_ENTITY,
@@ -125,8 +176,7 @@ void CollisionWorld::UpdateEntityBvh(uint64_t entityId, EntityShape shape,
 	if (it == entities.end()) {
 		return;
 	}
-	it->second->setWorldTransform(
-		btTransform(btQuaternion(), {pos.x, pos.y, pos.z}));
+	it->second->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
 	updateWorldBvh = true;
 }
 
@@ -143,39 +193,104 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 										   glm::vec3 end,
 										   glm::vec3 *finalCorrectedPosition,
-										   bool *isOnGround) const
+										   bool *isOnGround,
+										   glm::vec3 *normal) const
 {
-	btCapsuleShape _shape(shape.width * 0.5, shape.height);
-	btCollisionWorld::ClosestConvexResultCallback cb(
-		{start.x, start.y, start.z}, {end.x, end.y, end.z});
-	cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
-	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
-	collisionWorld->convexSweepTest(
-		&_shape, btTransform{btQuaternion{}, {start.x, start.y, start.z}},
-		btTransform{btQuaternion{}, {end.x, end.y, end.z}}, cb, 0);
-
+	glm::vec3 center = glm::vec3{0, shape.height * 0.5, 0};
+	start += center;
+	end += center;
+	btCapsuleShape _shape(shape.width * 0.5, shape.height - shape.width);
 	if (isOnGround) {
 		*isOnGround = false;
 	}
+	const int ITERATIONS = 1;
+	for (int i = 0; i < ITERATIONS; ++i) {
+		btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
+														 ToBullet(end));
+		cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
+		cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
+		collisionWorld->convexSweepTest(
+			&_shape, btTransform{btQuaternion{}, ToBullet(start)},
+			btTransform{btQuaternion{}, ToBullet(end)}, cb, 0);
 
-	if (cb.m_hitCollisionObject != nullptr) {
-		btVector3 v = cb.m_convexToWorld;
-		*finalCorrectedPosition = glm::vec3{v.x(), v.y(), v.z()};
+		if (cb.m_hitCollisionObject != nullptr) {
+// 			glm::vec3 relHitpoint = ToGlm(cb.m_hitPointWorld) - start;
+// 			{
+// 				glm::vec3 m = ToGlm(cb.m_hitPointWorld);
+// 				DEBUG("hitpoint = (%f, %f, %f)", m.x, m.y, m.z);
+// 			}
 
-		if (isOnGround) {
-			glm::vec3 hp, normal;
-			if (RayTestFirstHitTerrain(
-					*finalCorrectedPosition + glm::vec3{0.0f, 0.1f, 0.0f},
-					*finalCorrectedPosition - glm::vec3{0.0f, 0.1f, 0.0f}, &hp,
-					&normal, nullptr)) {
-				if (fabs(normal.y) > 0.7) {
-					*isOnGround = true;
+			glm::vec3 dm = (end - start);
+			glm::vec3 n = ToGlm(cb.m_hitNormalWorld);
+			if (glm::dot(n, dm) > 0)
+				n = -n;
+			if (normal)
+				*normal = n;
+			
+			*finalCorrectedPosition = start + dm * cb.m_closestHitFraction;
+
+			/*
+			glm::vec3 sup =
+				ToGlm(_shape.localGetSupportingVertex(ToBullet(relHitpoint)));
+			{
+				glm::vec3 m = sup;
+				DEBUG("sup = (%f, %f, %f)", m.x, m.y, m.z);
+			}
+
+			glm::vec3 newDeltaMoveSupport = relHitpoint - sup;
+
+			float ddm = glm::dot(dm, dm);
+			float dndms = glm::dot(newDeltaMoveSupport, newDeltaMoveSupport);
+			if (ddm > 0.001 && dndms > 0.001) {
+				glm::vec3 moveDir = glm::normalize(dm);
+				float d = glm::dot(newDeltaMoveSupport, moveDir);
+				if (d > 0) {
+					glm::vec3 newMove = moveDir * d;
+					end = newMove * 0.99f + start;
+					*finalCorrectedPosition = end;
+					if (i < ITERATIONS - 1) {
+						continue;
+					}
+				} else {
+					*finalCorrectedPosition = start;
+				}
+				
+				
+
+// 				float p = glm::dot(dm, newDeltaMoveSupport);
+// 				if (p < 0) {
+// 					// TODO: what to do?
+// 				} else {
+// 					glm::vec3 c = dm * (p / ddm);
+// 					end = c + start;
+// 					*finalCorrectedPosition = end;
+// 					if (i != ITERATIONS-1) {
+// 						continue;
+// 					}
+// 				}
+			} else {
+				btVector3 v = cb.m_convexToWorld;
+				*finalCorrectedPosition = ToGlm(v);
+			}
+			*/
+
+			if (isOnGround) {
+				glm::vec3 hp, _normal;
+				if (RayTestFirstHitTerrain(
+						*finalCorrectedPosition - center + glm::vec3{0.0f, 0.1f, 0.0f},
+						*finalCorrectedPosition - center - glm::vec3{0.0f, 0.1f, 0.0f},
+						&hp, &_normal, nullptr)) {
+					if (fabs(_normal.y) > 0.7) {
+						*isOnGround = true;
+					}
 				}
 			}
+			*finalCorrectedPosition -= center;
+			return true;
 		}
-
-		return true;
+		break;
 	}
+	*finalCorrectedPosition = end - center;
 	return false;
 }
 
@@ -258,8 +373,7 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 {
 	btCollisionWorld::ClosestRayResultCallback cb({}, {});
 	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
-	collisionWorld->rayTest({start.x, start.y, start.z}, {end.x, end.y, end.z},
-							cb);
+	collisionWorld->rayTest(ToBullet(start), ToBullet(end), cb);
 	if (cb.hasHit() == false) {
 		if (travelFactor)
 			*travelFactor = 1;
@@ -267,12 +381,13 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 	}
 
 	if (hitPosition)
-		*hitPosition = {cb.m_hitPointWorld.x(), cb.m_hitPointWorld.y(),
-						cb.m_hitPointWorld.z()};
+		*hitPosition = ToGlm(cb.m_hitPointWorld);
 	if (hitNormal) {
-		*hitNormal = {cb.m_hitNormalWorld.x(), cb.m_hitNormalWorld.y(),
-					  cb.m_hitNormalWorld.z()};
+		*hitNormal = ToGlm(cb.m_hitNormalWorld);
 		*hitNormal = glm::normalize(*hitNormal);
+		if (glm::dot(*hitNormal, end-start) > 0) {
+			*hitNormal = -*hitNormal;
+		}
 	}
 
 	if (travelFactor)

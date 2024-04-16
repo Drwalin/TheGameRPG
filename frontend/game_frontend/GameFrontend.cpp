@@ -1,4 +1,5 @@
 #include <godot_cpp/classes/window.hpp>
+#include "godot_cpp/classes/engine.hpp"
 
 #include "GodotGlm.hpp"
 
@@ -26,27 +27,43 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, PlayerTryJump);
 	METHOD_ARGS(GameFrontend, SetPlayerRotation, "rotation");
 	METHOD_NO_ARGS(GameFrontend, GetPlayerRotation);
+	METHOD_NO_ARGS(GameFrontend, GetPlayerPosition);
+	METHOD_NO_ARGS(GameFrontend, GetPlayerVelocity);
+	METHOD_NO_ARGS(GameFrontend, GetPlayerHeight);
+	METHOD_NO_ARGS(GameFrontend, GetPlayerWidth);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerCamera);
 
 	METHOD_NO_ARGS(GameFrontend, IsConnected);
 	METHOD_NO_ARGS(GameFrontend, IsConnecting);
 
+	METHOD_NO_ARGS(GameFrontend, InternalReady);
 	METHOD_NO_ARGS(GameFrontend, InternalProcess);
 }
 
-void GameFrontend::_ready()
+void GameFrontend::_ready() { InternalReady(); }
+void GameFrontend::_process(double dt) { InternalProcess(); }
+void GameFrontend::InternalReady()
 {
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
+
 	gameClientFrontend = new GameClientFrontend(this);
 	gameClientFrontend->Init();
 	playerCamera =
 		(Camera3D *)(this->get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
 	entitiesContainer =
 		(Node *)(this->get_node_or_null("/root/SceneRoot/EntitiesContainer"));
-	DEBUG("Entities container: %p", entitiesContainer);
-	DEBUG("Camera: %p", playerCamera);
 }
 
-void GameFrontend::InternalProcess() { gameClientFrontend->RunOneEpoch(); }
+void GameFrontend::InternalProcess()
+{
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
+
+	gameClientFrontend->RunOneEpoch();
+}
 
 void GameFrontend::Connect(const String &ip, int64_t port)
 {
@@ -77,6 +94,25 @@ void GameFrontend::SetPlayerRotation(const Vector3 &rot)
 Vector3 GameFrontend::GetPlayerRotation()
 {
 	return ToGodot(gameClientFrontend->GetRotation());
+}
+
+Vector3 GameFrontend::GetPlayerPosition()
+{
+	return ToGodot(gameClientFrontend->GetPosition());
+}
+
+Vector3 GameFrontend::GetPlayerVelocity()
+{
+	return ToGodot(gameClientFrontend->GetVelocity());
+}
+
+float GameFrontend::GetPlayerHeight()
+{
+	return gameClientFrontend->GetShape().height;
+}
+float GameFrontend::GetPlayerWidth()
+{
+	return gameClientFrontend->GetShape().width;
 }
 
 Camera3D *GameFrontend::GetPlayerCamera() { return playerCamera; }

@@ -31,7 +31,10 @@ public: // Godot bound functions
 	static void _bind_methods();
 
 	void _ready() override;
+	void _process(double dt) override;
 
+	// call it from within _ready script-overriden method
+	void InternalReady();
 	// call it from within _process script-overriden method
 	void InternalProcess();
 
@@ -46,6 +49,10 @@ private: // Godot callbacks
 	void PlayerTryJump();
 	void SetPlayerRotation(const Vector3 &rot);
 	Vector3 GetPlayerRotation();
+	Vector3 GetPlayerPosition();
+	Vector3 GetPlayerVelocity();
+	float GetPlayerHeight();
+	float GetPlayerWidth();
 	Camera3D *GetPlayerCamera();
 
 	bool IsConnected();
