@@ -1,14 +1,10 @@
 
-#include <chrono>
-#include <thread>
-
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
 #include <icon7/Command.hpp>
 #include <icon7/Flags.hpp>
 
 #include "../include/ServerCore.hpp"
-#include "../include/Realm.hpp"
 
 ServerCore::ServerCore() { host = nullptr; }
 
@@ -19,33 +15,27 @@ ServerCore::~ServerCore()
 	host->WaitStopRunning();
 	delete host;
 	host = nullptr;
-	for (auto it : realms) {
-		delete it.second;
-	}
 }
 
 void ServerCore::CreateRealm(std::string realmName)
 {
-	Realm *realm = new Realm();
-	realm->realmName = realmName;
-	realm->Init();
-	// TODO: add map entities to Realm
-	realms[realmName] = realm;
-	realmNames.push_back(realmName);
+	RealmServer *realm = new RealmServer();
 	realm->serverCore = this;
 	realm->rpc = &rpc;
-	realm->RunAsync();
+	realm->Init(realmName);
+	realmManager.AddNewRealm(realm);
+	spawnRealm = realmName;
 }
 
 void ServerCore::Disconnect(icon7::Peer *peer)
 {
-	Realm *realm = ((PeerData *)(peer->userPointer))->realm;
+	RealmServer *realm = ((PeerData *)(peer->userPointer))->realm;
 	if (realm) {
 		realm->DisconnectPeer(peer);
 	}
 }
 
-void ServerCore::StartListening(uint16_t port, int useIpv4)
+void ServerCore::StartService()
 {
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();
@@ -56,16 +46,13 @@ void ServerCore::StartListening(uint16_t port, int useIpv4)
 	host->SetOnDisconnect(_OnPeerDisconnect);
 
 	host->SetRpcEnvironment(&rpc);
-	host->ListenOnPort(port, useIpv4 ? icon7::IPv4 : icon7::IPv6);
 }
 
-void ServerCore::RunNetworkLoopSync()
+void ServerCore::Listen(const std::string &addressInterface, uint16_t port,
+						int useIpv4)
 {
-	RunNetworkLoopAsync();
-	std::this_thread::sleep_for(std::chrono::seconds(10));
-	while (host->IsRunningAsync()) {
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
+	host->ListenOnPort(addressInterface, port,
+					   useIpv4 ? icon7::IPv4 : icon7::IPv6);
 }
 
 void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }
@@ -79,27 +66,25 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 	data->userName = "";
 	peer->userPointer = data;
 
-	DEBUG("New peer connected: %p", peer);
-
-	((ServerCore *)(peer->host->userPointer))->RequestRealms(peer);
-
-	int count = 0;
-	peer->host->ForEachPeer([&](auto p) { count++; });
-	DEBUG("Total peers count on connect: %i", count);
+	auto core = ((ServerCore *)(peer->host->userPointer));
+	// TODO: get player data from database and call core->ConnectPeerToRealm
+	core->ConnectPeerToRealm(peer, core->spawnRealm);
 }
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm) {
-		data->realm->DisconnectPeer(peer);
-		data->peer = nullptr;
-		data->userName = "";
+		std::vector<uint8_t> v;
+		data->realm->ExecuteOnRealmThread(
+			peer, v,
+			[](icon7::Peer *peer, std::vector<uint8_t> &, void *realm) {
+				((RealmServer *)realm)->DisconnectPeer(peer);
+				PeerData *data = ((PeerData *)(peer->userPointer));
+				data->peer = nullptr;
+				data->userName = "";
+				delete data;
+				peer->userPointer = nullptr;
+			});
 	}
-	delete data;
-	peer->userPointer = nullptr;
-
-	int count = 0;
-	peer->host->ForEachPeer([&](auto p) { count++; });
-	DEBUG("Total peers count on disconnect: %i", count);
 }
