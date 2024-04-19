@@ -2,15 +2,17 @@
 
 #include <string>
 
+#include <flecs.h>
+
 #include <icon7/Peer.hpp>
 
-class Realm;
+class RealmServer;
 
 class PeerData
 {
 public:
 	std::string userName;
 	std::shared_ptr<icon7::Peer> peer;
-	Realm *realm = nullptr;
+	RealmServer *realm = nullptr;
 	uint64_t entityId = 0;
 };

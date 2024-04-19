@@ -1,0 +1,13 @@
+[configuration]
+entry_symbol = "game_frontend_library_init"
+compatibility_minimum = "4.2.1"
+
+[libraries]
+linux.debug.x86_64 = "res://bin/libgame_frontend.so"
+linux.release.x86_64 = "res://bin/libgame_frontend.so"
+linux.x86_64.debug = "res://bin/libgame_frontend.so"
+linux.x86_64.release = "res://bin/libgame_frontend.so"
+windows.debug.x86_64 = "res://bin/libgame_frontend.dll"
+windows.release.x86_64 = "res://bin/libgame_frontend.dll"
+windows.x86_64.debug = "res://bin/libgame_frontend.dll"
+windows.x86_64.release = "res://bin/libgame_frontend.dll"
