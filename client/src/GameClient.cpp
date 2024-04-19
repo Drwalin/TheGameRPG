@@ -212,22 +212,22 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 		return;
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityMovementState>();
-// 	if (oldState.oldState.onGround == false) {
-// 		DEBUG("Trying to move in the air");
-// 		// TODO: no air control implemented
-// 		return;
-// 	}
+	auto state = *player.get<EntityMovementState>();
+	if (state.onGround == false) {
+		DEBUG("Trying to move in the air");
+		// TODO: no air control implemented
+		return;
+	}
 
 	glm::vec3 vel;
 	vel.x = horizontalDirection.x;
 	vel.z = horizontalDirection.y;
-	vel.y = 0;
 	vel *= player.get<EntityMovementParameters>()->maxMovementSpeedHorizontal;
+	vel.y = state.vel.y;
 
-	oldState.vel = vel;
+	state.vel = vel;
 
-	player.set(oldState);
+	player.set(state);
 	needSendPlayerMovementInput = true;
 }
 
@@ -238,18 +238,18 @@ void GameClient::TryPerformJump()
 		return;
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
-	auto oldState = *player.get<EntityMovementState>();
-	if (oldState.onGround == false) {
+	auto state = *player.get<EntityMovementState>();
+	if (state.onGround == false) {
 		// TODO: no air jumps
 		return;
 	}
 
-	glm::vec3 vel = oldState.vel;
+	glm::vec3 vel = state.vel;
 	// TODO: use some true jump velocity
-	vel.y = 5;
+	vel.y = 5.0f;
 
-	oldState.vel = vel;
+	state.vel = vel;
 
-	player.set(oldState);
+	player.set(state);
 	needSendPlayerMovementInput = true;
 }
