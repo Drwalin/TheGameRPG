@@ -207,7 +207,7 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 	btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
 													 ToBullet(end));
 // 	auto A = std::chrono::steady_clock::now();
-	for (int i=0; i<1; ++i) {
+	for (int i=0; i<10; ++i) {
 		btCollisionWorld::ClosestConvexResultCallback _cb(ToBullet(start),
 														 ToBullet(end));
 		cb = _cb;
@@ -215,7 +215,10 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 		cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
 		collisionWorld->convexSweepTest(
 			&_shape, btTransform{btQuaternion{}, ToBullet(start)},
-			btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.01);
+			btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.03);
+		if (cb.hasHit()) {
+			break;
+		}
 	}
 // 	auto B = std::chrono::steady_clock::now();
 // 	auto C = std::chrono::duration_cast<std::chrono::nanoseconds>(B-A).count();
@@ -233,21 +236,14 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 			*normal = n;
 
 		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
 
 		if (isOnGround) {
 			glm::vec3 hp, _normal;
 			if (RayTestFirstHitTerrain(
-					*finalCorrectedPosition + glm::vec3{0.0f, 0.1f, 0.0f},
-					*finalCorrectedPosition - glm::vec3{0.0f, 0.1f, 0.0f}, &hp,
+					*finalCorrectedPosition + glm::vec3{0.0f, 0.07f, 0.0f},
+					*finalCorrectedPosition - glm::vec3{0.0f, 0.13f, 0.0f}, &hp,
 					&_normal, nullptr)) {
 				if (fabs(_normal.y) > 0.7) {
 					*isOnGround = true;
