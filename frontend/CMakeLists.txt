@@ -8,10 +8,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
-include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
-include_directories(../ICon7-godot-client/ICon7/include)
-include_directories(../ICon7-godot-client/godot-cpp/include)
+include_directories(../godot-cpp/include)
 include_directories(../common/include)
+include_directories(../client/include)
 include_directories(game_frontend)
 
 aux_source_directory(./game_frontend src_files)

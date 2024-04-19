@@ -15,12 +15,16 @@
 
 void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
+	DEBUG("");
 	if (p_level !=
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+	DEBUG("");
 	godot::ClassDB::register_class<GameFrontend>();
+	DEBUG("");
 	godot::ClassDB::register_class<EntityPrefabScript>();
+	DEBUG("");
 	// REGISTER CLASSES HERE LATER
 }
 
