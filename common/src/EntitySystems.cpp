@@ -31,14 +31,14 @@ void UpdateMovement(
 
 	float dt = _dt * 0.001f;
 
-	{
-		glm::vec3 vel = prev.vel;
-		glm::vec3 pos = prev.pos;
-		DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
-			  "%f %f)",
-			  entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks,
-			  pos.x, pos.y, pos.z);
-	}
+// 	{
+// 		glm::vec3 vel = prev.vel;
+// 		glm::vec3 pos = prev.pos;
+// 		DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
+// 			  "%f %f)",
+// 			  entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks,
+// 			  pos.x, pos.y, pos.z);
+// 	}
 
 	if (next.onGround == true && prev.vel.y < 0.1) {
 		glm::vec3 vel = prev.vel;
@@ -46,7 +46,7 @@ void UpdateMovement(
 		if (fabs(vel.x) + fabs(vel.z) + fabs(vel.y) < 0.005) {
 			next = prev;
 			next.timestamp = currentTick;
-			DEBUG("On ground, bail out calculations");
+//			DEBUG("On ground, bail out calculations");
 			return;
 		}
 
@@ -88,14 +88,12 @@ void UpdateMovement(
 
 		glm::vec3 p1 = prev.pos, p2 = next.pos;
 
-		DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f),        %s",
-			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
+//		DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f),        %s",
+//			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
 	} else {
 		glm::vec3 acc = {0, realm->gravity, 0};
 
 		glm::vec3 vel = prev.vel; // + acc * dt;
-
-		// 		DEBUG("Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
 
 		if (vel.y < -50) {
 			vel.y = -50;
@@ -108,16 +106,6 @@ void UpdateMovement(
 		glm::vec3 movement = prev.vel * dt; // + acc * (dt * dt * 0.5f);
 		glm::vec3 newPos = oldPos + movement;
 
-		// 		{
-		// 			glm::vec3 m = movement;
-		// 			DEBUG("movement = (%f, %f, %f)", m.x, m.y, m.z);
-		// 		}
-		//
-		// 		{
-		// 			glm::vec3 m = acc;
-		// 			DEBUG("acc = (%f, %f, %f)", m.x, m.y, m.z);
-		// 		}
-
 		// test collision here:
 		glm::vec3 pos;
 		glm::vec3 normal;
@@ -126,10 +114,6 @@ void UpdateMovement(
 			normal = glm::normalize(normal);
 			glm::vec3 v = normal * glm::dot(normal, vel);
 			vel -= v;
-// 			{
-// 				glm::vec3 m = normal;
-// 				DEBUG("normal = (%f, %f, %f)", m.x, m.y, m.z);
-// 			}
 		} else {
 			vel = prev.vel + acc * dt;
 		}
@@ -139,12 +123,11 @@ void UpdateMovement(
 		next.vel = vel;
 		next.rot = prev.rot;
 
-		glm::vec3 p1 = prev.pos, p2 = next.pos;
-
-		DEBUG("new Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
-		DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)      %s",
-			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
-		printf("\n");
+//		glm::vec3 p1 = prev.pos, p2 = next.pos;
+// 		DEBUG("new Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
+// 		DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)      %s",
+// 			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
+// 		printf("\n");
 	}
 
 	glm::vec3 d = currentState.pos - prev.pos;

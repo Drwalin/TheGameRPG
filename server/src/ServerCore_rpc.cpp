@@ -58,6 +58,10 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
 			entity.set<EntityLastAuthoritativeMovementState>(state);
+			
+			glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
+			DEBUG("Recv client [%lu]: vel (%f, %f, %f), pos (%f, %f, %f),    %s",
+				  entity.id(), p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
 		}
 	}
 }
@@ -66,12 +70,12 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
-		DEBUG("Invalid usernamne");
+		LOG_INFO("Invalid usernamne");
 		// 		return;
 	}
 	RealmServer *newRealm = realmManager.GetRealm(realmName);
 	if (newRealm == nullptr) {
-		DEBUG("Invalid realm");
+		LOG_INFO("Invalid realm");
 		return;
 	}
 
