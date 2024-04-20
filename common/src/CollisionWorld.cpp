@@ -224,8 +224,8 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 // 	auto C = std::chrono::duration_cast<std::chrono::nanoseconds>(B-A).count();
 // 	DEBUG("Time sweep: %f ns", ((double)C)/100.0);
 
-	DEBUG("Test: %f %f %f   ->   %f %f %f", start.x, start.y - center.y,
-		  start.z, end.x, end.y - center.y, end.z);
+// 	DEBUG("Test: %f %f %f   ->   %f %f %f", start.x, start.y - center.y,
+// 		  start.z, end.x, end.y - center.y, end.z);
 
 	if (cb.hasHit()) {
 		const glm::vec3 dm = (end - start);
@@ -235,7 +235,7 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 		if (normal)
 			*normal = n;
 
-		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+// 		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
 		*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
 
@@ -252,12 +252,12 @@ bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 		}
 		return true;
 	} else {
-		glm::vec3 a = ToGlm(cb.m_convexFromWorld),
-				  b = ToGlm(cb.m_convexToWorld);
-		printf("sweep MISS: %f %f %f   ->   %f %f %f\n", a.x, a.y, a.z, b.x, b.y,
-			   b.z);
+// 		glm::vec3 a = ToGlm(cb.m_convexFromWorld),
+// 				  b = ToGlm(cb.m_convexToWorld);
+// 		printf("sweep MISS: %f %f %f   ->   %f %f %f\n", a.x, a.y, a.z, b.x, b.y,
+// 			   b.z);
 	}
-	DEBUG("FALSE ............................................");
+// 	DEBUG("FALSE ............................................");
 	*finalCorrectedPosition = end - center;
 	return false;
 }
