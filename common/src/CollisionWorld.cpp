@@ -43,11 +43,11 @@ void CollisionWorld::Debug() const
 											 int triangleIndex)
 				{
 					LOG_INFO("partId: %i, triangleIndex: %i", partId,
-						  triangleIndex);
+							 triangleIndex);
 
 					LOG_INFO("Triangle: (%f %f %f) (%f %f %f) (%f %f %f)",
-						  t[0].x(), t[0].y(), t[0].z(), t[1].x(), t[1].y(),
-						  t[1].z(), t[2].x(), t[2].y(), t[2].z());
+							 t[0].x(), t[0].y(), t[0].z(), t[1].x(), t[1].y(),
+							 t[1].z(), t[2].x(), t[2].y(), t[2].z());
 				}
 
 			} cb;
@@ -152,7 +152,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	auto it = entities.find(entityId);
 	if (it != entities.end()) {
 		LOG_DEBUG("Error: entity with ID=%lu already exists in CollisionWorld.",
-			  entityId);
+				  entityId);
 		UpdateEntityBvh(entityId, shape, pos);
 		return false;
 	}
@@ -191,113 +191,230 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 	entities.erase(it);
 }
 
-bool CollisionWorld::TestCollisionMovementRays(
-	EntityShape shape, glm::vec3 start, glm::vec3 end,
-	glm::vec3 *finalCorrectedPosition, bool *isOnGround,
-	glm::vec3 *normal) const
+class BroadphaseAabbAgregate : public btBroadphaseAabbCallback
 {
-	LOG_FATAL("Not implemented");
-	bool onGround = false;
-	const glm::vec3 halfHeight(0, shape.height*0.5, 0);
-	glm::vec3 movement = end - start;
-	// perform multi-ray cast
+public:
+	int32_t filterGroup, filterMask;
+	std::vector<btCollisionObject *> objects;
+	BroadphaseAabbAgregate(int32_t filterGroup, int32_t filterMask)
+		: filterGroup(filterGroup), filterMask(filterMask)
+	{
+	}
+	virtual ~BroadphaseAabbAgregate() {}
+	virtual bool process(const btBroadphaseProxy *proxy) override
+	{
+		if (proxy->m_collisionFilterGroup & filterGroup) {
+			objects.emplace_back((btCollisionObject *)proxy->m_clientObject);
+		}
+		return true;
+	}
+};
+
+bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
+										   glm::vec3 end,
+										   glm::vec3 *finalCorrectedPosition,
+										   bool *isOnGround, glm::vec3 *normal,
+										   int approximationSpheresAmount,
+										   float stepHeight,
+										   float minNormalYcomponent) const
+{
+	approximationSpheresAmount = glm::max(approximationSpheresAmount, 3);
+	approximationSpheresAmount = glm::min(approximationSpheresAmount, 10);
+	const float radius = shape.width / 2.0;
+	const glm::vec3 safetyMarginXZ(0.5, 0.0, 0.5);
+	const glm::vec3 stepVector(0, stepHeight, 0);
+	const glm::vec3 halfExtentXZ(radius, 0, radius);
+	const glm::vec3 sizeFromPos = halfExtentXZ + glm::vec3(0, shape.height, 0);
+	const glm::vec3 aabbMin =
+		glm::min(start, end) - halfExtentXZ - stepVector - safetyMarginXZ;
+	const glm::vec3 aabbMax =
+		glm::max(start, end) + sizeFromPos + stepVector + safetyMarginXZ;
+
+	BroadphaseAabbAgregate broadphaseCallback(FILTER_GROUP_TERRAIN,
+											  FILTER_MASK_TERRAIN);
+
+	collisionWorld->getBroadphase()->aabbTest(
+		ToBullet(aabbMin), ToBullet(aabbMax), broadphaseCallback);
+
+	if (broadphaseCallback.objects.size() == 0) {
+		*finalCorrectedPosition = end;
+		if (isOnGround) {
+			glm::vec3 p, n;
+			*isOnGround =
+				TestIsOnGround(end, &p, &n, stepHeight, minNormalYcomponent);
+			if (*isOnGround) {
+				*finalCorrectedPosition = p;
+			}
+		}
+		return false;
+	}
+
+	const glm::vec3 totalMovement = end - start;
+	const float totalMovementLength = glm::length(totalMovement);
+	const glm::vec3 direction = totalMovement / totalMovementLength;
+
+	const float maxStep = radius / 2.0f; // TODO: subject to being an
+										 // argument to function
+
+	btCapsuleShape _shape(radius, shape.height - shape.width);
+	btCollisionObject sphere;
+	sphere.setCollisionShape(&_shape);
+
+	const auto &objects = broadphaseCallback.objects;
+
+	float distanceTraveled = 0;
+	float maxDistanceToTravel = totalMovementLength;
+
+	std::vector<std::vector<Contact>> contacts;
+
+	contacts.resize(approximationSpheresAmount);
+
+	const float heightStart = stepHeight+radius;
+	const float heightEnd = shape.height-radius;
+	const float heightDiff = heightEnd - heightStart;
+	const float heightSpheresDistance = heightDiff / (approximationSpheresAmount - 2);
 	
-	glm::vec3 hp, _normal;
-	const glm::vec3 startFeet = start - halfHeight;
-	const glm::vec3 startMid = start;
-	const glm::vec3 startHead = start + halfHeight;
-	glm::vec3 endFeet = startFeet + movement;
-	glm::vec3 endMid = startMid + movement;
-	glm::vec3 endHead = startHead + movement;
-	
-	// ray test feet
-	if (RayTestFirstHitTerrain(startFeet, endFeet, &hp, &_normal, nullptr)) {
-		if (_normal.y > 0.7) {
-			*isOnGround = true;
+	for (int i=1; i<approximationSpheresAmount; ++i) {
+		std::vector<Contact> *contactsForThis = &(contacts[i]);
+		
+		const float currentHeight = heightStart + heightSpheresDistance * i;
+		
+		glm::vec3 point = start + glm::vec3(0, currentHeight, 0);
+		
+		const int steps = glm::ceil(maxDistanceToTravel / maxStep);
+		const float step = totalMovementLength / steps - 0.000001f;
+		if (PerformObjectSweep(&sphere, point, direction, step,
+							   maxDistanceToTravel, objects, contactsForThis,
+							   &distanceTraveled)) {
+			maxDistanceToTravel = distanceTraveled;
+			float correctedTravelDistance = maxDistanceToTravel;
+			if (FindEscapePath(*contactsForThis, start,
+					direction,
+					distanceTraveled,
+					nullptr,
+					&correctedTravelDistance
+					))
+			{
+				maxDistanceToTravel = glm::min(maxDistanceToTravel,
+						correctedTravelDistance);
+				// TODO: maybe use here FindEscapePath(.correctedMovement)
+				// argument, to solve movement
+			}
 		}
 	}
 	
+	LOG_FATAL("Not implemented yet");
+	// TODO: test feet's sphere
 	
-	// ray test mid-body
-	// ray test head
+	// TODO: test isGround
 	
-	// ray test mid-body to feet
+	// TODO: solve somewhere FindEscapePath
 	
-	// if no collision, ray test feet
-	
-	
-	if (isOnGround) {
-		*isOnGround = onGround;
-	}
+	return false;
 }
 
-bool CollisionWorld::TestCollisionMovementMultiStep(EntityShape shape, glm::vec3 _start,
-							   glm::vec3 _end, glm::vec3 *finalCorrectedPosition,
-							   bool *isOnGround, glm::vec3 *normal, float stepSize) const
+bool CollisionWorld::FindEscapePath(const std::vector<Contact> &contacts,
+									glm::vec3 start,
+									glm::vec3 directionNormalized,
+									float currentTraveledDistance,
+									glm::vec3 *correctedMovement,
+									float *correctedTravelDistance) const
 {
-	const glm::vec3 diff = _end-_start;
-	const float diffLength = diff.length();
-	int steps = (diffLength+stepSize+0.001f)/stepSize;
-	glm::vec3 step = diff*(1.0f/steps);
-	glm::vec3 start, end = _start;
-	for (int i=0; i<steps; ++i) {
-		start = end;
-		end = start + step;
-		if (TestCollisionMovement(shape, start, end, finalCorrectedPosition, isOnGround, normal)) {
+	// TODO: implement
+	LOG_FATAL("Not implemented yet");
+	return false;
+}
+
+bool CollisionWorld::PerformObjectSweep(
+	btCollisionObject *object, glm::vec3 start, glm::vec3 dir, float step,
+	float maxDistance, const std::vector<btCollisionObject *> &otherObjects,
+	std::vector<Contact> *contacts, float *distanceTraveled) const
+{
+	*distanceTraveled = 0;
+	while (*distanceTraveled < maxDistance) {
+		glm::vec3 point = start + dir * *distanceTraveled;
+		object->setWorldTransform(btTransform(btQuaternion(), ToBullet(point)));
+		if (TestObjectCollision(object, otherObjects, contacts)) {
 			return true;
+		}
+
+		if (*distanceTraveled + step > maxDistance) {
+			if (*distanceTraveled > maxDistance) {
+				return false;
+			}
+			if (maxDistance - *distanceTraveled < 0.001) {
+				return false;
+			} else {
+				*distanceTraveled = maxDistance;
+			}
+		} else {
+			*distanceTraveled += step;
 		}
 	}
 	return false;
 }
 
-bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
-										   glm::vec3 end,
-										   glm::vec3 *finalCorrectedPosition,
-										   bool *isOnGround,
-										   glm::vec3 *normal) const
+bool CollisionWorld::TestObjectCollision(
+	btCollisionObject *object,
+	const std::vector<btCollisionObject *> &otherObjects,
+	std::vector<Contact> *contacts) const
 {
-	
-	glm::vec3 center = glm::vec3{0, shape.height * 0.5, 0};
-	start += center;
-	end += center;
-	const glm::vec3 dm = (end - start);
-	btCapsuleShape _shape(shape.width * 0.5, shape.height - shape.width);
-	if (isOnGround) {
-		*isOnGround = false;
-	}
-	btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
-													 ToBullet(end));
-	cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
-	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
-	// perform convex sweep test
-	collisionWorld->convexSweepTest(
-		&_shape, btTransform{btQuaternion{}, ToBullet(start)},
-		btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.01);
-
-	if (cb.hasHit()) {
-		glm::vec3 n = ToGlm(cb.m_hitNormalWorld);
-		if (glm::dot(n, dm) < 0) {
-			if (normal)
-				*normal = n;
-
-			*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
-
-			if (isOnGround) {
-				glm::vec3 hp, _normal;
-				if (RayTestFirstHitTerrain(
-						*finalCorrectedPosition + glm::vec3{0.0f, 0.07f, 0.0f},
-						*finalCorrectedPosition - glm::vec3{0.0f, 0.13f, 0.0f}, &hp,
-						&_normal, nullptr)) {
-					if (fabs(_normal.y) > 0.7) {
-						*isOnGround = true;
-					}
+	bool hasResult = false;
+	btCollisionObjectWrapper sphereWrapper(nullptr, object->getCollisionShape(),
+										   object, object->getWorldTransform(),
+										   -1, -1);
+	for (btCollisionObject *o : otherObjects) {
+		btCollisionObjectWrapper otherWrapper(
+			nullptr, o->getCollisionShape(), o, o->getWorldTransform(), -1, -1);
+		btCollisionAlgorithm *algo =
+			collisionWorld->getDispatcher()->findAlgorithm(
+				&sphereWrapper, &otherWrapper, 0, BT_CLOSEST_POINT_ALGORITHMS);
+		if (algo) {
+			class ManifoldResult : public btManifoldResult
+			{
+			public:
+				std::vector<Contact> *contacts;
+				bool has = false;
+				ManifoldResult(const btCollisionObjectWrapper *body0Wrap,
+							   const btCollisionObjectWrapper *body1Wrap,
+							   std::vector<Contact> *contacts)
+					: btManifoldResult(body0Wrap, body1Wrap), contacts(contacts)
+				{
 				}
-			}
+				virtual void addContactPoint(const btVector3 &normalOnBInWorld,
+											 const btVector3 &pointInWorld,
+											 btScalar depth) override
+				{
+					contacts->push_back(
+						{ToGlm(normalOnBInWorld), ToGlm(pointInWorld), depth});
+					has = true;
+				}
+			} result(&sphereWrapper, &otherWrapper, contacts);
+			algo->processCollision(&sphereWrapper, &otherWrapper,
+								   collisionWorld->getDispatchInfo(), &result);
+			collisionWorld->getDispatcher()->freeCollisionAlgorithm(algo);
+			hasResult |= result.has;
+		}
+	}
+	return hasResult;
+}
+
+bool CollisionWorld::TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
+									glm::vec3 *normal, float stepHeight,
+									float minNormalYcomponent) const
+{
+	glm::vec3 hp, _normal;
+	if (RayTestFirstHitTerrain(pos + glm::vec3{0.0f, stepHeight, 0.0f},
+							   pos - glm::vec3{0.0f, stepHeight, 0.0f}, &hp,
+							   &_normal, nullptr)) {
+		if (fabs(_normal.y) >= minNormalYcomponent) {
+			if (normal)
+				*normal = _normal;
+			if (groundPoint)
+				*groundPoint = hp;
 			return true;
 		}
 	}
-	
-	*finalCorrectedPosition = end - center;
 	return false;
 }
 
