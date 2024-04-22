@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+else()
+endif()
 
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
@@ -24,5 +28,5 @@ target_link_libraries(client PUBLIC common)
 add_custom_command(TARGET client POST_BUILD
 	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:client>
 	${PROJECT_SOURCE_DIR}/../frontend/bin/libclient.so
-	COMMENT "dummy"
+	COMMENT "Copying libclient.so"
 )

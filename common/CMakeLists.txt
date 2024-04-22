@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+else()
+endif()
 
 set(FLECS_SHARED OFF)
 add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP)
@@ -32,7 +36,3 @@ add_library(common STATIC
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PRIVATE ${BULLET_LIBRARIES})
-
-add_library(collision STATIC
-	src/CollisionWorld.cpp)
-

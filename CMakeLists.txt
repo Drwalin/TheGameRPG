@@ -6,7 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_COLOR_DIAGNOSTICS ON)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+else()
+endif()
 
 include_directories(common/flecs)
 
@@ -23,4 +29,3 @@ add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(client)
 add_subdirectory(frontend)
-
