@@ -48,7 +48,7 @@ func _process(delta: float)->void:
 			var d = Vector3(dir.x, 0, dir.y).normalized();
 			var rot = GetPlayerRotation();
 			mov += d.rotated(Vector3(0,1,0), rot.y);
-		if Input.is_action_pressed("movement_jump"): #.is_action_just_pressed("movement_jump"):
+		if Input.is_action_pressed("movement_jump"):
 			PlayerTryJump();
 		SetPlayerDirectionMovement(Vector2(mov.x, mov.z));
 	else:

@@ -34,7 +34,7 @@ void UpdateMovement(
 // 	{
 // 		glm::vec3 vel = prev.vel;
 // 		glm::vec3 pos = prev.pos;
-// 		DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
+// 		LOG_DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
 // 			  "%f %f)",
 // 			  entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks,
 // 			  pos.x, pos.y, pos.z);
@@ -46,7 +46,7 @@ void UpdateMovement(
 		if (fabs(vel.x) + fabs(vel.z) + fabs(vel.y) < 0.005) {
 			next = prev;
 			next.timestamp = currentTick;
-//			DEBUG("On ground, bail out calculations");
+//			LOG_DEBUG("On ground, bail out calculations");
 			return;
 		}
 
@@ -56,8 +56,8 @@ void UpdateMovement(
 		glm::vec3 oldPos = prev.pos;
 		glm::vec3 newPos = oldPos + glm::vec3(0, movementParams.stepHeight, 0);
 		glm::vec3 pos;
-		realm->collisionWorld.TestCollisionMovement(shape, oldPos, newPos, &pos,
-													nullptr, nullptr);
+		realm->collisionWorld.TestCollisionMovementMultiStep(shape, oldPos, newPos, &pos,
+													nullptr, nullptr, 0.07);
 		newPos = pos;
 
 		// step 2: vertical
@@ -65,16 +65,16 @@ void UpdateMovement(
 		float heightDiff = newPos.y - oldPos.y;
 		oldPos = newPos;
 		newPos = oldPos + movement;
-		realm->collisionWorld.TestCollisionMovement(shape, oldPos, newPos, &pos,
-													nullptr, nullptr);
+		realm->collisionWorld.TestCollisionMovementMultiStep(shape, oldPos, newPos, &pos,
+													nullptr, nullptr, 0.2);
 		newPos = pos;
 
 		// step 3: down
 		oldPos = newPos;
 		newPos =
 			oldPos - glm::vec3(0, heightDiff + movementParams.stepHeight, 0);
-		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, nullptr)) {
+		if (realm->collisionWorld.TestCollisionMovementMultiStep(
+				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 0.07)) {
 		}
 
 		if (next.onGround) {
@@ -88,7 +88,7 @@ void UpdateMovement(
 
 		glm::vec3 p1 = prev.pos, p2 = next.pos;
 
-//		DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f),        %s",
+//		LOG_DEBUG("Step-up position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f),        %s",
 //			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
 	} else {
 		glm::vec3 acc = {0, realm->gravity, 0};
@@ -109,8 +109,8 @@ void UpdateMovement(
 		// test collision here:
 		glm::vec3 pos;
 		glm::vec3 normal;
-		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, &normal)) {
+		if (realm->collisionWorld.TestCollisionMovementMultiStep(
+				shape, oldPos, newPos, &pos, &next.onGround, &normal, 0.02)) {
 			normal = glm::normalize(normal);
 			glm::vec3 v = normal * glm::dot(normal, vel);
 			vel -= v;
@@ -124,8 +124,8 @@ void UpdateMovement(
 		next.rot = prev.rot;
 
 //		glm::vec3 p1 = prev.pos, p2 = next.pos;
-// 		DEBUG("new Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
-// 		DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)      %s",
+// 		LOG_DEBUG("new Vel = (%f, %f, %f)", vel.x, vel.y, vel.z);
+// 		LOG_DEBUG("Falling position (%lu) dt(%f): (%f, %f, %f) -> (%f, %f, %f)      %s",
 // 			  entity.id(), dt, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, next.onGround?"ON GROUND":"FALLING");
 // 		printf("\n");
 	}

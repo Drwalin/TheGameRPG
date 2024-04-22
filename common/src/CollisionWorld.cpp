@@ -1,4 +1,4 @@
-#include <chrono>
+
 #include <icon7/Debug.hpp>
 
 #include <bullet/LinearMath/btVector3.h>
@@ -20,14 +20,14 @@ void CollisionWorld::Debug() const
 		auto shape = o->getCollisionShape();
 
 		if (auto *s = dynamic_cast<btCylinderShape *>(shape)) {
-			DEBUG("shape cylinder");
+			LOG_INFO("shape cylinder");
 		} else if (auto *s = dynamic_cast<btCapsuleShape *>(shape)) {
-			DEBUG("shape capsule");
+			LOG_INFO("shape capsule");
 		} else if (auto *s = dynamic_cast<btSphereShape *>(shape)) {
-			DEBUG("shape sphere");
+			LOG_INFO("shape sphere");
 		} else if (auto *s = dynamic_cast<btBvhTriangleMeshShape *>(shape)) {
 			auto a = o->getWorldTransform().getOrigin();
-			DEBUG("shape triangles: %f %f %f", a.x(), a.y(), a.z());
+			LOG_INFO("shape triangles: %f %f %f", a.x(), a.y(), a.z());
 			auto m = s->getMeshInterface();
 			class Cb : public btInternalTriangleIndexCallback
 			{
@@ -42,10 +42,10 @@ void CollisionWorld::Debug() const
 				virtual void processTriangle(btVector3 *t, int partId,
 											 int triangleIndex)
 				{
-					DEBUG("partId: %i, triangleIndex: %i", partId,
+					LOG_INFO("partId: %i, triangleIndex: %i", partId,
 						  triangleIndex);
 
-					DEBUG("Triangle: (%f %f %f) (%f %f %f) (%f %f %f)",
+					LOG_INFO("Triangle: (%f %f %f) (%f %f %f) (%f %f %f)",
 						  t[0].x(), t[0].y(), t[0].z(), t[1].x(), t[1].y(),
 						  t[1].z(), t[2].x(), t[2].y(), t[2].z());
 				}
@@ -151,7 +151,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 {
 	auto it = entities.find(entityId);
 	if (it != entities.end()) {
-		DEBUG("Error: entity with ID=%lu already exists in CollisionWorld.",
+		LOG_DEBUG("Error: entity with ID=%lu already exists in CollisionWorld.",
 			  entityId);
 		UpdateEntityBvh(entityId, shape, pos);
 		return false;
@@ -191,73 +191,112 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 	entities.erase(it);
 }
 
+bool CollisionWorld::TestCollisionMovementRays(
+	EntityShape shape, glm::vec3 start, glm::vec3 end,
+	glm::vec3 *finalCorrectedPosition, bool *isOnGround,
+	glm::vec3 *normal) const
+{
+	LOG_FATAL("Not implemented");
+	bool onGround = false;
+	const glm::vec3 halfHeight(0, shape.height*0.5, 0);
+	glm::vec3 movement = end - start;
+	// perform multi-ray cast
+	
+	glm::vec3 hp, _normal;
+	const glm::vec3 startFeet = start - halfHeight;
+	const glm::vec3 startMid = start;
+	const glm::vec3 startHead = start + halfHeight;
+	glm::vec3 endFeet = startFeet + movement;
+	glm::vec3 endMid = startMid + movement;
+	glm::vec3 endHead = startHead + movement;
+	
+	// ray test feet
+	if (RayTestFirstHitTerrain(startFeet, endFeet, &hp, &_normal, nullptr)) {
+		if (_normal.y > 0.7) {
+			*isOnGround = true;
+		}
+	}
+	
+	
+	// ray test mid-body
+	// ray test head
+	
+	// ray test mid-body to feet
+	
+	// if no collision, ray test feet
+	
+	
+	if (isOnGround) {
+		*isOnGround = onGround;
+	}
+}
+
+bool CollisionWorld::TestCollisionMovementMultiStep(EntityShape shape, glm::vec3 _start,
+							   glm::vec3 _end, glm::vec3 *finalCorrectedPosition,
+							   bool *isOnGround, glm::vec3 *normal, float stepSize) const
+{
+	const glm::vec3 diff = _end-_start;
+	const float diffLength = diff.length();
+	int steps = (diffLength+stepSize+0.001f)/stepSize;
+	glm::vec3 step = diff*(1.0f/steps);
+	glm::vec3 start, end = _start;
+	for (int i=0; i<steps; ++i) {
+		start = end;
+		end = start + step;
+		if (TestCollisionMovement(shape, start, end, finalCorrectedPosition, isOnGround, normal)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool CollisionWorld::TestCollisionMovement(EntityShape shape, glm::vec3 start,
 										   glm::vec3 end,
 										   glm::vec3 *finalCorrectedPosition,
 										   bool *isOnGround,
 										   glm::vec3 *normal) const
 {
+	
 	glm::vec3 center = glm::vec3{0, shape.height * 0.5, 0};
 	start += center;
 	end += center;
+	const glm::vec3 dm = (end - start);
 	btCapsuleShape _shape(shape.width * 0.5, shape.height - shape.width);
 	if (isOnGround) {
 		*isOnGround = false;
 	}
 	btCollisionWorld::ClosestConvexResultCallback cb(ToBullet(start),
 													 ToBullet(end));
-// 	auto A = std::chrono::steady_clock::now();
-	for (int i=0; i<10; ++i) {
-		btCollisionWorld::ClosestConvexResultCallback _cb(ToBullet(start),
-														 ToBullet(end));
-		cb = _cb;
-		cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
-		cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
-		collisionWorld->convexSweepTest(
-			&_shape, btTransform{btQuaternion{}, ToBullet(start)},
-			btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.03);
-		if (cb.hasHit()) {
-			break;
-		}
-	}
-// 	auto B = std::chrono::steady_clock::now();
-// 	auto C = std::chrono::duration_cast<std::chrono::nanoseconds>(B-A).count();
-// 	DEBUG("Time sweep: %f ns", ((double)C)/100.0);
-
-// 	DEBUG("Test: %f %f %f   ->   %f %f %f", start.x, start.y - center.y,
-// 		  start.z, end.x, end.y - center.y, end.z);
+	cb.m_collisionFilterGroup = FILTER_GROUP_TERRAIN;
+	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
+	// perform convex sweep test
+	collisionWorld->convexSweepTest(
+		&_shape, btTransform{btQuaternion{}, ToBullet(start)},
+		btTransform{btQuaternion{}, ToBullet(end)}, cb, -0.01);
 
 	if (cb.hasHit()) {
-		const glm::vec3 dm = (end - start);
 		glm::vec3 n = ToGlm(cb.m_hitNormalWorld);
-		if (glm::dot(n, dm) > 0)
-			n = -n;
-		if (normal)
-			*normal = n;
+		if (glm::dot(n, dm) < 0) {
+			if (normal)
+				*normal = n;
 
-// 		DEBUG("Has HIT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
 
-		*finalCorrectedPosition = start + dm * cb.m_closestHitFraction - center;
-
-		if (isOnGround) {
-			glm::vec3 hp, _normal;
-			if (RayTestFirstHitTerrain(
-					*finalCorrectedPosition + glm::vec3{0.0f, 0.07f, 0.0f},
-					*finalCorrectedPosition - glm::vec3{0.0f, 0.13f, 0.0f}, &hp,
-					&_normal, nullptr)) {
-				if (fabs(_normal.y) > 0.7) {
-					*isOnGround = true;
+			if (isOnGround) {
+				glm::vec3 hp, _normal;
+				if (RayTestFirstHitTerrain(
+						*finalCorrectedPosition + glm::vec3{0.0f, 0.07f, 0.0f},
+						*finalCorrectedPosition - glm::vec3{0.0f, 0.13f, 0.0f}, &hp,
+						&_normal, nullptr)) {
+					if (fabs(_normal.y) > 0.7) {
+						*isOnGround = true;
+					}
 				}
 			}
+			return true;
 		}
-		return true;
-	} else {
-// 		glm::vec3 a = ToGlm(cb.m_convexFromWorld),
-// 				  b = ToGlm(cb.m_convexToWorld);
-// 		printf("sweep MISS: %f %f %f   ->   %f %f %f\n", a.x, a.y, a.z, b.x, b.y,
-// 			   b.z);
 	}
-// 	DEBUG("FALSE ............................................");
+	
 	*finalCorrectedPosition = end - center;
 	return false;
 }

@@ -134,16 +134,16 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 {
 	int64_t currentTick = pingTimer.CalcCurrentTick();
 	pingMs = currentTick - localTick;
-	DEBUG("ping = %ld ms", pingMs);
+	LOG_DEBUG("ping = %ld ms", pingMs);
 	if (remoteTick != 0) {
 		// TODO: consider not adding latency?
 		int64_t newCurrentTick = remoteTick + pingMs / 2;
 		if (newCurrentTick < realm.timer.currentTick) {
 			// TODO: time error??
-			DEBUG("Ping/Pong received time invalid");
+			LOG_DEBUG("Ping/Pong received time invalid");
 		} else {
 			realm.timer.Start(newCurrentTick);
-			DEBUG("current tick = %lu", newCurrentTick);
+			LOG_DEBUG("current tick = %lu", newCurrentTick);
 		}
 	}
 }
@@ -175,9 +175,9 @@ void GameClient::SpawnEntity(uint64_t serverId,
 	if (serverId == serverPlayerEntityId) {
 		localPlayerEntityId = localId;
 		OnSetPlayerId(localPlayerEntityId);
-		DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
+		LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
 	} else {
-		DEBUG("Spawn   entity: [%lu>%lu]", serverId, localId);
+		LOG_DEBUG("Spawn   entity: [%lu>%lu]", serverId, localId);
 	}
 }
 
@@ -196,15 +196,15 @@ void GameClient::UpdateEntity(uint64_t serverId,
 	if (localId != localPlayerEntityId) {
 		realm.SetComponent(localId, state);
 		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		DEBUG("Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+		LOG_DEBUG("Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
 			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
 	} else {
 		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+		LOG_DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
 			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
 		realm.GetComponent<EntityMovementState>(localId);
 		p1 = state.oldState.pos, p2 = state.oldState.vel;
-		DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+		LOG_DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
 			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
 	}
 }
@@ -232,7 +232,7 @@ void GameClient::RemoveEntity(uint64_t serverId)
 	mapServerEntityIdToLocalEntityId.erase(serverId);
 	mapLocalEntityIdToServerEntityId.erase(localId);
 	
-	DEBUG("Despawn entity: [%lu>%lu]", serverId, localId);
+	LOG_DEBUG("Despawn entity: [%lu>%lu]", serverId, localId);
 }
 
 void GameClient::Login(const std::string &username, const std::string &password)

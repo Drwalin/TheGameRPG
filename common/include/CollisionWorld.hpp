@@ -42,6 +42,12 @@ public:
 	void DeleteEntity(uint64_t entityId);
 
 	// returns true if any collision happens
+	bool TestCollisionMovementRays(EntityShape shape, glm::vec3 start,
+							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
+							   bool *isOnGround, glm::vec3 *normal) const;
+	bool TestCollisionMovementMultiStep(EntityShape shape, glm::vec3 start,
+							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
+							   bool *isOnGround, glm::vec3 *normal, float stepSize) const;
 	bool TestCollisionMovement(EntityShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal) const;
