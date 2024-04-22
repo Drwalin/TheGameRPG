@@ -103,7 +103,7 @@ Vector3 EntityPrefabScript::GetRotation() const
 	if (state) {
 		return ToGodot(state->rot);
 	}
-	DEBUG("state component should exist");
+	LOG_ERROR("state component should exist");
 	return {};
 }
 
@@ -114,7 +114,7 @@ Vector3 EntityPrefabScript::GetPosition() const
 	if (state) {
 		return ToGodot(state->pos);
 	}
-	DEBUG("state component should exist");
+	LOG_ERROR("state component should exist");
 	return {};
 }
 
@@ -125,7 +125,7 @@ Vector3 EntityPrefabScript::GetVelocity() const
 	if (state) {
 		return ToGodot(state->vel);
 	}
-	DEBUG("state component should exist");
+	LOG_ERROR("state component should exist");
 	return {};
 }
 

@@ -5,6 +5,8 @@
 
 int main(int argc, char **argv)
 {
+	LOG_TRACE("Main begin");
+	
 	icon7::Initialize();
 	{
 		ServerCore serverCore;
@@ -13,7 +15,7 @@ int main(int argc, char **argv)
 		serverCore.CreateRealm("Middle Earth");
 		serverCore.CreateRealm("Heaven");
 
-		DEBUG("Starting to listen...");
+		LOG_INFO("Starting to listen...");
 
 		serverCore.StartService();
 		serverCore.Listen("localhost", 25369, true);
@@ -23,11 +25,12 @@ int main(int argc, char **argv)
 			serverCore.Listen(argv[i], 25369, true);
 		}
 
-		DEBUG("Running async thread...");
+		LOG_INFO("Running async threads...");
 
 		serverCore.realmManager.RunAsync(1);
 
 		serverCore.host->RunAsync();
+		
 		std::this_thread::sleep_for(std::chrono::seconds(60));
 		while (serverCore.host->IsRunningAsync()) {
 			std::this_thread::sleep_for(std::chrono::seconds(16));

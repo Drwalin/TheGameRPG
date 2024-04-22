@@ -55,7 +55,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	data->realm = this;
 
 	uint64_t entityId = NewEntity();
-	DEBUG("Spawn   entity: [%lu]", entityId);
+	LOG_DEBUG("Spawn   entity: [%lu]", entityId);
 	data->entityId = entityId;
 	// TODO: load player entity from database
 	SetComponent<EntityName>(entityId, {data->userName});
@@ -76,7 +76,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	auto it = peers.find(peer);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
-		DEBUG("Despawn entity: [%lu]", entityId);
+		LOG_DEBUG("Despawn entity: [%lu]", entityId);
 		peers.erase(peer);
 		RemoveEntity(entityId);
 	}
