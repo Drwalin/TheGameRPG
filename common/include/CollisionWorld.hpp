@@ -32,7 +32,7 @@ public:
 		EntityShape shape;
 		glm::vec3 pos;
 	};
-	
+
 	void Debug() const;
 
 	void LoadStaticCollision(const TerrainCollisionData *data);
@@ -42,15 +42,11 @@ public:
 	void DeleteEntity(uint64_t entityId);
 
 	// returns true if any collision happens
-	bool TestCollisionMovementRays(EntityShape shape, glm::vec3 start,
-							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
-							   bool *isOnGround, glm::vec3 *normal) const;
-	bool TestCollisionMovementMultiStep(EntityShape shape, glm::vec3 start,
-							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
-							   bool *isOnGround, glm::vec3 *normal, float stepSize) const;
 	bool TestCollisionMovement(EntityShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
-							   bool *isOnGround, glm::vec3 *normal) const;
+							   bool *isOnGround, glm::vec3 *normal,
+							   int approximationSpheresAmount, float stepHeight,
+							   float minNormalYcomponent) const;
 	bool RayTestFirstHit(glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
 						 glm::vec3 *hitNormal, uint64_t *entityId,
 						 float *travelFactor, bool *hasNormal,
@@ -59,11 +55,45 @@ public:
 								glm::vec3 *hitPosition, glm::vec3 *hitNormal,
 								float *travelFactor) const;
 
+	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
+						glm::vec3 *normal, float stepHeight,
+						float minNormalYcomponent) const;
+
 	// 	bool TestForEntities(class CustomShape &shape, std::vector<uint64_t>
 	// *testedEntityIds) const;
 
 	void RegisterObservers(Realm *realm);
 	void RegisterSystems(Realm *realm);
+
+private:
+	friend class ManifoldResult;
+
+	struct Contact {
+		glm::vec3 normal;
+		glm::vec3 point;
+		float depth;
+	};
+
+	/*
+	 * length(dir) == 1
+	 */
+	bool PerformObjectSweep(
+		btCollisionObject *object, glm::vec3 start, glm::vec3 dir, float step,
+		float maxDistance, const std::vector<btCollisionObject *> &otherObjects,
+		std::vector<Contact> *contacts, float *distanceTraveled) const;
+
+	bool
+	TestObjectCollision(btCollisionObject *object,
+						const std::vector<btCollisionObject *> &otherObjects,
+						std::vector<Contact> *contacts) const;
+
+	// returns successfull solution
+	bool FindEscapePath(const std::vector<Contact> &contacts, glm::vec3 start,
+						glm::vec3 directionNormalized,
+						float currentTraveledDistance,
+						glm::vec3 *correctedMovement,
+						float *correctedTravelDistance
+						) const;
 
 private:
 	CollisionWorld(CollisionWorld &) = delete;
@@ -72,6 +102,8 @@ private:
 	CollisionWorld &operator=(CollisionWorld &) = delete;
 	CollisionWorld &operator=(CollisionWorld &&) = delete;
 	CollisionWorld &operator=(const CollisionWorld &) = delete;
+
+	friend class BroadphaseAabbAgregate;
 
 private:
 	inline const static int32_t FILTER_MASK_ALL = -1;
