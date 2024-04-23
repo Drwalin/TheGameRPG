@@ -216,6 +216,7 @@ bool CollisionWorld::TestCollisionMovement(
 	int approximationSpheresAmount, float stepHeight, float minNormalYcomponent,
 	float maxDistancePerIteration) const
 {
+	LOG_FATAL("Test running");
 	approximationSpheresAmount = glm::max(approximationSpheresAmount, 3);
 	approximationSpheresAmount = glm::min(approximationSpheresAmount, 10);
 	const float radius = shape.width / 2.0;
@@ -238,13 +239,11 @@ bool CollisionWorld::TestCollisionMovement(
 	if (broadphaseCallback.objects.size() == 0) {
 		*finalCorrectedPosition = end;
 		if (isOnGround) {
-			glm::vec3 p, n;
-			*isOnGround =
-				TestIsOnGround(end, &p, &n, stepHeight, minNormalYcomponent);
-			if (*isOnGround) {
-				*finalCorrectedPosition = p;
-			}
+			*isOnGround = false;
 		}
+		
+		LOG_DEBUG("No collision");
+		
 		return false;
 	}
 
@@ -272,6 +271,12 @@ bool CollisionWorld::TestCollisionMovement(
 	glm::vec3 direction = totalMovement / totalMovementLength;
 
 	float maxDistanceToTravel = totalMovementLength;
+	
+	printf("\n");
+	LOG_TRACE("height:      %f", shape.height);
+	LOG_TRACE("width:       %f", shape.width);
+	LOG_TRACE("radius:      %f", radius);
+	LOG_TRACE("step height: %f", stepHeight);
 
 	for (int i = 1; i < approximationSpheresAmount; ++i) {
 		std::vector<Contact> *contactsForThis = &(contacts[i]);
@@ -280,6 +285,8 @@ bool CollisionWorld::TestCollisionMovement(
 			heightStart + heightSpheresDistance * (i - 1);
 
 		glm::vec3 point = start + glm::vec3(0, currentHeight, 0);
+		
+		LOG_TRACE("Testing upper body sphere bottom at height: %f", point.y-radius);
 
 		const int steps =
 			glm::ceil(maxDistanceToTravel / maxDistancePerIteration);
@@ -295,6 +302,12 @@ bool CollisionWorld::TestCollisionMovement(
 
 	glm::vec3 finalPosition = start + direction * maxDistanceToTravel;
 	*finalCorrectedPosition = finalPosition;
+	
+	{
+		glm::vec3 a = start;
+		glm::vec3 b = finalPosition;
+		LOG_TRACE("Test upper body: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
+	}
 
 	// test feet's sphere
 	std::vector<Contact> *contactsForThis = &(contacts[0]);
@@ -303,13 +316,21 @@ bool CollisionWorld::TestCollisionMovement(
 	maxDistanceToTravel = stepHeight * 2;
 
 	const glm::vec3 sweepBeg = finalPosition + glm::vec3(0, sweepBegHeight, 0);
+	
+	{
+		glm::vec3 a = sweepBeg - glm::vec3(0,radius,0);
+		glm::vec3 b = sweepBeg + glm::vec3(0,-1,0) * maxDistanceToTravel - glm::vec3(0,radius,0);
+		LOG_TRACE("Testing feet: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
+	}
 
 	const int steps = glm::ceil(maxDistanceToTravel / maxDistancePerIteration);
 	const float step = maxDistanceToTravel / steps - 0.000001f;
 	float distanceTraveled = 0;
+	float dt1 = 0;
 	if (PerformObjectSweep(&sphere, sweepBeg, glm::vec3(0, -1, 0), step,
 						   maxDistanceToTravel, objects, contactsForThis,
 						   &distanceTraveled)) {
+		dt1 = distanceTraveled;
 		FindCorrectTravelDistance(*contactsForThis, start, distanceTraveled,
 								  &distanceTraveled);
 		if (distanceTraveled < stepHeight) {
@@ -319,6 +340,12 @@ bool CollisionWorld::TestCollisionMovement(
 		} else {
 			// can go down
 		}
+	}
+	
+	{
+		glm::vec3 a = sweepBeg - glm::vec3(0,radius,0);
+		glm::vec3 b = sweepBeg + glm::vec3(0,-1,0) * distanceTraveled - glm::vec3(0,radius,0);
+		LOG_TRACE("Test feet: (%f %f %f) ==( %f >> %f / %f )=> (%f %f %f)", a.x, a.y, a.z, dt1, distanceTraveled, maxDistanceToTravel, b.x, b.y, b.z);
 	}
 
 	// TODO: test isGround
@@ -331,6 +358,12 @@ bool CollisionWorld::TestCollisionMovement(
 			glm::vec3 p2 = sweepBeg + glm::vec3(0, -1, 0) * distanceTraveled -
 						   glm::vec3(0, radius, 0);
 
+			{
+				glm::vec3 a = p;
+				glm::vec3 b = p2;
+				LOG_TRACE("p (%f %f %f) p2 (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
+			}
+			
 			bool doCorrection = false;
 
 			if (p.y >= p2.y && distanceTraveled < stepHeight) {
@@ -348,6 +381,19 @@ bool CollisionWorld::TestCollisionMovement(
 				}
 			}
 		}
+		LOG_TRACE("Distance traveled = %f", distanceTraveled);
+		{
+			glm::vec3 a = finalPosition;
+			glm::vec3 b = *finalCorrectedPosition;
+			float h1 = finalPosition.y-stepHeight, h2=finalPosition.y+stepHeight;
+			LOG_TRACE("Test onGround: (%f %f %f) -> (%f %f %f)   (%f ... %f)   %s", a.x, a.y, a.z, b.x, b.y, b.z, h1, h2, *isOnGround ? "ON GROUND" : "FALLING");
+		}
+	}
+	
+	{
+		glm::vec3 a = start;
+		glm::vec3 b = *finalCorrectedPosition;
+		LOG_TRACE("Total movement: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
 	}
 
 	// TODO: solve somewhere FindPushoutVector
@@ -403,7 +449,7 @@ bool CollisionWorld::PerformObjectSweep(
 {
 	bool hasCollision = false;
 	*distanceTraveled = 0;
-	while (*distanceTraveled < maxDistance) {
+	while (true) {
 		int contactsOffset = contacts->size();
 		glm::vec3 point = start + dir * *distanceTraveled;
 		object->setWorldTransform(btTransform(btQuaternion(), ToBullet(point)));
@@ -418,6 +464,7 @@ bool CollisionWorld::PerformObjectSweep(
 				hasCollision = true;
 				Contact &c = contacts->at(i);
 				if (glm::dot(c.dir, c.normal) < 0.0f) {
+					LOG_DEBUG("sweep ends at distance: %f", *distanceTraveled);
 					return true;
 				}
 			}
@@ -485,6 +532,8 @@ bool CollisionWorld::TestObjectCollision(
 						return;
 					}
 
+					LOG_DEBUG("depth:%f    origin:%f     hitpoint:%f", depth, origin.y(), pointInWorld.y());
+					
 					contacts->push_back({ToGlm(normalOnBInWorld),
 										 ToGlm(pointInWorld),
 										 fabs(depth),

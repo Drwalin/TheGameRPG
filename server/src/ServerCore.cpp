@@ -73,6 +73,7 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
+	LOG_TRACE("DISCONNECTING PEER on network thread");
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm) {
 		std::vector<uint8_t> v;
@@ -85,6 +86,7 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 				data->userName = "";
 				delete data;
 				peer->userPointer = nullptr;
+				LOG_TRACE("DISCONNECTING PEER on realm's thread");
 			});
 	}
 }
