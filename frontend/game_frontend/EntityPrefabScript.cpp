@@ -23,7 +23,7 @@ EntityPrefabScript::EntityPrefabScript() {}
 void EntityPrefabScript::_bind_methods()
 {
 	METHOD_NO_ARGS(EntityPrefabScript, GetGameFrontend);
-	
+
 	METHOD_NO_ARGS(EntityPrefabScript, IsPlayer);
 	METHOD_NO_ARGS(EntityPrefabScript, GetLocalEntityId);
 	METHOD_NO_ARGS(EntityPrefabScript, GetRotation);
@@ -37,8 +37,8 @@ void EntityPrefabScript::_ready()
 		return;
 	}
 
-	gameFrontend =
-		(GameFrontend *)(get_tree()->get_root()->get_node_or_null("gameFrontend"));
+	gameFrontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
+		"gameFrontend"));
 
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;

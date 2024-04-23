@@ -41,7 +41,7 @@ public:
 	 * otherwise return true current tick
 	 */
 	int64_t Update(int64_t maxDeltaTicks, int64_t *deltaTicks,
-					int64_t *trueCurrentTick)
+				   int64_t *trueCurrentTick)
 	{
 		const auto currentTime = std::chrono::steady_clock::now();
 		*deltaTicks = TicksBetween(lastTickCountingTime, currentTime);
