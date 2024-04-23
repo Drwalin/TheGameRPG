@@ -127,7 +127,7 @@ void GameClient::UpdatePlayerAuthoritativeState()
 	}
 	flecs::entity playerEntity = realm.Entity(localPlayerEntityId);
 	auto state = playerEntity.get<EntityMovementState>();
-// 	playerEntity.set<EntityLastAuthoritativeMovementState>({*state});
+	// 	playerEntity.set<EntityLastAuthoritativeMovementState>({*state});
 }
 
 void GameClient::PerformSendPlayerMovementInput()
@@ -136,13 +136,14 @@ void GameClient::PerformSendPlayerMovementInput()
 		return;
 	}
 	int64_t dt = 0;
-	authoritativePlayerSendTimer.Update(authdauthoritativePlayerSendDelay, &dt, nullptr);
-	if (dt <= authdauthoritativePlayerSendDelay && needSendPlayerMovementInput == false) {
+	authoritativePlayerSendTimer.Update(authdauthoritativePlayerSendDelay, &dt,
+										nullptr);
+	if (dt <= authdauthoritativePlayerSendDelay &&
+		needSendPlayerMovementInput == false) {
 		return;
 	}
 
-	auto state = realm.GetComponent<EntityMovementState>(
-		localPlayerEntityId);
+	auto state = realm.GetComponent<EntityMovementState>(localPlayerEntityId);
 	ServerRpcProxy::UpdatePlayer(this, *state);
 
 	needSendPlayerMovementInput = false;
@@ -152,7 +153,7 @@ glm::vec3 GameClient::GetRotation()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		return {0,0,0};
+		return {0, 0, 0};
 	}
 	flecs::entity player = realm.Entity(localPlayerEntityId);
 	auto oldState = *player.get<EntityMovementState>();
@@ -223,11 +224,11 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	vel.x = horizontalDirection.x;
 	vel.z = horizontalDirection.y;
 	vel *= player.get<EntityMovementParameters>()->maxMovementSpeedHorizontal;
-	
-	glm::vec3 dv = oldVel-vel;
+
+	glm::vec3 dv = oldVel - vel;
 	dv.y = 0;
 	float d = fabs(dv.x) + fabs(dv.z);
-	if (d> 0.001) {
+	if (d > 0.001) {
 		vel.y = state.vel.y;
 
 		state.vel = vel;

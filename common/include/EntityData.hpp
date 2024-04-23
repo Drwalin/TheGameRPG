@@ -8,7 +8,8 @@
 
 #include <random>
 
-static inline float R() {
+static inline float R()
+{
 	static std::random_device rd;
 	static std::mt19937_64 mt(rd());
 	static std::uniform_real_distribution<float> dist(-50, 50);

@@ -272,21 +272,14 @@ bool CollisionWorld::TestCollisionMovement(
 	glm::vec3 direction = totalMovement / totalMovementLength;
 
 	float maxDistanceToTravel = totalMovementLength;
-	
-	printf("\n");
-	LOG_TRACE("height:      %f", shape.height);
-	LOG_TRACE("width:       %f", shape.width);
-	LOG_TRACE("radius:      %f", radius);
-	LOG_TRACE("step height: %f", stepHeight);
 
 	for (int i = 1; i < approximationSpheresAmount; ++i) {
 		std::vector<Contact> *contactsForThis = &(contacts[i]);
 
-		const float currentHeight = heightStart + heightSpheresDistance * (i-1);
+		const float currentHeight =
+			heightStart + heightSpheresDistance * (i - 1);
 
 		glm::vec3 point = start + glm::vec3(0, currentHeight, 0);
-		
-		LOG_TRACE("Testing upper body sphere bottom at height: %f", point.y-radius);
 
 		const int steps =
 			glm::ceil(maxDistanceToTravel / maxDistancePerIteration);
@@ -295,80 +288,58 @@ bool CollisionWorld::TestCollisionMovement(
 		if (PerformObjectSweep(&sphere, point, direction, step,
 							   maxDistanceToTravel, objects, contactsForThis,
 							   &distanceTraveled)) {
-			FindCorrectTravelDistance(*contactsForThis, start,
-									  distanceTraveled, &maxDistanceToTravel);
+			FindCorrectTravelDistance(*contactsForThis, start, distanceTraveled,
+									  &maxDistanceToTravel);
 		}
 	}
 
 	glm::vec3 finalPosition = start + direction * maxDistanceToTravel;
 	*finalCorrectedPosition = finalPosition;
-	
-	{
-		glm::vec3 a = start;
-		glm::vec3 b = finalPosition;
-		LOG_TRACE("Test upper body: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
-	}
-	
+
 	// test feet's sphere
 	std::vector<Contact> *contactsForThis = &(contacts[0]);
-	
+
 	const float sweepBegHeight = radius + stepHeight;
 	maxDistanceToTravel = stepHeight * 2;
-	
+
 	const glm::vec3 sweepBeg = finalPosition + glm::vec3(0, sweepBegHeight, 0);
-	
-	{
-		glm::vec3 a = sweepBeg - glm::vec3(0,radius,0);
-		glm::vec3 b = sweepBeg + glm::vec3(0,-1,0) * maxDistanceToTravel - glm::vec3(0,radius,0);
-		LOG_TRACE("Testing feet: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
-	}
-	
-	const int steps =
-		glm::ceil(maxDistanceToTravel / maxDistancePerIteration);
+
+	const int steps = glm::ceil(maxDistanceToTravel / maxDistancePerIteration);
 	const float step = maxDistanceToTravel / steps - 0.000001f;
-	float distanceTraveled = 0, dt1 = 0;
-	if (PerformObjectSweep(&sphere, sweepBeg, glm::vec3(0,-1,0), step,
+	float distanceTraveled = 0;
+	if (PerformObjectSweep(&sphere, sweepBeg, glm::vec3(0, -1, 0), step,
 						   maxDistanceToTravel, objects, contactsForThis,
 						   &distanceTraveled)) {
-		dt1 = distanceTraveled;
-		FindCorrectTravelDistance(*contactsForThis, start,
-								  distanceTraveled, &distanceTraveled);
+		FindCorrectTravelDistance(*contactsForThis, start, distanceTraveled,
+								  &distanceTraveled);
 		if (distanceTraveled < stepHeight) {
-			*finalCorrectedPosition = sweepBeg + glm::vec3(0,-1,0) * distanceTraveled - glm::vec3(0,radius,0);
+			*finalCorrectedPosition = sweepBeg +
+									  glm::vec3(0, -1, 0) * distanceTraveled -
+									  glm::vec3(0, radius, 0);
 		} else {
 			// can go down
 		}
 	}
-	
-	{
-		glm::vec3 a = sweepBeg - glm::vec3(0,radius,0);
-		glm::vec3 b = sweepBeg + glm::vec3(0,-1,0) * distanceTraveled - glm::vec3(0,radius,0);
-		LOG_TRACE("Test feet: (%f %f %f) ==( %f >> %f / %f )=> (%f %f %f)", a.x, a.y, a.z, dt1, distanceTraveled, maxDistanceToTravel, b.x, b.y, b.z);
-	}
-	
+
 	// TODO: test isGround
 	if (isOnGround) {
 		bool wasOnGround = *isOnGround;
 		*isOnGround = false;
 		glm::vec3 p, n;
-		if (TestIsOnGround(finalPosition, &p, &n, stepHeight, minNormalYcomponent)) {
-			glm::vec3 p2 = sweepBeg + glm::vec3(0,-1,0) * distanceTraveled - glm::vec3(0,radius,0);
-			
-			{
-				glm::vec3 a = p;
-				glm::vec3 b = p2;
-				LOG_TRACE("p (%f %f %f) p2 (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
-			}
-			
+		if (TestIsOnGround(finalPosition, &p, &n, stepHeight,
+						   minNormalYcomponent)) {
+			glm::vec3 p2 = sweepBeg + glm::vec3(0, -1, 0) * distanceTraveled -
+						   glm::vec3(0, radius, 0);
+
 			bool doCorrection = false;
-			
+
 			if (p.y >= p2.y && distanceTraveled < stepHeight) {
 				doCorrection = true;
 				*isOnGround = true;
 			} else {
 				doCorrection = wasOnGround;
 			}
-			
+
 			if (doCorrection) {
 				if (p2.y > p.y) {
 					*finalCorrectedPosition = p2;
@@ -377,40 +348,20 @@ bool CollisionWorld::TestCollisionMovement(
 				}
 			}
 		}
-		LOG_TRACE("Distance traveled = %f", distanceTraveled);
-		{
-			glm::vec3 a = finalPosition;
-			glm::vec3 b = *finalCorrectedPosition;
-			float h1 = finalPosition.y-stepHeight, h2=finalPosition.y+stepHeight;
-			LOG_TRACE("Test onGround: (%f %f %f) -> (%f %f %f)   (%f ... %f)   %s", a.x, a.y, a.z, b.x, b.y, b.z, h1, h2, *isOnGround ? "ON GROUND" : "FALLING");
-		}
-	}
-	
-	{
-		glm::vec3 a = start;
-		glm::vec3 b = *finalCorrectedPosition;
-		LOG_TRACE("Total movement: (%f %f %f) -> (%f %f %f)", a.x, a.y, a.z, b.x, b.y, b.z);
 	}
 
 	// TODO: solve somewhere FindPushoutVector
 
-	
-	
+	// get normal
 	if (normal) {
-		for (int i=contacts.size(); i>0; --i) {
-			auto &c = contacts[(i)%contacts.size()];
+		for (int i = contacts.size(); i > 0; --i) {
+			auto &c = contacts[(i) % contacts.size()];
 			if (c.size()) {
 				*normal = c.back().normal;
 				break;
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
 	return false;
 }
 
@@ -523,24 +474,23 @@ bool CollisionWorld::TestObjectCollision(
 					btCollisionShape *s = object->getCollisionShape();
 					btSphereShape *shape = dynamic_cast<btSphereShape *>(s);
 					if (shape == nullptr) {
-						LOG_FATAL("Currently, only btSphereShape is supported.");
+						LOG_FATAL(
+							"Currently, only btSphereShape is supported.");
 						return;
 					}
 					float radius = shape->getRadius();
 					btVector3 origin = object->getWorldTransform().getOrigin();
 					btVector3 d = pointInWorld - origin;
-					if (d.length2() > radius*radius) {
+					if (d.length2() > radius * radius) {
 						return;
 					}
-					
-					LOG_DEBUG("depth:%f    origin:%f     hitpoint:%f", depth, origin.y(), pointInWorld.y());
-					
+
 					contacts->push_back({ToGlm(normalOnBInWorld),
 										 ToGlm(pointInWorld),
 										 fabs(depth),
 										 {0, 0, 0},
 										 0,
-										 {0,0,0}});
+										 {0, 0, 0}});
 					has = true;
 				}
 			} result(&sphereWrapper, &otherWrapper, contacts);
@@ -560,8 +510,8 @@ bool CollisionWorld::TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
 {
 	glm::vec3 hp, _normal;
 	if (RayTestFirstHitTerrain(pos + glm::vec3{0, stepHeight, 0},
-							   pos - glm::vec3{0, stepHeight, 0}, &hp,
-							   &_normal, nullptr)) {
+							   pos - glm::vec3{0, stepHeight, 0}, &hp, &_normal,
+							   nullptr)) {
 		if (fabs(_normal.y) >= minNormalYcomponent) {
 			if (normal)
 				*normal = _normal;
@@ -572,9 +522,9 @@ bool CollisionWorld::TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
 		}
 	}
 	if (normal)
-		*normal = {0,0,0};
+		*normal = {0, 0, 0};
 	if (groundPoint)
-		*groundPoint = {0,0,0};
+		*groundPoint = {0, 0, 0};
 	return false;
 }
 
@@ -582,7 +532,8 @@ class ClosestRayResultNotMe : public btCollisionWorld::ClosestRayResultCallback
 {
 public:
 	ClosestRayResultNotMe(btCollisionObject *me, glm::vec3 start, glm::vec3 end)
-		: btCollisionWorld::ClosestRayResultCallback(ToBullet(start), ToBullet(end))
+		: btCollisionWorld::ClosestRayResultCallback(ToBullet(start),
+													 ToBullet(end))
 	{
 		m_me = me;
 	}
@@ -654,14 +605,15 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 											glm::vec3 *hitNormal,
 											float *travelFactor) const
 {
-	btCollisionWorld::ClosestRayResultCallback cb(ToBullet(start), ToBullet(end));
+	btCollisionWorld::ClosestRayResultCallback cb(ToBullet(start),
+												  ToBullet(end));
 	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
 	collisionWorld->rayTest(ToBullet(start), ToBullet(end), cb);
 	if (cb.hasHit() == false) {
 		if (travelFactor)
 			*travelFactor = 1;
 		if (hitNormal)
-			*hitNormal = {0,0,0};
+			*hitNormal = {0, 0, 0};
 		if (hitPosition)
 			*hitPosition = end;
 		return false;

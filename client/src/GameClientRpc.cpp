@@ -196,16 +196,22 @@ void GameClient::UpdateEntity(uint64_t serverId,
 	if (localId != localPlayerEntityId) {
 		realm.SetComponent(localId, state);
 		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG("Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
+		LOG_DEBUG(
+			"Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+			state.oldState.onGround ? "ON GROUND" : "FALLING");
 	} else {
 		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
+		LOG_DEBUG(
+			"Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+			state.oldState.onGround ? "ON GROUND" : "FALLING");
 		realm.GetComponent<EntityMovementState>(localId);
 		p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG("Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			  serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, state.oldState.onGround?"ON GROUND":"FALLING");
+		LOG_DEBUG(
+			"Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+			state.oldState.onGround ? "ON GROUND" : "FALLING");
 	}
 }
 
@@ -231,7 +237,7 @@ void GameClient::RemoveEntity(uint64_t serverId)
 
 	mapServerEntityIdToLocalEntityId.erase(serverId);
 	mapLocalEntityIdToServerEntityId.erase(localId);
-	
+
 	LOG_DEBUG("Despawn entity: [%lu>%lu]", serverId, localId);
 }
 

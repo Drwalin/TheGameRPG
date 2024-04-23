@@ -124,7 +124,8 @@ bool Realm::OneEpoch()
 			auto beg = std::chrono::steady_clock::now();
 			sys.run();
 			auto end = std::chrono::steady_clock::now();
-			auto dt = std::chrono::duration_cast<std::chrono::nanoseconds>(end-beg);
+			auto dt =
+				std::chrono::duration_cast<std::chrono::nanoseconds>(end - beg);
 		}
 		return true;
 	} else {
