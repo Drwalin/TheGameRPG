@@ -4,7 +4,6 @@
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
-#include "godot_cpp/variant/utility_functions.hpp"
 
 #include "GameFrontend.hpp"
 
@@ -44,8 +43,6 @@ void EntityPrefabScript::_ready()
 		return;
 	}
 	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
-	UtilityFunctions::print("physics body is not null, setting meshInstance(",
-							(uint64_t)(meshInstance), ")");
 }
 
 void EntityPrefabScript::_process(double dt)
@@ -57,12 +54,15 @@ void EntityPrefabScript::_process(double dt)
 	flecs::entity entity =
 		gameFrontend->gameClientFrontend->realm.Entity(localEntityId);
 	if (entity.is_alive() == false) {
+		LOG_ERROR("Entity %lu is not alive/not present in ecs", localEntityId);
 		return;
 	}
 	auto state = entity.get<EntityMovementState>();
 	if (state) {
 		SetRotation(state->rot);
 		SetPosition(state->pos);
+	} else {
+		LOG_ERROR("Entity %lu has no movement state", localEntityId);
 	}
 }
 
