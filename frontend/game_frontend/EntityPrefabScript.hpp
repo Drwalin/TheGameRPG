@@ -25,9 +25,9 @@ using namespace godot;
 
 class GameFrontend;
 
-class EntityPrefabScript : public Node
+class EntityPrefabScript : public Node3D
 {
-	GDCLASS(EntityPrefabScript, Node)
+	GDCLASS(EntityPrefabScript, Node3D)
 public: // Godot bound functions
 	EntityPrefabScript();
 	static void _bind_methods();

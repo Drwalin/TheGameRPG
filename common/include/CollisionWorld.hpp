@@ -46,7 +46,8 @@ public:
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,
 							   int approximationSpheresAmount, float stepHeight,
-							   float minNormalYcomponent) const;
+							   float minNormalYcomponent,
+							   float maxDistancePerIteration) const;
 	bool RayTestFirstHit(glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
 						 glm::vec3 *hitNormal, uint64_t *entityId,
 						 float *travelFactor, bool *hasNormal,
@@ -72,6 +73,9 @@ private:
 		glm::vec3 normal;
 		glm::vec3 point;
 		float depth;
+		glm::vec3 dir;
+		float distance;
+		glm::vec3 objectPos;
 	};
 
 	/*
@@ -87,13 +91,12 @@ private:
 						const std::vector<btCollisionObject *> &otherObjects,
 						std::vector<Contact> *contacts) const;
 
-	// returns successfull solution
-	bool FindEscapePath(const std::vector<Contact> &contacts, glm::vec3 start,
-						glm::vec3 directionNormalized,
-						float currentTraveledDistance,
-						glm::vec3 *correctedMovement,
-						float *correctedTravelDistance
-						) const;
+	void FindCorrectTravelDistance(const std::vector<Contact> &contacts,
+								   glm::vec3 start,
+								   float currentTraveledDistance,
+								   float *correctedTravelDistance) const;
+	void FindPushoutVector(const std::vector<Contact> &contacts,
+						   glm::vec3 position, glm::vec3 *pushoutVector) const;
 
 private:
 	CollisionWorld(CollisionWorld &) = delete;

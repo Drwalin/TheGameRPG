@@ -75,12 +75,12 @@ void EntityPrefabScript::Init(uint64_t localEntityId)
 
 void EntityPrefabScript::SetRotation(glm::vec3 rot)
 {
-	meshInstance->set_rotation(ToGodot(rot));
+	this->set_rotation(ToGodot({0, rot.y, 0}));
 }
 
 void EntityPrefabScript::SetPosition(glm::vec3 pos)
 {
-	meshInstance->set_position(ToGodot(pos));
+	this->set_position(ToGodot(pos));
 }
 
 void EntityPrefabScript::SetModel(const EntityModelName &model)

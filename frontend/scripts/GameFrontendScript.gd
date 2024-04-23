@@ -58,6 +58,7 @@ func _process(delta: float)->void:
 	var rot = gameFrontend.GetPlayerRotation();
 	camera.set_rotation(rot);
 	var d = camera.basis * Vector3(0, 0, 5);
-	camera.position = pos + d;
+	var height = gameFrontend.GetPlayerHeight();
+	camera.position = pos + d + Vector3(0, height, 0);
 	
 	pass;
