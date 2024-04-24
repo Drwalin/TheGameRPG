@@ -43,10 +43,17 @@ void UpdateMovement(
 		const glm::vec3 oldPos = prev.pos;
 		const glm::vec3 movement = vel * dt;
 		const glm::vec3 newPos = oldPos + movement;
+		/*
 		if (realm->collisionWorld.TestCollisionMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
 				movementParams.stepHeight, 0.7, 0.07)) {
 		}
+		*/
+		if (realm->collisionWorld.TestCollisionMovementRays(
+				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
+				movementParams.stepHeight, 0.7, 8, 0.1)) {
+		}
+		
 
 		if (next.onGround) {
 			vel.y = 0;
@@ -58,6 +65,7 @@ void UpdateMovement(
 		next.rot = prev.rot;
 
 	} else {
+		next.onGround = false;
 		const glm::vec3 acc = {0, realm->gravity, 0};
 
 		glm::vec3 vel = prev.vel; // + acc * dt;
@@ -76,9 +84,9 @@ void UpdateMovement(
 		// test collision here:
 		glm::vec3 pos;
 		glm::vec3 normal;
-		if (realm->collisionWorld.TestCollisionMovement(
+		if (realm->collisionWorld.TestCollisionMovementRays(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
-				movementParams.stepHeight, 0.7, 0.07)) {
+				movementParams.stepHeight, 0.7, 8, 0.1)) {
 			normal = glm::normalize(normal);
 			glm::vec3 v = normal * glm::dot(normal, vel);
 			vel -= v;
@@ -91,14 +99,15 @@ void UpdateMovement(
 		next.vel = vel;
 		next.rot = prev.rot;
 	}
-	
+
 	{
 		glm::vec3 vel = next.vel;
 		glm::vec3 pos = next.pos;
-		LOG_DEBUG("entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
-			  "%f %f)    %s",
-			  entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks,
-			  pos.x, pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
+		LOG_DEBUG(
+			"entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
+			"%f %f)    %s",
+			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks, pos.x,
+			pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
 	}
 
 	glm::vec3 d = currentState.pos - prev.pos;
