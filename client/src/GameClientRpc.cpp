@@ -195,6 +195,7 @@ void GameClient::UpdateEntity(uint64_t serverId,
 
 	if (localId != localPlayerEntityId) {
 		realm.SetComponent(localId, state);
+		realm.SetComponent(localId, state.oldState);
 		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
 		LOG_DEBUG(
 			"Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",

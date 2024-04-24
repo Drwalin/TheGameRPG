@@ -58,6 +58,7 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
 			entity.set<EntityLastAuthoritativeMovementState>(state);
+			entity.set<EntityMovementState>(state.oldState);
 
 			glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
 			LOG_DEBUG(
