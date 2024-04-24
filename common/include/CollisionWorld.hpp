@@ -42,6 +42,14 @@ public:
 	void DeleteEntity(uint64_t entityId);
 
 	// returns true if any collision happens
+	bool TestCollisionMovementRays(EntityShape shape, glm::vec3 start,
+								   glm::vec3 end,
+								   glm::vec3 *finalCorrectedPosition,
+								   bool *isOnGround, glm::vec3 *normal,
+								   int horizontalRaysCountInMovementDirection,
+								   float stepHeight, float minNormalYcomponent,
+								   int horizontalFromCenterCorrectionRaysCount,
+								   float verticalRayTestToGroundDistance) const;
 	bool TestCollisionMovement(EntityShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,
@@ -55,14 +63,20 @@ public:
 	bool RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 								glm::vec3 *hitPosition, glm::vec3 *hitNormal,
 								float *travelFactor) const;
+	bool RayTestFirstHitTerrainVector(glm::vec3 start, glm::vec3 toEnd,
+									  glm::vec3 *hitPosition,
+									  glm::vec3 *hitNormal,
+									  float *travelFactor) const;
 
 	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
 						glm::vec3 *normal, float stepHeight,
 						float minNormalYcomponent) const;
 
-	// 	bool TestForEntities(class CustomShape &shape, std::vector<uint64_t>
-	// *testedEntityIds) const;
-
+	/*
+	bool TestForEntities(class CustomShape &shape,
+						 std::vector<uint64_t> *testedEntityIds) const;
+	*/
+	
 	void RegisterObservers(Realm *realm);
 	void RegisterSystems(Realm *realm);
 
@@ -97,6 +111,14 @@ private:
 								   float *correctedTravelDistance) const;
 	void FindPushoutVector(const std::vector<Contact> &contacts,
 						   glm::vec3 position, glm::vec3 *pushoutVector) const;
+
+	void GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax, int filterGroup,
+						  int filterMask,
+						  std::vector<btCollisionObject *> *objects) const;
+	bool RayTestFirstHitWithObjects(
+		glm::vec3 start, glm::vec3 direction, glm::vec3 *hitPosition,
+		glm::vec3 *hitNormal, float *travelFactor,
+		const std::vector<btCollisionObject *> &objects) const;
 
 private:
 	CollisionWorld(CollisionWorld &) = delete;
