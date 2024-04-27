@@ -58,7 +58,7 @@ void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 {
 	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter writer(buffer);
+	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
 	writer.op(ClientRpcFunctionNames::SpawnEntities);
 	realm->queryEntityLongState.each(
 		[&](flecs::entity entity,
@@ -81,7 +81,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 								icon7::ByteReader &reader)
 {
 	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter writer(buffer);
+	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
 	writer.op(ClientRpcFunctionNames::SpawnEntities);
 	while (reader.get_remaining_bytes() >= 8) {
 		uint64_t entityId = 0;
@@ -132,7 +132,7 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 	int written = 0;
 
 	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter writer(buffer);
+	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
 	writer.op(ClientRpcFunctionNames::UpdateEntities);
 
 	realm->queryLastAuthoritativeState.each(
