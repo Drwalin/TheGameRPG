@@ -29,7 +29,7 @@ void GetEntitiesData(GameClient *gameClient,
 					 const std::vector<uint64_t> &entities)
 {
 	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter writer(buffer);
+	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
 	writer.op(ServerRpcFunctionNames::GetEntitiesData);
 	writer.op(entities.data(), entities.size());
 	gameClient->realmConnectionPeer->Send(std::move(buffer),
