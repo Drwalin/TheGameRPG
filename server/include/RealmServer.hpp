@@ -68,11 +68,8 @@ void RealmServer::BroadcastReliable(const std::string &functionName,
 {
 	std::vector<uint8_t> buffer;
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
-	{
-		bitscpp::ByteWriter writer(buffer);
-		icon7::RPCEnvironment::SerializeSend(writer, flags, functionName,
-											 args...);
-	}
+	bitscpp::ByteWriter writer(buffer);
+	icon7::RPCEnvironment::SerializeSend(writer, flags, functionName, args...);
 	Broadcast(buffer, flags, 0);
 }
 
@@ -82,10 +79,7 @@ void RealmServer::BroadcastUnreliable(const std::string &functionName,
 {
 	std::vector<uint8_t> buffer;
 	icon7::Flags flags = icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
-	{
-		bitscpp::ByteWriter writer(buffer);
-		icon7::RPCEnvironment::SerializeSend(writer, flags, functionName,
-											 args...);
-	}
+	bitscpp::ByteWriter writer(buffer);
+	icon7::RPCEnvironment::SerializeSend(writer, flags, functionName, args...);
 	Broadcast(buffer, flags, 0);
 }
