@@ -95,8 +95,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 
 				writer.op(entityId);
 
-				writer.op(
-					*entity.get<EntityLastAuthoritativeMovementState>());
+				writer.op(*entity.get<EntityLastAuthoritativeMovementState>());
 				writer.op(*entity.get<EntityName>());
 				writer.op(*entity.get<EntityModelName>());
 				writer.op(*entity.get<EntityShape>());
@@ -138,12 +137,10 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 	realm->queryLastAuthoritativeState.each(
 		[&](flecs::entity entity,
 			const EntityLastAuthoritativeMovementState &state) {
-			if (writer.GetSize() + singleEntitySize >= 1100 &&
-				written > 0) {
-				realm->Broadcast(buffer,
-								 icon7::FLAG_UNRELIABLE |
-									 icon7::FLAGS_CALL_NO_FEEDBACK,
-								 0);
+			if (writer.GetSize() + singleEntitySize >= 1100 && written > 0) {
+				realm->Broadcast(
+					buffer,
+					icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK, 0);
 				buffer.clear();
 				written = 0;
 				writer.op(ClientRpcFunctionNames::UpdateEntities);

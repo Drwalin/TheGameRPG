@@ -48,30 +48,32 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 {
 	DisconnectRealmPeer();
 
-	icon7::commands::ExecuteOnPeer com{};
-
 	struct X {
 		std::shared_ptr<icon7::Peer> sp;
-		std::atomic<icon7::Peer *> rp;
-		std::atomic<int> s;
+		std::atomic<icon7::Peer *> rp = nullptr;
+		std::atomic<int> s = 0;
 	};
 
-	using _T = std::shared_ptr<X>;
-	_T state(new X{nullptr, nullptr, 0});
-
-	com.data.resize(sizeof(_T));
-	new (com.data.data()) _T(state);
-	com.function = [](auto peer, auto bytes, auto ptr) {
-		_T *v = (_T *)bytes.data();
-		if (peer) {
-			(*v)->sp = peer->shared_from_this();
-			(*v)->rp.store(peer);
-			(*v)->s.store(1);
-		} else {
-			(*v)->s.store(-1);
+	class CommandConnectToServer : public icon7::commands::ExecuteOnPeer
+	{
+	public:
+		CommandConnectToServer() = default;
+		~CommandConnectToServer() = default;
+		std::shared_ptr<X> v;
+		virtual void Execute() override
+		{
+			if (peer) {
+				v->sp = peer->shared_from_this();
+				v->rp.store(peer.get());
+				v->s.store(1);
+			} else {
+				v->s.store(-1);
+			}
 		}
-		v->~shared_ptr();
 	};
+	std::shared_ptr<X> state = std::make_shared<X>();
+	auto com = icon7::CommandHandle<CommandConnectToServer>::Create();
+	com->v = state;
 
 	host->Connect(ip, port, std::move(com));
 
@@ -105,19 +107,11 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 void GameClient::RunOneEpoch()
 {
-	const uint32_t MAX_EVENTS = 128;
-	icon7::Command commands[MAX_EVENTS];
-	const uint32_t dequeued =
-		executionQueue.TryDequeueBulkAny(commands, MAX_EVENTS);
-
-	for (uint32_t i = 0; i < dequeued; ++i) {
-		commands[i].Execute();
-		commands[i].~Command();
-	}
+	executionQueue.Execute(128);
 
 	PerformSendPlayerMovementInput();
 	realm.OneEpoch();
-// 	UpdatePlayerAuthoritativeState();
+	// 	UpdatePlayerAuthoritativeState();
 	PerformSendPlayerMovementInput();
 }
 

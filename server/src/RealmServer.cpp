@@ -24,20 +24,10 @@ void RealmServer::Init(const std::string &realmName)
 
 bool RealmServer::OneEpoch()
 {
-	bool busy = false;
-	const uint32_t MAX_EVENTS = 128;
-	icon7::Command commands[MAX_EVENTS];
-	const uint32_t dequeued =
-		executionQueue.TryDequeueBulkAny(commands, MAX_EVENTS);
-
-	busy |= dequeued != 0;
-	for (uint32_t i = 0; i < dequeued; ++i) {
-		commands[i].Execute();
-		commands[i].~Command();
-	}
-
+	bool busy = executionQueue.Execute(128) != 0;
 	busy |= Realm::OneEpoch();
-	// TODO: here do other server updates, AI, other mechanics and logic
+	// TODO: here do other server updates, AI, other mechanics and logic,
+	// defer some work to other worker threads (ai, db)  maybe?
 
 	int64_t dt = 0;
 	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
@@ -83,16 +73,9 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 }
 
 void RealmServer::ExecuteOnRealmThread(
-	icon7::Peer *peer, std::vector<uint8_t> &customData,
-	void (*function)(icon7::Peer *, std::vector<uint8_t> &, void *))
+	icon7::CommandHandle<icon7::Command> &&command)
 {
-	icon7::commands::ExecuteOnPeer com;
-	std::swap(com.data, customData);
-	com.peer = peer->shared_from_this();
-	com.userPointer = this;
-	com.function = function;
-
-	executionQueue.EnqueueCommand(std::move(com));
+	executionQueue.EnqueueCommand(std::move(command));
 }
 
 void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,

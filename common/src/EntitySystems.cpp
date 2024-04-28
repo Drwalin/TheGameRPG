@@ -53,7 +53,6 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 		}
-		
 
 		if (next.onGround) {
 			vel.y = 0;

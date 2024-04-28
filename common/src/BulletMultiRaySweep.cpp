@@ -7,9 +7,9 @@
 #include "../include/CollisionWorld.hpp"
 
 /*
- * verticalRayTestToGroundDistance - if <0 then casts only one ray at destination
- * 								   ignored for now
- * horizontalFromCenterCorrectionRaysCount - should be at least 4
+ * verticalRayTestToGroundDistance - if <0 then casts only one ray at
+ * destination ignored for now horizontalFromCenterCorrectionRaysCount - should
+ * be at least 4
  */
 bool CollisionWorld::TestCollisionMovementRays(
 	EntityShape shape, glm::vec3 start, glm::vec3 end,
@@ -19,7 +19,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 	float verticalRayTestToGroundDistance) const
 {
 	if (normal) {
-		*normal = glm::normalize(end-start);
+		*normal = glm::normalize(end - start);
 	}
 	bool wasOnGround = false;
 	if (isOnGround) {
@@ -80,7 +80,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 									   objects)) {
 			endWithMargin = hp - offset;
 			if (normal) {
-				if (glm::dot(n, end-start) < glm::dot(*normal, end-start)) {
+				if (glm::dot(n, end - start) < glm::dot(*normal, end - start)) {
 					*normal = n;
 				}
 			}
@@ -103,7 +103,8 @@ bool CollisionWorld::TestCollisionMovementRays(
 				end -= (end - start) * tf;
 				end -= n * (maxSingleCorrectionLength * 0.25f);
 				if (normal) {
-					if (glm::dot(n, end-start) < glm::dot(*normal, end-start)) {
+					if (glm::dot(n, end - start) <
+						glm::dot(*normal, end - start)) {
 						*normal = n;
 					}
 				}
@@ -146,7 +147,8 @@ bool CollisionWorld::TestCollisionMovementRays(
 							end -= trueDir * (1.0f - tf);
 						}
 						if (normal) {
-							if (glm::dot(n, end-start) < glm::dot(*normal, end-start)) {
+							if (glm::dot(n, end - start) <
+								glm::dot(*normal, end - start)) {
 								*normal = n;
 							}
 						}
@@ -161,7 +163,8 @@ bool CollisionWorld::TestCollisionMovementRays(
 	// TODO: test isOnGround
 	const glm::vec3 toHeadTop = glm::vec3(0, heightEnd, 0);
 	const glm::vec3 toMaxFeet = glm::vec3(0, stepHeight, 0);
-	const glm::vec3 toFeetBottom = glm::vec3(0, -0.01, 0) +
+	const glm::vec3 toFeetBottom =
+		glm::vec3(0, -0.01, 0) +
 		((wasOnGround) ? -glm::vec3(0, stepHeight, 0) : glm::vec3(0, 0, 0));
 	const glm::vec3 toMid = toHeadTop * 0.5f;
 	const glm::vec3 toFeetStart = toMid + glm::vec3(0, 0.1, 0);
@@ -171,17 +174,16 @@ bool CollisionWorld::TestCollisionMovementRays(
 	float travelFactor;
 
 	// test for head collision
-// 	if (RayTestFirstHitWithObjects(end + toHeadStart, toHeadTop - toHeadStart,
-// 								   &hitPoint, &hitNormal, &travelFactor,
-// 								   objects)) {
-// 		// TODO: correct position due to ceiling
-// 		if (normal) {
-// 			if (glm::dot(hitNormal, end-start) < glm::dot(*normal, end-start)) {
-// 				*normal = hitNormal;
-// 			}
-// 		}
-// 	}
-	
+	// 	if (RayTestFirstHitWithObjects(end + toHeadStart, toHeadTop -
+	// toHeadStart, 								   &hitPoint, &hitNormal, &travelFactor, 								   objects)) {
+	// 		// TODO: correct position due to ceiling
+	// 		if (normal) {
+	// 			if (glm::dot(hitNormal, end-start) < glm::dot(*normal,
+	// end-start)) { 				*normal = hitNormal;
+	// 			}
+	// 		}
+	// 	}
+
 	// test for feet collision and onGround
 	if (RayTestFirstHitWithObjects(end + toFeetStart,
 								   toFeetBottom - toFeetStart, &hitPoint,
@@ -195,7 +197,8 @@ bool CollisionWorld::TestCollisionMovementRays(
 			*isOnGround = true;
 		}
 		if (normal) {
-			if (glm::dot(hitNormal, end-start) < glm::dot(*normal, end-start)) {
+			if (glm::dot(hitNormal, end - start) <
+				glm::dot(*normal, end - start)) {
 				*normal = hitNormal;
 			}
 		}
