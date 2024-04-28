@@ -76,7 +76,7 @@ public:
 	bool TestForEntities(class CustomShape &shape,
 						 std::vector<uint64_t> *testedEntityIds) const;
 	*/
-	
+
 	void RegisterObservers(Realm *realm);
 	void RegisterSystems(Realm *realm);
 

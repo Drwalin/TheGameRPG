@@ -15,7 +15,7 @@ inline ByteReader<true> &op<glm::vec3>(ByteReader<true> &s, glm::vec3 &v)
 	s.op(v.z);
 	return s;
 }
-template<typename BT>
+template <typename BT>
 inline ByteWriter<BT> &op(ByteWriter<BT> &s, const glm::vec3 &v)
 {
 	s.op(v.x);

@@ -27,10 +27,7 @@ public:
 	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);
 
-	void ExecuteOnRealmThread(icon7::Peer *peer,
-							  std::vector<uint8_t> &customData,
-							  void (*function)(icon7::Peer *,
-											   std::vector<uint8_t> &, void *));
+	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
 	void RegisterObservers();
 	void RegisterSystems();

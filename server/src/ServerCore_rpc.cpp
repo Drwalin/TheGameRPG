@@ -86,29 +86,35 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 	if (oldRealm) {
 		oldRealm->DisconnectPeer(peer);
 
-		icon7::commands::ExecuteOnPeer com;
-		com.data.resize(realmName.size() + 1);
-		memcpy(com.data.data(), realmName.data(), com.data.size());
-		com.peer = peer->shared_from_this();
-		com.userPointer = this;
-		com.function = [](icon7::Peer *peer, std::vector<uint8_t> &fname,
-						  void *ptr) {
-			((ServerCore *)ptr)
-				->ConnectPeerToRealm(peer,
-									 {(char *)fname.data(), fname.size() - 1});
+		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
+		{
+		public:
+			CommandConnectPeerToRealm() = default;
+			~CommandConnectPeerToRealm() = default;
+			std::string realmName;
+			ServerCore *serverCore;
+			virtual void Execute() override
+			{
+				serverCore->ConnectPeerToRealm(peer.get(), realmName);
+			}
 		};
-
+		auto com = icon7::CommandHandle<CommandConnectPeerToRealm>::Create();
+		com->realmName = realmName;
+		com->peer = peer->shared_from_this();
+		com->serverCore = this;
 		newRealm->executionQueue.EnqueueCommand(std::move(com));
 	} else {
-		icon7::commands::ExecuteOnPeer com;
-		com.peer = peer->shared_from_this();
-		com.userPointer = newRealm;
-		com.function = [](icon7::Peer *peer, std::vector<uint8_t> &fname,
-						  void *ptr) {
-			RealmServer *realm = ((RealmServer *)ptr);
-			realm->ConnectPeer(peer);
+		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
+		{
+		public:
+			CommandConnectPeerToRealm() = default;
+			~CommandConnectPeerToRealm() = default;
+			RealmServer *realm;
+			virtual void Execute() override { realm->ConnectPeer(peer.get()); }
 		};
-
+		auto com = icon7::CommandHandle<CommandConnectPeerToRealm>::Create();
+		com->peer = peer->shared_from_this();
+		com->realm = newRealm;
 		newRealm->executionQueue.EnqueueCommand(std::move(com));
 	}
 }
