@@ -78,15 +78,14 @@ void RealmServer::ExecuteOnRealmThread(
 	executionQueue.EnqueueCommand(std::move(command));
 }
 
-void RealmServer::Broadcast(const std::vector<uint8_t> &buffer,
-							icon7::Flags flags, uint64_t exceptEntityId)
+void RealmServer::Broadcast(icon7::ByteBuffer &buffer,
+		uint64_t exceptEntityId)
 {
 	for (auto it : peers) {
 		if (it.second != exceptEntityId) {
 			if (((PeerData *)(it.first->userPointer))->entityId !=
 				exceptEntityId) {
-				std::vector<uint8_t> buf = buffer;
-				it.first->Send(std::move(buf), flags);
+				it.first->Send(buffer);
 			}
 		}
 	}

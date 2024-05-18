@@ -28,13 +28,12 @@ void UpdatePlayer(GameClient *gameClient, const EntityMovementState &state)
 void GetEntitiesData(GameClient *gameClient,
 					 const std::vector<uint64_t> &entities)
 {
-	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
-	writer.op(ServerRpcFunctionNames::GetEntitiesData);
+	icon7::ByteWriter writer(1000);
+	gameClient->rpc.InitializeSerializeSend(writer, ServerRpcFunctionNames::GetEntitiesData);
 	writer.op(entities.data(), entities.size());
-	gameClient->realmConnectionPeer->Send(std::move(buffer),
-										  icon7::FLAG_RELIABLE |
-											  icon7::FLAGS_CALL_NO_FEEDBACK);
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	gameClient->rpc.FinalizeSerializeSend(writer, flags);
+	gameClient->realmConnectionPeer->Send(std::move(writer.Buffer()));
 }
 
 void Ping(GameClient *gameClient, bool reliable)

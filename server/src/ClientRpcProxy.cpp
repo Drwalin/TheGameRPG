@@ -57,9 +57,8 @@ void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 
 void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 {
-	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
-	writer.op(ClientRpcFunctionNames::SpawnEntities);
+	icon7::ByteWriter writer(1000);
+	realm->rpc->InitializeSerializeSend(writer, ClientRpcFunctionNames::SpawnEntities);
 	realm->queryEntityLongState.each(
 		[&](flecs::entity entity,
 			const EntityLastAuthoritativeMovementState state,
@@ -73,16 +72,16 @@ void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 			writer.op(shape);
 			writer.op(movementParams);
 		});
-	peer->Send(std::move(buffer),
-			   icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK);
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	realm->rpc->FinalizeSerializeSend(writer, flags);
+	peer->Send(std::move(writer.Buffer()));
 }
 
 void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 								icon7::ByteReader &reader)
 {
-	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
-	writer.op(ClientRpcFunctionNames::SpawnEntities);
+	icon7::ByteWriter writer(1000);
+	realm->rpc->InitializeSerializeSend(writer, ClientRpcFunctionNames::SpawnEntities);
 	while (reader.get_remaining_bytes() >= 8) {
 		uint64_t entityId = 0;
 		reader.op(entityId);
@@ -103,8 +102,9 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 			}
 		}
 	}
-	peer->Send(std::move(buffer),
-			   icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK);
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	realm->rpc->FinalizeSerializeSend(writer, flags);
+	peer->Send(std::move(writer.Buffer()));
 }
 
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
@@ -130,29 +130,33 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 
 	int written = 0;
 
-	std::vector<uint8_t> buffer;
-	bitscpp::ByteWriter<std::vector<uint8_t>> writer(buffer);
-	writer.op(ClientRpcFunctionNames::UpdateEntities);
+	icon7::ByteWriter writer(1500);
 
 	realm->queryLastAuthoritativeState.each(
 		[&](flecs::entity entity,
 			const EntityLastAuthoritativeMovementState &state) {
-			if (writer.GetSize() + singleEntitySize >= 1100 && written > 0) {
-				realm->Broadcast(
-					buffer,
-					icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK, 0);
-				buffer.clear();
-				written = 0;
-				writer.op(ClientRpcFunctionNames::UpdateEntities);
+			
+			if (written == 0) {
+				writer.Reinit(1500);
+				realm->rpc->InitializeSerializeSend(writer, ClientRpcFunctionNames::UpdateEntities);
 			}
-
+			
 			writer.op((uint64_t)entity.id());
 			writer.op(state);
 			written++;
+			
+			if (writer.GetSize() + singleEntitySize >= 1100) {
+				icon7::Flags flags = icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+				realm->rpc->FinalizeSerializeSend(writer, flags);
+				icon7::ByteBuffer buffer = std::move(writer.Buffer());
+				realm->Broadcast(buffer, 0);
+				written = 0;
+			}
 		});
 	if (written > 0) {
-		realm->Broadcast(
-			buffer, icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK, 0);
+		icon7::Flags flags = icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+		realm->rpc->FinalizeSerializeSend(writer, flags);
+		realm->Broadcast(writer.Buffer(), 0);
 	}
 }
 
