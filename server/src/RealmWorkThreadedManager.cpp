@@ -9,10 +9,24 @@ RealmWorkThreadedManager::RealmWorkThreadedManager() { runningThreads = 0; }
 
 RealmWorkThreadedManager::~RealmWorkThreadedManager()
 {
+	DestroyAllRealmsAndStop();
+}
+
+void RealmWorkThreadedManager::DestroyAllRealmsAndStop()
+{
 	WaitStopRunning();
-	for (auto it : realms) {
+	
+	std::lock_guard lock(mutex);
+	while (realmsQueue.empty() == false) {
+		realmsQueue.pop();
+	}
+	std::unordered_map<std::string, RealmServer *> r = realms;
+	for (auto it : r) {
+		it.second->DisconnectAllAndDestroy();
 		delete it.second;
 	}
+	realms.clear();
+	realmsToDestroy.clear();
 }
 
 bool RealmWorkThreadedManager::AddNewRealm(RealmServer *realm)
@@ -64,9 +78,10 @@ void RealmWorkThreadedManager::RequestStopRunning()
 void RealmWorkThreadedManager::WaitStopRunning()
 {
 	RequestStopRunning();
-	while (runningThreads > 0) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(4));
+	for (std::thread &t : threads) {
+		t.join();
 	}
+	threads.clear();
 }
 
 bool RealmWorkThreadedManager::IsRunning() { return runningThreads > 0; }
@@ -93,6 +108,7 @@ void RealmWorkThreadedManager::SingleRunner()
 		}
 
 		if (destroyRealm) {
+			realm->DisconnectAllAndDestroy();
 			delete realm;
 			realm = nullptr;
 			notBusyCount = 0;
@@ -124,8 +140,7 @@ void RealmWorkThreadedManager::SingleRunner()
 			countBusySinceLastSleep = 0;
 		}
 	}
-	--runningThreads;
-	if (runningThreads == 0) {
+	if ((--runningThreads) == 0) {
 		requestStopRunning = false;
 	}
 }

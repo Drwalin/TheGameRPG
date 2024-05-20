@@ -10,11 +10,24 @@ ServerCore::ServerCore() { host = nullptr; }
 
 ServerCore::~ServerCore()
 {
-	host->DisconnectAllAsync();
-	host->StopListening();
-	host->WaitStopRunning();
-	delete host;
-	host = nullptr;
+	Destroy();
+}
+
+void ServerCore::Destroy()
+{
+	if (host) {
+		host->DisconnectAllAsync();
+		host->StopListening();
+		host->DisconnectAllAsync();
+	}
+		
+	realmManager.DestroyAllRealmsAndStop();
+	
+	if (host) {
+		host->WaitStopRunning();
+		delete host;
+		host = nullptr;
+	}
 }
 
 void ServerCore::CreateRealm(std::string realmName)

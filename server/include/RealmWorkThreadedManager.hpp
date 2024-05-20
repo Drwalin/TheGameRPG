@@ -16,6 +16,8 @@ class RealmWorkThreadedManager final
 public:
 	RealmWorkThreadedManager();
 	~RealmWorkThreadedManager();
+	
+	void DestroyAllRealmsAndStop();
 
 	bool AddNewRealm(RealmServer *realm);
 	void DestroyRealm(std::string realmName);

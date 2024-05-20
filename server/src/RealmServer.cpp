@@ -13,7 +13,14 @@ RealmServer::RealmServer()
 	RealmServer::RegisterObservers();
 }
 
-RealmServer::~RealmServer() {}
+RealmServer::~RealmServer() {
+	DisconnectAllAndDestroy();
+}
+
+void RealmServer::DisconnectAllAndDestroy()
+{
+	// TODO: here
+}
 
 void RealmServer::Init(const std::string &realmName)
 {

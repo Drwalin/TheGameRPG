@@ -18,6 +18,7 @@ public:
 public:
 	ServerCore();
 	~ServerCore();
+	void Destroy();
 
 	void CreateRealm(std::string realmName);
 
@@ -30,6 +31,8 @@ public:
 				int useIpv4);
 
 	void RunNetworkLoopAsync();
+	
+	void RunMainThreadInteractive();
 
 	void BindRpc();
 
@@ -49,7 +52,11 @@ private:
 						 icon7::Peer *peer, icon7::ByteReader &reader,
 						 icon7::Flags flags);
 
+	void ParseCommand(const std::string &cmd);
+	
 public:
+	volatile bool requestStop = false;
+	
 	std::unordered_map<std::shared_ptr<icon7::Peer>, PeerData *> peersData;
 
 	RealmWorkThreadedManager realmManager;
