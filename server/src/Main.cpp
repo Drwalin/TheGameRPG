@@ -1,6 +1,3 @@
-#include <chrono>
-#include <thread>
-
 #include "../include/ServerCore.hpp"
 
 int main(int argc, char **argv)
@@ -27,14 +24,11 @@ int main(int argc, char **argv)
 
 		LOG_INFO("Running async threads...");
 
-		serverCore.realmManager.RunAsync(1);
+		serverCore.realmManager.RunAsync(2);
 
 		serverCore.host->RunAsync();
 
-		std::this_thread::sleep_for(std::chrono::seconds(60));
-		while (serverCore.host->IsRunningAsync()) {
-			std::this_thread::sleep_for(std::chrono::seconds(16));
-		}
+		serverCore.RunMainThreadInteractive();
 	}
 	icon7::Deinitialize();
 	return 0;

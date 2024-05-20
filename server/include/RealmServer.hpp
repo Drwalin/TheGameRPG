@@ -17,6 +17,8 @@ class RealmServer : public Realm
 public:
 	RealmServer();
 	virtual ~RealmServer() override;
+	
+	void DisconnectAllAndDestroy();
 
 	virtual void Init(const std::string &realmName) override;
 
