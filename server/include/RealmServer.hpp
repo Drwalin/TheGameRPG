@@ -33,6 +33,8 @@ public:
 
 	void RegisterObservers();
 	void RegisterSystems();
+	
+	void StoreEntityIntoDatabase(flecs::entity entity);
 
 public:
 	void Broadcast(icon7::ByteBuffer &buffer,
