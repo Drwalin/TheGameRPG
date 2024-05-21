@@ -20,16 +20,15 @@ void RealmWorkThreadedManager::DestroyAllRealmsAndStop()
 	while (realmsQueue.empty() == false) {
 		realmsQueue.pop();
 	}
-	std::unordered_map<std::string, RealmServer *> r = realms;
+	std::unordered_map<std::string, std::shared_ptr<RealmServer>> r = realms;
 	for (auto it : r) {
 		it.second->DisconnectAllAndDestroy();
-		delete it.second;
 	}
 	realms.clear();
 	realmsToDestroy.clear();
 }
 
-bool RealmWorkThreadedManager::AddNewRealm(RealmServer *realm)
+bool RealmWorkThreadedManager::AddNewRealm(std::shared_ptr<RealmServer> realm)
 {
 	std::lock_guard lock(mutex);
 	if (realms.count(realm->realmName) != 0) {
@@ -49,7 +48,7 @@ void RealmWorkThreadedManager::DestroyRealm(std::string realmName)
 	realmsToDestroy.insert(realmName);
 }
 
-RealmServer *RealmWorkThreadedManager::GetRealm(const std::string &realmName)
+std::shared_ptr<RealmServer> RealmWorkThreadedManager::GetRealm(const std::string &realmName)
 {
 	std::lock_guard lock(mutex);
 	auto it = realms.find(realmName);
@@ -94,7 +93,7 @@ void RealmWorkThreadedManager::SingleRunner()
 	uint32_t countBusySinceLastSleep = 0;
 	while (requestStopRunning == false) {
 		bool destroyRealm = false;
-		RealmServer *realm = nullptr;
+		std::shared_ptr<RealmServer> realm = nullptr;
 		{
 			std::lock_guard lock(mutex);
 			if (realmsQueue.empty() == false) {
@@ -109,7 +108,7 @@ void RealmWorkThreadedManager::SingleRunner()
 
 		if (destroyRealm) {
 			realm->DisconnectAllAndDestroy();
-			delete realm;
+			// delete realm;
 			realm = nullptr;
 			notBusyCount = 0;
 		} else if (realm) {

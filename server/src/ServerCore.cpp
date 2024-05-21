@@ -32,7 +32,7 @@ void ServerCore::Destroy()
 
 void ServerCore::CreateRealm(std::string realmName)
 {
-	RealmServer *realm = new RealmServer();
+	std::shared_ptr<RealmServer> realm = std::make_shared<RealmServer>();
 	realm->serverCore = this;
 	realm->rpc = &rpc;
 	realm->Init(realmName);
@@ -42,7 +42,8 @@ void ServerCore::CreateRealm(std::string realmName)
 
 void ServerCore::Disconnect(icon7::Peer *peer)
 {
-	RealmServer *realm = ((PeerData *)(peer->userPointer))->realm;
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
 		realm->DisconnectPeer(peer);
 	}
@@ -74,7 +75,7 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 {
 	PeerData *data = new PeerData;
 	data->peer = peer->shared_from_this();
-	data->realm = nullptr;
+	data->realm.reset();
 	data->entityId = 0;
 	data->userName = "";
 	peer->userPointer = data;
@@ -88,7 +89,8 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
 	LOG_TRACE("DISCONNECTING PEER on network thread enter");
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	if (data->realm) {
+	auto realm = data->realm.lock();
+	if (realm) {
 
 		class CommandExecutePeerDisconnectOnRealm
 			: public icon7::commands::ExecuteOnPeer
@@ -96,23 +98,28 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 		public:
 			CommandExecutePeerDisconnectOnRealm() = default;
 			~CommandExecutePeerDisconnectOnRealm() = default;
-			RealmServer *realmServer;
+			std::weak_ptr<RealmServer> realmServer;
 			virtual void Execute() override
 			{
-				realmServer->DisconnectPeer(peer.get());
-				PeerData *data = ((PeerData *)(peer->userPointer));
-				data->peer = nullptr;
-				data->userName = "";
-				delete data;
-				peer->userPointer = nullptr;
-				LOG_TRACE("DISCONNECTING PEER on realm's thread");
+				auto r = realmServer.lock();
+				if (r) {
+						r->DisconnectPeer(peer.get());
+						PeerData *data = ((PeerData *)(peer->userPointer));
+						data->peer = nullptr;
+						data->userName = "";
+						delete data;
+						peer->userPointer = nullptr;
+						LOG_TRACE("DISCONNECTING PEER on realm's thread");
+				} else {
+					LOG_FATAL("Realm object already destroyed");
+				}
 			}
 		};
 		auto com =
 			icon7::CommandHandle<CommandExecutePeerDisconnectOnRealm>::Create();
 		com->peer = peer->shared_from_this();
-		com->realmServer = data->realm;
-		data->realm->ExecuteOnRealmThread(std::move(com));
+		com->realmServer = realm;
+		realm->ExecuteOnRealmThread(std::move(com));
 	} else {
 		delete data;
 		peer->userPointer = nullptr;

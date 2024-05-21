@@ -39,7 +39,7 @@ bool RealmServer::OneEpoch()
 	int64_t dt = 0;
 	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
 	if (dt >= sendUpdateDeltaTicks) {
-		ClientRpcProxy::Broadcast_UpdateEntities(this);
+		ClientRpcProxy::Broadcast_UpdateEntities(shared_from_this());
 		return true;
 	} else {
 		return busy;
@@ -49,7 +49,7 @@ bool RealmServer::OneEpoch()
 void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	data->realm = this;
+	data->realm = this->weak_from_this();
 
 	uint64_t entityId = NewEntity();
 	LOG_DEBUG("Spawn   entity: [%lu]", entityId);
@@ -67,7 +67,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	// TODO: store player entity into database
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
-		data->realm = nullptr;
+		data->realm.reset();
 	}
 
 	auto it = peers.find(peer);

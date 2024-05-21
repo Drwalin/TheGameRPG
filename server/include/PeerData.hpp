@@ -13,6 +13,6 @@ class PeerData
 public:
 	std::string userName;
 	std::shared_ptr<icon7::Peer> peer;
-	RealmServer *realm = nullptr;
+	std::weak_ptr<RealmServer> realm;
 	uint64_t entityId = 0;
 };

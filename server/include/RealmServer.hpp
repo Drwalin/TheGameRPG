@@ -13,7 +13,7 @@
 
 class ServerCore;
 
-class RealmServer : public Realm
+class RealmServer : public Realm, public std::enable_shared_from_this<RealmServer>
 {
 public:
 	RealmServer();
