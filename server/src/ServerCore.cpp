@@ -74,7 +74,7 @@ void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }
 void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 {
 	PeerData *data = new PeerData;
-	data->peer = peer->shared_from_this();
+	data->peer = peer->weak_from_this();
 	data->realm.reset();
 	data->entityId = 0;
 	data->userName = "";
@@ -105,7 +105,7 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 				if (r) {
 						r->DisconnectPeer(peer.get());
 						PeerData *data = ((PeerData *)(peer->userPointer));
-						data->peer = nullptr;
+						data->peer.reset();
 						data->userName = "";
 						delete data;
 						peer->userPointer = nullptr;

@@ -64,7 +64,6 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
-	// TODO: store player entity into database
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
 		data->realm.reset();
@@ -73,10 +72,22 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	auto it = peers.find(peer);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
-		LOG_DEBUG("Despawn entity: [%lu]", entityId);
+		
 		peers.erase(peer);
+		
+		flecs::entity entity = Entity(entityId);
+		if (entity.is_alive()) {
+			// store player entity into database
+			StoreEntityIntoDatabase(entity);
+		}
+		
 		RemoveEntity(entityId);
 	}
+}
+
+void RealmServer::StoreEntityIntoDatabase(flecs::entity entity)
+{
+	// TODO: implement
 }
 
 void RealmServer::ExecuteOnRealmThread(

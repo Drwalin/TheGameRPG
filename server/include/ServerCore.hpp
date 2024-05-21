@@ -15,7 +15,6 @@
 class ServerCore
 {
 public:
-public:
 	ServerCore();
 	~ServerCore();
 	void Destroy();
