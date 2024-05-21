@@ -34,7 +34,7 @@ ServerCore::SelectExecutionQueue(icon7::MessageConverter *messageConverter,
 								 icon7::Flags flags)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	RealmServer *realm = data->realm;
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
 		return &realm->executionQueue;
 	}
@@ -53,7 +53,7 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 							  const EntityLastAuthoritativeMovementState &state)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	RealmServer *realm = data->realm;
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
@@ -76,13 +76,13 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 		LOG_INFO("Invalid usernamne");
 		// 		return;
 	}
-	RealmServer *newRealm = realmManager.GetRealm(realmName);
+	std::shared_ptr<RealmServer> newRealm = realmManager.GetRealm(realmName);
 	if (newRealm == nullptr) {
 		LOG_INFO("Invalid realm");
 		return;
 	}
 
-	RealmServer *oldRealm = data->realm;
+	std::shared_ptr<RealmServer> oldRealm = data->realm.lock();
 	if (oldRealm) {
 		oldRealm->DisconnectPeer(peer);
 
@@ -109,8 +109,15 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 		public:
 			CommandConnectPeerToRealm() = default;
 			~CommandConnectPeerToRealm() = default;
-			RealmServer *realm;
-			virtual void Execute() override { realm->ConnectPeer(peer.get()); }
+			std::weak_ptr<RealmServer> realm;
+			virtual void Execute() override {
+				auto r = realm.lock();
+				if (r) {
+						r->ConnectPeer(peer.get());
+				} else {
+					LOG_FATAL("Realm object already destroyed");
+				}
+			}
 		};
 		auto com = icon7::CommandHandle<CommandConnectPeerToRealm>::Create();
 		com->peer = peer->shared_from_this();
@@ -123,7 +130,7 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 									  icon7::ByteReader *reader)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	RealmServer *realm = data->realm;
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm && reader) {
 		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm, peer, *reader);
 	}

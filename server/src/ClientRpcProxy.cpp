@@ -28,8 +28,9 @@ void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data)
 	PeerData *peerData = ((PeerData *)(peer->userPointer));
 	int64_t currentTick = 0;
 	if (peerData) {
-		if (peerData->realm) {
-			currentTick = peerData->realm->timer.CalcCurrentTick();
+		auto realm = peerData->realm.lock();
+		if (realm.get() != nullptr) {
+			currentTick = realm->timer.CalcCurrentTick();
 		} else {
 			LOG_DEBUG("Peer has no realm");
 		}
@@ -48,14 +49,14 @@ void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
 					 ClientRpcFunctionNames::SetGravity, gravity);
 }
 
-void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
+void DeleteEntity_ForPeer(std::shared_ptr<RealmServer> realm, icon7::Peer *peer,
 						  uint64_t entityId)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::DeleteEntities, entityId);
 }
 
-void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
+void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm, icon7::Peer *peer)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer, ClientRpcFunctionNames::SpawnEntities);
@@ -77,7 +78,7 @@ void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm, icon7::Peer *peer,
 								icon7::ByteReader &reader)
 {
 	icon7::ByteWriter writer(1000);
@@ -107,7 +108,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
+void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
 						const std::string &modelName, EntityShape shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SetModel, entityId,
@@ -124,7 +125,7 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 							 state, shape, entityModelName, entityName);
 }
 
-void Broadcast_UpdateEntities(RealmServer *realm)
+void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm)
 {
 	const static uint32_t singleEntitySize = 8 + 8 + 12 + 12 + 12 + 1;
 

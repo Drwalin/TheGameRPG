@@ -8,6 +8,7 @@
 #include <atomic>
 #include <thread>
 #include <mutex>
+#include <memory>
 
 class RealmServer;
 
@@ -19,7 +20,7 @@ public:
 	
 	void DestroyAllRealmsAndStop();
 
-	bool AddNewRealm(RealmServer *realm);
+	bool AddNewRealm(std::shared_ptr<RealmServer> realm);
 	void DestroyRealm(std::string realmName);
 
 	void RunAsync(int workerThreadsCount);
@@ -28,15 +29,15 @@ public:
 	void WaitStopRunning();
 	bool IsRunning();
 
-	RealmServer *GetRealm(const std::string &realmName);
+	std::shared_ptr<RealmServer> GetRealm(const std::string &realmName);
 
 private:
 	void SingleRunner();
 
 private:
 	std::mutex mutex;
-	std::queue<RealmServer *> realmsQueue;
-	std::unordered_map<std::string, RealmServer *> realms;
+	std::queue<std::shared_ptr<RealmServer>> realmsQueue;
+	std::unordered_map<std::string, std::shared_ptr<RealmServer>> realms;
 	std::unordered_set<std::string> realmsToDestroy;
 
 	std::atomic<bool> requestStopRunning;

@@ -1,5 +1,3 @@
-#include <chrono>
-
 #include <icon7/Debug.hpp>
 
 #include "../include/EntitySystems.hpp"
@@ -121,11 +119,7 @@ bool Realm::OneEpoch()
 
 	if (deltaTicks >= maxDeltaTicks) {
 		for (auto &sys : systemsRunPeriodicallyByTimer) {
-			auto beg = std::chrono::steady_clock::now();
 			sys.run();
-			auto end = std::chrono::steady_clock::now();
-			auto dt =
-				std::chrono::duration_cast<std::chrono::nanoseconds>(end - beg);
 		}
 		return true;
 	} else {
