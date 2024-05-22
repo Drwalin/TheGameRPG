@@ -1,8 +1,8 @@
-#include "../../include/PeerData.hpp"
-#include "../../include/RealmServer.hpp"
-#include "../../include/ServerCore.hpp"
+#include "../include/PeerData.hpp"
+#include "../include/RealmServer.hpp"
+#include "../include/ServerCore.hpp"
 
-#include "../../include/peer_state_transitions/ConnectingNewPeer.hpp"
+#include "../include/PeerStateTransitions.hpp"
 
 namespace peer_transitions
 {

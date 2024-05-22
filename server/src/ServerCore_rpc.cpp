@@ -6,7 +6,7 @@
 #include "../../common/include/ServerRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
-#include "../include/peer_state_transitions/ConnectingNewPeer.hpp"
+#include "../include/PeerStateTransitions.hpp"
 
 #include "../include/ServerCore.hpp"
 
@@ -46,7 +46,7 @@ void ServerCore::Login(icon7::Peer *peer, const std::string &userName)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
-		peer_transitions::ConnectinNewPeer::OnReceivedLogin(peer, userName);
+		peer_transitions::OnReceivedLogin(peer, userName);
 	} else {
 		LOG_ERROR("Peer received Login request but PeerData is NULL");
 	}
