@@ -1,18 +1,17 @@
 #include "../include/ServerCore.hpp"
+#include "../include/DBWorker.hpp"
 
 int main(int argc, char **argv)
 {
-	LOG_TRACE("Main begin");
-
 	icon7::Initialize();
 	{
+		DBWorker::GetSingleton()->Init("database.db");
+		
 		ServerCore serverCore;
 		serverCore.BindRpc();
 		serverCore.CreateRealm("World1");
 		serverCore.CreateRealm("Middle Earth");
 		serverCore.CreateRealm("Heaven");
-
-		LOG_INFO("Starting to listen...");
 
 		serverCore.StartService();
 		serverCore.Listen("localhost", 25369, true);
@@ -22,14 +21,13 @@ int main(int argc, char **argv)
 			serverCore.Listen(argv[i], 25369, true);
 		}
 
-		LOG_INFO("Running async threads...");
-
-		serverCore.realmManager.RunAsync(2);
+		serverCore.realmManager.RunAsync(1);
 
 		serverCore.host->RunAsync();
 
 		serverCore.RunMainThreadInteractive();
 	}
+	DBWorker::GetSingleton()->Destroy();
 	icon7::Deinitialize();
 	return 0;
 }

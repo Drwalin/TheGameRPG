@@ -78,16 +78,12 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 	data->realm.reset();
 	data->entityId = 0;
 	data->userName = "";
+	data->peerState = WAITING_FOR_USERNAME;
 	peer->userPointer = data;
-
-	auto core = ((ServerCore *)(peer->host->userPointer));
-	// TODO: get player data from database and call core->ConnectPeerToRealm
-	core->ConnectPeerToRealm(peer, core->spawnRealm);
 }
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
-	LOG_TRACE("DISCONNECTING PEER on network thread enter");
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	auto realm = data->realm.lock();
 	if (realm) {
@@ -109,7 +105,6 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 						data->userName = "";
 						delete data;
 						peer->userPointer = nullptr;
-						LOG_TRACE("DISCONNECTING PEER on realm's thread");
 				} else {
 					LOG_FATAL("Realm object already destroyed");
 				}
@@ -123,6 +118,5 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 	} else {
 		delete data;
 		peer->userPointer = nullptr;
-		LOG_TRACE("DISCONNECTING PEER on network thread");
 	}
 }

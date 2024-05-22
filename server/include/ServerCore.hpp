@@ -35,8 +35,7 @@ public:
 
 	void BindRpc();
 
-	static void Login(icon7::Peer *peer, const std::string &userName,
-					  const std::string &password);
+	static void Login(icon7::Peer *peer, const std::string &userName);
 	static void UpdatePlayer(icon7::Peer *peer,
 							 const EntityLastAuthoritativeMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
