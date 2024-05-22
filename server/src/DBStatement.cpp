@@ -47,6 +47,11 @@ int Statement::BindFloat(int id, double value)
 	return sqlite3_bind_double(stmt, id, value);
 }
 
+int Statement::ClearBindings()
+{
+	return sqlite3_clear_bindings(stmt);
+}
+
 int Statement::BindNull(int id)
 {
 	return sqlite3_bind_null(stmt, id);

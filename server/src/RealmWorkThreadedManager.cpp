@@ -64,8 +64,10 @@ void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 	std::lock_guard lock(mutex);
 	for (int i = threads.size(); i < workerThreadsCount; ++i) {
 		threads.push_back(std::thread(
-			+[](RealmWorkThreadedManager *manager) { manager->SingleRunner(); },
-			this));
+			+[](RealmWorkThreadedManager *manager, int id, int count) {
+			LOG_INFO("Realms worker thread %i / %i", id+1, count);
+			manager->SingleRunner(); },
+			this, i, workerThreadsCount));
 	}
 }
 

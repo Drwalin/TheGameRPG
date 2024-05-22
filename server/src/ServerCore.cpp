@@ -4,14 +4,13 @@
 #include <icon7/Command.hpp>
 #include <icon7/Flags.hpp>
 
+#include "../include/DBWorker.hpp"
+
 #include "../include/ServerCore.hpp"
 
 ServerCore::ServerCore() { host = nullptr; }
 
-ServerCore::~ServerCore()
-{
-	Destroy();
-}
+ServerCore::~ServerCore() { Destroy(); }
 
 void ServerCore::Destroy()
 {
@@ -20,9 +19,9 @@ void ServerCore::Destroy()
 		host->StopListening();
 		host->DisconnectAllAsync();
 	}
-		
+
 	realmManager.DestroyAllRealmsAndStop();
-	
+
 	if (host) {
 		host->WaitStopRunning();
 		delete host;
@@ -69,7 +68,13 @@ void ServerCore::Listen(const std::string &addressInterface, uint16_t port,
 					   useIpv4 ? icon7::IPv4 : icon7::IPv6);
 }
 
-void ServerCore::RunNetworkLoopAsync() { host->RunAsync(); }
+void ServerCore::RunNetworkLoopAsync()
+{
+	host->RunAsync();
+	host->EnqueueCommand(
+		icon7::CommandHandle<CommandFunctor<void (*)()>>::Create(
+			+[]() { LOG_INFO("Networking thread"); }));
+}
 
 void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 {
@@ -99,12 +104,12 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 			{
 				auto r = realmServer.lock();
 				if (r) {
-						r->DisconnectPeer(peer.get());
-						PeerData *data = ((PeerData *)(peer->userPointer));
-						data->peer.reset();
-						data->userName = "";
-						delete data;
-						peer->userPointer = nullptr;
+					r->DisconnectPeer(peer.get());
+					PeerData *data = ((PeerData *)(peer->userPointer));
+					data->peer.reset();
+					data->userName = "";
+					delete data;
+					peer->userPointer = nullptr;
 				} else {
 					LOG_FATAL("Realm object already destroyed");
 				}

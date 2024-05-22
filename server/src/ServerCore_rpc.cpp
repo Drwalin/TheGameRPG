@@ -74,6 +74,7 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 
 void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 {
+	LOG_INFO("TODO: replace ServerCore::ConnectPeerToRealm with something suitable to use with database.");
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");

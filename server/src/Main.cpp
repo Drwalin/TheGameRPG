@@ -4,8 +4,10 @@
 int main(int argc, char **argv)
 {
 	icon7::Initialize();
+	LOG_INFO("Main thread started");
 	{
 		DBWorker::GetSingleton()->Init("database.db");
+		DBWorker::GetSingleton()->RunAsync();
 		
 		ServerCore serverCore;
 		serverCore.BindRpc();
@@ -23,7 +25,7 @@ int main(int argc, char **argv)
 
 		serverCore.realmManager.RunAsync(1);
 
-		serverCore.host->RunAsync();
+		serverCore.RunNetworkLoopAsync();
 
 		serverCore.RunMainThreadInteractive();
 	}
