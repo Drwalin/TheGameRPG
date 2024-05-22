@@ -6,6 +6,7 @@
 #include "../../common/include/ServerRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
+#include "../include/peer_state_transitions/ConnectingNewPeer.hpp"
 
 #include "../include/ServerCore.hpp"
 
@@ -41,12 +42,14 @@ ServerCore::SelectExecutionQueue(icon7::MessageConverter *messageConverter,
 	return nullptr;
 }
 
-void ServerCore::Login(icon7::Peer *peer, const std::string &userName,
-					   const std::string &password)
+void ServerCore::Login(icon7::Peer *peer, const std::string &userName)
 {
-	// TODO: add login with password verification
-	((PeerData *)(peer->userPointer))->userName = userName;
-	ClientRpcProxy::LoginSuccessfull(peer);
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	if (data) {
+		peer_transitions::ConnectinNewPeer::OnReceivedLogin(peer, userName);
+	} else {
+		LOG_ERROR("Peer received Login request but PeerData is NULL");
+	}
 }
 
 void ServerCore::UpdatePlayer(icon7::Peer *peer,
