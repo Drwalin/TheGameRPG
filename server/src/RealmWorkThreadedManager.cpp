@@ -112,7 +112,6 @@ void RealmWorkThreadedManager::SingleRunner()
 		}
 
 		if (destroyRealm) {
-			LOG_DEBUG("Destroying Realm");
 			realm->DisconnectAllAndDestroy();
 			// delete realm;
 			realm = nullptr;

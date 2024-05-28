@@ -30,7 +30,8 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						const EntityName &entityName)
 {
 	ClientRpcProxy::Broadcast_DeleteEntity(realm, entity.id());
-	realm->peers.erase(peer.peer.get());
+	// TODO: check if this realm->peers.erase() is required
+	realm->peers.erase(peer.peer);
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));
 	data->realm.reset();
 	data->entityId = 0;
