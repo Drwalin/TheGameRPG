@@ -78,7 +78,6 @@ void ServerCore::RunNetworkLoopAsync()
 
 void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 {
-	LOG_DEBUG("OnPeerConnected: %p", peer);
 	PeerData *data = new PeerData;
 	data->peer = peer->weak_from_this();
 	data->realm.reset();
@@ -90,7 +89,6 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
-	LOG_DEBUG("OnPeerDisconnected: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	auto realm = data->realm.lock();
 	if (realm) {

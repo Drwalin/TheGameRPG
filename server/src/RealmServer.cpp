@@ -20,9 +20,9 @@ RealmServer::~RealmServer() {
 void RealmServer::DisconnectAllAndDestroy()
 {
 	// TODO: safe all entities and states
-	std::unordered_map<icon7::Peer *, uint64_t> peers = this->peers;
-	for (auto it : peers) {
-		DisconnectPeer(it.first);
+	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> p = this->peers;
+	for (auto it : p) {
+		DisconnectPeer(it.first.get());
 	}
 }
 
@@ -52,34 +52,33 @@ bool RealmServer::OneEpoch()
 
 void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
-	LOG_DEBUG("RealmServer::ConnectPeer: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	data->realm = this->weak_from_this();
 
 	uint64_t entityId = NewEntity();
-	LOG_DEBUG("Spawn   entity: [%lu]", entityId);
 	data->entityId = entityId;
 	// TODO: load player entity from database
 	SetComponent<EntityName>(entityId, {data->userName});
 
-	peers[peer] = entityId;
+	auto pw = peer->shared_from_this();
+	peers[pw] = entityId;
 	this->SetComponent<EntityPlayerConnectionPeer>(
 		entityId, EntityPlayerConnectionPeer(peer->shared_from_this()));
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
-	LOG_DEBUG("RealmServer::DisconnectPeer: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
 		data->realm.reset();
 	}
 
-	auto it = peers.find(peer);
+	auto pw = peer->shared_from_this();
+	auto it = peers.find(pw);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
 		
-		peers.erase(peer);
+		peers.erase(pw);
 		
 		flecs::entity entity = Entity(entityId);
 		if (entity.is_alive()) {
