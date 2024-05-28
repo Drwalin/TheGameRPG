@@ -2,6 +2,8 @@
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
 
+#include "../../common/include/CollisionLoader.hpp"
+
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 
@@ -30,6 +32,11 @@ void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
+	
+	CollisionLoader loader;
+	loader.LoadOBJ(realmName + ".obj");
+	collisionWorld.LoadStaticCollision(&loader.collisionData);
+	
 	sendEntitiesToClientsTimer.Start();
 }
 

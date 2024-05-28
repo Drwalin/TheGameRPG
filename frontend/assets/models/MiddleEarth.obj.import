@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b4krfqmgy1eh7"
+path="res://.godot/imported/MiddleEarth.obj-5b3f6247dd2e9e522083ee4b9ae03b01.mesh"
+
+[deps]
+
+files=["res://.godot/imported/MiddleEarth.obj-5b3f6247dd2e9e522083ee4b9ae03b01.mesh"]
+
+source_file="res://assets/models/MiddleEarth.obj"
+dest_files=["res://.godot/imported/MiddleEarth.obj-5b3f6247dd2e9e522083ee4b9ae03b01.mesh", "res://.godot/imported/MiddleEarth.obj-5b3f6247dd2e9e522083ee4b9ae03b01.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
