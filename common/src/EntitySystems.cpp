@@ -99,15 +99,15 @@ void UpdateMovement(
 		next.rot = prev.rot;
 	}
 
-	{
-		glm::vec3 vel = next.vel;
-		glm::vec3 pos = next.pos;
-		LOG_DEBUG(
-			"entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
-			"%f %f)    %s",
-			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks, pos.x,
-			pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
-	}
+// 	{
+// 		glm::vec3 vel = next.vel;
+// 		glm::vec3 pos = next.pos;
+// 		LOG_DEBUG(
+// 			"entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
+// 			"%f %f)    %s",
+// 			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks, pos.x,
+// 			pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
+// 	}
 
 	glm::vec3 d = currentState.pos - prev.pos;
 	if (glm::dot(d, d) > 0.00001) {

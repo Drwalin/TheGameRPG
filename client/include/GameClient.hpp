@@ -1,7 +1,7 @@
 #pragma once
 
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Peer.hpp>
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/Peer.hpp"
 
 #include "RealmClient.hpp"
 

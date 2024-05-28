@@ -2,11 +2,10 @@
 
 #include <unordered_map>
 
-#include <icon7/Command.hpp>
-#include <icon7/Peer.hpp>
-#include <icon7/Flags.hpp>
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Flags.hpp>
+#include "../../ICon7/include/icon7/PeerUStcp.hpp"
+#include "../../ICon7/include/icon7/Command.hpp"
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
