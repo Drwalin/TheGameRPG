@@ -1,3 +1,5 @@
+#include "../../common/include/CollisionLoader.hpp"
+
 #include "../include/GameClient.hpp"
 
 #include "../include/RealmClient.hpp"
@@ -16,6 +18,10 @@ void RealmClient::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
+	
+	CollisionLoader loader;
+	loader.LoadOBJ(std::string("assets/models/") + realmName + ".obj");
+	collisionWorld.LoadStaticCollision(&loader.collisionData);
 }
 
 void RealmClient::Clear()

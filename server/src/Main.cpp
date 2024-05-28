@@ -12,8 +12,8 @@ int main(int argc, char **argv)
 		ServerCore serverCore;
 		serverCore.BindRpc();
 		serverCore.CreateRealm("World1");
-		serverCore.CreateRealm("Middle Earth");
 		serverCore.CreateRealm("Heaven");
+		serverCore.CreateRealm("MiddleEarth");
 
 		serverCore.StartService();
 		serverCore.Listen("localhost", 25369, true);
