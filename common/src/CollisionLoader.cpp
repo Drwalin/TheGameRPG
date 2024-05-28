@@ -1,67 +1,9 @@
 
 #include <fstream>
-#include <sstream>
 
 #include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/CollisionLoader.hpp"
-
-static inline std::istream &GetLine(std::istream &stream, std::string &line) {
-	std::getline(stream, line);
-	if(line.size() && line[line.size()-1] == 13)
-		line.resize(line.size() - 1);
-	return stream;
-}
-
-bool CollisionLoader::LoadOBJ_Cpp(std::string fileName) {
-	std::ifstream stream(fileName);
-	if (stream.good() == false) {
-		LOG_FATAL("Failed to open file: `%s`", fileName.c_str());
-		return false;
-	}
-	collisionData.indices.reserve(1000000);
-	collisionData.vertices.reserve(1000000);
-	std::vector<uint32_t> ind;
-	std::string line, word;
-	glm::vec3 v;
-	std::stringstream s;
-	while(!stream.eof() && stream.good()) {
-		line.clear();
-		word.clear();
-		GetLine(stream, line);
-		s.clear();
-		s.str(line);
-		s >> word;
-		switch(word[0]) {
-		case 'v':
-			if(word[1] == 0) {
-				s >> v.x;
-				s >> v.y;
-				s >> v.z;
-				collisionData.vertices.push_back(v);
-			}
-			break;
-		case 'f':
-			ind.clear();
-			while(true) {
-				word = "";
-				s >> word;
-				if(word == "")
-					break;
-				ind.push_back(atoi(word.substr(0,word.find("/")).c_str())-1);
-			}
-			for (uint32_t j=0; j+2<ind.size(); ++j) {
-				collisionData.indices.push_back(ind[0]);
-				collisionData.indices.push_back(ind[j+1]);
-				collisionData.indices.push_back(ind[j+2]);
-			}
-			break;
-		}
-	}
-	collisionData.indices.shrink_to_fit();
-	collisionData.vertices.shrink_to_fit();
-	return true;
-}
 
 bool CollisionLoader::LoadOBJ(std::string fileName) {
 	std::ifstream stream(fileName);
