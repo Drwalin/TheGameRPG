@@ -1,5 +1,3 @@
-#include <icon7/Debug.hpp>
-
 #include <bullet/LinearMath/btVector3.h>
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
@@ -55,8 +53,6 @@ bool CollisionWorld::TestCollisionMovementRays(
 		}
 		return false;
 	}
-
-	printf("\n");
 
 	const float heightStart = stepHeight;
 	const float heightEnd = shape.height - 0.001f;

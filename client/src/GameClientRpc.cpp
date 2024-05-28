@@ -1,12 +1,8 @@
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/Command.hpp>
-#include <icon7/Flags.hpp>
 
 #include "../include/ServerRpcProxy.hpp"
 
 #include "../include/GameClient.hpp"
-#include "ClientRpcFunctionNames.hpp"
+#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 void GameClient::BindRpc()
 {
@@ -196,17 +192,19 @@ void GameClient::UpdateEntity(uint64_t serverId,
 	if (localId != localPlayerEntityId) {
 		realm.SetComponent(localId, state);
 		realm.SetComponent(localId, state.oldState);
-		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG(
-			"Recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-			state.oldState.onGround ? "ON GROUND" : "FALLING");
+		/*
+		glm::vec3 p1 = state.oldstate.pos, p2 = state.oldstate.vel;
+		log_debug(
+			"recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+			serverid, localid, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+			state.oldstate.onground ? "on ground" : "falling");
 	} else {
-		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG(
-			"Recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-			state.oldState.onGround ? "ON GROUND" : "FALLING");
+		glm::vec3 p1 = state.oldstate.pos, p2 = state.oldstate.vel;
+		log_debug(
+			"recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
+			serverid, localid, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
+			state.oldstate.onground ? "on ground" : "falling");
+		*/
 	}
 }
 

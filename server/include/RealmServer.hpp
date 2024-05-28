@@ -4,8 +4,6 @@
 #include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
 #include "../../ICon7/include/icon7/Peer.hpp"
 
-#include <flecs.h>
-
 #include "PeerData.hpp"
 
 #include "../../common/include/Realm.hpp"

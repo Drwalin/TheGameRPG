@@ -1,8 +1,8 @@
 
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/Command.hpp>
-#include <icon7/Flags.hpp>
+#include "../../ICon7/include/icon7/PeerUStcp.hpp"
+#include "../../ICon7/include/icon7/HostUStcp.hpp"
+#include "../../ICon7/include/icon7/Command.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
 
 #include "../include/DBWorker.hpp"
 
@@ -73,11 +73,12 @@ void ServerCore::RunNetworkLoopAsync()
 	host->RunAsync();
 	host->EnqueueCommand(
 		icon7::CommandHandle<CommandFunctor<void (*)()>>::Create(
-			+[]() { LOG_INFO("Networking thread"); }));
+			+[]() { LOG_INFO("Networking thread started"); }));
 }
 
 void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 {
+	LOG_DEBUG("OnPeerConnected: %p", peer);
 	PeerData *data = new PeerData;
 	data->peer = peer->weak_from_this();
 	data->realm.reset();
@@ -89,6 +90,7 @@ void ServerCore::_OnPeerConnect(icon7::Peer *peer)
 
 void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 {
+	LOG_DEBUG("OnPeerDisconnected: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	auto realm = data->realm.lock();
 	if (realm) {

@@ -93,7 +93,7 @@ void RealmWorkThreadedManager::SingleRunner()
 	++runningThreads;
 	int sleepMilliseconds = 1;
 	uint32_t countBusySinceLastSleep = 0;
-	while (requestStopRunning == false) {
+	while (true) {
 		bool destroyRealm = false;
 		std::shared_ptr<RealmServer> realm = nullptr;
 		{
@@ -101,14 +101,18 @@ void RealmWorkThreadedManager::SingleRunner()
 			if (realmsQueue.empty() == false) {
 				realm = realmsQueue.front();
 				realmsQueue.pop();
-				if (realmsToDestroy.count(realm->realmName) != 0) {
+				if (realmsToDestroy.count(realm->realmName) != 0 || requestStopRunning == true) {
 					realms.erase(realm->realmName);
 					realmsToDestroy.erase(realm->realmName);
+					destroyRealm = true;
 				}
+			} else if (requestStopRunning) {
+				break;
 			}
 		}
 
 		if (destroyRealm) {
+			LOG_DEBUG("Destroying Realm");
 			realm->DisconnectAllAndDestroy();
 			// delete realm;
 			realm = nullptr;

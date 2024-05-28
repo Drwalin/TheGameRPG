@@ -19,7 +19,11 @@ RealmServer::~RealmServer() {
 
 void RealmServer::DisconnectAllAndDestroy()
 {
-	// TODO: here
+	// TODO: safe all entities and states
+	std::unordered_map<icon7::Peer *, uint64_t> peers = this->peers;
+	for (auto it : peers) {
+		DisconnectPeer(it.first);
+	}
 }
 
 void RealmServer::Init(const std::string &realmName)
@@ -48,6 +52,7 @@ bool RealmServer::OneEpoch()
 
 void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
+	LOG_DEBUG("RealmServer::ConnectPeer: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	data->realm = this->weak_from_this();
 
@@ -64,6 +69,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
+	LOG_DEBUG("RealmServer::DisconnectPeer: %p", peer);
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
 		data->realm.reset();
