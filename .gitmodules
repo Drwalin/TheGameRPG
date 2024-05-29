@@ -1,5 +1,5 @@
 [submodule "common/flecs"]
-	path = common/flecs
+	path = flecs
 	url = https://github.com/SanderMertens/flecs.git
 [submodule "ICon7"]
 	path = ICon7

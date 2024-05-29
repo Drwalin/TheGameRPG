@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-#include "../flecs/flecs.h"
+#include <flecs.h>
 #include <glm/glm.hpp>
 
 #include "Timer.hpp"
