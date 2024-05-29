@@ -3,6 +3,7 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/CollisionLoader.hpp"
+#include "../../common/include/EntitySystems.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
@@ -108,6 +109,39 @@ void RealmServer::Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId)
 			}
 		}
 	}
+}
+
+EntityMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
+{
+	auto entity = Entity(entityId);
+
+	const EntityShape *shape = entity.get<EntityShape>();
+	if (shape == nullptr) {
+		return {};
+	}
+	EntityMovementState *currentState =
+		(EntityMovementState *)
+		entity.get<EntityMovementState>();
+	if (currentState == nullptr) {
+		return {};
+	}
+	const EntityLastAuthoritativeMovementState
+		*lastAuthoritativeState =
+		entity.get<EntityLastAuthoritativeMovementState>();
+	if (lastAuthoritativeState == nullptr) {
+		return {};
+	}
+	const EntityMovementParameters *movementParams =
+		entity.get<EntityMovementParameters>();
+	if (movementParams == nullptr) {
+		return {};
+	}
+
+	EntitySystems::UpdateMovement(
+			this, entity, *shape, *currentState,
+			*lastAuthoritativeState, *movementParams);
+	
+	return *currentState;
 }
 
 void RealmServer::RegisterObservers()

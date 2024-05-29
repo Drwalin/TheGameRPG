@@ -28,6 +28,8 @@ public:
 	void DisconnectPeer(icon7::Peer *peer);
 
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
+	
+	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) override;
 
 	void RegisterObservers();
 

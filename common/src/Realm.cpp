@@ -88,43 +88,12 @@ void Realm::RegisterObservers()
 			static EntityEventTemplate defaultMovementEvent{
 				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
 				   uint64_t entityId) {
-					auto entity = realm->Entity(entityId);
-
-					const EntityShape *shape = entity.get<EntityShape>();
-					if (shape == nullptr) {
-						return;
-					}
-					EntityMovementState *currentState =
-						(EntityMovementState *)
-							entity.get<EntityMovementState>();
-					if (currentState == nullptr) {
-						return;
-					}
-					const EntityLastAuthoritativeMovementState
-						*lastAuthoritativeState =
-							entity.get<EntityLastAuthoritativeMovementState>();
-					if (lastAuthoritativeState == nullptr) {
-						return;
-					}
-					const EntityMovementParameters *movementParams =
-						entity.get<EntityMovementParameters>();
-					if (movementParams == nullptr) {
-						return;
-					}
-					EntityEventsQueue *eventsQueue =
-						(EntityEventsQueue *)entity.get<EntityEventsQueue>();
-					if (eventsQueue == nullptr) {
-						return;
-					}
-
-					EntitySystems::UpdateMovement(
-						realm, entity, *shape, *currentState,
-						*lastAuthoritativeState, *movementParams);
-
-					glm::vec3 v = currentState->vel;
+					EntityMovementState currentState = realm->ExecuteMovementUpdate(entityId);
+					
+					glm::vec3 v = currentState.vel;
 					int64_t dt = realm->maxMovementDeltaTicks;
-					;
-					if (currentState->onGround == false) {
+					
+					if (currentState.onGround == false) {
 						dt = realm->minMovementDeltaTicks;
 						;
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
@@ -134,7 +103,14 @@ void Realm::RegisterObservers()
 					EntityEvent event;
 					event.dueTick = realm->timer.currentTick + dt;
 					event.event = &defaultMovementEvent;
-					eventsQueue->ScheduleEvent(realm, entity.id(), event);
+					
+					EntityEventsQueue *eventsQueue =
+						realm->AccessComponent<EntityEventsQueue>(entityId);
+					if (eventsQueue == nullptr) {
+						return;
+					}
+					
+					eventsQueue->ScheduleEvent(realm, entityId, event);
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 100;
@@ -184,9 +160,9 @@ bool Realm::OneEpoch()
 		} else {
 			return false;
 		}
-
-		return true;
 	}
+	
+	return true;
 }
 
 void Realm::UpdateEntityAuthoritativeState(
