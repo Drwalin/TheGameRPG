@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <functional>
 
 #include "../flecs/flecs.h"
@@ -9,6 +8,7 @@
 
 #include "Timer.hpp"
 #include "CollisionWorld.hpp"
+#include "EntityEvent.hpp"
 
 class Realm
 {
@@ -24,9 +24,8 @@ public:
 	void RemoveEntity(uint64_t entity);
 
 	void RegisterObservers();
-	void RegisterSystems();
 
-	// returns false if was not busy
+	// returns false if was not busy or if does not need to be busy
 	virtual bool OneEpoch();
 
 	virtual void UpdateEntityAuthoritativeState(
@@ -34,18 +33,26 @@ public:
 
 public:
 	Timer timer;
-	int64_t minDeltaTicks = 50;
-	int64_t maxDeltaTicks = 200;
+	int64_t minMovementDeltaTicks = 50;
+	int64_t maxMovementDeltaTicks = 200;
 	int64_t ticksBeforeIgnoringInputMovement = 500;
 
 	float gravity = -9.81f;
 
 	flecs::world ecs;
-	std::vector<flecs::system> systemsRunPeriodicallyByTimer;
 
 	CollisionWorld collisionWorld;
 
 	std::string realmName;
+	
+	// TODO: fill this
+	EntityEventPriorityQueue eventsPriorityQueue;
+
+public:
+	flecs::query<const EntityShape, EntityMovementState,
+				 const EntityLastAuthoritativeMovementState,
+				 const EntityMovementParameters>
+		queryEntityForMovementUpdate;
 
 public:
 	template <typename... TArgs>
@@ -83,6 +90,10 @@ public: // accessors
 	template <typename T> const T *GetComponent(uint64_t entity) const
 	{
 		return Entity(entity).get<T>();
+	}
+	template <typename T> T *AccessComponent(uint64_t entity) const
+	{
+		return (T *)Entity(entity).get<T>();
 	}
 
 	template <typename T> void RemoveComponent(uint64_t entity)

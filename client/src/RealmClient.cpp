@@ -6,9 +6,8 @@
 
 RealmClient::RealmClient(GameClient *gameClient) : gameClient(gameClient)
 {
-	this->minDeltaTicks = 3;
-	this->maxDeltaTicks = 9;
-	RealmClient::RegisterSystems();
+	this->minMovementDeltaTicks = 3;
+	this->maxMovementDeltaTicks = 9;
 	RealmClient::RegisterObservers();
 }
 
@@ -70,5 +69,3 @@ void RealmClient::RegisterObservers()
 						 gameClient->OnEntityShape(entity.id(), shape);
 					 });
 }
-
-void RealmClient::RegisterSystems() { Realm::RegisterSystems(); }

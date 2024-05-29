@@ -11,7 +11,6 @@
 
 RealmServer::RealmServer()
 {
-	RealmServer::RegisterSystems();
 	RealmServer::RegisterObservers();
 }
 
@@ -37,7 +36,7 @@ void RealmServer::Init(const std::string &realmName)
 	loader.LoadOBJ(realmName + ".obj");
 	collisionWorld.LoadStaticCollision(&loader.collisionData);
 	
-	sendEntitiesToClientsTimer.Start();
+	sendEntitiesToClientsTimer = 0;
 }
 
 bool RealmServer::OneEpoch()
@@ -47,9 +46,10 @@ bool RealmServer::OneEpoch()
 	// TODO: here do other server updates, AI, other mechanics and logic,
 	// defer some work to other worker threads (ai, db)  maybe?
 
-	int64_t dt = 0;
-	sendEntitiesToClientsTimer.Update(sendUpdateDeltaTicks, &dt, nullptr);
-	if (dt >= sendUpdateDeltaTicks) {
+	
+	
+	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <= timer.currentTick) {
+		sendEntitiesToClientsTimer = timer.currentTick;
 		ClientRpcProxy::Broadcast_UpdateEntities(shared_from_this());
 		return true;
 	} else {
@@ -124,11 +124,6 @@ void RealmServer::Broadcast(icon7::ByteBuffer &buffer,
 void RealmServer::RegisterObservers()
 {
 	EntityNetworkingSystems::RegisterObservers(this);
-}
-
-void RealmServer::RegisterSystems()
-{
-	EntityNetworkingSystems::RegisterSystems(this);
 
 	queryLastAuthoritativeState =
 		ecs.query<const EntityLastAuthoritativeMovementState>();

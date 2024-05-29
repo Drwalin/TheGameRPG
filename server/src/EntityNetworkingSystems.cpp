@@ -62,6 +62,4 @@ void RegisterObservers(RealmServer *realm)
 			OnPeerDisconnected(realm, entity, peer, entityName);
 		});
 }
-
-void RegisterSystems(RealmServer *realm) {}
 } // namespace EntityNetworkingSystems
