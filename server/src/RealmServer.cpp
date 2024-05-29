@@ -9,14 +9,9 @@
 
 #include "../include/RealmServer.hpp"
 
-RealmServer::RealmServer()
-{
-	RealmServer::RegisterObservers();
-}
+RealmServer::RealmServer() { RealmServer::RegisterObservers(); }
 
-RealmServer::~RealmServer() {
-	DisconnectAllAndDestroy();
-}
+RealmServer::~RealmServer() { DisconnectAllAndDestroy(); }
 
 void RealmServer::DisconnectAllAndDestroy()
 {
@@ -31,11 +26,11 @@ void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-	
+
 	CollisionLoader loader;
 	loader.LoadOBJ(realmName + ".obj");
 	collisionWorld.LoadStaticCollision(&loader.collisionData);
-	
+
 	sendEntitiesToClientsTimer = 0;
 }
 
@@ -46,9 +41,8 @@ bool RealmServer::OneEpoch()
 	// TODO: here do other server updates, AI, other mechanics and logic,
 	// defer some work to other worker threads (ai, db)  maybe?
 
-	
-	
-	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <= timer.currentTick) {
+	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
+		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;
 		ClientRpcProxy::Broadcast_UpdateEntities(shared_from_this());
 		return true;
@@ -64,7 +58,9 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 	uint64_t entityId = NewEntity();
 	data->entityId = entityId;
-	// TODO: load player entity from database
+	// TODO: load player entity from database // TODO: move this line into
+	// 												   code managed by
+	// 												   ServerCore thread
 	SetComponent<EntityName>(entityId, {data->userName});
 
 	auto pw = peer->shared_from_this();
@@ -84,22 +80,16 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	auto it = peers.find(pw);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
-		
+
 		peers.erase(pw);
-		
+
 		flecs::entity entity = Entity(entityId);
 		if (entity.is_alive()) {
-			// store player entity into database
-			StoreEntityIntoDatabase(entity);
+			// TODO: store player entity into database here
 		}
-		
+
 		RemoveEntity(entityId);
 	}
-}
-
-void RealmServer::StoreEntityIntoDatabase(flecs::entity entity)
-{
-	// TODO: implement
 }
 
 void RealmServer::ExecuteOnRealmThread(
@@ -108,8 +98,7 @@ void RealmServer::ExecuteOnRealmThread(
 	executionQueue.EnqueueCommand(std::move(command));
 }
 
-void RealmServer::Broadcast(icon7::ByteBuffer &buffer,
-		uint64_t exceptEntityId)
+void RealmServer::Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId)
 {
 	for (auto it : peers) {
 		if (it.second != exceptEntityId) {

@@ -81,11 +81,10 @@ void Realm::RegisterObservers()
 			*/
 		});
 
-	ecs.observer<EntityEventsQueue>()
+	ecs.observer<EntityEventsQueue, const EntityMovementParameters>()
 		.event(flecs::OnAdd)
-		.each([this](flecs::entity entity, EntityEventsQueue &eventsQueue) {
-			EntityEvent event;
-			event.dueTick = timer.currentTick + 100;
+		.each([this](flecs::entity entity, EntityEventsQueue &eventsQueue,
+					 const EntityMovementParameters &) {
 			static EntityEventTemplate defaultMovementEvent{
 				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
 				   uint64_t entityId) {
@@ -112,30 +111,33 @@ void Realm::RegisterObservers()
 					if (movementParams == nullptr) {
 						return;
 					}
-					EntityEventsQueue *eventsQueue = 
+					EntityEventsQueue *eventsQueue =
 						(EntityEventsQueue *)entity.get<EntityEventsQueue>();
 					if (eventsQueue == nullptr) {
 						return;
 					}
-					
-					LOG_DEBUG("Update movement");
-					
+
 					EntitySystems::UpdateMovement(
 						realm, entity, *shape, *currentState,
 						*lastAuthoritativeState, *movementParams);
-					
+
 					glm::vec3 v = currentState->vel;
-					int64_t dt = realm->maxMovementDeltaTicks;;
+					int64_t dt = realm->maxMovementDeltaTicks;
+					;
 					if (currentState->onGround == false) {
-						dt = realm->minMovementDeltaTicks;;
+						dt = realm->minMovementDeltaTicks;
+						;
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
-						dt = realm->minMovementDeltaTicks;;
+						dt = realm->minMovementDeltaTicks;
+						;
 					}
 					EntityEvent event;
 					event.dueTick = realm->timer.currentTick + dt;
 					event.event = &defaultMovementEvent;
 					eventsQueue->ScheduleEvent(realm, entity.id(), event);
 				}};
+			EntityEvent event;
+			event.dueTick = timer.currentTick + 100;
 			event.event = &defaultMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});

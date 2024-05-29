@@ -44,8 +44,6 @@ bool RealmClient::OneEpoch()
 
 void RealmClient::RegisterObservers()
 {
-	Realm::RegisterObservers();
-
 	RegisterObserver(flecs::OnAdd,
 					 [this](flecs::entity entity, const EntityMovementState &,
 							const EntityLastAuthoritativeMovementState &,
