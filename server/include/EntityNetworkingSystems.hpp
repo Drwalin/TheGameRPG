@@ -24,5 +24,4 @@ void OnPeerDisconnected(RealmServer *realm,
 						const EntityName &entityName);
 
 void RegisterObservers(RealmServer *realm);
-void RegisterSystems(RealmServer *realm);
 }; // namespace EntityNetworkingSystems

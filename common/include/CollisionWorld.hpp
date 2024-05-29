@@ -78,7 +78,6 @@ public:
 	*/
 
 	void RegisterObservers(Realm *realm);
-	void RegisterSystems(Realm *realm);
 
 private:
 	friend class ManifoldResult;

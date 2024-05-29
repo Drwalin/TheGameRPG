@@ -20,7 +20,7 @@ GameClient::GameClient() : realm(this)
 
 	// host->SetOnDisconnect();
 	pingTimer.Start();
-	authoritativePlayerSendTimer.Start();
+	lastTickAuthoritativeSent = 0;
 }
 
 GameClient::~GameClient()
@@ -133,14 +133,13 @@ void GameClient::PerformSendPlayerMovementInput()
 	if (localPlayerEntityId == 0) {
 		return;
 	}
-	int64_t dt = 0;
-	authoritativePlayerSendTimer.Update(authdauthoritativePlayerSendDelay, &dt,
-										nullptr);
-	if (dt <= authdauthoritativePlayerSendDelay &&
+	if (lastTickAuthoritativeSent + authdauthoritativePlayerSendDelay >
+			realm.timer.currentTick &&
 		needSendPlayerMovementInput == false) {
 		return;
 	}
 
+	lastTickAuthoritativeSent = realm.timer.currentTick;
 	auto state = realm.GetComponent<EntityMovementState>(localPlayerEntityId);
 	ServerRpcProxy::UpdatePlayer(this, *state);
 

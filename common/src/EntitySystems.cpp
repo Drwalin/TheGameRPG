@@ -25,7 +25,7 @@ void UpdateMovement(
 	auto &next = currentState;
 
 	const int64_t _dt = currentTick - prev.timestamp;
-	if (_dt < realm->minDeltaTicks) {
+	if (_dt < realm->minMovementDeltaTicks) {
 		return;
 	}
 
@@ -105,7 +105,7 @@ void UpdateMovement(
 // 		LOG_DEBUG(
 // 			"entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
 // 			"%f %f)    %s",
-// 			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minDeltaTicks, pos.x,
+// 			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minMovementDeltaTicks, pos.x,
 // 			pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
 // 	}
 

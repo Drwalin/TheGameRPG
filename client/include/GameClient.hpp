@@ -84,7 +84,7 @@ public:
 
 	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput;
-	Timer authoritativePlayerSendTimer;
+	int64_t lastTickAuthoritativeSent = 0;
 	Timer pingTimer;
 	int64_t pingMs = 10;
 

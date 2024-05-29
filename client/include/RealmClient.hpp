@@ -21,7 +21,6 @@ public:
 	virtual bool OneEpoch() override;
 
 	void RegisterObservers();
-	void RegisterSystems();
 
 public:
 	GameClient *gameClient;

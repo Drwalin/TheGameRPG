@@ -30,7 +30,6 @@ public:
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
 	void RegisterObservers();
-	void RegisterSystems();
 	
 	void StoreEntityIntoDatabase(flecs::entity entity);
 
@@ -53,7 +52,7 @@ public:
 
 	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> peers;
 
-	Timer sendEntitiesToClientsTimer;
+	uint64_t sendEntitiesToClientsTimer = 0;
 	int64_t sendUpdateDeltaTicks = 250;
 	flecs::query<const EntityLastAuthoritativeMovementState>
 		queryLastAuthoritativeState;

@@ -228,5 +228,3 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 			}
 		});
 }
-
-void CollisionWorld::RegisterSystems(Realm *realm) { return; }
