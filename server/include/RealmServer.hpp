@@ -30,8 +30,6 @@ public:
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
 	void RegisterObservers();
-	
-	void StoreEntityIntoDatabase(flecs::entity entity);
 
 public:
 	void Broadcast(icon7::ByteBuffer &buffer,
