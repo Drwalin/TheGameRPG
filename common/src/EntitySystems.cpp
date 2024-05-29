@@ -67,14 +67,7 @@ void UpdateMovement(
 		next.onGround = false;
 		const glm::vec3 acc = {0, realm->gravity, 0};
 
-		glm::vec3 vel = prev.vel; // + acc * dt;
-
-		if (vel.y < -50) {
-			vel.y = -50;
-		}
-		if (vel.y > 50) {
-			vel.y = 50;
-		}
+		glm::vec3 vel = prev.vel + acc * dt * 0.5f;
 
 		const glm::vec3 oldPos = prev.pos;
 		const glm::vec3 movement = prev.vel * dt; // + acc * (dt * dt * 0.5f);
@@ -90,7 +83,14 @@ void UpdateMovement(
 			glm::vec3 v = normal * glm::dot(normal, vel);
 			vel -= v;
 		} else {
-			vel = prev.vel + acc * dt;
+			vel += acc * dt * 0.5f;
+		}
+		
+		if (vel.y < -50) {
+			vel.y = -50;
+		}
+		if (vel.y > 50) {
+			vel.y = 50;
 		}
 
 		next.timestamp = currentTick;
