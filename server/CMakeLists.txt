@@ -11,7 +11,6 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(../common/include)
-include_directories(sqlite3.45.3)
 include_directories(include)
 
 # Library compilation
@@ -21,7 +20,6 @@ aux_source_directory(./include/ include_files)
 add_executable(server
 	${src_files}
 	${include_files}
-	sqlite3.45.3/sqlite3.c
 )
 target_link_libraries(server PUBLIC common)
 
