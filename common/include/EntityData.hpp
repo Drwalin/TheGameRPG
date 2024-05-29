@@ -30,7 +30,7 @@ struct EntityShape {
 
 struct EntityMovementState {
 	int64_t timestamp = 0;
-	glm::vec3 pos = {R(), 150, R()};
+	glm::vec3 pos = {R(), 70, R()};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;
