@@ -1,5 +1,7 @@
 #pragma once
 
+#include <flecs.h>
+
 #include "../../common/include/EntityData.hpp"
 
 #include "EntityDataServer.hpp"

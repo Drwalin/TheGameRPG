@@ -12,9 +12,6 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 endif()
 
-set(FLECS_SHARED OFF)
-add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP)
-
 find_package(Bullet REQUIRED)
 include_directories(${BULLET_INCLUDE_DIR})
 
@@ -23,16 +20,17 @@ message(MESSAGE ${BULLET_INCLUDE_DIR})
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(include)
-include_directories(flecs)
 
 # Library compilation
+
+add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP)
 
 aux_source_directory(./src/ src_files)
 aux_source_directory(./include/ include_files)
 add_library(common STATIC
 	${src_files}
 	${include_files}
-	flecs/flecs.c
+	../flecs/flecs.c
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PRIVATE ${BULLET_LIBRARIES})

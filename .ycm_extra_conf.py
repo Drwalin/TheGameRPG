@@ -13,7 +13,7 @@ def Settings( **kwargs ):
     '-Icommon/include',
     '-Iserver/include',
     '-Iclient/src/include',
-    '-Icommon/flecs',
-    '-Icommon/flecs/include'
+    '-Iflecs',
+    '-Iflecs/include'
     ],
   }
