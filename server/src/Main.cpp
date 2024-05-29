@@ -1,14 +1,10 @@
 #include "../include/ServerCore.hpp"
-#include "../include/DBWorker.hpp"
 
 int main(int argc, char **argv)
 {
 	icon7::Initialize();
 	LOG_INFO("Main thread started");
 	{
-		DBWorker::GetSingleton()->Init("database.db");
-		DBWorker::GetSingleton()->RunAsync();
-		
 		ServerCore serverCore;
 		serverCore.BindRpc();
 		serverCore.CreateRealm("World1");
@@ -29,7 +25,6 @@ int main(int argc, char **argv)
 
 		serverCore.RunMainThreadInteractive();
 	}
-	DBWorker::GetSingleton()->Destroy();
 	icon7::Deinitialize();
 	return 0;
 }

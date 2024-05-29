@@ -4,7 +4,7 @@
 #include "../../ICon7/include/icon7/Command.hpp"
 #include "../../ICon7/include/icon7/Flags.hpp"
 
-#include "../include/DBWorker.hpp"
+#include "../include/FunctorCommands.hpp"
 
 #include "../include/ServerCore.hpp"
 
