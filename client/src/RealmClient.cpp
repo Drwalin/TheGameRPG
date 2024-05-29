@@ -115,7 +115,7 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 	}
 	
 	EntityMovementHistory *_states = (EntityMovementHistory *)entity.get<EntityMovementHistory>();
-	if (_states != nullptr) {
+	if (entityId != gameClient->localPlayerEntityId && _states != nullptr && _states->states.size() > 0) {
 		auto &states = _states->states;
 		
 		int id = states.size()-1;
@@ -126,22 +126,59 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 		}
 		++id;
 		if (id < states.size()) {
-			lastAuthoritativeState->oldState = states[id];
-			*currentState = states[id];
+			if (lastAuthoritativeState->oldState != states[id]) {
+				lastAuthoritativeState->oldState = states[id];
+				*currentState = states[id];
+			}
 		}
-	}
+		
+		EntitySystems::UpdateMovement(
+				this, entity, *shape, *currentState,
+				*lastAuthoritativeState, *movementParams);
+		
+		if (id+1 < states.size()) {
+			EntityMovementState prev = states[id];
+			EntityMovementState next = states[id+1];
+			
+			glm::vec3 A = prev.pos;
+			glm::vec3 B = next.pos;
+			glm::vec3 V = prev.vel;
+			int64_t iDt = next.timestamp - prev.timestamp;
+			float fullDt = iDt * 0.001f;
+			
+			glm::vec3 a = (B - A - V*fullDt) / (fullDt * fullDt) * 2.0f;
+			
+			int64_t iT = timer.currentTick - prev.timestamp;
+			float dt = iT * 0.001f;
+			
+			float t = (float)iT / (float)iDt;
+			
+			currentState->vel = V + a*dt;
+			
+			glm::vec3 P = A + V*dt + a*dt*dt*0.5f;
+			
+			currentState->pos =
+				currentState->pos * (1-t) +
+				P * t;
+			
+			currentState->rot =
+				prev.rot * (1-t) +
+				next.rot * t;
+			LOG_DEBUG("With next: %i", states.size());
+		} else {
+			LOG_DEBUG("Without next: %i", states.size());
+		}
+		
+		if (id > 10) {
+			states.erase(states.begin(), states.begin()+id-3);
+			LOG_DEBUG("Removing states: %i", states.size());
+		}
 
-	EntitySystems::UpdateMovement(
-			this, entity, *shape, *currentState,
-			*lastAuthoritativeState, *movementParams);
-	
-	EntityLastAuthoritativeMovementState state;
-	state.oldState = *currentState;
-	glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-	LOG_DEBUG(
-			"recv  other [>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			entityId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-			state.oldState.onGround ? "on ground" : "falling");
+	} else {
+		EntitySystems::UpdateMovement(
+				this, entity, *shape, *currentState,
+				*lastAuthoritativeState, *movementParams);
+	}
 	
 	return *currentState;
 }
