@@ -12,6 +12,8 @@ class RealmClient : public Realm
 public:
 	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
+	
+	inline const static int64_t STATE_UPDATE_DELAY = 200;
 
 	virtual void Init(const std::string &realmName) override;
 	virtual void Clear() override;
@@ -19,6 +21,13 @@ public:
 
 	// returns false if was not busy
 	virtual bool OneEpoch() override;
+
+	void AddNewAuthoritativeMovementState(
+		uint64_t localId, uint64_t serverId,
+		EntityLastAuthoritativeMovementState state);
+	void UpdateEntityCurrentState(uint64_t localId, uint64_t serverId);
+	
+	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) override;
 
 	void RegisterObservers();
 
