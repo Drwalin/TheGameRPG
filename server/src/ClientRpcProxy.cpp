@@ -1,7 +1,7 @@
 #include <icon7/Flags.hpp>
 #include <icon7/RPCEnvironment.hpp>
 
-#include <ClientRpcFunctionNames.hpp>
+#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 #include "../include/RealmServer.hpp"
 

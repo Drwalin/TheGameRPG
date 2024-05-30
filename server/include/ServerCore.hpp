@@ -45,9 +45,9 @@ private:
 	static void _OnPeerDisconnect(icon7::Peer *peer);
 
 	static icon7::CommandExecutionQueue *
-	SelectExecutionQueue(icon7::MessageConverter *messageConverter,
-						 icon7::Peer *peer, icon7::ByteReader &reader,
-						 icon7::Flags flags);
+	SelectExecutionQueueByRealm(icon7::MessageConverter *messageConverter,
+								icon7::Peer *peer, icon7::ByteReader &reader,
+								icon7::Flags flags);
 
 	void ParseCommand(const std::string &cmd);
 	

@@ -50,38 +50,19 @@ void RealmClient::AddNewAuthoritativeMovementState(
 	EntityMovementState state = _state.oldState;
 	EntityMovementHistory *movement = AccessComponent<EntityMovementHistory>(localId);
 	auto &states = movement->states;
-	int id = states.size()-1;
-	if (states.size() == 0) {
-		states.push_back(state);
-		return;
-	}
-	if (states.size() == 1) {
-		if (states[0].timestamp > state.timestamp) {
-			states.insert(states.begin(), state);
+	
+	for (int i=states.size()-1; i>=0; --i) {
+		if (states[i].timestamp < state.timestamp) {
+			states.insert(states.begin()+i+1, state);
 			return;
-		} else if (states[0].timestamp < state.timestamp) {
-			states.push_back(state);
-			return;
-		} else {
-			states[0] = state;
+		} else if (states[i].timestamp == state.timestamp) {
+			states[i] = state;
 			return;
 		}
 	}
-	for (; id >= 0; --id) {
-		if (states[id].timestamp <= state.timestamp) {
-			break;
-		}
-	}
-	++id;
-	if (id == states.size()) {
-		states.push_back(state);
-		return;
-	}
-	if (states[id].timestamp == state.timestamp) {
-		states[id] = state;
-	} else {
-		states.insert(states.begin() + id, state);
-	}
+	
+	states.insert(states.begin(), state);
+	return;
 }
 
 void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
@@ -119,13 +100,14 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 		auto &states = _states->states;
 		
 		int id = states.size()-1;
-		for (; id >= 0; --id) {
+		
+		for (; id>=0; --id) {
 			if (states[id].timestamp <= timer.currentTick) {
 				break;
 			}
 		}
-		++id;
-		if (id < states.size()) {
+		
+		if (id >= 0) {
 			if (lastAuthoritativeState->oldState != states[id]) {
 				lastAuthoritativeState->oldState = states[id];
 				*currentState = states[id];
@@ -137,7 +119,12 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 				*lastAuthoritativeState, *movementParams);
 		
 		if (id+1 < states.size()) {
-			EntityMovementState prev = states[id];
+			EntityMovementState prev;
+			if (id >= 0) {
+				prev = states[id];
+			} else {
+				prev = lastAuthoritativeState->oldState;
+			}
 			EntityMovementState next = states[id+1];
 			
 			glm::vec3 A = prev.pos;
@@ -164,14 +151,10 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 			currentState->rot =
 				prev.rot * (1-t) +
 				next.rot * t;
-			LOG_DEBUG("With next: %i", states.size());
-		} else {
-			LOG_DEBUG("Without next: %i", states.size());
 		}
 		
 		if (id > 10) {
 			states.erase(states.begin(), states.begin()+id-3);
-			LOG_DEBUG("Removing states: %i", states.size());
 		}
 
 	} else {
