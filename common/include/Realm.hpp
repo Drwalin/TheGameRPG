@@ -3,8 +3,8 @@
 #include <string>
 #include <functional>
 
-#include <flecs.h>
 #include <glm/glm.hpp>
+#include <flecs.h>
 
 #include "Timer.hpp"
 #include "CollisionWorld.hpp"
@@ -16,6 +16,7 @@ public:
 	Realm();
 	virtual ~Realm();
 
+	virtual void Destroy();
 	virtual void Clear();
 
 	virtual void Init(const std::string &realmName);

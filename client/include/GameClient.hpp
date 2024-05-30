@@ -10,6 +10,8 @@ class GameClient
 public:
 	GameClient();
 	virtual ~GameClient();
+	
+	virtual void Destroy();
 
 	void BindRpc();
 	void RunNetworkLoopAsync();
@@ -70,7 +72,7 @@ public: // client input api
 	void UpdatePlayerAuthoritativeState();
 
 public:
-	RealmClient realm;
+	RealmClient *realm;
 
 	icon7::RPCEnvironment rpc;
 	icon7::Host *host;

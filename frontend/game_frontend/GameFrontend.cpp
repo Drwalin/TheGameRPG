@@ -13,7 +13,11 @@
 
 GameFrontend::GameFrontend() {}
 
-GameFrontend::~GameFrontend() {}
+GameFrontend::~GameFrontend() {
+	gameClientFrontend->Destroy();
+	delete gameClientFrontend;
+	gameClientFrontend = nullptr;
+}
 
 void GameFrontend::_bind_methods()
 {
