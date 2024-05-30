@@ -13,7 +13,7 @@ public:
 	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
 	
-	inline const static int64_t STATE_UPDATE_DELAY = 200;
+	inline const static int64_t STATE_UPDATE_DELAY = 100;
 
 	virtual void Init(const std::string &realmName) override;
 	virtual void Clear() override;

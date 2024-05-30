@@ -4,6 +4,7 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
+#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
@@ -15,11 +16,11 @@ void ServerCore::BindRpc()
 	rpc.RegisterMessage(ServerRpcFunctionNames::Login, &ServerCore::Login);
 	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer,
 						&ServerCore::UpdatePlayer, nullptr,
-						SelectExecutionQueue);
+						SelectExecutionQueueByRealm);
 
 	rpc.RegisterMessage(ServerRpcFunctionNames::GetEntitiesData,
 						&ServerCore::RequestSpawnEntities, nullptr,
-						SelectExecutionQueue);
+						SelectExecutionQueueByRealm);
 
 	rpc.RegisterMessage(
 		ServerRpcFunctionNames::Ping,
@@ -30,7 +31,7 @@ void ServerCore::BindRpc()
 }
 
 icon7::CommandExecutionQueue *
-ServerCore::SelectExecutionQueue(icon7::MessageConverter *messageConverter,
+ServerCore::SelectExecutionQueueByRealm(icon7::MessageConverter *messageConverter,
 								 icon7::Peer *peer, icon7::ByteReader &reader,
 								 icon7::Flags flags)
 {
@@ -62,6 +63,11 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 		if (entity.is_alive()) {
 			entity.set<EntityLastAuthoritativeMovementState>(state);
 			entity.set<EntityMovementState>(state.oldState);
+			
+			// TODO: verify movement state
+			realm->BroadcastUnreliableExcept(data->entityId,
+					ClientRpcFunctionNames::UpdateEntities,
+					data->entityId, state);
 
 			/*
 			glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
