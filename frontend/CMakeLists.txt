@@ -24,8 +24,16 @@ add_library(game_frontend SHARED
 target_link_libraries(game_frontend PUBLIC client)
 target_link_libraries(game_frontend PUBLIC godot::cpp)
 
-add_custom_command(TARGET game_frontend POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:game_frontend>
-	${PROJECT_SOURCE_DIR}/bin/libgame_frontend.so
-	COMMENT "Copying libgame_frontend.so"
-)
+if(UNIX)
+	add_custom_command(TARGET game_frontend POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:game_frontend>
+		${PROJECT_SOURCE_DIR}/bin/libgame_frontend.so
+		COMMENT "Copying libgame_frontend.so"
+	)
+else()
+	add_custom_command(TARGET game_frontend POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:game_frontend>
+		${PROJECT_SOURCE_DIR}/bin/libgame_frontend.dll
+		COMMENT "Copying libgame_frontend.dll"
+	)
+endif()

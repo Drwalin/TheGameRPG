@@ -4,6 +4,11 @@
 
 #include "../include/CollisionWorld.hpp"
 
+#if not __unix__
+# define M_PI 3.141292
+#else
+#endif
+
 /*
  * verticalRayTestToGroundDistance - if <0 then casts only one ray at
  * destination ignored for now horizontalFromCenterCorrectionRaysCount - should

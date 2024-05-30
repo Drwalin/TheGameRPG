@@ -1,2 +1,5 @@
 build
 release
+windows-release
+exports
+frontend/export_presets.cfg

@@ -11,12 +11,19 @@
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
-GameFrontend::GameFrontend() {}
+GameFrontend::GameFrontend() {
+	gameClientFrontend = nullptr;
+	if (Engine::get_singleton()->is_editor_hint()) {
+		return;
+	}
+}
 
 GameFrontend::~GameFrontend() {
-	gameClientFrontend->Destroy();
-	delete gameClientFrontend;
-	gameClientFrontend = nullptr;
+	if (gameClientFrontend) {
+		gameClientFrontend->Destroy();
+		delete gameClientFrontend;
+		gameClientFrontend = nullptr;
+	}
 }
 
 void GameFrontend::_bind_methods()
