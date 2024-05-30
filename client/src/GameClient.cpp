@@ -1,16 +1,15 @@
 #include <chrono>
 #include <thread>
 
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/Command.hpp>
-#include <icon7/Flags.hpp>
+#include "../../ICon7/include/icon7/PeerUStcp.hpp"
+#include "../../ICon7/include/icon7/HostUStcp.hpp"
+#include "../../ICon7/include/icon7/Command.hpp"
 
 #include "../include/ServerRpcProxy.hpp"
 
 #include "../include/GameClient.hpp"
 
-GameClient::GameClient() : realm(this)
+GameClient::GameClient() : realm(new RealmClient(this))
 {
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();
@@ -23,14 +22,22 @@ GameClient::GameClient() : realm(this)
 	lastTickAuthoritativeSent = 0;
 }
 
-GameClient::~GameClient()
+GameClient::~GameClient() {}
+
+void GameClient::Destroy()
 {
 	if (host) {
+		realmConnectionPeer = nullptr;
 		host->DisconnectAllAsync();
 		host->StopListening();
 		host->WaitStopRunning();
 		delete host;
 		host = nullptr;
+	}
+	if (realm) {
+		realm->Destroy();
+		delete realm;
+		realm = nullptr;
 	}
 }
 
@@ -110,7 +117,7 @@ void GameClient::RunOneEpoch()
 	executionQueue.Execute(128);
 
 	PerformSendPlayerMovementInput();
-	realm.OneEpoch();
+	realm->OneEpoch();
 	// 	UpdatePlayerAuthoritativeState();
 	PerformSendPlayerMovementInput();
 }
@@ -121,7 +128,7 @@ void GameClient::UpdatePlayerAuthoritativeState()
 	if (localPlayerEntityId == 0) {
 		return;
 	}
-	flecs::entity playerEntity = realm.Entity(localPlayerEntityId);
+	flecs::entity playerEntity = realm->Entity(localPlayerEntityId);
 	auto state = playerEntity.get<EntityMovementState>();
 	if (state) {
 		playerEntity.set<EntityLastAuthoritativeMovementState>({*state});
@@ -134,13 +141,13 @@ void GameClient::PerformSendPlayerMovementInput()
 		return;
 	}
 	if (lastTickAuthoritativeSent + authdauthoritativePlayerSendDelay >
-			realm.timer.currentTick &&
+			realm->timer.currentTick &&
 		needSendPlayerMovementInput == false) {
 		return;
 	}
 
-	lastTickAuthoritativeSent = realm.timer.currentTick;
-	auto state = realm.GetComponent<EntityMovementState>(localPlayerEntityId);
+	lastTickAuthoritativeSent = realm->timer.currentTick;
+	auto state = realm->GetComponent<EntityMovementState>(localPlayerEntityId);
 	ServerRpcProxy::UpdatePlayer(this, *state);
 
 	needSendPlayerMovementInput = false;
@@ -152,7 +159,7 @@ glm::vec3 GameClient::GetRotation()
 		// TODO: maybe error?
 		return {0, 0, 0};
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<EntityMovementState>();
 	if (oldState)
 		return oldState->rot;
@@ -165,7 +172,7 @@ glm::vec3 GameClient::GetPosition()
 		// TODO: maybe error?
 		return {0, 0, 0};
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<EntityMovementState>();
 	if (oldState)
 		return oldState->pos;
@@ -178,7 +185,7 @@ glm::vec3 GameClient::GetVelocity()
 		// TODO: maybe error?
 		return {0, 0, 0};
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<EntityMovementState>();
 	if (oldState)
 		return oldState->vel;
@@ -191,7 +198,7 @@ EntityShape GameClient::GetShape()
 		// TODO: maybe error?
 		return {0, 0};
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto shape = player.get<EntityShape>();
 	if (shape)
 		return *shape;
@@ -204,7 +211,7 @@ void GameClient::SetRotation(glm::vec3 rotation)
 		// TODO: maybe error?
 		return;
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<EntityMovementState>();
 	if (oldState) {
 		auto state = *oldState;
@@ -220,7 +227,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 		// TODO: maybe error?
 		return;
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto stateP = player.get<EntityMovementState>();
 	if (stateP == nullptr) {
 		return;
@@ -256,7 +263,7 @@ void GameClient::TryPerformJump()
 		// TODO: maybe error?
 		return;
 	}
-	flecs::entity player = realm.Entity(localPlayerEntityId);
+	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto stateP = player.get<EntityMovementState>();
 	if (stateP == nullptr) {
 		return;

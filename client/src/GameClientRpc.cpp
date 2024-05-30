@@ -31,7 +31,7 @@ void GameClient::BindRpc()
 
 void GameClient::JoinRealm(const std::string &realmName)
 {
-	realm.Reinit(realmName);
+	realm->Reinit(realmName);
 	ServerRpcProxy::Ping(this, true);
 }
 
@@ -83,8 +83,8 @@ void GameClient::SetModel(uint64_t serverId, EntityModelName model,
 		localId = it->second;
 	}
 
-	realm.SetComponent(localId, shape);
-	realm.SetComponent(localId, model);
+	realm->SetComponent(localId, shape);
+	realm->SetComponent(localId, model);
 
 	OnEntityShape(localId, shape);
 	OnEntityModel(localId, model);
@@ -115,7 +115,7 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 	}
 }
 
-void GameClient::SetGravity(float gravity) { realm.gravity = gravity; }
+void GameClient::SetGravity(float gravity) { realm->gravity = gravity; }
 
 void GameClient::LoginFailed()
 {
@@ -135,11 +135,11 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 	if (remoteTick != 0) {
 		// TODO: consider not adding latency?
 		int64_t newCurrentTick = remoteTick + pingMs / 2;
-		if (newCurrentTick < realm.timer.currentTick) {
+		if (newCurrentTick < realm->timer.currentTick) {
 			// TODO: time error??
 			LOG_DEBUG("Ping/Pong received time invalid");
 		} else {
-			realm.timer.Start(newCurrentTick);
+			realm->timer.Start(newCurrentTick);
 			LOG_DEBUG("current tick = %lu", newCurrentTick);
 		}
 	}
@@ -154,18 +154,18 @@ void GameClient::SpawnEntity(uint64_t serverId,
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
 	if (it == mapServerEntityIdToLocalEntityId.end()) {
-		localId = realm.NewEntity();
+		localId = realm->NewEntity();
 		mapServerEntityIdToLocalEntityId[serverId] = localId;
 		mapLocalEntityIdToServerEntityId[localId] = serverId;
 	} else {
 		localId = it->second;
 	}
 
-	realm.SetComponent(localId, name);
-	realm.SetComponent(localId, state);
-	realm.SetComponent(localId, model);
-	realm.SetComponent(localId, shape);
-	realm.SetComponent(localId, movementParams);
+	realm->SetComponent(localId, name);
+	realm->SetComponent(localId, state);
+	realm->SetComponent(localId, model);
+	realm->SetComponent(localId, shape);
+	realm->SetComponent(localId, movementParams);
 
 	OnEntityAdd(localId);
 
@@ -191,11 +191,11 @@ void GameClient::UpdateEntity(uint64_t serverId,
 	}
 
 	if (localId != localPlayerEntityId) {
-		realm.AddNewAuthoritativeMovementState(localId, serverId, state);
-		realm.UpdateEntityCurrentState(localId, serverId);
+		realm->AddNewAuthoritativeMovementState(localId, serverId, state);
+		realm->UpdateEntityCurrentState(localId, serverId);
 		/*
-		realm.SetComponent(localId, state);
-		realm.SetComponent(localId, state.oldState);
+		realm->SetComponent(localId, state);
+		realm->SetComponent(localId, state.oldState);
 		*/
 		
 		/*
@@ -237,7 +237,7 @@ void GameClient::RemoveEntity(uint64_t serverId)
 		localPlayerEntityId = 0;
 	}
 
-	realm.RemoveEntity(localId);
+	realm->RemoveEntity(localId);
 
 	mapServerEntityIdToLocalEntityId.erase(serverId);
 	mapLocalEntityIdToServerEntityId.erase(localId);

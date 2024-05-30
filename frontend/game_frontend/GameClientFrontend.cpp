@@ -21,30 +21,32 @@ void GameClientFrontend::Init()
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
-	realm.Reinit(realmName);
+	realm->Reinit(realmName);
 }
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
 {
-	if (realm.HasComponent<EntityGodotNode>(localId) == false) {
+	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 		node->Init(localId);
 		node->gameFrontend = gameFrontend;
 		gameFrontend->GetNodeToAddEntities()->add_child(node);
-		realm.SetComponent(localId, EntityGodotNode{node});
+		realm->SetComponent(localId, EntityGodotNode{node});
 	}
 }
 void GameClientFrontend::OnEntityRemove(uint64_t localId)
 {
-	if (realm.HasComponent<EntityGodotNode>(localId) == false) {
+	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		return;
 	}
 	EntityPrefabScript *node =
-		realm.GetComponent<EntityGodotNode>(localId)->node;
+		realm->GetComponent<EntityGodotNode>(localId)->node;
 	node->localEntityId = 0;
-	node->get_parent()->remove_child(node);
+	if (node->get_parent()) {
+		node->get_parent()->remove_child(node);
+	}
 	node->queue_free();
-	realm.SetComponent<EntityGodotNode>(localId, EntityGodotNode{nullptr});
-	realm.RemoveComponent<EntityGodotNode>(localId);
+	realm->SetComponent<EntityGodotNode>(localId, EntityGodotNode{nullptr});
+	realm->RemoveComponent<EntityGodotNode>(localId);
 }
 void GameClientFrontend::OnEntityShape(uint64_t localId,
 									   const EntityShape &shape)
@@ -54,11 +56,11 @@ void GameClientFrontend::OnEntityShape(uint64_t localId,
 void GameClientFrontend::OnEntityModel(uint64_t localId,
 									   const EntityModelName &model)
 {
-	if (realm.HasComponent<EntityGodotNode>(localId) == false) {
+	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		return;
 	}
 	EntityPrefabScript *node =
-		realm.GetComponent<EntityGodotNode>(localId)->node;
+		realm->GetComponent<EntityGodotNode>(localId)->node;
 	node->SetModel(model);
 }
 void GameClientFrontend::OnSetPlayerId(uint64_t localId)

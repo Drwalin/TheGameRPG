@@ -52,7 +52,6 @@ bool CollisionLoader::LoadOBJ(std::string fileName) {
 			break;
 		}
 	}
-	LOG_TRACE("vertices: %lu   indices: %lu", collisionData.vertices.size(), collisionData.indices.size());
 	collisionData.indices.shrink_to_fit();
 	collisionData.vertices.shrink_to_fit();
 	return true;

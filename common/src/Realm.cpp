@@ -13,6 +13,14 @@ Realm::~Realm()
 	Realm::Clear();
 }
 
+void Realm::Destroy()
+{
+	Clear();
+	
+	ecs.~world();
+	new (&ecs) flecs::world();
+}
+
 void Realm::Clear()
 {
 	ecs.defer_begin();
