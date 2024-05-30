@@ -22,7 +22,7 @@ func Rotate(x: float, y: float)->void:
 var isDraggingCameraRotationButton: bool = false;
 func _input(event)->void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_MIDDLE:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
 			if (event.pressed) && (isDraggingCameraRotationButton == false):
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
 				isDraggingCameraRotationButton = true;
