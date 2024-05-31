@@ -156,7 +156,6 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 		if (id > 10) {
 			states.erase(states.begin(), states.begin()+id-3);
 		}
-
 	} else {
 		EntitySystems::UpdateMovement(
 				this, entity, *shape, *currentState,

@@ -108,10 +108,11 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
 	if (it == mapServerEntityIdToLocalEntityId.end()) {
 		RequestSpawnOf(serverId);
-		return;
+		LOG_DEBUG("Set player entity id: [%lu]", serverId);
 	} else {
 		localPlayerEntityId = it->second;
 		OnSetPlayerId(localPlayerEntityId);
+		LOG_DEBUG("Set player entity id: [%lu > %lu]", serverId, localPlayerEntityId);
 	}
 }
 

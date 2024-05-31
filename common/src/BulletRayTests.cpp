@@ -67,7 +67,7 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 		object = it->second;
 	}
 	ClosestRayResultNotMe cb(object, start, end);
-	cb.m_collisionFilterMask = FILTER_MASK_ALL;
+	cb.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
 	collisionWorld->rayTest({start.x, start.y, start.z}, {end.x, end.y, end.z},
 							cb);
 	if (cb.hasHit() == false) {
@@ -119,7 +119,7 @@ bool CollisionWorld::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
 {
 	btCollisionWorld::ClosestRayResultCallback cb(ToBullet(start),
 												  ToBullet(end));
-	cb.m_collisionFilterMask = FILTER_GROUP_TERRAIN;
+	cb.m_collisionFilterMask = btBroadphaseProxy::StaticFilter;
 	collisionWorld->rayTest(ToBullet(start), ToBullet(end), cb);
 	if (cb.hasHit() == false) {
 		if (travelFactor)
