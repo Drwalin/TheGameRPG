@@ -140,7 +140,6 @@ private:
 	class btDefaultCollisionConfiguration *collisionConfiguration;
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;
-	bool updateWorldBvh;
 
 	std::unordered_map<uint64_t, btCollisionObject *> entities;
 
