@@ -14,12 +14,11 @@
 CollisionWorld::CollisionWorld(Realm *realm)
 {
 	this->realm = realm;
-	broadphase = new btDbvtBroadphase();
+	broadphase = new btSimpleBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	collisionWorld =
 		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
-	updateWorldBvh = true;
 }
 
 CollisionWorld::~CollisionWorld()
@@ -69,6 +68,7 @@ void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
 btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 {
 	btCollisionObject *object = new btCollisionObject();
+	object->setUserIndex(0);
 	object->setUserIndex2(0);
 	object->setUserIndex3(0);
 	return object;
@@ -95,8 +95,9 @@ void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data)
 	shape->buildOptimizedBvh();
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(shape);
-	collisionWorld->addCollisionObject(object, FILTER_GROUP_TERRAIN,
-									   FILTER_MASK_TERRAIN);
+	object->setUserIndex(FILTER_TERRAIN);
+	collisionWorld->addCollisionObject(object, btBroadphaseProxy::StaticFilter);
+	collisionWorld->updateSingleAabb(object);
 }
 
 bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
@@ -104,7 +105,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 {
 	auto it = entities.find(entityId);
 	if (it != entities.end()) {
-		LOG_DEBUG("Error: entity with ID=%lu already exists in CollisionWorld.",
+		LOG_WARN("Error: entity with ID=%lu already exists in CollisionWorld.",
 				  entityId);
 		UpdateEntityBvh(entityId, shape, pos);
 		return false;
@@ -115,11 +116,11 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	object->setCollisionShape(_shape);
 	entities[entityId] = object;
 	object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
+	object->setUserIndex(FILTER_ENTITY);
 	object->setUserIndex2(((uint32_t)(entityId)) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entityId >> 32)) & 0xFFFFFFFF);
-	collisionWorld->addCollisionObject(object, FILTER_GROUP_ENTITY,
-									   FILTER_MASK_ENTITY);
-	updateWorldBvh = true;
+	collisionWorld->addCollisionObject(object, btBroadphaseProxy::CharacterFilter);
+	collisionWorld->updateSingleAabb(object);
 	return true;
 }
 
@@ -131,7 +132,7 @@ void CollisionWorld::UpdateEntityBvh(uint64_t entityId, EntityShape shape,
 		return;
 	}
 	it->second->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
-	updateWorldBvh = true;
+	collisionWorld->updateSingleAabb(it->second);
 }
 
 void CollisionWorld::DeleteEntity(uint64_t entityId)
@@ -145,13 +146,20 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 }
 
 void CollisionWorld::GetObjectsInAABB(
-	glm::vec3 aabbMin, glm::vec3 aabbMax, int filterGroup, int filterMask,
+	glm::vec3 aabbMin, glm::vec3 aabbMax, int filter,
 	std::vector<btCollisionObject *> *objects) const
 {
-	BroadphaseAabbAgregate broadphaseCallback(filterGroup, filterMask);
+	int f = 0;
+	if (filter & FILTER_TERRAIN) {
+		f |= btBroadphaseProxy::StaticFilter;
+	}
+	if (filter & FILTER_ENTITY) {
+		f |= btBroadphaseProxy::CharacterFilter;
+	}
+	BroadphaseAabbAgregate broadphaseCallback(f);
 	std::swap(*objects, broadphaseCallback.objects);
 
-	collisionWorld->getBroadphase()->aabbTest(
+	broadphase->aabbTest(
 		ToBullet(aabbMin), ToBullet(aabbMax), broadphaseCallback);
 	std::swap(*objects, broadphaseCallback.objects);
 }

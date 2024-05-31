@@ -30,8 +30,7 @@ bool CollisionWorld::TestCollisionMovement(
 		glm::max(start, end) + extentFromPos + stepVector + safetyMarginXYZ;
 
 	std::vector<btCollisionObject *> objects;
-	GetObjectsInAABB(aabbMin, aabbMax, FILTER_GROUP_TERRAIN,
-					 FILTER_MASK_TERRAIN, &objects);
+	GetObjectsInAABB(aabbMin, aabbMax, FILTER_TERRAIN, &objects);
 
 	if (objects.size() == 0) {
 		*finalCorrectedPosition = end;

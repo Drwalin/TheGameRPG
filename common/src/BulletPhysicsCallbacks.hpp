@@ -16,16 +16,16 @@
 class BroadphaseAabbAgregate : public btBroadphaseAabbCallback
 {
 public:
-	int32_t filterGroup, filterMask;
+	int32_t filter;
 	std::vector<btCollisionObject *> objects;
-	BroadphaseAabbAgregate(int32_t filterGroup, int32_t filterMask)
-		: filterGroup(filterGroup), filterMask(filterMask)
+	BroadphaseAabbAgregate(int32_t filter)
+		: filter(filter)
 	{
 	}
 	virtual ~BroadphaseAabbAgregate() {}
 	virtual bool process(const btBroadphaseProxy *proxy) override
 	{
-		if (proxy->m_collisionFilterGroup & filterGroup) {
+		if (proxy->m_collisionFilterGroup & filter) {
 			objects.emplace_back((btCollisionObject *)proxy->m_clientObject);
 		}
 		return true;

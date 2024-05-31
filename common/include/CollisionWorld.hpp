@@ -111,8 +111,7 @@ private:
 	void FindPushoutVector(const std::vector<Contact> &contacts,
 						   glm::vec3 position, glm::vec3 *pushoutVector) const;
 
-	void GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax, int filterGroup,
-						  int filterMask,
+	void GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax, int filter,
 						  std::vector<btCollisionObject *> *objects) const;
 	bool RayTestFirstHitWithObjects(
 		glm::vec3 start, glm::vec3 direction, glm::vec3 *hitPosition,
@@ -130,18 +129,14 @@ private:
 	friend class BroadphaseAabbAgregate;
 
 private:
-	inline const static int32_t FILTER_MASK_ALL = -1;
-
-	inline const static int32_t FILTER_GROUP_TERRAIN = 1;
-	inline const static int32_t FILTER_MASK_TERRAIN = -1;
-
-	inline const static int32_t FILTER_GROUP_ENTITY = 2;
-	inline const static int32_t FILTER_MASK_ENTITY = -1 & (~2);
+	inline const static int32_t FILTER_ALL = 3;
+	inline const static int32_t FILTER_TERRAIN = 1;
+	inline const static int32_t FILTER_ENTITY = 2;
 
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
 	class btCollisionObject *AllocateNewCollisionObject();
 
-	class btDbvtBroadphase *broadphase;
+	class btSimpleBroadphase *broadphase;
 	class btDefaultCollisionConfiguration *collisionConfiguration;
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;

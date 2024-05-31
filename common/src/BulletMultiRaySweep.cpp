@@ -48,8 +48,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 		glm::max(start, end) + extentFromPos + stepVector + safetyMarginXYZ;
 
 	std::vector<btCollisionObject *> objects;
-	GetObjectsInAABB(aabbMin, aabbMax, FILTER_GROUP_TERRAIN,
-					 FILTER_MASK_TERRAIN, &objects);
+	GetObjectsInAABB(aabbMin, aabbMax, FILTER_TERRAIN, &objects);
 
 	if (objects.size() == 0) {
 		*finalCorrectedPosition = end;
@@ -169,7 +168,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 		((wasOnGround) ? -glm::vec3(0, stepHeight, 0) : glm::vec3(0, 0, 0));
 	const glm::vec3 toMid = toHeadTop * 0.5f;
 	const glm::vec3 toFeetStart = toMid + glm::vec3(0, 0.1, 0);
-	const glm::vec3 toHeadStart = toMid - glm::vec3(0, 0.1, 0);
+// 	const glm::vec3 toHeadStart = toMid - glm::vec3(0, 0.1, 0);
 
 	glm::vec3 hitPoint, hitNormal;
 	float travelFactor;
