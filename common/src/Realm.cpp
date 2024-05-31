@@ -24,7 +24,24 @@ void Realm::Destroy()
 void Realm::Clear()
 {
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity) { entity.destruct(); });
+	ecs.each([](flecs::entity entity, EntityShape) {
+			entity.destruct();
+			});
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, EntityEventsQueue) {
+			entity.destruct();
+			});
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, EntityMovementState) {
+			entity.destruct();
+			});
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, EntityName) {
+			entity.destruct();
+			});
 	ecs.defer_end();
 
 	collisionWorld.Clear();

@@ -45,7 +45,7 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, GetPlayerCamera);
 
 	METHOD_NO_ARGS(GameFrontend, IsConnected);
-	METHOD_NO_ARGS(GameFrontend, IsConnecting);
+	METHOD_NO_ARGS(GameFrontend, IsDisconnected);
 
 	METHOD_NO_ARGS(GameFrontend, InternalReady);
 	METHOD_NO_ARGS(GameFrontend, InternalProcess);
@@ -131,17 +131,16 @@ Camera3D *GameFrontend::GetPlayerCamera() { return playerCamera; }
 bool GameFrontend::IsConnected()
 {
 	if (gameClientFrontend->realmConnectionPeer != nullptr) {
-		if (gameClientFrontend->realmConnectionPeer->IsReadyToUse()) {
-			return true;
-		}
+		return gameClientFrontend->realmConnectionPeer->IsReadyToUse();
 	}
 	return false;
 }
 
-bool GameFrontend::IsConnecting()
+bool GameFrontend::IsDisconnected()
 {
 	if (gameClientFrontend->realmConnectionPeer != nullptr) {
-		return true;
+		return gameClientFrontend->realmConnectionPeer->IsDisconnecting() ||
+			gameClientFrontend->realmConnectionPeer->IsClosed();
 	}
-	return false;
+	return true;
 }

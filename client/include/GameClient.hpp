@@ -22,6 +22,8 @@ public:
 	void Login(const std::string &username, const std::string &password);
 
 	virtual void RunOneEpoch();
+	
+	void RegisterObservers();
 
 private: // rpc methods
 	void JoinRealm(const std::string &realm);
@@ -69,7 +71,6 @@ public: // client input api
 	EntityShape GetShape();
 
 	void PerformSendPlayerMovementInput();
-	void UpdatePlayerAuthoritativeState();
 
 public:
 	RealmClient *realm;

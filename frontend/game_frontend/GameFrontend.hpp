@@ -44,7 +44,7 @@ public: // Godot bound functions
 
 	Node *GetNodeToAddEntities();
 
-private: // Godot callbacks
+public: // Godot callbacks
 	void SetPlayerDirectionMovement(const Vector2 &dir);
 	void PlayerTryJump();
 	void SetPlayerRotation(const Vector3 &rot);
@@ -56,7 +56,7 @@ private: // Godot callbacks
 	Camera3D *GetPlayerCamera();
 
 	bool IsConnected();
-	bool IsConnecting();
+	bool IsDisconnected();
 
 public: // variables
 	GameClientFrontend *gameClientFrontend;

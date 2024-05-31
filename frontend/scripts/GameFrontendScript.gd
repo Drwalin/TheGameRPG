@@ -19,24 +19,25 @@ func Rotate(x: float, y: float)->void:
 		rot.x = 3.141592*0.5
 	SetPlayerRotation(rot);
 
+var mouseCapturedPosition:Vector2;
 var isDraggingCameraRotationButton: bool = false;
 func _input(event)->void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			if (event.pressed) && (isDraggingCameraRotationButton == false):
+				mouseCapturedPosition = get_viewport().get_mouse_position();
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
 				isDraggingCameraRotationButton = true;
 			elif (!event.pressed) && (isDraggingCameraRotationButton == true):
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE);
+				get_viewport().warp_mouse(mouseCapturedPosition);
 				isDraggingCameraRotationButton = false;
 	if event is InputEventMouseMotion:
 		if isDraggingCameraRotationButton:
 			Rotate(-event.relative.y * SENSITIVITY, -event.relative.x * SENSITIVITY);
 	if event is InputEventKey:
 		if event.keycode == KEY_ESCAPE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE);
-			if OS.is_debug_build():
-				get_tree().quit();
+			pass;
 
 func _process(delta: float)->void:
 	InternalProcess();
