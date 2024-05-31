@@ -3,6 +3,7 @@
 #include "EntityPrefabScript.hpp"
 #include "GameFrontend.hpp"
 #include "EntityDataFrontend.hpp"
+#include "GameFrontend.hpp"
 
 #include "GameClientFrontend.hpp"
 
@@ -74,4 +75,13 @@ void GameClientFrontend::OnSetPlayerId(uint64_t localId)
 void GameClientFrontend::OnPlayerIdUnset()
 {
 	// TODO: ???
+}
+
+void GameClientFrontend::RunOneEpoch()
+{
+	if (gameFrontend->IsDisconnected()) {
+		DisconnectRealmPeer();
+	}
+	
+	GameClient::RunOneEpoch();
 }

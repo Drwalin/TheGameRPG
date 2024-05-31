@@ -1,1 +1,1 @@
-extends EntityPrefabScript
+extends EntityPrefabScript;

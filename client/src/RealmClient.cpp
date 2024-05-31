@@ -28,7 +28,6 @@ void RealmClient::Init(const std::string &realmName)
 void RealmClient::Clear()
 {
 	Realm::Clear();
-	peer = nullptr;
 }
 
 void RealmClient::Reinit(const std::string &realmName)

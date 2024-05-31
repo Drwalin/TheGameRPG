@@ -11,14 +11,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_odikw")
 
-[node name="ConnectionState" type="Label" parent="."]
-layout_mode = 0
-offset_left = 856.0
-offset_top = 67.0
-offset_right = 1108.0
-offset_bottom = 90.0
-text = "Connection status: disconnected"
-
 [node name="LabelAddress" type="Label" parent="."]
 layout_mode = 0
 offset_left = 514.0
@@ -103,5 +95,21 @@ offset_right = 652.0
 offset_bottom = 558.0
 text = "Login"
 
+[node name="Exit" type="Button" parent="."]
+offset_left = 88.0
+offset_top = 451.0
+offset_right = 233.0
+offset_bottom = 488.0
+text = "Quit Game"
+
+[node name="Disconnect" type="Button" parent="."]
+offset_left = 90.0
+offset_top = 519.0
+offset_right = 235.0
+offset_bottom = 556.0
+text = "Disconnect"
+
 [connection signal="pressed" from="Button" to="." method="_on_connect_to_server_pressed"]
 [connection signal="pressed" from="ButtonLogin" to="." method="_OnLoginPressed"]
+[connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]

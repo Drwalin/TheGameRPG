@@ -20,6 +20,25 @@ GameClient::GameClient() : realm(new RealmClient(this))
 	// host->SetOnDisconnect();
 	pingTimer.Start();
 	lastTickAuthoritativeSent = 0;
+	
+	RegisterObservers();
+}
+
+void GameClient::RegisterObservers()
+{
+	realm->RegisterObserver(flecs::OnRemove,
+					 [this](flecs::entity entity, const EntityMovementState &) {
+						if (entity.id() == localPlayerEntityId) {
+							OnPlayerIdUnset();
+							serverPlayerEntityId = 0;
+							localPlayerEntityId = 0;
+						}
+						auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
+						if (it != mapLocalEntityIdToServerEntityId.end()) {
+							mapServerEntityIdToLocalEntityId.erase(it->second);
+							mapLocalEntityIdToServerEntityId.erase(it);
+						}
+					 });
 }
 
 GameClient::~GameClient() {}
@@ -45,10 +64,18 @@ void GameClient::RunNetworkLoopAsync() { host->RunAsync(); }
 
 void GameClient::DisconnectRealmPeer()
 {
-	if (realmConnectionPeer) {
-		realmConnectionPeer->Disconnect();
-		realmConnectionPeer = nullptr;
+	realm->Clear();
+	if (serverPlayerEntityId || localPlayerEntityId) {
+		OnPlayerIdUnset();
+		serverPlayerEntityId = 0;
+		localPlayerEntityId = 0;
 	}
+	if (realmConnectionPeer &&
+		(realmConnectionPeer->IsClosed() == false ||
+		 realmConnectionPeer->IsDisconnecting() == false)) {
+		realmConnectionPeer->Disconnect();
+	}
+	realm->Clear();
 }
 
 bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
@@ -97,19 +124,6 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 	realmConnectionPeer = state->sp;
 	return true;
-
-	// 	std::future<std::shared_ptr<icon7::Peer>> peerFuture =
-	// 		host->ConnectPromise(ip, port);
-	// 	std::this_thread::sleep_for(std::chrono::seconds(5));
-	// 	peerFuture.wait_for(std::chrono::seconds(5));
-	// 	if (peerFuture.valid() == false) {
-	// 		return false;
-	// 	}
-	// 	realmConnectionPeer = peerFuture.get();
-	//
-	// 	ServerRpcProxy::Ping(this, true);
-	//
-	// 	return true;
 }
 
 void GameClient::RunOneEpoch()
@@ -118,21 +132,7 @@ void GameClient::RunOneEpoch()
 
 	PerformSendPlayerMovementInput();
 	realm->OneEpoch();
-	// 	UpdatePlayerAuthoritativeState();
 	PerformSendPlayerMovementInput();
-}
-
-void GameClient::UpdatePlayerAuthoritativeState()
-{
-	// TODO: is this function needed??
-	if (localPlayerEntityId == 0) {
-		return;
-	}
-	flecs::entity playerEntity = realm->Entity(localPlayerEntityId);
-	auto state = playerEntity.get<EntityMovementState>();
-	if (state) {
-		playerEntity.set<EntityLastAuthoritativeMovementState>({*state});
-	}
 }
 
 void GameClient::PerformSendPlayerMovementInput()
