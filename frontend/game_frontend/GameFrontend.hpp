@@ -59,7 +59,7 @@ public: // Godot callbacks
 	bool IsDisconnected();
 
 public: // variables
-	GameClientFrontend *gameClientFrontend;
+	GameClientFrontend *gameClient;
 	Camera3D *playerCamera = nullptr;
 
 	Node *entitiesContainer = nullptr;

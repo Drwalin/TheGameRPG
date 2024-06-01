@@ -43,6 +43,23 @@ void GameClient::RegisterObservers()
 
 GameClient::~GameClient() {}
 
+bool GameClient::IsConnected()
+{
+	if (realmConnectionPeer != nullptr) {
+		return realmConnectionPeer->IsReadyToUse();
+	}
+	return false;
+}
+
+bool GameClient::IsDisconnected()
+{
+	if (realmConnectionPeer != nullptr) {
+		return realmConnectionPeer->IsDisconnecting() ||
+			realmConnectionPeer->IsClosed();
+	}
+	return true;
+}
+
 void GameClient::Destroy()
 {
 	if (host) {

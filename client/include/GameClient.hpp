@@ -24,6 +24,9 @@ public:
 	virtual void RunOneEpoch();
 	
 	void RegisterObservers();
+	
+	bool IsConnected();
+	bool IsDisconnected();
 
 private: // rpc methods
 	void JoinRealm(const std::string &realm);
