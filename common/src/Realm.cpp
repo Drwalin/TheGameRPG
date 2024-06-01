@@ -167,3 +167,26 @@ void Realm::UpdateEntityAuthoritativeState(
 		entity.set<EntityMovementState>(state.oldState);
 	}
 }
+
+uint64_t Realm::CreateStaticEntity(EntityStaticTransform transform,
+								   EntityModelName model,
+								   EntityStaticCollisionShapeName shape)
+{
+	TerrainCollisionData col;
+	bool r = GetCollisionShape(shape.shapeName, &col);
+	if (r || shape.shapeName == "") {
+		uint64_t entityId = NewEntity();
+		flecs::entity entity = Entity(entityId);
+
+		entity.set(transform);
+		entity.set(model);
+		entity.set(shape);
+
+		if (r) {
+			collisionWorld.LoadStaticCollision(&col, transform);
+		}
+
+		return entityId;
+	}
+	return 0;
+}

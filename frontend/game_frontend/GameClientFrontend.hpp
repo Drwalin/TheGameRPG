@@ -39,6 +39,9 @@ public: // callbacks
 
 	virtual void RunOneEpoch() override;
 
+	virtual bool GetCollisionShape(std::string collisionShapeName,
+								   TerrainCollisionData *data) override;
+
 public:
 	class GameFrontend *frontend;
 };

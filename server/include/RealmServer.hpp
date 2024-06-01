@@ -35,6 +35,9 @@ public:
 
 	void RegisterObservers();
 
+	virtual bool GetCollisionShape(std::string collisionShapeName,
+								   TerrainCollisionData *data) override;
+
 public:
 	void Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId);
 

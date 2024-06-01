@@ -102,5 +102,21 @@ struct EntityModelName {
 struct EntityStaticTransform {
 	glm::vec3 pos;
 	glm::vec3 rot;
-	glm::vec3 scale;
+
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(pos);
+		s.op(rot);
+		return s;
+	}
+};
+
+struct EntityStaticCollisionShapeName {
+	std::string shapeName;
+
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(shapeName);
+		return s;
+	}
 };

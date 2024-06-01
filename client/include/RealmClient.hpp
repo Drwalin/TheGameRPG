@@ -31,6 +31,9 @@ public:
 
 	void RegisterObservers();
 
+	virtual bool GetCollisionShape(std::string collisionShapeName,
+								   TerrainCollisionData *data) override;
+
 public:
 	GameClient *gameClient;
 	icon7::RPCEnvironment *rpc;

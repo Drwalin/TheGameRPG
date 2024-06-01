@@ -10,6 +10,7 @@
 #include "GameFrontend.hpp"
 #include "GodotGlm.hpp"
 #include "EntityPrefabScript.hpp"
+#include "EntityStaticPrefabScript.hpp"
 
 #include "GameClientFrontend.hpp"
 
@@ -27,6 +28,28 @@ void GameClientFrontend::Init()
 	GameClientFrontend::RegisterObservers();
 }
 
+bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
+										   TerrainCollisionData *data)
+{
+	ResourceLoader *rl = ResourceLoader::get_singleton();
+	Ref<Mesh> mesh = rl->load((std::string("res://assets/map_collision/") +
+							   collisionShapeName + ".obj")
+								  .c_str(),
+							  "Mesh");
+	if (mesh.is_null()) {
+		return false;
+	}
+	const auto arr = mesh->get_faces();
+	const uint32_t size = arr.size() - (arr.size() % 3);
+	for (uint32_t i = 0; i < size; ++i) {
+		data->vertices.push_back(ToGlm(arr[i]));
+		data->indices.push_back(i);
+	}
+	if (data->indices.size() >= 3 && data->vertices.size() >= 3) {
+		return true;
+	}
+	return false;
+}
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
 	TerrainCollisionData col;
@@ -43,7 +66,7 @@ void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 		col.vertices.push_back(ToGlm(arr[i]));
 		col.indices.push_back(i);
 	}
-	realm->collisionWorld.LoadStaticCollision(&col);
+	realm->collisionWorld.LoadStaticCollision(&col, {{}, {}});
 
 	// Load map
 	Node *container = frontend->GetNodeToAddStaticMap();
@@ -126,13 +149,43 @@ void GameClientFrontend::RunOneEpoch()
 
 void GameClientFrontend::RegisterObservers()
 {
-	realm->RegisterObserver(flecs::OnSet, [](flecs::entity entity,
-											 const EntityName &name) {
-		EntityGodotNode *en = (EntityGodotNode *)entity.get<EntityGodotNode>();
-		if (en) {
-			if (en->node) {
-				en->node->SetName(name);
+	realm->RegisterObserver(
+		flecs::OnSet, +[](flecs::entity entity, const EntityName &name) {
+			EntityGodotNode *en =
+				(EntityGodotNode *)entity.get<EntityGodotNode>();
+			if (en) {
+				if (en->node) {
+					en->node->SetName(name);
+				}
+			}
+		});
+
+	realm->RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
+												 const EntityModelName &model) {
+		auto t = entity.get<EntityStaticTransform>();
+		if (t != nullptr) {
+			EntityStaticGodotNode *node =
+				realm->AccessComponent<EntityStaticGodotNode>(entity);
+			if (node->node == nullptr) {
+				node->node->Init(entity.id(), model, *t);
 			}
 		}
 	});
+
+	realm->RegisterObserver(
+		flecs::OnRemove,
+		+[](flecs::entity entity, EntityStaticGodotNode &node) {
+			if (node.node) {
+				node.node->queue_free();
+				node.node = nullptr;
+			}
+		});
+
+	realm->RegisterObserver(
+		flecs::OnRemove, +[](flecs::entity entity, EntityGodotNode &node) {
+			if (node.node) {
+				node.node->queue_free();
+				node.node = nullptr;
+			}
+		});
 }

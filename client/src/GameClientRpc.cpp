@@ -11,6 +11,9 @@ void GameClient::BindRpc()
 							  &GameClient::JoinRealm, &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::SpawnEntities, this,
 							  &GameClient::SpawnEntities, &executionQueue);
+	rpc.RegisterObjectMessage(ClientRpcFunctionNames::SpawnStaticEntities, this,
+							  &GameClient::SpawnStaticEntities,
+							  &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::UpdateEntities, this,
 							  &GameClient::UpdateEntities, &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::SetModel, this,
@@ -53,6 +56,24 @@ void GameClient::SpawnEntities(icon7::ByteReader *reader)
 
 		if (reader->is_valid()) {
 			SpawnEntity(serverId, state, name, model, shape, movementParams);
+		}
+	}
+}
+
+void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
+{
+	uint64_t serverId;
+	EntityStaticTransform transform;
+	EntityModelName model;
+	EntityStaticCollisionShapeName shape;
+	while (reader->get_remaining_bytes() > 8) {
+		reader->op(serverId);
+		reader->op(transform);
+		reader->op(model);
+		reader->op(shape);
+
+		if (reader->is_valid()) {
+			SpawnStaticEntity(serverId, transform, model, shape);
 		}
 	}
 }
@@ -179,6 +200,23 @@ void GameClient::SpawnEntity(uint64_t serverId,
 		LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
 	} else {
 		LOG_DEBUG("Spawn   entity: [%lu>%lu]", serverId, localId);
+	}
+}
+
+void GameClient::SpawnStaticEntity(uint64_t serverId,
+								   EntityStaticTransform transform,
+								   EntityModelName model,
+								   EntityStaticCollisionShapeName shape)
+{
+	uint64_t localId = 0;
+	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
+	if (it == mapServerEntityIdToLocalEntityId.end()) {
+		localId = realm->CreateStaticEntity(transform, model, shape);
+		mapServerEntityIdToLocalEntityId[serverId] = localId;
+		mapLocalEntityIdToServerEntityId[localId] = serverId;
+	} else {
+		LOG_ERROR("Recreation of static entity is not implemented.");
+		return;
 	}
 }
 

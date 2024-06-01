@@ -35,7 +35,8 @@ public:
 
 	void Debug() const;
 
-	void LoadStaticCollision(const TerrainCollisionData *data);
+	void LoadStaticCollision(const TerrainCollisionData *data,
+							 EntityStaticTransform transform);
 
 	bool AddEntity(uint64_t entityId, EntityShape shape, glm::vec3 pos);
 	void UpdateEntityBvh(uint64_t entityId, EntityShape shape, glm::vec3 pos);

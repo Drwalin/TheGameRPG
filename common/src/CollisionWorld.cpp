@@ -74,7 +74,8 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	return object;
 }
 
-void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data)
+void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data,
+										 EntityStaticTransform transform)
 {
 	btTriangleMesh *triangles =
 		new btTriangleMesh((data->vertices.size() / 3) > (1 << 15), false);
@@ -95,6 +96,9 @@ void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data)
 	shape->buildOptimizedBvh();
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(shape);
+	object->setWorldTransform(btTransform(
+		btQuaternion(transform.rot.x, transform.rot.y, transform.rot.z),
+		ToBullet(transform.pos)));
 	object->setUserIndex(FILTER_TERRAIN);
 	collisionWorld->addCollisionObject(object, btBroadphaseProxy::StaticFilter);
 	collisionWorld->updateSingleAabb(object);

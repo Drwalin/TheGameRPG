@@ -34,6 +34,13 @@ public:
 
 	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
 
+	uint64_t CreateStaticEntity(EntityStaticTransform transform,
+								EntityModelName model,
+								EntityStaticCollisionShapeName shape);
+
+	virtual bool GetCollisionShape(std::string collisionShapeName,
+								   TerrainCollisionData *data) = 0;
+
 public:
 	Timer timer;
 	int64_t minMovementDeltaTicks = 50;

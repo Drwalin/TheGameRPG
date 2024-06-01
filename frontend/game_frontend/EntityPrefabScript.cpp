@@ -40,9 +40,6 @@ void EntityPrefabScript::_ready()
 	frontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
 		"gameFrontend"));
 
-	if (Engine::get_singleton()->is_editor_hint()) {
-		return;
-	}
 	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
 }
 
