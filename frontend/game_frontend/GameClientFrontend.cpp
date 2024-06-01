@@ -7,9 +7,9 @@
 
 #include "GameClientFrontend.hpp"
 
-GameClientFrontend::GameClientFrontend(GameFrontend *gameFrontend)
+GameClientFrontend::GameClientFrontend(GameFrontend *frontend)
 {
-	this->gameFrontend = gameFrontend;
+	this->frontend = frontend;
 }
 
 GameClientFrontend::~GameClientFrontend() {}
@@ -29,8 +29,8 @@ void GameClientFrontend::OnEntityAdd(uint64_t localId)
 	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 		node->Init(localId);
-		node->gameFrontend = gameFrontend;
-		gameFrontend->GetNodeToAddEntities()->add_child(node);
+		node->frontend = frontend;
+		frontend->GetNodeToAddEntities()->add_child(node);
 		realm->SetComponent(localId, EntityGodotNode{node});
 	}
 }
@@ -79,7 +79,7 @@ void GameClientFrontend::OnPlayerIdUnset()
 
 void GameClientFrontend::RunOneEpoch()
 {
-	if (gameFrontend->IsDisconnected()) {
+	if (frontend->IsDisconnected()) {
 		DisconnectRealmPeer();
 	}
 	GameClient::RunOneEpoch();

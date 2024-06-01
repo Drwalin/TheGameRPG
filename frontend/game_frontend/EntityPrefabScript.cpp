@@ -36,7 +36,7 @@ void EntityPrefabScript::_ready()
 		return;
 	}
 
-	gameFrontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
+	frontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
 		"gameFrontend"));
 
 	if (Engine::get_singleton()->is_editor_hint()) {
@@ -52,7 +52,7 @@ void EntityPrefabScript::_process(double dt)
 	}
 
 	flecs::entity entity =
-		gameFrontend->gameClient->realm->Entity(localEntityId);
+		frontend->client->realm->Entity(localEntityId);
 	if (entity.is_alive() == false) {
 		LOG_ERROR("Entity %lu is not alive/not present in ecs", localEntityId);
 		return;
@@ -90,7 +90,7 @@ void EntityPrefabScript::SetModel(const EntityModelName &model)
 
 bool EntityPrefabScript::IsPlayer() const
 {
-	return localEntityId == gameFrontend->gameClient->localPlayerEntityId;
+	return localEntityId == frontend->client->localPlayerEntityId;
 }
 
 int64_t EntityPrefabScript::GetLocalEntityId() const { return localEntityId; }
@@ -98,7 +98,7 @@ int64_t EntityPrefabScript::GetLocalEntityId() const { return localEntityId; }
 Vector3 EntityPrefabScript::GetRotation() const
 {
 	auto state =
-		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+		frontend->client->realm->GetComponent<EntityMovementState>(
 			localEntityId);
 	if (state) {
 		return ToGodot(state->rot);
@@ -110,7 +110,7 @@ Vector3 EntityPrefabScript::GetRotation() const
 Vector3 EntityPrefabScript::GetPosition() const
 {
 	auto state =
-		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+		frontend->client->realm->GetComponent<EntityMovementState>(
 			localEntityId);
 	if (state) {
 		return ToGodot(state->pos);
@@ -122,7 +122,7 @@ Vector3 EntityPrefabScript::GetPosition() const
 Vector3 EntityPrefabScript::GetVelocity() const
 {
 	auto state =
-		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+		frontend->client->realm->GetComponent<EntityMovementState>(
 			localEntityId);
 	if (state) {
 		return ToGodot(state->vel);

@@ -18,7 +18,7 @@ using namespace godot;
 class GameClientFrontend : public GameClient
 {
 public:
-	GameClientFrontend(class GameFrontend *gameFrontend);
+	GameClientFrontend(class GameFrontend *frontend);
 	virtual ~GameClientFrontend() override;
 
 	void Init();
@@ -39,5 +39,5 @@ public: // callbacks
 	virtual void RunOneEpoch() override;
 
 public:
-	class GameFrontend *gameFrontend;
+	class GameFrontend *frontend;
 };
