@@ -1,5 +1,6 @@
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/mesh.hpp>
+#include <godot_cpp/classes/packed_scene.hpp>
 
 #include "../../client/include/RealmClient.hpp"
 
@@ -27,9 +28,10 @@ void GameClientFrontend::Init()
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
 	TerrainCollisionData col;
+	
+	// Load collision
 	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Resource> res = rl->load((std::string("res://assets/models/") + realmName + ".obj").c_str(), "Mesh");
-	Mesh *mesh = Object::cast_to<Mesh>(res.ptr());
+	Ref<Mesh> mesh = rl->load((std::string("res://assets/map_collision/") + realmName + ".obj").c_str(), "Mesh");
 	const auto arr = mesh->get_faces();
 	const uint32_t size = arr.size() - (arr.size()%3);
 	for (uint32_t i=0; i<size; ++i) {
@@ -37,6 +39,18 @@ void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 		col.indices.push_back(i);
 	}
 	realm->collisionWorld.LoadStaticCollision(&col);
+	
+	// Load map
+	Node *container = frontend->GetNodeToAddStaticMap();
+	while (true) {
+		TypedArray<Node> oldScenes = container->get_children();
+		if (oldScenes.size() == 0) {
+			break;
+		}
+		container->remove_child(Object::cast_to<Node>(oldScenes[0]));
+	}
+	Ref<PackedScene> scene = rl->load((std::string("res://assets/scenes/") + realmName + ".tscn").c_str(), "PackedScene");
+	container->add_child(scene->instantiate());
 }
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
 {

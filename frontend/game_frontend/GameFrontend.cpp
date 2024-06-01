@@ -35,6 +35,7 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, Disconnect);
 
 	METHOD_NO_ARGS(GameFrontend, GetNodeToAddEntities);
+	METHOD_NO_ARGS(GameFrontend, GetNodeToAddStaticMap);
 
 	METHOD_ARGS(GameFrontend, SetPlayerDirectionMovement, "movementDir");
 	METHOD_NO_ARGS(GameFrontend, PlayerTryJump);
@@ -67,6 +68,8 @@ void GameFrontend::InternalReady()
 		(Camera3D *)(this->get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
 	entitiesContainer =
 		(Node *)(this->get_node_or_null("/root/SceneRoot/EntitiesContainer"));
+	staticMapContainer =
+		(Node *)(this->get_node_or_null("/root/SceneRoot/Terrain"));
 }
 
 void GameFrontend::InternalProcess()
@@ -91,6 +94,8 @@ void GameFrontend::Login(const String &username, const String &password)
 void GameFrontend::Disconnect() { client->DisconnectRealmPeer(); }
 
 Node *GameFrontend::GetNodeToAddEntities() { return entitiesContainer; }
+
+Node *GameFrontend::GetNodeToAddStaticMap() { return staticMapContainer; }
 
 void GameFrontend::SetPlayerDirectionMovement(const Vector2 &dir)
 {
