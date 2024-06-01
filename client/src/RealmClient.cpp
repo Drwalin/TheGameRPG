@@ -19,9 +19,6 @@ void RealmClient::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-	CollisionLoader loader;
-	loader.LoadOBJ(std::string("assets/models/") + realmName + ".obj");
-	collisionWorld.LoadStaticCollision(&loader.collisionData);
 }
 
 void RealmClient::Clear() { Realm::Clear(); }
@@ -30,6 +27,7 @@ void RealmClient::Reinit(const std::string &realmName)
 {
 	Clear();
 	Init(realmName);
+	gameClient->OnEnterRealm(realmName);
 }
 
 bool RealmClient::OneEpoch() { return Realm::OneEpoch(); }
