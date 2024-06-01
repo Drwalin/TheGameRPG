@@ -4,6 +4,7 @@
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
+#include <godot_cpp/classes/label3d.hpp>
 
 #include "GameFrontend.hpp"
 
@@ -81,6 +82,13 @@ void EntityPrefabScript::SetRotation(glm::vec3 rot)
 void EntityPrefabScript::SetPosition(glm::vec3 pos)
 {
 	this->set_position(ToGodot(pos));
+}
+
+void EntityPrefabScript::SetName(const EntityName &name)
+{
+	Node *node = find_child("MeshInstance3D")->find_child("Label3D");
+	Label3D *label = Object::cast_to<Label3D>(node);
+	label->set_text(name.name.c_str());
 }
 
 void EntityPrefabScript::SetModel(const EntityModelName &model)

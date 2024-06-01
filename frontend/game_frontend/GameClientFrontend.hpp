@@ -22,6 +22,7 @@ public:
 	virtual ~GameClientFrontend() override;
 
 	void Init();
+	virtual void RegisterObservers() override;
 
 public: // callbacks
 	virtual void OnEnterRealm(const std::string &realmName) override;

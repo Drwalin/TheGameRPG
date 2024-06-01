@@ -17,7 +17,10 @@ void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
 				 data->peer.expired() ? "true" : "false");
 		ClientRpcProxy::LoginFailed(peer);
 		return;
+	} else {
+		LOG_INFO("Player login successfull: '%s'", username.c_str());
 	}
+	data->userName = username;
 	auto core = ((ServerCore *)(peer->host->userPointer));
 	// TODO: get player data from database and call core->ConnectPeerToRealm
 	core->ConnectPeerToRealm(peer, core->spawnRealm);
