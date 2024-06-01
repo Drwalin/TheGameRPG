@@ -13,14 +13,14 @@ namespace ServerRpcProxy
 {
 void Login(GameClient *gameClient, std::string username, std::string password)
 {
-	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(),
+	gameClient->rpc.Send(gameClient->peer.get(),
 						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						 ServerRpcFunctionNames::Login, username, password);
 }
 
 void UpdatePlayer(GameClient *gameClient, const EntityMovementState &state)
 {
-	gameClient->rpc.Send(gameClient->realmConnectionPeer.get(),
+	gameClient->rpc.Send(gameClient->peer.get(),
 						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						 ServerRpcFunctionNames::UpdatePlayer, state);
 }
@@ -33,14 +33,14 @@ void GetEntitiesData(GameClient *gameClient,
 	writer.op(entities.data(), entities.size());
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	gameClient->rpc.FinalizeSerializeSend(writer, flags);
-	gameClient->realmConnectionPeer->Send(std::move(writer.Buffer()));
+	gameClient->peer->Send(std::move(writer.Buffer()));
 }
 
 void Ping(GameClient *gameClient, bool reliable)
 {
 	int64_t currentTick = gameClient->pingTimer.CalcCurrentTick();
 	gameClient->rpc.Send(
-		gameClient->realmConnectionPeer.get(),
+		gameClient->peer.get(),
 		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |
 			icon7::FLAGS_CALL_NO_FEEDBACK,
 		ServerRpcFunctionNames::Ping, currentTick);

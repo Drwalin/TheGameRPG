@@ -45,17 +45,17 @@ GameClient::~GameClient() {}
 
 bool GameClient::IsConnected()
 {
-	if (realmConnectionPeer != nullptr) {
-		return realmConnectionPeer->IsReadyToUse();
+	if (peer != nullptr) {
+		return peer->IsReadyToUse();
 	}
 	return false;
 }
 
 bool GameClient::IsDisconnected()
 {
-	if (realmConnectionPeer != nullptr) {
-		return realmConnectionPeer->IsDisconnecting() ||
-			realmConnectionPeer->IsClosed();
+	if (peer != nullptr) {
+		return peer->IsDisconnecting() ||
+			peer->IsClosed();
 	}
 	return true;
 }
@@ -63,7 +63,7 @@ bool GameClient::IsDisconnected()
 void GameClient::Destroy()
 {
 	if (host) {
-		realmConnectionPeer = nullptr;
+		peer = nullptr;
 		host->DisconnectAllAsync();
 		host->StopListening();
 		host->WaitStopRunning();
@@ -87,10 +87,10 @@ void GameClient::DisconnectRealmPeer()
 		serverPlayerEntityId = 0;
 		localPlayerEntityId = 0;
 	}
-	if (realmConnectionPeer &&
-		(realmConnectionPeer->IsClosed() == false ||
-		 realmConnectionPeer->IsDisconnecting() == false)) {
-		realmConnectionPeer->Disconnect();
+	if (peer &&
+		(peer->IsClosed() == false ||
+		 peer->IsDisconnecting() == false)) {
+		peer->Disconnect();
 	}
 	realm->Clear();
 }
@@ -139,7 +139,7 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 		return false;
 	}
 
-	realmConnectionPeer = state->sp;
+	peer = state->sp;
 	return true;
 }
 
