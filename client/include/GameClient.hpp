@@ -80,7 +80,7 @@ public:
 
 	icon7::RPCEnvironment rpc;
 	icon7::Host *host;
-	std::shared_ptr<icon7::Peer> realmConnectionPeer;
+	std::shared_ptr<icon7::Peer> peer;
 
 	icon7::CommandExecutionQueue executionQueue;
 
