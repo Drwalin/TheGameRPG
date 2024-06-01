@@ -20,8 +20,6 @@ func _OnLoginPressed():
 	if username != "":
 		gameFrontend.Login(username, password);
 		hide();
-	else:
-		print("_OnLoginPressed");
 
 func _input(event)->void:
 	if event is InputEventKey:

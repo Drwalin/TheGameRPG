@@ -43,6 +43,7 @@ public: // Godot bound functions
 	void Disconnect();
 
 	Node *GetNodeToAddEntities();
+	Node *GetNodeToAddStaticMap();
 
 public: // Godot callbacks
 	void SetPlayerDirectionMovement(const Vector2 &dir);
@@ -63,4 +64,5 @@ public: // variables
 	Camera3D *playerCamera = nullptr;
 
 	Node *entitiesContainer = nullptr;
+	Node *staticMapContainer = nullptr;
 };

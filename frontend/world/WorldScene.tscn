@@ -1,9 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://m0gckaqqjvd4"]
+[gd_scene load_steps=14 format=3 uid="uid://m0gckaqqjvd4"]
 
 [ext_resource type="PackedScene" uid="uid://4k5megwckldt" path="res://gui/LoginMenu.tscn" id="1_800s2"]
 [ext_resource type="AudioStream" uid="uid://cvnaebqi1yo4t" path="res://assets/audio/ambient/Ambient 1.ogg" id="2_wl60s"]
 [ext_resource type="AudioStream" uid="uid://ce6xxa1876s5f" path="res://assets/audio/ambient/Ambient 2.ogg" id="3_284es"]
-[ext_resource type="ArrayMesh" uid="uid://b4krfqmgy1eh7" path="res://assets/models/MiddleEarth.obj" id="3_ypcpt"]
 [ext_resource type="AudioStream" uid="uid://cjea50p652kux" path="res://assets/audio/ambient/Ambient 3.ogg" id="4_03gyl"]
 [ext_resource type="AudioStream" uid="uid://cxb4howy300gt" path="res://assets/audio/ambient/Ambient 4.ogg" id="5_lm4rp"]
 [ext_resource type="AudioStream" uid="uid://x7tr0ad0vy0q" path="res://assets/audio/ambient/Ambient 5.ogg" id="6_x2dab"]
@@ -57,12 +56,6 @@ volume_db = -5.973
 autoplay = true
 
 [node name="Terrain" type="Node" parent="."]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Terrain"]
-
-[node name="MiddleEarth" type="MeshInstance3D" parent="Terrain"]
-mesh = ExtResource("3_ypcpt")
-skeleton = NodePath("../..")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.638177, 0.637161, -0.432153, 0, 0.561318, 0.8276, 0.76989, -0.528155, 0.35822, 0, 6.83921, 0)
