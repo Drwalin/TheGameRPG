@@ -30,18 +30,21 @@ void GameClientFrontend::Init()
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
 	TerrainCollisionData col;
-	
+
 	// Load collision
 	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Mesh> mesh = rl->load((std::string("res://assets/map_collision/") + realmName + ".obj").c_str(), "Mesh");
+	Ref<Mesh> mesh = rl->load(
+		(std::string("res://assets/map_collision/") + realmName + ".obj")
+			.c_str(),
+		"Mesh");
 	const auto arr = mesh->get_faces();
-	const uint32_t size = arr.size() - (arr.size()%3);
-	for (uint32_t i=0; i<size; ++i) {
+	const uint32_t size = arr.size() - (arr.size() % 3);
+	for (uint32_t i = 0; i < size; ++i) {
 		col.vertices.push_back(ToGlm(arr[i]));
 		col.indices.push_back(i);
 	}
 	realm->collisionWorld.LoadStaticCollision(&col);
-	
+
 	// Load map
 	Node *container = frontend->GetNodeToAddStaticMap();
 	while (true) {
@@ -51,7 +54,9 @@ void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 		}
 		container->remove_child(Object::cast_to<Node>(oldScenes[0]));
 	}
-	Ref<PackedScene> scene = rl->load((std::string("res://assets/scenes/") + realmName + ".tscn").c_str(), "PackedScene");
+	Ref<PackedScene> scene = rl->load(
+		(std::string("res://assets/scenes/") + realmName + ".tscn").c_str(),
+		"PackedScene");
 	container->add_child(scene->instantiate());
 }
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
@@ -121,14 +126,13 @@ void GameClientFrontend::RunOneEpoch()
 
 void GameClientFrontend::RegisterObservers()
 {
-	realm->RegisterObserver(
-		flecs::OnSet, [](flecs::entity entity, const EntityName &name) {
-			EntityGodotNode *en =
-				(EntityGodotNode *)entity.get<EntityGodotNode>();
-			if (en) {
-				if (en->node) {
-					en->node->SetName(name);
-				}
+	realm->RegisterObserver(flecs::OnSet, [](flecs::entity entity,
+											 const EntityName &name) {
+		EntityGodotNode *en = (EntityGodotNode *)entity.get<EntityGodotNode>();
+		if (en) {
+			if (en->node) {
+				en->node->SetName(name);
 			}
-		});
+		}
+	});
 }
