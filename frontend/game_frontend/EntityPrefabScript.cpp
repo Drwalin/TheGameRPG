@@ -90,16 +90,16 @@ void EntityPrefabScript::SetModel(const EntityModelName &model)
 
 bool EntityPrefabScript::IsPlayer() const
 {
-	return localEntityId ==
-		   gameFrontend->gameClient->localPlayerEntityId;
+	return localEntityId == gameFrontend->gameClient->localPlayerEntityId;
 }
 
 int64_t EntityPrefabScript::GetLocalEntityId() const { return localEntityId; }
 
 Vector3 EntityPrefabScript::GetRotation() const
 {
-	auto state = gameFrontend->gameClient->realm
-					 ->GetComponent<EntityMovementState>(localEntityId);
+	auto state =
+		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+			localEntityId);
 	if (state) {
 		return ToGodot(state->rot);
 	}
@@ -109,8 +109,9 @@ Vector3 EntityPrefabScript::GetRotation() const
 
 Vector3 EntityPrefabScript::GetPosition() const
 {
-	auto state = gameFrontend->gameClient->realm
-					 ->GetComponent<EntityMovementState>(localEntityId);
+	auto state =
+		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+			localEntityId);
 	if (state) {
 		return ToGodot(state->pos);
 	}
@@ -120,8 +121,9 @@ Vector3 EntityPrefabScript::GetPosition() const
 
 Vector3 EntityPrefabScript::GetVelocity() const
 {
-	auto state = gameFrontend->gameClient->realm
-					 ->GetComponent<EntityMovementState>(localEntityId);
+	auto state =
+		gameFrontend->gameClient->realm->GetComponent<EntityMovementState>(
+			localEntityId);
 	if (state) {
 		return ToGodot(state->vel);
 	}

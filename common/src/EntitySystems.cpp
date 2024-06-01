@@ -90,14 +90,14 @@ void UpdateMovement(
 				float vvl = glm::length(vv);
 				float frictionFactor = 0.5 * dt;
 				if (frictionFactor >= vvl) {
-					vel = {0,0,0};
+					vel = {0, 0, 0};
 				} else {
 					vel -= vv * (frictionFactor / vvl);
 				}
 			}
 		}
 		vel += acc * dt * 0.5f;
-		
+
 		if (vel.y < -50) {
 			vel.y = -50;
 		}

@@ -4,7 +4,7 @@
 
 struct EntityPlayerConnectionPeer {
 	std::shared_ptr<icon7::Peer> peer;
-	
+
 	inline EntityPlayerConnectionPeer() = default;
 	EntityPlayerConnectionPeer(EntityPlayerConnectionPeer &) = default;
 	EntityPlayerConnectionPeer(EntityPlayerConnectionPeer &&) = default;

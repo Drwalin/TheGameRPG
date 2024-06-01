@@ -34,25 +34,17 @@ struct EntityMovementState {
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;
-	
-	bool operator ==(const EntityMovementState &o) const
+
+	inline bool operator==(const EntityMovementState &o) const
 	{
-		return
-			timestamp == o.timestamp &&
-			pos == o.pos &&
-			vel == o.vel &&
-			rot == o.rot &&
-			onGround == o.onGround;
+		return timestamp == o.timestamp && pos == o.pos && vel == o.vel &&
+			   rot == o.rot && onGround == o.onGround;
 	}
-	
-	bool operator !=(const EntityMovementState &o) const
+
+	inline bool operator!=(const EntityMovementState &o) const
 	{
-		return
-			timestamp != o.timestamp ||
-			pos != o.pos ||
-			vel != o.vel ||
-			rot != o.rot ||
-			onGround != o.onGround;
+		return timestamp != o.timestamp || pos != o.pos || vel != o.vel ||
+			   rot != o.rot || onGround != o.onGround;
 	}
 
 	template <typename S> S &__ByteStream_op(S &s)

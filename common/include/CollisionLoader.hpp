@@ -4,8 +4,7 @@
 
 #include "CollisionWorld.hpp"
 
-struct CollisionLoader
-{
+struct CollisionLoader {
 	TerrainCollisionData collisionData;
 
 	bool LoadOBJ(std::string fileName);

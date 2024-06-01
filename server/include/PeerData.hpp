@@ -8,15 +8,14 @@
 
 class RealmServer;
 
-enum PeerState : uint32_t
-{
+enum PeerState : uint32_t {
 	WAITING_FOR_USERNAME,
 	FETCHING_USER_DATA,
 	INVALID_USER_NAME,
-	
+
 	CONNECTED,
 	DISCONNECTED,
-	
+
 	PLAYING_IN_REALM,
 	DISCONNECTING_FROM_REALM,
 	DISCONNECTING,

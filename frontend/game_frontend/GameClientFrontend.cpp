@@ -82,6 +82,5 @@ void GameClientFrontend::RunOneEpoch()
 	if (gameFrontend->IsDisconnected()) {
 		DisconnectRealmPeer();
 	}
-	
 	GameClient::RunOneEpoch();
 }

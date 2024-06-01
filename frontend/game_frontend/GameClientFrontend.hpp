@@ -35,7 +35,7 @@ public: // callbacks
 
 	virtual void OnSetPlayerId(uint64_t localId) override;
 	virtual void OnPlayerIdUnset() override;
-	
+
 	virtual void RunOneEpoch() override;
 
 public:

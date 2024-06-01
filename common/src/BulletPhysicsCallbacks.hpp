@@ -18,10 +18,7 @@ class BroadphaseAabbAgregate : public btBroadphaseAabbCallback
 public:
 	int32_t filter;
 	std::vector<btCollisionObject *> objects;
-	BroadphaseAabbAgregate(int32_t filter)
-		: filter(filter)
-	{
-	}
+	BroadphaseAabbAgregate(int32_t filter) : filter(filter) {}
 	virtual ~BroadphaseAabbAgregate() {}
 	virtual bool process(const btBroadphaseProxy *proxy) override
 	{

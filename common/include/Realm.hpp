@@ -31,7 +31,7 @@ public:
 
 	virtual void UpdateEntityAuthoritativeState(
 		uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
-	
+
 	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
 
 public:
@@ -47,7 +47,7 @@ public:
 	CollisionWorld collisionWorld;
 
 	std::string realmName;
-	
+
 	// TODO: fill this
 	EntityEventPriorityQueue eventsPriorityQueue;
 

@@ -11,14 +11,16 @@
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
-GameFrontend::GameFrontend() {
+GameFrontend::GameFrontend()
+{
 	gameClient = nullptr;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 }
 
-GameFrontend::~GameFrontend() {
+GameFrontend::~GameFrontend()
+{
 	if (gameClient) {
 		gameClient->Destroy();
 		delete gameClient;
@@ -117,23 +119,11 @@ Vector3 GameFrontend::GetPlayerVelocity()
 	return ToGodot(gameClient->GetVelocity());
 }
 
-float GameFrontend::GetPlayerHeight()
-{
-	return gameClient->GetShape().height;
-}
-float GameFrontend::GetPlayerWidth()
-{
-	return gameClient->GetShape().width;
-}
+float GameFrontend::GetPlayerHeight() { return gameClient->GetShape().height; }
+float GameFrontend::GetPlayerWidth() { return gameClient->GetShape().width; }
 
 Camera3D *GameFrontend::GetPlayerCamera() { return playerCamera; }
 
-bool GameFrontend::IsConnected()
-{
-	return  gameClient->IsConnected();
-}
+bool GameFrontend::IsConnected() { return gameClient->IsConnected(); }
 
-bool GameFrontend::IsDisconnected()
-{
-	return  gameClient->IsDisconnected();
-}
+bool GameFrontend::IsDisconnected() { return gameClient->IsDisconnected(); }

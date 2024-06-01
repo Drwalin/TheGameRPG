@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../ICon7/include/icon7/RPCEnvironment.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
 
 #include "../../common/include/Realm.hpp"
 
@@ -12,7 +11,7 @@ class RealmClient : public Realm
 public:
 	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
-	
+
 	inline const static int64_t STATE_UPDATE_DELAY = 100;
 
 	virtual void Init(const std::string &realmName) override;
@@ -26,13 +25,13 @@ public:
 		uint64_t localId, uint64_t serverId,
 		EntityLastAuthoritativeMovementState state);
 	void UpdateEntityCurrentState(uint64_t localId, uint64_t serverId);
-	
-	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) override;
+
+	virtual EntityMovementState
+	ExecuteMovementUpdate(uint64_t entityId) override;
 
 	void RegisterObservers();
 
 public:
 	GameClient *gameClient;
 	icon7::RPCEnvironment *rpc;
-// 	std::shared_ptr<icon7::Peer> peer;
 };

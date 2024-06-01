@@ -10,7 +10,7 @@ class GameClient
 public:
 	GameClient();
 	virtual ~GameClient();
-	
+
 	virtual void Destroy();
 
 	void BindRpc();
@@ -22,9 +22,9 @@ public:
 	void Login(const std::string &username, const std::string &password);
 
 	virtual void RunOneEpoch();
-	
+
 	void RegisterObservers();
-	
+
 	bool IsConnected();
 	bool IsDisconnected();
 

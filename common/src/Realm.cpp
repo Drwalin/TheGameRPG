@@ -16,7 +16,6 @@ Realm::~Realm()
 void Realm::Destroy()
 {
 	Clear();
-	
 	ecs.~world();
 	new (&ecs) flecs::world();
 }
@@ -24,24 +23,18 @@ void Realm::Destroy()
 void Realm::Clear()
 {
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityShape) {
-			entity.destruct();
-			});
+	ecs.each([](flecs::entity entity, EntityShape) { entity.destruct(); });
 	ecs.defer_end();
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityEventsQueue) {
-			entity.destruct();
-			});
+	ecs.each(
+		[](flecs::entity entity, EntityEventsQueue) { entity.destruct(); });
 	ecs.defer_end();
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityMovementState) {
-			entity.destruct();
-			});
+	ecs.each(
+		[](flecs::entity entity, EntityMovementState) { entity.destruct(); });
 	ecs.defer_end();
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityName) {
-			entity.destruct();
-			});
+	ecs.each([](flecs::entity entity, EntityName) { entity.destruct(); });
 	ecs.defer_end();
 
 	collisionWorld.Clear();
@@ -113,11 +106,12 @@ void Realm::RegisterObservers()
 			static EntityEventTemplate defaultMovementEvent{
 				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
 				   uint64_t entityId) {
-					EntityMovementState currentState = realm->ExecuteMovementUpdate(entityId);
-					
+					EntityMovementState currentState =
+						realm->ExecuteMovementUpdate(entityId);
+
 					glm::vec3 v = currentState.vel;
 					int64_t dt = realm->maxMovementDeltaTicks;
-					
+
 					if (currentState.onGround == false) {
 						dt = realm->minMovementDeltaTicks;
 						;
@@ -128,13 +122,13 @@ void Realm::RegisterObservers()
 					EntityEvent event;
 					event.dueTick = realm->timer.currentTick + dt;
 					event.event = &defaultMovementEvent;
-					
+
 					EntityEventsQueue *eventsQueue =
 						realm->AccessComponent<EntityEventsQueue>(entityId);
 					if (eventsQueue == nullptr) {
 						return;
 					}
-					
+
 					eventsQueue->ScheduleEvent(realm, entityId, event);
 				}};
 			EntityEvent event;
@@ -186,7 +180,6 @@ bool Realm::OneEpoch()
 			return false;
 		}
 	}
-	
 	return true;
 }
 

@@ -17,7 +17,7 @@ class RealmWorkThreadedManager final
 public:
 	RealmWorkThreadedManager();
 	~RealmWorkThreadedManager();
-	
+
 	void DestroyAllRealmsAndStop();
 
 	bool AddNewRealm(std::shared_ptr<RealmServer> realm);

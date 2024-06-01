@@ -22,4 +22,3 @@ struct CommandBinding : public icon7::Command {
 	std::tuple<Args...> args;
 	virtual void Execute() override { std::apply(functor, args); }
 };
-

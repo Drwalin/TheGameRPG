@@ -17,11 +17,11 @@ void ServerCore::RunMainThreadInteractive()
 void ServerCore::ParseCommand(const std::string &_cmd)
 {
 	std::string cmd = _cmd;
-	std::transform(cmd.begin(), cmd.end(), cmd.begin(), [](auto c){ return std::tolower(c); });
-	
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(),
+				   [](auto c) { return std::tolower(c); });
+
 	if (cmd == "quit" || cmd == "exit" || cmd == "stop" || cmd == "q") {
 		requestStop = true;
-		
 		Destroy();
 	}
 }

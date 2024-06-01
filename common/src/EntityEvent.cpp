@@ -65,7 +65,7 @@ void EntityEventsQueue::Update(int64_t currentTick, uint64_t entityId,
 			break;
 		}
 	}
-	
+
 	{
 		EntityEvent &event = events.Top();
 		if (event.scheduledInRealm == false) {

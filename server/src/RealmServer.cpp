@@ -120,13 +120,11 @@ EntityMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
 		return {};
 	}
 	EntityMovementState *currentState =
-		(EntityMovementState *)
-		entity.get<EntityMovementState>();
+		(EntityMovementState *)entity.get<EntityMovementState>();
 	if (currentState == nullptr) {
 		return {};
 	}
-	const EntityLastAuthoritativeMovementState
-		*lastAuthoritativeState =
+	const EntityLastAuthoritativeMovementState *lastAuthoritativeState =
 		entity.get<EntityLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		return {};
@@ -137,10 +135,9 @@ EntityMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
 		return {};
 	}
 
-	EntitySystems::UpdateMovement(
-			this, entity, *shape, *currentState,
-			*lastAuthoritativeState, *movementParams);
-	
+	EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
+								  *lastAuthoritativeState, *movementParams);
+
 	return *currentState;
 }
 
