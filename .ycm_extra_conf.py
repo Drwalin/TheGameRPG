@@ -4,16 +4,16 @@ def Settings( **kwargs ):
     '-std=c++20',
     '-I/usr/include',
     '-I/usr/include/bullet',
-    '-Igodot-cpp/include',
-    '-Igodot-cpp/gdextension',
-    '-Igodot-cpp/gen/include',
+    '-Ithirdparty/godot-cpp/include',
+    '-Ithirdparty/godot-cpp/gdextension',
+    '-Ithirdparty/godot-cpp/gen/include',
     '-IICon7/bitscpp/include',
     '-IICon7/uSockets/src/libusockets.h',
     '-IICon7/include',
     '-Icommon/include',
     '-Iserver/include',
     '-Iclient/src/include',
-    '-Iflecs',
-    '-Iflecs/include'
+    '-Ithirdparty/flecs',
+    '-Ithirdparty/flecs/include'
     ],
   }

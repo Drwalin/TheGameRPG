@@ -1,9 +1,9 @@
 [submodule "common/flecs"]
-	path = flecs
+	path = thirdparty/flecs
 	url = https://github.com/SanderMertens/flecs.git
 [submodule "ICon7"]
 	path = ICon7
 	url = https://github.com/Drwalin/ICon7.git
 [submodule "godot-cpp"]
-	path = godot-cpp
+	path = thirdparty/godot-cpp
 	url = https://github.com/godotengine/godot-cpp.git

@@ -14,9 +14,9 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 endif()
 
-include_directories(flecs/include)
+include_directories(thirdparty/flecs/include)
 
-add_subdirectory(godot-cpp)
+add_subdirectory(thirdparty/godot-cpp)
 
 set(ICON7_IGNORE_COMMON_LOG_PATH 1)
 add_subdirectory(ICon7)
