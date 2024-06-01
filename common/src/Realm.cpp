@@ -49,22 +49,6 @@ void Realm::Init(const std::string &realmName)
 uint64_t Realm::NewEntity()
 {
 	flecs::entity entity = ecs.entity();
-	// TODO: check what to add depending on some arguments: string, enum,
-	// something else
-
-	entity.add<EntityShape>();
-	entity.add<EntityMovementState>();
-	entity.add<EntityLastAuthoritativeMovementState>();
-	entity.add<EntityName>();
-	entity.add<EntityMovementParameters>();
-	entity.add<EntityModelName>();
-	entity.add<EntityEventsQueue>();
-
-	auto s = *entity.get<EntityLastAuthoritativeMovementState>();
-	s.oldState.timestamp = timer.currentTick;
-	entity.set<EntityLastAuthoritativeMovementState>(s);
-	entity.set<EntityMovementState>(s.oldState);
-
 	return entity.id();
 }
 
@@ -73,6 +57,7 @@ void Realm::RemoveEntity(uint64_t entity) { Entity(entity).destruct(); }
 void Realm::RegisterObservers()
 {
 	collisionWorld.RegisterObservers(this);
+	
 	ecs.observer<EntityLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
@@ -81,22 +66,12 @@ void Realm::RegisterObservers()
 			if (shape == nullptr) {
 				return;
 			}
-			/*
-			int64_t dt = timer.currentTick - lastState.oldState.timestamp;
-			if (dt >= minMovementDeltaTicks) {
-			*/
+			
 			EntityMovementState currentState = lastState.oldState;
 			auto movementParams = entity.get<EntityMovementParameters>();
 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
 										  lastState, *movementParams);
 			entity.set<EntityMovementState>(currentState);
-			/*
-			} else {
-				entity.set<$EntityMovementState>(lastState.oldState);
-				collisionWorld.UpdateEntityBvh(entity.id(), *shape,
-											   lastState.oldState.pos);
-			}
-			*/
 		});
 
 	ecs.observer<EntityEventsQueue, const EntityMovementParameters>()

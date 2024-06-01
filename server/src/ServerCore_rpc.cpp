@@ -60,13 +60,9 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 	if (realm) {
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
+			// TODO: verify movement state
 			entity.set<EntityLastAuthoritativeMovementState>(state);
 			entity.set<EntityMovementState>(state.oldState);
-
-			// TODO: verify movement state
-			realm->BroadcastUnreliableExcept(
-				data->entityId, ClientRpcFunctionNames::UpdateEntities,
-				data->entityId, state);
 		}
 	}
 }

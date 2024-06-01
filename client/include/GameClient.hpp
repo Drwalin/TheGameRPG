@@ -23,7 +23,7 @@ public:
 
 	virtual void RunOneEpoch();
 
-	void RegisterObservers();
+	virtual void RegisterObservers();
 
 	bool IsConnected();
 	bool IsDisconnected();
@@ -42,7 +42,8 @@ private: // rpc methods
 
 	void SpawnEntity(uint64_t serverId,
 					 const EntityLastAuthoritativeMovementState state,
-					 const EntityName name, const EntityModelName model,
+					 const EntityName name,
+					 const EntityModelName model,
 					 const EntityShape shape,
 					 const EntityMovementParameters movementParams);
 	void UpdateEntity(uint64_t serverId,

@@ -1,5 +1,6 @@
 #include "../include/GameClient.hpp"
 #include "../include/EntityDataClient.hpp"
+
 #include "../../common/include/EntitySystems.hpp"
 
 #include "../include/RealmClient.hpp"

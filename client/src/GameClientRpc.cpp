@@ -149,7 +149,8 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 
 void GameClient::SpawnEntity(uint64_t serverId,
 							 const EntityLastAuthoritativeMovementState state,
-							 const EntityName name, const EntityModelName model,
+							 const EntityName name,
+							 const EntityModelName model,
 							 const EntityShape shape,
 							 const EntityMovementParameters movementParams)
 {
@@ -163,11 +164,13 @@ void GameClient::SpawnEntity(uint64_t serverId,
 		localId = it->second;
 	}
 
-	realm->SetComponent(localId, name);
-	realm->SetComponent(localId, state);
-	realm->SetComponent(localId, model);
 	realm->SetComponent(localId, shape);
+	realm->SetComponent(localId, state);
 	realm->SetComponent(localId, movementParams);
+	realm->SetComponent(localId, name);
+	realm->SetComponent(localId, model);
+	realm->AssureComponent<EntityEventsQueue>(localId);
+	realm->SetComponent(localId, state.oldState);
 
 	OnEntityAdd(localId);
 

@@ -9,6 +9,7 @@
 #include "EntityDataFrontend.hpp"
 #include "GameFrontend.hpp"
 #include "GodotGlm.hpp"
+#include "EntityPrefabScript.hpp"
 
 #include "GameClientFrontend.hpp"
 
@@ -23,6 +24,7 @@ void GameClientFrontend::Init()
 {
 	BindRpc();
 	this->RunNetworkLoopAsync();
+	GameClientFrontend::RegisterObservers();
 }
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
@@ -60,6 +62,10 @@ void GameClientFrontend::OnEntityAdd(uint64_t localId)
 		node->frontend = frontend;
 		frontend->GetNodeToAddEntities()->add_child(node);
 		realm->SetComponent(localId, EntityGodotNode{node});
+		const EntityName *name = realm->GetComponent<EntityName>(localId);
+		if (name) {
+			node->SetName(*name);
+		}
 	}
 }
 void GameClientFrontend::OnEntityRemove(uint64_t localId)
@@ -111,4 +117,18 @@ void GameClientFrontend::RunOneEpoch()
 		DisconnectRealmPeer();
 	}
 	GameClient::RunOneEpoch();
+}
+
+void GameClientFrontend::RegisterObservers()
+{
+	realm->RegisterObserver(
+		flecs::OnSet, [](flecs::entity entity, const EntityName &name) {
+			EntityGodotNode *en =
+				(EntityGodotNode *)entity.get<EntityGodotNode>();
+			if (en) {
+				if (en->node) {
+					en->node->SetName(name);
+				}
+			}
+		});
 }

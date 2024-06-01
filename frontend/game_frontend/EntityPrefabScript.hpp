@@ -42,6 +42,7 @@ public: // Godot bound functions
 	void Init(uint64_t localEntityId);
 
 public:
+	void SetName(const EntityName &name);
 	void SetModel(const EntityModelName &model);
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
