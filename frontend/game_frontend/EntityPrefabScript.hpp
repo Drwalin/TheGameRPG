@@ -47,7 +47,7 @@ public:
 	void SetRotation(glm::vec3 rot);
 
 private: // Godot callbacks
-	inline GameFrontend *GetGameFrontend() { return gameFrontend; }
+	inline GameFrontend *GetGameFrontend() { return frontend; }
 
 	bool IsPlayer() const;
 	int64_t GetLocalEntityId() const;
@@ -57,7 +57,7 @@ private: // Godot callbacks
 
 public: // variables
 	uint64_t localEntityId = 0;
-	GameFrontend *gameFrontend = nullptr;
+	GameFrontend *frontend = nullptr;
 
 	MeshInstance3D *meshInstance = nullptr;
 
