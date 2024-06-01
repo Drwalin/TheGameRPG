@@ -20,6 +20,10 @@ boot_splash/show_image=false
 
 gameFrontend="*res://scripts/GameFrontendScript.gd"
 
+[display]
+
+window/vsync/vsync_mode=0
+
 [input]
 
 movement_left={
@@ -60,3 +64,4 @@ common/physics_jitter_fix=0.0
 renderer/rendering_method="mobile"
 camera/depth_of_field/depth_of_field_bokeh_shape=0
 camera/depth_of_field/depth_of_field_bokeh_quality=0
+occlusion_culling/use_occlusion_culling=true
