@@ -30,7 +30,7 @@ aux_source_directory(./include/ include_files)
 add_library(common STATIC
 	${src_files}
 	${include_files}
-	../flecs/flecs.c
+	../thirdparty/flecs/flecs.c
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PRIVATE ${BULLET_LIBRARIES})
