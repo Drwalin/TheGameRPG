@@ -31,6 +31,7 @@ public:
 private: // rpc methods
 	void JoinRealm(const std::string &realm);
 	void SpawnEntities(icon7::ByteReader *reader);
+	void SpawnStaticEntities(icon7::ByteReader *reader);
 	void UpdateEntities(icon7::ByteReader *reader);
 	void SetModel(uint64_t serverId, EntityModelName model, EntityShape shape);
 	void DeleteEntities(icon7::ByteReader *reader);
@@ -45,6 +46,9 @@ private: // rpc methods
 					 const EntityName name, const EntityModelName model,
 					 const EntityShape shape,
 					 const EntityMovementParameters movementParams);
+	void SpawnStaticEntity(uint64_t serverId, EntityStaticTransform transform,
+						   EntityModelName model,
+						   EntityStaticCollisionShapeName shape);
 	void UpdateEntity(uint64_t serverId,
 					  const EntityLastAuthoritativeMovementState state);
 	void RemoveEntity(uint64_t serverId);
@@ -63,6 +67,9 @@ public: // game output api
 
 	virtual void OnSetPlayerId(uint64_t localId) = 0;
 	virtual void OnPlayerIdUnset() = 0;
+
+	virtual bool GetCollisionShape(std::string collisionShapeName,
+								   TerrainCollisionData *data) = 0;
 
 public: // client input api
 	void SetRotation(glm::vec3 rotation);

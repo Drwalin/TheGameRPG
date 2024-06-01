@@ -31,9 +31,18 @@ void RealmServer::Init(const std::string &realmName)
 
 	CollisionLoader loader;
 	loader.LoadOBJ(realmName + ".obj");
-	collisionWorld.LoadStaticCollision(&loader.collisionData);
+	collisionWorld.LoadStaticCollision(&loader.collisionData, {{}, {}});
 
 	sendEntitiesToClientsTimer = 0;
+}
+
+bool RealmServer::GetCollisionShape(std::string collisionShapeName,
+									TerrainCollisionData *data)
+{
+	CollisionLoader loader;
+	bool res = loader.LoadOBJ(realmName + ".obj");
+	std::swap(loader.collisionData, *data);
+	return res && data->vertices.size() >= 3 && data->indices.size() >= 3;
 }
 
 bool RealmServer::OneEpoch()
@@ -176,5 +185,16 @@ void RealmServer::RegisterObservers()
 					 const EntityLastAuthoritativeMovementState &lastState) {
 			BroadcastReliable(ClientRpcFunctionNames::UpdateEntities,
 							  entity.id(), lastState);
+		});
+
+	ecs.observer<EntityStaticTransform, EntityModelName,
+				 EntityStaticCollisionShapeName>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity,
+					 const EntityStaticTransform &transform,
+					 const EntityModelName &model,
+					 const EntityStaticCollisionShapeName &shape) {
+			BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
+							  entity.id(), transform, model, shape);
 		});
 }

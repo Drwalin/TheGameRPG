@@ -1,7 +1,9 @@
 #pragma once
 
-class EntityPrefabScript;
-
 struct EntityGodotNode {
-	EntityPrefabScript *node;
+	class EntityPrefabScript *node = nullptr;
+};
+
+struct EntityStaticGodotNode {
+	class EntityStaticPrefabScript *node = nullptr;
 };

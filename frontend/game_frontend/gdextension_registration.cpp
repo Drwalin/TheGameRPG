@@ -12,6 +12,7 @@
 
 #include "GameFrontend.hpp"
 #include "EntityPrefabScript.hpp"
+#include "EntityStaticPrefabScript.hpp"
 
 void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
@@ -21,6 +22,7 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	}
 	godot::ClassDB::register_class<GameFrontend>();
 	godot::ClassDB::register_class<EntityPrefabScript>();
+	godot::ClassDB::register_class<EntityStaticPrefabScript>();
 	// REGISTER CLASSES HERE LATER
 }
 
