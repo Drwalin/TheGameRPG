@@ -1,9 +1,13 @@
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/mesh.hpp>
+
 #include "../../client/include/RealmClient.hpp"
 
 #include "EntityPrefabScript.hpp"
 #include "GameFrontend.hpp"
 #include "EntityDataFrontend.hpp"
 #include "GameFrontend.hpp"
+#include "GodotGlm.hpp"
 
 #include "GameClientFrontend.hpp"
 
@@ -22,7 +26,17 @@ void GameClientFrontend::Init()
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
-	realm->Reinit(realmName);
+	TerrainCollisionData col;
+	ResourceLoader *rl = ResourceLoader::get_singleton();
+	Ref<Resource> res = rl->load((std::string("res://assets/models/") + realmName + ".obj").c_str(), "Mesh");
+	Mesh *mesh = Object::cast_to<Mesh>(res.ptr());
+	const auto arr = mesh->get_faces();
+	const uint32_t size = arr.size() - (arr.size()%3);
+	for (uint32_t i=0; i<size; ++i) {
+		col.vertices.push_back(ToGlm(arr[i]));
+		col.indices.push_back(i);
+	}
+	realm->collisionWorld.LoadStaticCollision(&col);
 }
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
 {
