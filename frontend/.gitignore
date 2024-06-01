@@ -1,1 +1,4 @@
 .godot
+*.so
+*.dll
+*.dylib

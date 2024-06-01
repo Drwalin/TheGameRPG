@@ -15,7 +15,6 @@ else()
 endif()
 
 include_directories(flecs/include)
-# add_subdirectory(flecs EXCLUDE_FROM_ALL)
 
 add_subdirectory(godot-cpp)
 
