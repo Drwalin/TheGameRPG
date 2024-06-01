@@ -13,7 +13,7 @@ RealmClient::RealmClient(GameClient *gameClient) : gameClient(gameClient)
 	RealmClient::RegisterObservers();
 }
 
-RealmClient::~RealmClient() { peer = nullptr; }
+RealmClient::~RealmClient() { }//peer = nullptr; }
 
 void RealmClient::Init(const std::string &realmName)
 {

@@ -12,17 +12,17 @@
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
 GameFrontend::GameFrontend() {
-	gameClientFrontend = nullptr;
+	gameClient = nullptr;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 }
 
 GameFrontend::~GameFrontend() {
-	if (gameClientFrontend) {
-		gameClientFrontend->Destroy();
-		delete gameClientFrontend;
-		gameClientFrontend = nullptr;
+	if (gameClient) {
+		gameClient->Destroy();
+		delete gameClient;
+		gameClient = nullptr;
 	}
 }
 
@@ -59,8 +59,8 @@ void GameFrontend::InternalReady()
 		return;
 	}
 
-	gameClientFrontend = new GameClientFrontend(this);
-	gameClientFrontend->Init();
+	gameClient = new GameClientFrontend(this);
+	gameClient->Init();
 	playerCamera =
 		(Camera3D *)(this->get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
 	entitiesContainer =
@@ -73,74 +73,67 @@ void GameFrontend::InternalProcess()
 		return;
 	}
 
-	gameClientFrontend->RunOneEpoch();
+	gameClient->RunOneEpoch();
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)
 {
-	gameClientFrontend->ConnectToServer(ip.utf8().ptr(), port);
+	gameClient->ConnectToServer(ip.utf8().ptr(), port);
 }
 
 void GameFrontend::Login(const String &username, const String &password)
 {
-	gameClientFrontend->Login(username.utf8().ptr(), password.utf8().ptr());
+	gameClient->Login(username.utf8().ptr(), password.utf8().ptr());
 }
 
-void GameFrontend::Disconnect() { gameClientFrontend->DisconnectRealmPeer(); }
+void GameFrontend::Disconnect() { gameClient->DisconnectRealmPeer(); }
 
 Node *GameFrontend::GetNodeToAddEntities() { return entitiesContainer; }
 
 void GameFrontend::SetPlayerDirectionMovement(const Vector2 &dir)
 {
-	gameClientFrontend->ProvideMovementInputDirection(ToGlm(dir));
+	gameClient->ProvideMovementInputDirection(ToGlm(dir));
 }
 
-void GameFrontend::PlayerTryJump() { gameClientFrontend->TryPerformJump(); }
+void GameFrontend::PlayerTryJump() { gameClient->TryPerformJump(); }
 
 void GameFrontend::SetPlayerRotation(const Vector3 &rot)
 {
-	gameClientFrontend->SetRotation(ToGlm(rot));
+	gameClient->SetRotation(ToGlm(rot));
 }
 
 Vector3 GameFrontend::GetPlayerRotation()
 {
-	return ToGodot(gameClientFrontend->GetRotation());
+	return ToGodot(gameClient->GetRotation());
 }
 
 Vector3 GameFrontend::GetPlayerPosition()
 {
-	return ToGodot(gameClientFrontend->GetPosition());
+	return ToGodot(gameClient->GetPosition());
 }
 
 Vector3 GameFrontend::GetPlayerVelocity()
 {
-	return ToGodot(gameClientFrontend->GetVelocity());
+	return ToGodot(gameClient->GetVelocity());
 }
 
 float GameFrontend::GetPlayerHeight()
 {
-	return gameClientFrontend->GetShape().height;
+	return gameClient->GetShape().height;
 }
 float GameFrontend::GetPlayerWidth()
 {
-	return gameClientFrontend->GetShape().width;
+	return gameClient->GetShape().width;
 }
 
 Camera3D *GameFrontend::GetPlayerCamera() { return playerCamera; }
 
 bool GameFrontend::IsConnected()
 {
-	if (gameClientFrontend->realmConnectionPeer != nullptr) {
-		return gameClientFrontend->realmConnectionPeer->IsReadyToUse();
-	}
-	return false;
+	return  gameClient->IsConnected();
 }
 
 bool GameFrontend::IsDisconnected()
 {
-	if (gameClientFrontend->realmConnectionPeer != nullptr) {
-		return gameClientFrontend->realmConnectionPeer->IsDisconnecting() ||
-			gameClientFrontend->realmConnectionPeer->IsClosed();
-	}
-	return true;
+	return  gameClient->IsDisconnected();
 }

@@ -34,5 +34,5 @@ public:
 public:
 	GameClient *gameClient;
 	icon7::RPCEnvironment *rpc;
-	std::shared_ptr<icon7::Peer> peer;
+// 	std::shared_ptr<icon7::Peer> peer;
 };
