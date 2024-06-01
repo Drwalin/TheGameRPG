@@ -149,8 +149,7 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 
 void GameClient::SpawnEntity(uint64_t serverId,
 							 const EntityLastAuthoritativeMovementState state,
-							 const EntityName name,
-							 const EntityModelName model,
+							 const EntityName name, const EntityModelName model,
 							 const EntityShape shape,
 							 const EntityMovementParameters movementParams)
 {

@@ -57,7 +57,7 @@ void Realm::RemoveEntity(uint64_t entity) { Entity(entity).destruct(); }
 void Realm::RegisterObservers()
 {
 	collisionWorld.RegisterObservers(this);
-	
+
 	ecs.observer<EntityLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
@@ -66,7 +66,7 @@ void Realm::RegisterObservers()
 			if (shape == nullptr) {
 				return;
 			}
-			
+
 			EntityMovementState currentState = lastState.oldState;
 			auto movementParams = entity.get<EntityMovementParameters>();
 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,

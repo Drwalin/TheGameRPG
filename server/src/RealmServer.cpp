@@ -59,14 +59,14 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	data->realm = this->weak_from_this();
 
 	uint64_t entityId = NewEntity();
-	
+
 	flecs::entity entity = Entity(entityId);
-	
+
 	auto pw = peer->shared_from_this();
 	peers[pw] = entityId;
 	SetComponent<EntityPlayerConnectionPeer>(
 		entityId, EntityPlayerConnectionPeer{peer->shared_from_this()});
-	
+
 	entity.add<EntityShape>();
 	entity.add<EntityLastAuthoritativeMovementState>();
 	entity.add<EntityMovementParameters>();
@@ -77,13 +77,14 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	s.oldState.timestamp = timer.currentTick;
 	entity.set<EntityLastAuthoritativeMovementState>(s);
 	entity.set<EntityMovementState>(s.oldState);
-	
+
 	data->entityId = entityId;
 	// TODO: load player entity from database // TODO: move this line into
 	// 												   code managed by
 	// 												   ServerCore thread
 	SetComponent<EntityName>(entityId, EntityName{data->userName});
-	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(), realmName.c_str());
+	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
+			 realmName.c_str());
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
@@ -168,12 +169,12 @@ void RealmServer::RegisterObservers()
 		ecs.query<const EntityLastAuthoritativeMovementState, const EntityName,
 				  const EntityModelName, const EntityShape,
 				  const EntityMovementParameters>();
-	
+
 	ecs.observer<EntityLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
 					 const EntityLastAuthoritativeMovementState &lastState) {
 			BroadcastReliable(ClientRpcFunctionNames::UpdateEntities,
-				entity.id(), lastState);
+							  entity.id(), lastState);
 		});
 }
