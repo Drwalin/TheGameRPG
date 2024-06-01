@@ -70,7 +70,7 @@ void UpdateMovement(
 		glm::vec3 vel = prev.vel + acc * dt * 0.5f;
 
 		const glm::vec3 oldPos = prev.pos;
-		const glm::vec3 movement = prev.vel * dt; // + acc * (dt * dt * 0.5f);
+		const glm::vec3 movement = vel * dt;
 		const glm::vec3 newPos = oldPos + movement;
 
 		// test collision here:
@@ -80,11 +80,23 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 			normal = glm::normalize(normal);
-			glm::vec3 v = normal * glm::dot(normal, vel);
-			vel -= v;
-		} else {
-			vel += acc * dt * 0.5f;
+			float dnv = glm::dot(normal, vel);
+			if (dnv < 0.0f) {
+				vel -= normal * dnv;
+			}
+			if (vel.y > 0) {
+				glm::vec3 vv = vel;
+				vv.y = 0.0f;
+				float vvl = glm::length(vv);
+				float frictionFactor = 0.5 * dt;
+				if (frictionFactor >= vvl) {
+					vel = {0,0,0};
+				} else {
+					vel -= vv * (frictionFactor / vvl);
+				}
+			}
 		}
+		vel += acc * dt * 0.5f;
 		
 		if (vel.y < -50) {
 			vel.y = -50;
@@ -98,16 +110,6 @@ void UpdateMovement(
 		next.vel = vel;
 		next.rot = prev.rot;
 	}
-
-// 	{
-// 		glm::vec3 vel = next.vel;
-// 		glm::vec3 pos = next.pos;
-// 		LOG_DEBUG(
-// 			"entity=%lu    Vel = (%f, %f, %f),   dt: %li >= %i,    pos = (%f "
-// 			"%f %f)    %s",
-// 			entity.id(), vel.x, vel.y, vel.z, _dt, realm->minMovementDeltaTicks, pos.x,
-// 			pos.y, pos.z, next.onGround ? "ON GROUND" : "FALLING");
-// 	}
 
 	glm::vec3 d = currentState.pos - prev.pos;
 	if (glm::dot(d, d) > 0.00001) {

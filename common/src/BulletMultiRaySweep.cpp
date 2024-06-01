@@ -114,6 +114,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 
 	// TODO: test vertical rays on travel path
 
+	bool hasCollision = false;
 	// test horizontal 'crown' of rays outward to push out of walls
 	{
 		const float deltaAngle =
@@ -141,6 +142,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 					glm::vec3 n;
 					if (RayTestFirstHitWithObjects(startVec, trueDir, nullptr,
 												   &n, &tf, objects)) {
+						hasCollision = true;
 						if (tf <= 0.1f / 1.1f) {
 							end += trueDir * (0.1f / 1.1f - tf);
 						} else {
@@ -188,13 +190,14 @@ bool CollisionWorld::TestCollisionMovementRays(
 	if (RayTestFirstHitWithObjects(end + toFeetStart,
 								   toFeetBottom - toFeetStart, &hitPoint,
 								   &hitNormal, &travelFactor, objects)) {
+		hasCollision = true;
 		if (hitPoint.y > toMaxFeet.y + end.y) {
 			// TODO: floor collision is too high, need to retrace backward, to
 			//       stop on vertical obstacle
 		}
 		*finalCorrectedPosition = end = hitPoint;
 		if (isOnGround) {
-			*isOnGround = true;
+			*isOnGround = (hitNormal.y >= minNormalYcomponent);
 		}
 		if (normal) {
 			if (glm::dot(hitNormal, end - start) <
@@ -204,5 +207,5 @@ bool CollisionWorld::TestCollisionMovementRays(
 		}
 	}
 
-	return false;
+	return hasCollision;
 }
