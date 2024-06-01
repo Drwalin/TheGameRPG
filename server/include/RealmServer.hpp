@@ -108,7 +108,7 @@ void RealmServer::BroadcastReliableExcept(uint64_t exceptEntityId,
 										  Args &&...args)
 {
 	BroadcastExcept(exceptEntityId, icon7::FLAG_RELIABLE, functionName,
-			  std::forward<Args>(args)...);
+					std::forward<Args>(args)...);
 }
 
 template <typename... Args>
@@ -117,7 +117,7 @@ void RealmServer::BroadcastUnreliableExcept(uint64_t exceptEntityId,
 											Args &&...args)
 {
 	BroadcastExcept(exceptEntityId, icon7::FLAG_UNRELIABLE, functionName,
-			  std::forward<Args>(args)...);
+					std::forward<Args>(args)...);
 }
 
 template <typename... Args>

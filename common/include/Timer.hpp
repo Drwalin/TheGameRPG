@@ -23,16 +23,10 @@ public:
 		this->currentTick = currentTick;
 		startTickCountingTime -= milliseconds(currentTick);
 	}
-	
-	[[nodiscard]] inline int64_t GetCurrentTick() const
-	{
-		return currentTick;
-	}
 
-	inline void Update()
-	{
-		currentTick = CalcCurrentTick();
-	}
+	[[nodiscard]] inline int64_t GetCurrentTick() const { return currentTick; }
+
+	inline void Update() { currentTick = CalcCurrentTick(); }
 
 	[[nodiscard]] inline int64_t CalcCurrentTick() const
 	{

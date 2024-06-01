@@ -106,7 +106,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	auto it = entities.find(entityId);
 	if (it != entities.end()) {
 		LOG_WARN("Error: entity with ID=%lu already exists in CollisionWorld.",
-				  entityId);
+				 entityId);
 		UpdateEntityBvh(entityId, shape, pos);
 		return false;
 	}
@@ -119,7 +119,8 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	object->setUserIndex(FILTER_ENTITY);
 	object->setUserIndex2(((uint32_t)(entityId)) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entityId >> 32)) & 0xFFFFFFFF);
-	collisionWorld->addCollisionObject(object, btBroadphaseProxy::CharacterFilter);
+	collisionWorld->addCollisionObject(object,
+									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
 	return true;
 }
@@ -159,8 +160,8 @@ void CollisionWorld::GetObjectsInAABB(
 	BroadphaseAabbAgregate broadphaseCallback(f);
 	std::swap(*objects, broadphaseCallback.objects);
 
-	broadphase->aabbTest(
-		ToBullet(aabbMin), ToBullet(aabbMax), broadphaseCallback);
+	broadphase->aabbTest(ToBullet(aabbMin), ToBullet(aabbMax),
+						 broadphaseCallback);
 	std::swap(*objects, broadphaseCallback.objects);
 }
 

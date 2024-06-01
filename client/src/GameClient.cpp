@@ -20,25 +20,26 @@ GameClient::GameClient() : realm(new RealmClient(this))
 	// host->SetOnDisconnect();
 	pingTimer.Start();
 	lastTickAuthoritativeSent = 0;
-	
+
 	RegisterObservers();
 }
 
 void GameClient::RegisterObservers()
 {
-	realm->RegisterObserver(flecs::OnRemove,
-					 [this](flecs::entity entity, const EntityMovementState &) {
-						if (entity.id() == localPlayerEntityId) {
-							OnPlayerIdUnset();
-							serverPlayerEntityId = 0;
-							localPlayerEntityId = 0;
-						}
-						auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
-						if (it != mapLocalEntityIdToServerEntityId.end()) {
-							mapServerEntityIdToLocalEntityId.erase(it->second);
-							mapLocalEntityIdToServerEntityId.erase(it);
-						}
-					 });
+	realm->RegisterObserver(
+		flecs::OnRemove,
+		[this](flecs::entity entity, const EntityMovementState &) {
+			if (entity.id() == localPlayerEntityId) {
+				OnPlayerIdUnset();
+				serverPlayerEntityId = 0;
+				localPlayerEntityId = 0;
+			}
+			auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
+			if (it != mapLocalEntityIdToServerEntityId.end()) {
+				mapServerEntityIdToLocalEntityId.erase(it->second);
+				mapLocalEntityIdToServerEntityId.erase(it);
+			}
+		});
 }
 
 GameClient::~GameClient() {}
@@ -54,8 +55,7 @@ bool GameClient::IsConnected()
 bool GameClient::IsDisconnected()
 {
 	if (peer != nullptr) {
-		return peer->IsDisconnecting() ||
-			peer->IsClosed();
+		return peer->IsDisconnecting() || peer->IsClosed();
 	}
 	return true;
 }
@@ -88,8 +88,7 @@ void GameClient::DisconnectRealmPeer()
 		localPlayerEntityId = 0;
 	}
 	if (peer &&
-		(peer->IsClosed() == false ||
-		 peer->IsDisconnecting() == false)) {
+		(peer->IsClosed() == false || peer->IsDisconnecting() == false)) {
 		peer->Disconnect();
 	}
 	realm->Clear();

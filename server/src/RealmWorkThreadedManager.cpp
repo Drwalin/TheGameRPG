@@ -15,7 +15,7 @@ RealmWorkThreadedManager::~RealmWorkThreadedManager()
 void RealmWorkThreadedManager::DestroyAllRealmsAndStop()
 {
 	WaitStopRunning();
-	
+
 	std::lock_guard lock(mutex);
 	while (realmsQueue.empty() == false) {
 		realmsQueue.pop();
@@ -48,7 +48,8 @@ void RealmWorkThreadedManager::DestroyRealm(std::string realmName)
 	realmsToDestroy.insert(realmName);
 }
 
-std::shared_ptr<RealmServer> RealmWorkThreadedManager::GetRealm(const std::string &realmName)
+std::shared_ptr<RealmServer>
+RealmWorkThreadedManager::GetRealm(const std::string &realmName)
 {
 	std::lock_guard lock(mutex);
 	auto it = realms.find(realmName);
@@ -65,8 +66,9 @@ void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 	for (int i = threads.size(); i < workerThreadsCount; ++i) {
 		threads.push_back(std::thread(
 			+[](RealmWorkThreadedManager *manager, int id, int count) {
-			LOG_INFO("Realms worker thread %i / %i", id+1, count);
-			manager->SingleRunner(); },
+				LOG_INFO("Realms worker thread %i / %i", id + 1, count);
+				manager->SingleRunner();
+			},
 			this, i, workerThreadsCount));
 	}
 }
@@ -101,7 +103,8 @@ void RealmWorkThreadedManager::SingleRunner()
 			if (realmsQueue.empty() == false) {
 				realm = realmsQueue.front();
 				realmsQueue.pop();
-				if (realmsToDestroy.count(realm->realmName) != 0 || requestStopRunning == true) {
+				if (realmsToDestroy.count(realm->realmName) != 0 ||
+					requestStopRunning == true) {
 					realms.erase(realm->realmName);
 					realmsToDestroy.erase(realm->realmName);
 					destroyRealm = true;

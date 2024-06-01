@@ -5,7 +5,7 @@
 #include "../include/CollisionWorld.hpp"
 
 #if not __unix__
-# define M_PI 3.141292
+#define M_PI 3.141292
 #else
 #endif
 
@@ -170,21 +170,25 @@ bool CollisionWorld::TestCollisionMovementRays(
 		((wasOnGround) ? -glm::vec3(0, stepHeight, 0) : glm::vec3(0, 0, 0));
 	const glm::vec3 toMid = toHeadTop * 0.5f;
 	const glm::vec3 toFeetStart = toMid + glm::vec3(0, 0.1, 0);
-// 	const glm::vec3 toHeadStart = toMid - glm::vec3(0, 0.1, 0);
+	// const glm::vec3 toHeadStart = toMid - glm::vec3(0, 0.1, 0);
 
 	glm::vec3 hitPoint, hitNormal;
 	float travelFactor;
 
-	// test for head collision
-	// 	if (RayTestFirstHitWithObjects(end + toHeadStart, toHeadTop -
-	// toHeadStart, 								   &hitPoint, &hitNormal, &travelFactor, 								   objects)) {
-	// 		// TODO: correct position due to ceiling
-	// 		if (normal) {
-	// 			if (glm::dot(hitNormal, end-start) < glm::dot(*normal,
-	// end-start)) { 				*normal = hitNormal;
-	// 			}
-	// 		}
-	// 	}
+	// test for head collision (ceiling)
+	/*
+	if (RayTestFirstHitWithObjects(end + toHeadStart, toHeadTop - toHeadStart,
+								   &hitPoint, &hitNormal, &travelFactor,
+								   objects)) {
+		// TODO: correct position due to ceiling
+		if (normal) {
+			if (glm::dot(hitNormal, end - start) <
+				glm::dot(*normal, end - start)) {
+				*normal = hitNormal;
+			}
+		}
+	}
+	*/
 
 	// test for feet collision and onGround
 	if (RayTestFirstHitWithObjects(end + toFeetStart,

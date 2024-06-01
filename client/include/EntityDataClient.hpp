@@ -7,4 +7,3 @@
 struct EntityMovementHistory {
 	std::vector<EntityMovementState> states;
 };
-

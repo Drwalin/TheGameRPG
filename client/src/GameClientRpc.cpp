@@ -112,7 +112,8 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 	} else {
 		localPlayerEntityId = it->second;
 		OnSetPlayerId(localPlayerEntityId);
-		LOG_DEBUG("Set player entity id: [%lu > %lu]", serverId, localPlayerEntityId);
+		LOG_DEBUG("Set player entity id: [%lu > %lu]", serverId,
+				  localPlayerEntityId);
 	}
 }
 
@@ -194,27 +195,6 @@ void GameClient::UpdateEntity(uint64_t serverId,
 	if (localId != localPlayerEntityId) {
 		realm->AddNewAuthoritativeMovementState(localId, serverId, state);
 		realm->UpdateEntityCurrentState(localId, serverId);
-		/*
-		realm->SetComponent(localId, state);
-		realm->SetComponent(localId, state.oldState);
-		*/
-		
-		/*
-		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG(
-			"recv  other [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-			state.oldState.onGround ? "on ground" : "falling");
-		*/
-	} else {
-		/*
-		glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-		LOG_DEBUG(
-			"recv player [%lu>%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-			serverId, localId, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-			state.oldState.onGround ? "on ground" : "falling");
-		*/
-		
 		// TODO: implement server authority correction of client-side player
 		//       entity
 	}

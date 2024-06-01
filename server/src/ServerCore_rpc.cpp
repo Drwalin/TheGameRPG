@@ -30,10 +30,9 @@ void ServerCore::BindRpc()
 		nullptr, nullptr);
 }
 
-icon7::CommandExecutionQueue *
-ServerCore::SelectExecutionQueueByRealm(icon7::MessageConverter *messageConverter,
-								 icon7::Peer *peer, icon7::ByteReader &reader,
-								 icon7::Flags flags)
+icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueByRealm(
+	icon7::MessageConverter *messageConverter, icon7::Peer *peer,
+	icon7::ByteReader &reader, icon7::Flags flags)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
@@ -63,26 +62,19 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 		if (entity.is_alive()) {
 			entity.set<EntityLastAuthoritativeMovementState>(state);
 			entity.set<EntityMovementState>(state.oldState);
-			
-			// TODO: verify movement state
-			realm->BroadcastUnreliableExcept(data->entityId,
-					ClientRpcFunctionNames::UpdateEntities,
-					data->entityId, state);
 
-			/*
-			glm::vec3 p1 = state.oldState.pos, p2 = state.oldState.vel;
-			LOG_DEBUG(
-				"Recv client [%lu]: pos (%f, %f, %f), vel (%f, %f, %f),    %s",
-				entity.id(), p1.x, p1.y, p1.z, p2.x, p2.y, p2.z,
-				state.oldState.onGround ? "ON GROUND" : "FALLING");
-			*/
+			// TODO: verify movement state
+			realm->BroadcastUnreliableExcept(
+				data->entityId, ClientRpcFunctionNames::UpdateEntities,
+				data->entityId, state);
 		}
 	}
 }
 
 void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 {
-	LOG_INFO("TODO: replace ServerCore::ConnectPeerToRealm with something suitable to use with database.");
+	LOG_INFO("TODO: replace ServerCore::ConnectPeerToRealm with something "
+			 "suitable to use with database.");
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");
@@ -122,10 +114,11 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 			CommandConnectPeerToRealm() = default;
 			~CommandConnectPeerToRealm() = default;
 			std::weak_ptr<RealmServer> realm;
-			virtual void Execute() override {
+			virtual void Execute() override
+			{
 				auto r = realm.lock();
 				if (r) {
-						r->ConnectPeer(peer.get());
+					r->ConnectPeer(peer.get());
 				} else {
 					LOG_FATAL("Realm object already destroyed");
 				}
