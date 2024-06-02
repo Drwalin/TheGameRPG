@@ -73,7 +73,12 @@ void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 		reader->op(shape);
 
 		if (reader->is_valid()) {
-			SpawnStaticEntity(serverId, transform, model, shape);
+			auto it = mapServerEntityIdToLocalEntityId.find(serverId);
+			if (it == mapServerEntityIdToLocalEntityId.end()) {
+				SpawnStaticEntity(serverId, transform, model, shape);
+			} else {
+				realm->SetComponent(it->second, transform);
+			}
 		}
 	}
 }
@@ -208,16 +213,9 @@ void GameClient::SpawnStaticEntity(uint64_t serverId,
 								   EntityModelName model,
 								   EntityStaticCollisionShapeName shape)
 {
-	uint64_t localId = 0;
-	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
-	if (it == mapServerEntityIdToLocalEntityId.end()) {
-		localId = realm->CreateStaticEntity(transform, model, shape);
-		mapServerEntityIdToLocalEntityId[serverId] = localId;
-		mapLocalEntityIdToServerEntityId[localId] = serverId;
-	} else {
-		LOG_ERROR("Recreation of static entity is not implemented.");
-		return;
-	}
+	uint64_t localId = realm->CreateStaticEntity(transform, model, shape);
+	mapServerEntityIdToLocalEntityId[serverId] = localId;
+	mapLocalEntityIdToServerEntityId[localId] = serverId;
 }
 
 void GameClient::UpdateEntity(uint64_t serverId,

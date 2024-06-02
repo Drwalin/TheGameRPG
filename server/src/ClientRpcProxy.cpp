@@ -190,14 +190,12 @@ void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
 								   const EntityModelName &model,
 								   const EntityStaticCollisionShapeName &shape)
 {
-	LOG_DEBUG("Broadcast on static spawn");
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
 							 entityId, transform, model, shape);
 }
 
 void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 {
-	LOG_DEBUG("Send static entities on peer join");
 	icon7::ByteWriter writer(1500);
 	realm->rpc->InitializeSerializeSend(
 		writer, ClientRpcFunctionNames::SpawnStaticEntities);

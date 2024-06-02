@@ -44,6 +44,9 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 {
 	if (localEntityId) {
 		this->localEntityId = localEntityId;
+	} else {
+		LOG_ERROR(
+			"trying to initialize EntityStaticPrefabScript with entityId == 0");
 	}
 	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
 
@@ -52,8 +55,15 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 		(std::string("res://assets/") + model.modelName).c_str(), "Mesh");
 
 	meshInstance->set_mesh(mesh);
+	SetTransform(transform);
+}
+
+void EntityStaticPrefabScript::SetTransform(
+	const EntityStaticTransform &transform)
+{
 	set_position(ToGodot(transform.pos));
-	set_rotation(ToGodot(transform.pos));
+	set_rotation(ToGodot(transform.rot).get_euler());
+	set_scale(ToGodot(transform.scale));
 }
 
 EntityStaticPrefabScript *EntityStaticPrefabScript::CreateNew()

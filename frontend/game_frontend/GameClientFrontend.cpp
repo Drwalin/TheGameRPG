@@ -48,42 +48,7 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 	}
 	return false;
 }
-void GameClientFrontend::OnEnterRealm(const std::string &realmName)
-{
-	TerrainCollisionData col;
-
-	return;
-
-	// TODO: remove this code
-
-	// Load collision
-	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Mesh> mesh = rl->load(
-		(std::string("res://assets/map_collision/") + realmName + ".obj")
-			.c_str(),
-		"Mesh");
-	const auto arr = mesh->get_faces();
-	const uint32_t size = arr.size() - (arr.size() % 3);
-	for (uint32_t i = 0; i < size; ++i) {
-		col.vertices.push_back(ToGlm(arr[i]));
-		col.indices.push_back(i);
-	}
-	realm->collisionWorld.LoadStaticCollision(&col, {{}, {}});
-
-	// Load map
-	Node *container = frontend->GetNodeToAddStaticMap();
-	while (true) {
-		TypedArray<Node> oldScenes = container->get_children();
-		if (oldScenes.size() == 0) {
-			break;
-		}
-		container->remove_child(Object::cast_to<Node>(oldScenes[0]));
-	}
-	Ref<PackedScene> scene = rl->load(
-		(std::string("res://assets/scenes/") + realmName + ".tscn").c_str(),
-		"PackedScene");
-	container->add_child(scene->instantiate());
-}
+void GameClientFrontend::OnEnterRealm(const std::string &realmName) {}
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
 {
 	// TODO: maybe replace with ecs::observer
@@ -180,6 +145,18 @@ void GameClientFrontend::RegisterObservers()
 			entity.set<EntityStaticGodotNode>(node);
 		}
 	});
+
+	realm->RegisterObserver(
+		flecs::OnSet,
+		+[](flecs::entity entity, const EntityStaticTransform &transform) {
+			EntityStaticGodotNode node;
+			if (auto n = entity.get<EntityStaticGodotNode>()) {
+				node = *n;
+			}
+			if (node.node != nullptr) {
+				node.node->SetTransform(transform);
+			}
+		});
 
 	realm->RegisterObserver(
 		flecs::OnRemove,

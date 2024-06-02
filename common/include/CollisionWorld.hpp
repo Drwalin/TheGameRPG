@@ -35,12 +35,16 @@ public:
 
 	void Debug() const;
 
-	void LoadStaticCollision(const TerrainCollisionData *data,
+	void LoadStaticCollision(uint64_t entityId,
+							 const TerrainCollisionData *data,
 							 EntityStaticTransform transform);
 
 	bool AddEntity(uint64_t entityId, EntityShape shape, glm::vec3 pos);
 	void UpdateEntityBvh(uint64_t entityId, EntityShape shape, glm::vec3 pos);
 	void DeleteEntity(uint64_t entityId);
+
+	void EntitySetTransform(uint64_t entityId,
+							const EntityStaticTransform &transform);
 
 	// returns true if any collision happens
 	bool TestCollisionMovementRays(EntityShape shape, glm::vec3 start,
