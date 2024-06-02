@@ -74,9 +74,18 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	return object;
 }
 
-void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data,
+void CollisionWorld::LoadStaticCollision(uint64_t entityId,
+										 const TerrainCollisionData *data,
 										 EntityStaticTransform transform)
 {
+	auto it = entities.find(entityId);
+	if (it != entities.end()) {
+		LOG_WARN("Error: static entity with ID=%lu already exists in "
+				 "CollisionWorld.",
+				 entityId);
+		return;
+	}
+
 	btTriangleMesh *triangles =
 		new btTriangleMesh((data->vertices.size() / 3) > (1 << 15), false);
 	triangles->preallocateVertices(data->vertices.size());
@@ -95,13 +104,14 @@ void CollisionWorld::LoadStaticCollision(const TerrainCollisionData *data,
 		new btBvhTriangleMeshShape(triangles, false, true);
 	shape->buildOptimizedBvh();
 	btCollisionObject *object = AllocateNewCollisionObject();
+	shape->setLocalScaling(ToBullet(transform.scale));
 	object->setCollisionShape(shape);
-	object->setWorldTransform(btTransform(
-		btQuaternion(transform.rot.x, transform.rot.y, transform.rot.z),
-		ToBullet(transform.pos)));
+	object->setWorldTransform(
+		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 	object->setUserIndex(FILTER_TERRAIN);
 	collisionWorld->addCollisionObject(object, btBroadphaseProxy::StaticFilter);
 	collisionWorld->updateSingleAabb(object);
+	entities[entityId] = object;
 }
 
 bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
@@ -148,6 +158,19 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 	}
 	RemoveAndDestroyCollisionObject(it->second);
 	entities.erase(it);
+}
+
+void CollisionWorld::EntitySetTransform(uint64_t entityId,
+										const EntityStaticTransform &transform)
+{
+	auto it = entities.find(entityId);
+	if (it == entities.end()) {
+		return;
+	}
+	it->second->setWorldTransform(
+		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
+	it->second->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
+	collisionWorld->updateSingleAabb(it->second);
 }
 
 void CollisionWorld::GetObjectsInAABB(

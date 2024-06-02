@@ -126,6 +126,12 @@ void Realm::RegisterObservers()
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 
+	RegisterObserver(
+		flecs::OnSet,
+		[this](flecs::entity entity, const EntityStaticTransform &transform) {
+			collisionWorld.EntitySetTransform(entity.id(), transform);
+		});
+
 	queryEntityForMovementUpdate =
 		ecs.query<const EntityShape, EntityMovementState,
 				  const EntityLastAuthoritativeMovementState,
@@ -197,7 +203,7 @@ uint64_t Realm::CreateStaticEntity(EntityStaticTransform transform,
 		entity.set(shape);
 
 		if (r) {
-			collisionWorld.LoadStaticCollision(&col, transform);
+			collisionWorld.LoadStaticCollision(entityId, &col, transform);
 		}
 
 		return entityId;

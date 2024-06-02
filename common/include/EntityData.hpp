@@ -3,6 +3,8 @@
 #include <string>
 
 #include <glm/glm.hpp>
+#include <glm/ext/quaternion_float.hpp>
+#include <glm/ext/quaternion_common.hpp>
 
 #include "GlmSerialization.hpp"
 
@@ -100,13 +102,15 @@ struct EntityModelName {
 };
 
 struct EntityStaticTransform {
-	glm::vec3 pos;
-	glm::vec3 rot;
+	glm::vec3 pos = {0, 0, 0};
+	glm::quat rot = {0, 0, 0, 1};
+	glm::vec3 scale = {1, 1, 1};
 
 	template <typename S> S &__ByteStream_op(S &s)
 	{
 		s.op(pos);
 		s.op(rot);
+		s.op(scale);
 		return s;
 	}
 };

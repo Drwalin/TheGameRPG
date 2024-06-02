@@ -18,13 +18,9 @@
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
-EntityPrefabScript::EntityPrefabScript()
-{
-}
+EntityPrefabScript::EntityPrefabScript() {}
 
-EntityPrefabScript::~EntityPrefabScript()
-{
-}
+EntityPrefabScript::~EntityPrefabScript() {}
 
 void EntityPrefabScript::_bind_methods()
 {

@@ -42,6 +42,8 @@ public: // Godot bound functions
 	void Init(uint64_t localEntityId, const EntityModelName &model,
 			  EntityStaticTransform transform);
 
+	void SetTransform(const EntityStaticTransform &transform);
+
 public: // variables
 	uint64_t localEntityId = 0;
 
