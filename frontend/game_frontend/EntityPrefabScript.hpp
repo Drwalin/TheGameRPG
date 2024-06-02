@@ -30,6 +30,7 @@ class EntityPrefabScript : public Node3D
 	GDCLASS(EntityPrefabScript, Node3D)
 public: // Godot bound functions
 	EntityPrefabScript();
+	~EntityPrefabScript();
 	static void _bind_methods();
 
 	// void _enter_tree() override;

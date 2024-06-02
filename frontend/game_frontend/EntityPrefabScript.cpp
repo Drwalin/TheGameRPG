@@ -18,7 +18,13 @@
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
-EntityPrefabScript::EntityPrefabScript() {}
+EntityPrefabScript::EntityPrefabScript()
+{
+}
+
+EntityPrefabScript::~EntityPrefabScript()
+{
+}
 
 void EntityPrefabScript::_bind_methods()
 {
@@ -140,5 +146,6 @@ EntityPrefabScript *EntityPrefabScript::CreateNew()
 			"res://prefabs/MovingEntity.tscn", "PackedScene");
 		prefab = x;
 	}
-	return (EntityPrefabScript *)(prefab->instantiate());
+	auto ret = (EntityPrefabScript *)(prefab->instantiate());
+	return ret;
 }

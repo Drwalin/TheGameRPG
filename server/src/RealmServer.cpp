@@ -29,9 +29,14 @@ void RealmServer::Init(const std::string &realmName)
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
 
+	CreateStaticEntity({{}, {}}, {"map_collision/" + realmName + ".obj"},
+					   {"map_collision/" + realmName + ".obj"});
+
+	/*
 	CollisionLoader loader;
 	loader.LoadOBJ(realmName + ".obj");
 	collisionWorld.LoadStaticCollision(&loader.collisionData, {{}, {}});
+	*/
 
 	sendEntitiesToClientsTimer = 0;
 }
@@ -40,7 +45,7 @@ bool RealmServer::GetCollisionShape(std::string collisionShapeName,
 									TerrainCollisionData *data)
 {
 	CollisionLoader loader;
-	bool res = loader.LoadOBJ(realmName + ".obj");
+	bool res = loader.LoadOBJ(collisionShapeName);
 	std::swap(loader.collisionData, *data);
 	return res && data->vertices.size() >= 3 && data->indices.size() >= 3;
 }
@@ -94,6 +99,8 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	SetComponent<EntityName>(entityId, EntityName{data->userName});
 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
 			 realmName.c_str());
+
+	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
@@ -179,6 +186,10 @@ void RealmServer::RegisterObservers()
 				  const EntityModelName, const EntityShape,
 				  const EntityMovementParameters>();
 
+	queryStaticEntity =
+		ecs.query<const EntityStaticTransform, const EntityModelName,
+				  const EntityStaticCollisionShapeName>();
+
 	ecs.observer<EntityLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
@@ -194,7 +205,7 @@ void RealmServer::RegisterObservers()
 					 const EntityStaticTransform &transform,
 					 const EntityModelName &model,
 					 const EntityStaticCollisionShapeName &shape) {
-			BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
-							  entity.id(), transform, model, shape);
+			ClientRpcProxy::Broadcast_SpawnStaticEntities(
+				this, entity, transform, model, shape);
 		});
 }

@@ -77,6 +77,10 @@ public:
 				 const EntityModelName, const EntityShape,
 				 const EntityMovementParameters>
 		queryEntityLongState;
+
+	flecs::query<const EntityStaticTransform, const EntityModelName,
+				 const EntityStaticCollisionShapeName>
+		queryStaticEntity;
 };
 
 template <typename... Args>

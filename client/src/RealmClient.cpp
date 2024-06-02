@@ -20,7 +20,20 @@ void RealmClient::Init(const std::string &realmName)
 	Realm::Init(realmName);
 }
 
-void RealmClient::Clear() { Realm::Clear(); }
+void RealmClient::Clear()
+{
+	auto ar = gameClient->mapLocalEntityIdToServerEntityId;
+	for (auto it = ar.begin(); it != ar.end(); ++it) {
+		flecs::entity entity = Entity(it->first);
+		if (entity.is_valid() && entity.is_alive()) {
+			entity.destruct();
+		}
+	}
+	gameClient->mapLocalEntityIdToServerEntityId.clear();
+	gameClient->mapServerEntityIdToLocalEntityId.clear();
+
+	Realm::Clear();
+}
 
 void RealmClient::Reinit(const std::string &realmName)
 {
@@ -149,19 +162,30 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 
 void RealmClient::RegisterObservers()
 {
-	RegisterObserver(flecs::OnAdd,
-					 [this](flecs::entity entity, const EntityMovementState &,
-							const EntityLastAuthoritativeMovementState &,
-							const EntityName, const EntityModelName,
-							const EntityShape, const EntityName &name) {
-						 gameClient->OnEntityAdd(entity.id());
-						 entity.add<EntityMovementHistory>();
-					 });
+	RegisterObserver(
+		flecs::OnAdd,
+		+[](flecs::entity entity, const EntityMovementState &,
+			const EntityLastAuthoritativeMovementState &, const EntityName,
+			const EntityModelName, const EntityShape,
+			const EntityName &name) { entity.add<EntityMovementHistory>(); });
 
-	RegisterObserver(flecs::OnRemove,
-					 [this](flecs::entity entity, const EntityMovementState &) {
-						 gameClient->OnEntityRemove(entity.id());
-					 });
+	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
+											 const EntityMovementState &) {
+		gameClient->OnEntityRemove(entity.id());
+		entity.destruct();
+		auto it =
+			gameClient->mapLocalEntityIdToServerEntityId.find(entity.id());
+		if (it != gameClient->mapLocalEntityIdToServerEntityId.end()) {
+			gameClient->mapServerEntityIdToLocalEntityId.erase(it->second);
+			gameClient->mapLocalEntityIdToServerEntityId.erase(it);
+		}
+	});
+
+	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
+											 const EntityStaticTransform &) {
+		gameClient->OnEntityRemove(entity.id());
+		entity.destruct();
+	});
 
 	RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
 										  const EntityModelName &model) {

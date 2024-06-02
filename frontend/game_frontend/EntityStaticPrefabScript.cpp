@@ -9,6 +9,8 @@
 
 #include "GodotGlm.hpp"
 
+#include <icon7/Debug.hpp>
+
 #include "EntityStaticPrefabScript.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -43,6 +45,7 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 	if (localEntityId) {
 		this->localEntityId = localEntityId;
 	}
+	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
 
 	ResourceLoader *rl = ResourceLoader::get_singleton();
 	Ref<Mesh> mesh = rl->load(
@@ -61,5 +64,6 @@ EntityStaticPrefabScript *EntityStaticPrefabScript::CreateNew()
 			"res://prefabs/StaticEntity.tscn", "PackedScene");
 		prefab = x;
 	}
-	return (EntityStaticPrefabScript *)(prefab->instantiate());
+	auto ret = (EntityStaticPrefabScript *)(prefab->instantiate());
+	return ret;
 }

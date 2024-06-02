@@ -62,6 +62,8 @@ common/physics_jitter_fix=0.0
 [rendering]
 
 renderer/rendering_method="mobile"
+global_illumination/voxel_gi/quality=1
 camera/depth_of_field/depth_of_field_bokeh_shape=0
 camera/depth_of_field/depth_of_field_bokeh_quality=0
+global_illumination/sdfgi/probe_ray_count=5
 occlusion_culling/use_occlusion_culling=true

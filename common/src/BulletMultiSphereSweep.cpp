@@ -38,8 +38,6 @@ bool CollisionWorld::TestCollisionMovement(
 			*isOnGround = false;
 		}
 
-		LOG_DEBUG("No collision");
-
 		return false;
 	}
 
