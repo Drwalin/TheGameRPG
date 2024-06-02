@@ -32,10 +32,8 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 										   TerrainCollisionData *data)
 {
 	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Mesh> mesh = rl->load((std::string("res://assets/map_collision/") +
-							   collisionShapeName + ".obj")
-								  .c_str(),
-							  "Mesh");
+	Ref<Mesh> mesh = rl->load(
+		(std::string("res://assets/") + collisionShapeName).c_str(), "Mesh");
 	if (mesh.is_null()) {
 		return false;
 	}
@@ -53,6 +51,10 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
 	TerrainCollisionData col;
+
+	return;
+
+	// TODO: remove this code
 
 	// Load collision
 	ResourceLoader *rl = ResourceLoader::get_singleton();
@@ -84,6 +86,7 @@ void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 }
 void GameClientFrontend::OnEntityAdd(uint64_t localId)
 {
+	// TODO: maybe replace with ecs::observer
 	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 		node->Init(localId);
@@ -98,6 +101,7 @@ void GameClientFrontend::OnEntityAdd(uint64_t localId)
 }
 void GameClientFrontend::OnEntityRemove(uint64_t localId)
 {
+	// TODO; remove OnEntityRemove
 	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
 		return;
 	}
@@ -162,13 +166,18 @@ void GameClientFrontend::RegisterObservers()
 
 	realm->RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
 												 const EntityModelName &model) {
-		auto t = entity.get<EntityStaticTransform>();
-		if (t != nullptr) {
-			EntityStaticGodotNode *node =
-				realm->AccessComponent<EntityStaticGodotNode>(entity);
-			if (node->node == nullptr) {
-				node->node->Init(entity.id(), model, *t);
+		auto transform = entity.get<EntityStaticTransform>();
+		if (transform != nullptr) {
+			EntityStaticGodotNode node;
+			if (auto n = entity.get<EntityStaticGodotNode>()) {
+				node = *n;
 			}
+			if (node.node == nullptr) {
+				node.node = EntityStaticPrefabScript::CreateNew();
+				frontend->GetNodeToAddStaticMap()->add_child(node.node);
+			}
+			node.node->Init(entity.id(), model, *transform);
+			entity.set<EntityStaticGodotNode>(node);
 		}
 	});
 

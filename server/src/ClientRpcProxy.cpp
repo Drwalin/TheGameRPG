@@ -184,4 +184,39 @@ void LoginFailed(icon7::Peer *peer)
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 		ClientRpcFunctionNames::LoginFailed);
 }
+
+void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
+								   const EntityStaticTransform &transform,
+								   const EntityModelName &model,
+								   const EntityStaticCollisionShapeName &shape)
+{
+	LOG_DEBUG("Broadcast on static spawn");
+	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
+							 entityId, transform, model, shape);
+}
+
+void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
+{
+	LOG_DEBUG("Send static entities on peer join");
+	icon7::ByteWriter writer(1500);
+	realm->rpc->InitializeSerializeSend(
+		writer, ClientRpcFunctionNames::SpawnStaticEntities);
+	int written = 0;
+	realm->queryStaticEntity.each(
+		[&](flecs::entity entity, const EntityStaticTransform &transform,
+			const EntityModelName &model,
+			const EntityStaticCollisionShapeName &shape) {
+			++written;
+			writer.op(entity.id());
+			writer.op(transform);
+			writer.op(model);
+			writer.op(shape);
+		});
+	if (written > 0) {
+		icon7::Flags flags =
+			icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+		realm->rpc->FinalizeSerializeSend(writer, flags);
+		realm->Broadcast(writer.Buffer(), 0);
+	}
+}
 } // namespace ClientRpcProxy

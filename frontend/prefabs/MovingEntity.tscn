@@ -4,7 +4,7 @@
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_f1gji"]
 
-[node name="EntityPrefabScript" type="EntityPrefabScript"]
+[node name="StaticEntity" type="EntityPrefabScript"]
 script = ExtResource("1_d4ei3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

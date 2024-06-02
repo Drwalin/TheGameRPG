@@ -36,4 +36,10 @@ void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 
 void LoginSuccessfull(icon7::Peer *peer);
 void LoginFailed(icon7::Peer *peer);
+
+void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
+								   const EntityStaticTransform &transform,
+								   const EntityModelName &model,
+								   const EntityStaticCollisionShapeName &shape);
+void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 } // namespace ClientRpcProxy

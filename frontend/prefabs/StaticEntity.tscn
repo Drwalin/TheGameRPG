@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://67hmi4b20jwg"]
+
+[ext_resource type="Script" path="res://prefabs/StaticEntity.gd" id="1_f3im5"]
+
+[node name="EntityStaticPrefabScript" type="EntityStaticPrefabScript"]
+script = ExtResource("1_f3im5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+skeleton = NodePath("")
