@@ -37,6 +37,9 @@ public:
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
+	
+	void QueueDestroy();
+	bool IsQueuedToDestroy();
 
 public:
 	void Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId);
@@ -81,6 +84,9 @@ public:
 	flecs::query<const EntityStaticTransform, const EntityModelName,
 				 const EntityStaticCollisionShapeName>
 		queryStaticEntity;
+	
+private:
+	bool queueDestroy = false;
 };
 
 template <typename... Args>

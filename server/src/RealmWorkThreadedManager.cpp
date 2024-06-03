@@ -25,7 +25,6 @@ void RealmWorkThreadedManager::DestroyAllRealmsAndStop()
 		it.second->DisconnectAllAndDestroy();
 	}
 	realms.clear();
-	realmsToDestroy.clear();
 }
 
 bool RealmWorkThreadedManager::AddNewRealm(std::shared_ptr<RealmServer> realm)
@@ -41,11 +40,10 @@ bool RealmWorkThreadedManager::AddNewRealm(std::shared_ptr<RealmServer> realm)
 
 void RealmWorkThreadedManager::DestroyRealm(std::string realmName)
 {
-	std::lock_guard lock(mutex);
-	if (realms.count(realmName) == 0) {
-		return;
+	std::shared_ptr<RealmServer> realm = GetRealm(realmName);
+	if (realm != nullptr) {
+		realm->QueueDestroy();
 	}
-	realmsToDestroy.insert(realmName);
 }
 
 std::shared_ptr<RealmServer>
@@ -103,10 +101,8 @@ void RealmWorkThreadedManager::SingleRunner()
 			if (realmsQueue.empty() == false) {
 				realm = realmsQueue.front();
 				realmsQueue.pop();
-				if (realmsToDestroy.count(realm->realmName) != 0 ||
-					requestStopRunning == true) {
+				if (realm->IsQueuedToDestroy() || requestStopRunning == true) {
 					realms.erase(realm->realmName);
-					realmsToDestroy.erase(realm->realmName);
 					destroyRealm = true;
 				}
 			} else if (requestStopRunning) {

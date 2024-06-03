@@ -15,6 +15,16 @@ RealmServer::RealmServer() { RealmServer::RegisterObservers(); }
 
 RealmServer::~RealmServer() { DisconnectAllAndDestroy(); }
 
+void RealmServer::QueueDestroy()
+{
+	queueDestroy = true;
+}
+
+bool RealmServer::IsQueuedToDestroy()
+{
+	return queueDestroy;
+}
+
 void RealmServer::DisconnectAllAndDestroy()
 {
 	// TODO: safe all entities and states
