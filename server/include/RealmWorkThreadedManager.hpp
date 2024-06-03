@@ -38,7 +38,6 @@ private:
 	std::mutex mutex;
 	std::queue<std::shared_ptr<RealmServer>> realmsQueue;
 	std::unordered_map<std::string, std::shared_ptr<RealmServer>> realms;
-	std::unordered_set<std::string> realmsToDestroy;
 
 	std::atomic<bool> requestStopRunning;
 	std::atomic<int> runningThreads;

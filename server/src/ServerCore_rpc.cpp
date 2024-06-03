@@ -4,7 +4,6 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
-#include "../../common/include/ClientRpcFunctionNames.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
