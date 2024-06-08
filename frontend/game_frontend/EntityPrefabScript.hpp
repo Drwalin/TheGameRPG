@@ -10,6 +10,7 @@
 #include <godot_cpp/core/engine_ptrcall.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/classes/animation_tree.hpp>
 
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
@@ -37,7 +38,7 @@ public: // Godot bound functions
 	// void _exit_tree() override;
 	void _ready() override;
 	void _process(double dt) override;
-	// void _my_internal_process(double dt);
+	void _my_internal_process(double dt);
 	// void _physics_process(double dt) override;
 
 	void Init(uint64_t localEntityId);
@@ -56,12 +57,15 @@ private: // Godot callbacks
 	Vector3 GetRotation() const;
 	Vector3 GetPosition() const;
 	Vector3 GetVelocity() const;
+	bool GetOnGround() const;
+	AnimationTree *GetAnimationTree();
 
 public: // variables
 	uint64_t localEntityId = 0;
 	GameFrontend *frontend = nullptr;
 
-	MeshInstance3D *meshInstance = nullptr;
+	Node *nodeContainingModel = nullptr;
+	AnimationTree *animationTree = nullptr;
 
 public:
 	static EntityPrefabScript *CreateNew();

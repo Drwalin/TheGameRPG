@@ -55,6 +55,7 @@ public: // Godot callbacks
 	float GetPlayerHeight();
 	float GetPlayerWidth();
 	Camera3D *GetPlayerCamera();
+	bool GetIsPlayerOnGround();
 
 	bool IsConnected();
 	bool IsDisconnected();

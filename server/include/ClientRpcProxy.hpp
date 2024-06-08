@@ -30,7 +30,8 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 						   const EntityMovementState &state,
 						   const EntityShape &shape,
 						   const EntityModelName &entityModelName,
-						   const EntityName &entityName);
+						   const EntityName &entityName,
+						   const EntityMovementParameters &movementParams);
 void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm);
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 

@@ -19,10 +19,12 @@ void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
 						const EntityMovementState &state,
 						const EntityShape &shape,
 						const EntityModelName &entityModelName,
-						const EntityName &entityName)
+						const EntityName &entityName,
+						const EntityMovementParameters &movementParams)
 {
 	ClientRpcProxy::Broadcast_SpawnEntity(realm, entity, state, shape,
-										  entityModelName, entityName);
+										  entityModelName, entityName,
+										  movementParams);
 }
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
@@ -50,9 +52,11 @@ void RegisterObservers(RealmServer *realm)
 									const EntityMovementState &state,
 									const EntityShape &shape,
 									const EntityModelName &entityModelName,
-									const EntityName &entityName) {
+									const EntityName &entityName,
+									const EntityMovementParameters &movementParams) {
 								OnNewEntitySpawned(realm, entity, state, shape,
-												   entityModelName, entityName);
+												   entityModelName, entityName,
+												   movementParams);
 							});
 
 	realm->RegisterObserver(

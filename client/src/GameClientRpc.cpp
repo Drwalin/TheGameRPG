@@ -112,8 +112,11 @@ void GameClient::SetModel(uint64_t serverId, EntityModelName model,
 	realm->SetComponent(localId, shape);
 	realm->SetComponent(localId, model);
 
+	/*
 	OnEntityShape(localId, shape);
+	LOG_INFO("OnEntityModel");
 	OnEntityModel(localId, model);
+	*/
 }
 
 void GameClient::DeleteEntities(icon7::ByteReader *reader)
@@ -193,11 +196,11 @@ void GameClient::SpawnEntity(uint64_t serverId,
 	realm->SetComponent(localId, state);
 	realm->SetComponent(localId, movementParams);
 	realm->SetComponent(localId, name);
-	realm->SetComponent(localId, model);
 	realm->AssureComponent<EntityEventsQueue>(localId);
 	realm->SetComponent(localId, state.oldState);
+	realm->SetComponent(localId, model);
 
-	OnEntityAdd(localId);
+// 	OnEntityAdd(localId);
 
 	if (serverId == serverPlayerEntityId) {
 		localPlayerEntityId = localId;

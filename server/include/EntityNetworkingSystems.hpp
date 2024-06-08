@@ -17,7 +17,8 @@ void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
 						const EntityMovementState &state,
 						const EntityShape &shape,
 						const EntityModelName &entityModelName,
-						const EntityName &entityName);
+						const EntityName &entityName,
+						const EntityMovementParameters &movementParams);
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						const EntityPlayerConnectionPeer &peer,

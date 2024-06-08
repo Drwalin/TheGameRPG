@@ -15,15 +15,9 @@ RealmServer::RealmServer() { RealmServer::RegisterObservers(); }
 
 RealmServer::~RealmServer() { DisconnectAllAndDestroy(); }
 
-void RealmServer::QueueDestroy()
-{
-	queueDestroy = true;
-}
+void RealmServer::QueueDestroy() { queueDestroy = true; }
 
-bool RealmServer::IsQueuedToDestroy()
-{
-	return queueDestroy;
-}
+bool RealmServer::IsQueuedToDestroy() { return queueDestroy; }
 
 void RealmServer::DisconnectAllAndDestroy()
 {
@@ -120,7 +114,8 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	entity.add<EntityShape>();
 	entity.add<EntityLastAuthoritativeMovementState>();
 	entity.add<EntityMovementParameters>();
-	entity.add<EntityModelName>();
+	entity.set<EntityModelName>(EntityModelName{
+		"characters/low_poly_medieval_people/city_dwellers_1_model.tscn"});
 	entity.add<EntityEventsQueue>();
 
 	auto s = *entity.get<EntityLastAuthoritativeMovementState>();
@@ -234,6 +229,16 @@ void RealmServer::RegisterObservers()
 							  entity.id(), lastState);
 		});
 
+	ecs.observer<EntityModelName, EntityShape>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity, const EntityModelName &model,
+					 const EntityShape &shape) {
+			LOG_INFO("Broadcast entity model '%s' to everyone",
+					 model.modelName.c_str());
+			ClientRpcProxy::Broadcast_SetModel(
+				this->shared_from_this(), entity.id(), model.modelName, shape);
+		});
+
 	ecs.observer<EntityStaticTransform, EntityModelName,
 				 EntityStaticCollisionShapeName>()
 		.event(flecs::OnSet)
@@ -241,6 +246,7 @@ void RealmServer::RegisterObservers()
 					 const EntityStaticTransform &transform,
 					 const EntityModelName &model,
 					 const EntityStaticCollisionShapeName &shape) {
+			// TODO: separate transform broadcast from model and shape broadcast
 			ClientRpcProxy::Broadcast_SpawnStaticEntities(
 				this, entity, transform, model, shape);
 		});
