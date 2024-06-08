@@ -208,6 +208,19 @@ glm::vec3 GameClient::GetVelocity()
 	return {0, 0, 0};
 }
 
+bool GameClient::GetOnGround()
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return true;
+	}
+	flecs::entity player = realm->Entity(localPlayerEntityId);
+	auto oldState = player.get<EntityMovementState>();
+	if (oldState)
+		return oldState->onGround;
+	return true;
+}
+
 EntityShape GameClient::GetShape()
 {
 	if (localPlayerEntityId == 0) {

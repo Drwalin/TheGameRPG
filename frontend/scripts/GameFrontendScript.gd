@@ -5,6 +5,8 @@ var camera:Camera3D;
 
 var SENSITIVITY:float = 0.01;
 
+var animationTree:AnimationTree;
+
 func _ready():
 	InternalReady();
 	camera = GetPlayerCamera();
@@ -48,7 +50,7 @@ func _process(delta: float)->void:
 		if dir.length_squared() > 0.01:
 			var d = Vector3(dir.x, 0, dir.y).normalized();
 			var rot = GetPlayerRotation();
-			mov += d.rotated(Vector3(0,1,0), rot.y);
+			mov += d.rotated(Vector3(0,1,0), rot.y+PI);
 		if Input.is_action_pressed("movement_jump"):
 			PlayerTryJump();
 		SetPlayerDirectionMovement(Vector2(mov.x, mov.z));
@@ -57,9 +59,9 @@ func _process(delta: float)->void:
 	
 	var pos = gameFrontend.GetPlayerPosition();
 	var rot = gameFrontend.GetPlayerRotation();
-	camera.set_rotation(rot);
-	var d = camera.basis * Vector3(0, 0, 5);
+	camera.set_rotation(rot + Vector3(0, PI, 0));
+	var d = camera.basis * Vector3(0, 0, 3);
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + d + Vector3(0, height, 0);
 	
-	pass;
+	

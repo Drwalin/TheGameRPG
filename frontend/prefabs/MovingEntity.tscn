@@ -1,19 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://cehunl33xkgdu"]
+[gd_scene load_steps=2 format=3 uid="uid://cehunl33xkgdu"]
 
 [ext_resource type="Script" path="res://prefabs/MovingEntity.gd" id="1_d4ei3"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_f1gji"]
 
 [node name="StaticEntity" type="EntityPrefabScript"]
 script = ExtResource("1_d4ei3")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-mesh = SubResource("CapsuleMesh_f1gji")
-skeleton = NodePath("")
+[node name="Mesh" type="Node3D" parent="."]
 
-[node name="Label3D" type="Label3D" parent="MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4749, 0)
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4749, 0)
 billboard = 2
 fixed_size = true
 text = "Placeholder"

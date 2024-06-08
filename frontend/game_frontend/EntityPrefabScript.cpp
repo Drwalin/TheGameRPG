@@ -31,6 +31,10 @@ void EntityPrefabScript::_bind_methods()
 	METHOD_NO_ARGS(EntityPrefabScript, GetRotation);
 	METHOD_NO_ARGS(EntityPrefabScript, GetPosition);
 	METHOD_NO_ARGS(EntityPrefabScript, GetVelocity);
+	METHOD_NO_ARGS(EntityPrefabScript, GetOnGround);
+	METHOD_NO_ARGS(EntityPrefabScript, GetAnimationTree);
+	
+	METHOD_ARGS(EntityPrefabScript, _my_internal_process, "deltaTime");
 }
 
 void EntityPrefabScript::_ready()
@@ -42,10 +46,15 @@ void EntityPrefabScript::_ready()
 	frontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
 		"gameFrontend"));
 
-	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
+	nodeContainingModel = (Node *)(get_node<Node>("Mesh"));
 }
 
 void EntityPrefabScript::_process(double dt)
+{
+	_my_internal_process(dt);
+}
+
+void EntityPrefabScript::_my_internal_process(double dt)
 {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -84,14 +93,30 @@ void EntityPrefabScript::SetPosition(glm::vec3 pos)
 
 void EntityPrefabScript::SetName(const EntityName &name)
 {
-	Node *node = find_child("MeshInstance3D")->find_child("Label3D");
-	Label3D *label = Object::cast_to<Label3D>(node);
+	Label3D *label = Object::cast_to<Label3D>(find_child("Label3D"));
 	label->set_text(name.name.c_str());
 }
 
 void EntityPrefabScript::SetModel(const EntityModelName &model)
 {
-	// TODO: implement
+	LOG_INFO(" ----------------------------------- Setting model to %lu: %s", localEntityId, model.modelName.c_str());
+	
+	while (nodeContainingModel->get_child_count() > 0) {
+		Node *n = nodeContainingModel->get_child(0);
+		nodeContainingModel->remove_child(n);
+		n->queue_free();
+	}
+	
+	std::string path = std::string("res://assets/") + model.modelName;
+	
+	ResourceLoader *rl = ResourceLoader::get_singleton();
+	Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
+	if (scene.is_null() == false && scene.is_valid()) {
+		Node *node = scene->instantiate();
+		nodeContainingModel->add_child(node);
+		
+		animationTree = (AnimationTree *)(node->find_child("AnimationTree"));
+	}
 }
 
 bool EntityPrefabScript::IsPlayer() const
@@ -132,6 +157,22 @@ Vector3 EntityPrefabScript::GetVelocity() const
 	}
 	LOG_ERROR("state component should exist");
 	return {};
+}
+
+bool EntityPrefabScript::GetOnGround() const
+{
+	auto state = frontend->client->realm->GetComponent<EntityMovementState>(
+		localEntityId);
+	if (state) {
+		return state->onGround;
+	}
+	LOG_ERROR("state component should exist");
+	return true;
+}
+
+AnimationTree *EntityPrefabScript::GetAnimationTree()
+{
+	return animationTree;
 }
 
 EntityPrefabScript *EntityPrefabScript::CreateNew()
