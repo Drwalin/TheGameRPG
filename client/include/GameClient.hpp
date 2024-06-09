@@ -57,12 +57,6 @@ private: // rpc methods
 
 public: // game output api
 	// may be called multiple times per single entity
-	virtual void OnEntityAdd(uint64_t localId) = 0;
-	virtual void OnEntityRemove(uint64_t localId) = 0;
-	virtual void OnEntityShape(uint64_t localId, const EntityShape &shape) = 0;
-	virtual void OnEntityModel(uint64_t localId,
-							   const EntityModelName &model) = 0;
-
 	virtual void OnEnterRealm(const std::string &realmName) = 0;
 
 	virtual void OnSetPlayerId(uint64_t localId) = 0;
