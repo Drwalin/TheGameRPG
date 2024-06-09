@@ -233,8 +233,6 @@ void RealmServer::RegisterObservers()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const EntityModelName &model,
 					 const EntityShape &shape) {
-			LOG_INFO("Broadcast entity model '%s' to everyone",
-					 model.modelName.c_str());
 			ClientRpcProxy::Broadcast_SetModel(
 				this->shared_from_this(), entity.id(), model.modelName, shape);
 		});

@@ -171,7 +171,6 @@ void RealmClient::RegisterObservers()
 
 	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
 											 const EntityMovementState &) {
-		gameClient->OnEntityRemove(entity.id());
 		entity.destruct();
 		auto it =
 			gameClient->mapLocalEntityIdToServerEntityId.find(entity.id());
@@ -183,17 +182,12 @@ void RealmClient::RegisterObservers()
 
 	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
 											 const EntityStaticTransform &) {
-		gameClient->OnEntityRemove(entity.id());
 		entity.destruct();
+		auto it =
+			gameClient->mapLocalEntityIdToServerEntityId.find(entity.id());
+		if (it != gameClient->mapLocalEntityIdToServerEntityId.end()) {
+			gameClient->mapServerEntityIdToLocalEntityId.erase(it->second);
+			gameClient->mapLocalEntityIdToServerEntityId.erase(it);
+		}
 	});
-
-	RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
-										  const EntityModelName &model) {
-		gameClient->OnEntityModel(entity.id(), model);
-	});
-
-	RegisterObserver(flecs::OnSet,
-					 [this](flecs::entity entity, const EntityShape &shape) {
-						 gameClient->OnEntityShape(entity.id(), shape);
-					 });
 }

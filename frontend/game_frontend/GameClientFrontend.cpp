@@ -48,48 +48,9 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 	}
 	return false;
 }
-void GameClientFrontend::OnEnterRealm(const std::string &realmName) {}
-void GameClientFrontend::OnEntityAdd(uint64_t localId)
-{
-	LOG_ERROR("This should be removed in favor of ecs::observer");
-}
-void GameClientFrontend::OnEntityRemove(uint64_t localId)
-{
-	// TODO; remove OnEntityRemove
-	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
-		return;
-	}
-	EntityPrefabScript *node =
-		realm->GetComponent<EntityGodotNode>(localId)->node;
-	node->localEntityId = 0;
-	if (node->get_parent()) {
-		node->get_parent()->remove_child(node);
-	}
-	node->queue_free();
-	realm->SetComponent<EntityGodotNode>(localId, EntityGodotNode{nullptr});
-	realm->RemoveComponent<EntityGodotNode>(localId);
-}
-void GameClientFrontend::OnEntityShape(uint64_t localId,
-									   const EntityShape &shape)
-{
-	LOG_ERROR("Remove OnEntityShape() this in favor of ecs::observer");
-	// TODO: ???
-}
-void GameClientFrontend::OnEntityModel(uint64_t localId,
-									   const EntityModelName &model)
-{
-	LOG_ERROR("Remove OnEntityModel() in favor of ecs::observer");
 
-	if (realm->HasComponent<EntityGodotNode>(localId) == false) {
-		LOG_INFO("OnEntityModel null godot node");
-		return;
-	}
-	/*
-	EntityPrefabScript *node =
-		realm->GetComponent<EntityGodotNode>(localId)->node;
-	node->SetModel(model);
-	*/
-}
+void GameClientFrontend::OnEnterRealm(const std::string &realmName) {}
+
 void GameClientFrontend::OnSetPlayerId(uint64_t localId)
 {
 	if (localId == 0) {
@@ -98,6 +59,7 @@ void GameClientFrontend::OnSetPlayerId(uint64_t localId)
 	}
 	// TODO: ???
 }
+
 void GameClientFrontend::OnPlayerIdUnset()
 {
 	// TODO: ???
@@ -129,9 +91,6 @@ void GameClientFrontend::RegisterObservers()
 		[this](flecs::entity entity, const EntityModelName &modelName,
 			   const EntityMovementState &movementState) {
 			if (entity.has<EntityGodotNode>() == false) {
-				LOG_INFO("On entity add model and movementstate and godot node "
-						 "null for: %lu",
-						 entity.id());
 				EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 				node->Init(entity.id());
 				node->frontend = this->frontend;
@@ -149,7 +108,6 @@ void GameClientFrontend::RegisterObservers()
 												 const EntityModelName &model) {
 		auto transform = entity.get<EntityStaticTransform>();
 		if (transform) {
-			LOG_INFO("Setting EntityGodotNode to static");
 			EntityStaticGodotNode node;
 			if (auto n = entity.get<EntityStaticGodotNode>()) {
 				node = *n;
@@ -165,7 +123,6 @@ void GameClientFrontend::RegisterObservers()
 		EntityGodotNode *node =
 			(EntityGodotNode *)entity.get<EntityGodotNode>();
 		if (node) {
-			LOG_INFO("Setting EntityGodotNode to moving %lu", entity.id());
 			node->node->SetModel(model);
 		}
 	});
@@ -182,6 +139,10 @@ void GameClientFrontend::RegisterObservers()
 		flecs::OnRemove,
 		+[](flecs::entity entity, EntityStaticGodotNode &node) {
 			if (node.node) {
+				node.node->localEntityId = 0;
+				if (node.node->get_parent()) {
+					node.node->get_parent()->remove_child(node.node);
+				}
 				node.node->queue_free();
 				node.node = nullptr;
 			}
@@ -190,8 +151,14 @@ void GameClientFrontend::RegisterObservers()
 	realm->RegisterObserver(
 		flecs::OnRemove, +[](flecs::entity entity, EntityGodotNode &node) {
 			if (node.node) {
+				node.node->localEntityId = 0;
+				if (node.node->get_parent()) {
+					node.node->get_parent()->remove_child(node.node);
+				}
 				node.node->queue_free();
 				node.node = nullptr;
 			}
 		});
+	
+	// TODO: add ecs::observer(OnSet, EntityShape)
 }

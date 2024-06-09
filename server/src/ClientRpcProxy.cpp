@@ -74,7 +74,6 @@ void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
 			writer.op(model);
 			writer.op(shape);
 			writer.op(movementParams);
-			LOG_INFO("Broadcasting model name: %s", model.modelName.c_str());
 		});
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	realm->rpc->FinalizeSerializeSend(writer, flags);
@@ -104,7 +103,6 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 				writer.op(*entity.get<EntityModelName>());
 				writer.op(*entity.get<EntityShape>());
 				writer.op(*entity.get<EntityMovementParameters>());
-				LOG_INFO("Broadcasting by id model name: %s", entity.get<EntityModelName>()->modelName.c_str());
 			}
 		}
 	}
@@ -127,7 +125,6 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 						   const EntityName &entityName,
 						   const EntityMovementParameters &movementParams)
 {
-	LOG_INFO("Spawn model name: %s", entityModelName.modelName.c_str());
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnEntities, entityId,
 							 state, entityName, entityModelName, shape,
 							 movementParams);

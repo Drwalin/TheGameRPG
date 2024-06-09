@@ -99,8 +99,6 @@ void EntityPrefabScript::SetName(const EntityName &name)
 
 void EntityPrefabScript::SetModel(const EntityModelName &model)
 {
-	LOG_INFO(" ----------------------------------- Setting model to %lu: %s", localEntityId, model.modelName.c_str());
-	
 	while (nodeContainingModel->get_child_count() > 0) {
 		Node *n = nodeContainingModel->get_child(0);
 		nodeContainingModel->remove_child(n);
