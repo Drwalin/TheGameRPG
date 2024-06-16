@@ -9,7 +9,7 @@ script = ExtResource("1_d4ei3")
 
 [node name="Label3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4749, 0)
-billboard = 2
+billboard = 1
 fixed_size = true
 text = "Placeholder"
 font_size = 8

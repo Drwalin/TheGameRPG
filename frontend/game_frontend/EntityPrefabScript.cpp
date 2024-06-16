@@ -94,7 +94,7 @@ void EntityPrefabScript::SetPosition(glm::vec3 pos)
 void EntityPrefabScript::SetName(const EntityName &name)
 {
 	Label3D *label = Object::cast_to<Label3D>(find_child("Label3D"));
-	label->set_text(name.name.c_str());
+	label->set_text(String::utf8(name.name.c_str()));
 }
 
 void EntityPrefabScript::SetModel(const EntityModelName &model)

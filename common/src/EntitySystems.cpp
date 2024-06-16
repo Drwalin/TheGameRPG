@@ -81,9 +81,7 @@ void UpdateMovement(
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 			normal = glm::normalize(normal);
 			float dnv = glm::dot(normal, vel);
-			if (dnv < 0.0f) {
-				vel -= normal * dnv;
-			}
+			vel -= normal * glm::dot(normal, vel);
 			if (vel.y > 0) {
 				glm::vec3 vv = vel;
 				vv.y = 0.0f;
