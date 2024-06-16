@@ -1,5 +1,6 @@
 #pragma once
 
+#include <random>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -7,8 +8,6 @@
 #include <glm/ext/quaternion_common.hpp>
 
 #include "GlmSerialization.hpp"
-
-#include <random>
 
 static inline float R()
 {
