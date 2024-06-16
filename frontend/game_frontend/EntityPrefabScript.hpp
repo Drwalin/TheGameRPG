@@ -20,7 +20,7 @@
 
 #include <glm/glm.hpp>
 
-#include "../../common/include/EntityData.hpp"
+#include "../../common/include/EntityComponents.hpp"
 
 using namespace godot;
 
@@ -44,8 +44,8 @@ public: // Godot bound functions
 	void Init(uint64_t localEntityId);
 
 public:
-	void SetName(const EntityName &name);
-	void SetModel(const EntityModelName &model);
+	void SetName(const ComponentName &name);
+	void SetModel(const ComponentModelName &model);
 	void SetPosition(glm::vec3 pos);
 	void SetRotation(glm::vec3 rot);
 

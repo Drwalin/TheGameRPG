@@ -39,8 +39,8 @@ void EntityStaticPrefabScript::_process(double dt)
 }
 
 void EntityStaticPrefabScript::Init(uint64_t localEntityId,
-									const EntityModelName &model,
-									EntityStaticTransform transform)
+									const ComponentModelName &model,
+									ComponentStaticTransform transform)
 {
 	if (localEntityId) {
 		this->localEntityId = localEntityId;
@@ -59,7 +59,7 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 }
 
 void EntityStaticPrefabScript::SetTransform(
-	const EntityStaticTransform &transform)
+	const ComponentStaticTransform &transform)
 {
 	set_position(ToGodot(transform.pos));
 	set_rotation(ToGodot(transform.rot).get_euler());

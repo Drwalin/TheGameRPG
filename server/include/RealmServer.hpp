@@ -30,14 +30,14 @@ public:
 
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
-	virtual EntityMovementState
+	virtual ComponentMovementState
 	ExecuteMovementUpdate(uint64_t entityId) override;
 
 	void RegisterObservers();
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
-	
+
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
 
@@ -73,18 +73,18 @@ public:
 
 	uint64_t sendEntitiesToClientsTimer = 0;
 	int64_t sendUpdateDeltaTicks = 250;
-	flecs::query<const EntityLastAuthoritativeMovementState>
+	flecs::query<const ComponentLastAuthoritativeMovementState>
 		queryLastAuthoritativeState;
 
-	flecs::query<const EntityLastAuthoritativeMovementState, const EntityName,
-				 const EntityModelName, const EntityShape,
-				 const EntityMovementParameters>
+	flecs::query<const ComponentLastAuthoritativeMovementState,
+				 const ComponentName, const ComponentModelName,
+				 const ComponentShape, const ComponentMovementParameters>
 		queryEntityLongState;
 
-	flecs::query<const EntityStaticTransform, const EntityModelName,
-				 const EntityStaticCollisionShapeName>
+	flecs::query<const ComponentStaticTransform, const ComponentModelName,
+				 const ComponentStaticCollisionShapeName>
 		queryStaticEntity;
-	
+
 private:
 	bool queueDestroy = false;
 };

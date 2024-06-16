@@ -7,15 +7,15 @@
 namespace EntitySystems
 {
 void UpdateMovement(
-	Realm *realm, flecs::entity entity, const EntityShape shape,
-	EntityMovementState &currentState,
-	const EntityLastAuthoritativeMovementState &_lastAuthoritativeState,
-	const EntityMovementParameters &movementParams)
+	Realm *realm, flecs::entity entity, const ComponentShape shape,
+	ComponentMovementState &currentState,
+	const ComponentLastAuthoritativeMovementState &_lastAuthoritativeState,
+	const ComponentMovementParameters &movementParams)
 {
-	const EntityMovementState lastAuthoritativeState =
+	const ComponentMovementState lastAuthoritativeState =
 		_lastAuthoritativeState.oldState;
 	const int64_t currentTick = realm->timer.currentTick;
-	EntityMovementState prev = lastAuthoritativeState;
+	ComponentMovementState prev = lastAuthoritativeState;
 	if (currentState.timestamp >
 		prev.timestamp + 10) { // < realm->ticksBeforeIgnoringInputMovement) {
 		prev = currentState;

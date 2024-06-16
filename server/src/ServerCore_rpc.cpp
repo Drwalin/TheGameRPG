@@ -51,8 +51,8 @@ void ServerCore::Login(icon7::Peer *peer, const std::string &userName)
 	}
 }
 
-void ServerCore::UpdatePlayer(icon7::Peer *peer,
-							  const EntityLastAuthoritativeMovementState &state)
+void ServerCore::UpdatePlayer(
+	icon7::Peer *peer, const ComponentLastAuthoritativeMovementState &state)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
@@ -60,8 +60,8 @@ void ServerCore::UpdatePlayer(icon7::Peer *peer,
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
 			// TODO: verify movement state
-			entity.set<EntityLastAuthoritativeMovementState>(state);
-			entity.set<EntityMovementState>(state.oldState);
+			entity.set<ComponentLastAuthoritativeMovementState>(state);
+			entity.set<ComponentMovementState>(state.oldState);
 		}
 	}
 }

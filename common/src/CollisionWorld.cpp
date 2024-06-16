@@ -76,7 +76,7 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 
 void CollisionWorld::LoadStaticCollision(uint64_t entityId,
 										 const TerrainCollisionData *data,
-										 EntityStaticTransform transform)
+										 ComponentStaticTransform transform)
 {
 	auto it = entities.find(entityId);
 	if (it != entities.end()) {
@@ -114,7 +114,7 @@ void CollisionWorld::LoadStaticCollision(uint64_t entityId,
 	entities[entityId] = object;
 }
 
-bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
+bool CollisionWorld::AddEntity(uint64_t entityId, ComponentShape shape,
 							   glm::vec3 pos)
 {
 	auto it = entities.find(entityId);
@@ -139,7 +139,7 @@ bool CollisionWorld::AddEntity(uint64_t entityId, EntityShape shape,
 	return true;
 }
 
-void CollisionWorld::UpdateEntityBvh(uint64_t entityId, EntityShape shape,
+void CollisionWorld::UpdateEntityBvh(uint64_t entityId, ComponentShape shape,
 									 glm::vec3 pos)
 {
 	auto it = entities.find(entityId);
@@ -160,8 +160,8 @@ void CollisionWorld::DeleteEntity(uint64_t entityId)
 	entities.erase(it);
 }
 
-void CollisionWorld::EntitySetTransform(uint64_t entityId,
-										const EntityStaticTransform &transform)
+void CollisionWorld::EntitySetTransform(
+	uint64_t entityId, const ComponentStaticTransform &transform)
 {
 	auto it = entities.find(entityId);
 	if (it == entities.end()) {
@@ -242,24 +242,24 @@ void CollisionWorld::Debug() const
 void CollisionWorld::RegisterObservers(Realm *realm)
 {
 	auto &ecs = realm->ecs;
-	ecs.observer<EntityShape, EntityMovementState>()
+	ecs.observer<ComponentShape, ComponentMovementState>()
 		.event(flecs::OnAdd)
-		.each([this](flecs::entity entity, const EntityShape &shape,
-					 const EntityMovementState &state) {
+		.each([this](flecs::entity entity, const ComponentShape &shape,
+					 const ComponentMovementState &state) {
 			this->AddEntity(entity.id(), shape, state.pos);
 		});
-	ecs.observer<EntityShape, EntityMovementState>()
+	ecs.observer<ComponentShape, ComponentMovementState>()
 		.event(flecs::OnRemove)
-		.each([this](flecs::entity entity, const EntityShape &shape,
-					 const EntityMovementState &state) {
+		.each([this](flecs::entity entity, const ComponentShape &shape,
+					 const ComponentMovementState &state) {
 			this->DeleteEntity(entity.id());
 		});
-	ecs.observer<EntityShape>()
+	ecs.observer<ComponentShape>()
 		.event(flecs::OnSet)
-		.each([this](flecs::entity entity, const EntityShape &shape) {
-			const EntityMovementState *state =
-				entity.get<EntityMovementState>();
-			if (entity.has<EntityMovementState>()) {
+		.each([this](flecs::entity entity, const ComponentShape &shape) {
+			const ComponentMovementState *state =
+				entity.get<ComponentMovementState>();
+			if (entity.has<ComponentMovementState>()) {
 				this->UpdateEntityBvh(entity.id(), shape, state->pos);
 			}
 		});

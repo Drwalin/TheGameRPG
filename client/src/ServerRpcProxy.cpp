@@ -18,7 +18,7 @@ void Login(GameClient *gameClient, std::string username, std::string password)
 						 ServerRpcFunctionNames::Login, username, password);
 }
 
-void UpdatePlayer(GameClient *gameClient, const EntityMovementState &state)
+void UpdatePlayer(GameClient *gameClient, const ComponentMovementState &state)
 {
 	gameClient->rpc.Send(gameClient->peer.get(),
 						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,

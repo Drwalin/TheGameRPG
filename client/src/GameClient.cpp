@@ -28,7 +28,7 @@ void GameClient::RegisterObservers()
 {
 	realm->RegisterObserver(
 		flecs::OnRemove,
-		[this](flecs::entity entity, const EntityMovementState &) {
+		[this](flecs::entity entity, const ComponentMovementState &) {
 			if (entity.id() == localPlayerEntityId) {
 				OnPlayerIdUnset();
 				serverPlayerEntityId = 0;
@@ -163,7 +163,8 @@ void GameClient::PerformSendPlayerMovementInput()
 	}
 
 	lastTickAuthoritativeSent = realm->timer.currentTick;
-	auto state = realm->GetComponent<EntityMovementState>(localPlayerEntityId);
+	auto state =
+		realm->GetComponent<ComponentMovementState>(localPlayerEntityId);
 	ServerRpcProxy::UpdatePlayer(this, *state);
 
 	needSendPlayerMovementInput = false;
@@ -176,7 +177,7 @@ glm::vec3 GameClient::GetRotation()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<EntityMovementState>();
+	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->rot;
 	return {0, 0, 0};
@@ -189,7 +190,7 @@ glm::vec3 GameClient::GetPosition()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<EntityMovementState>();
+	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->pos;
 	return {0, 0, 0};
@@ -202,7 +203,7 @@ glm::vec3 GameClient::GetVelocity()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<EntityMovementState>();
+	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->vel;
 	return {0, 0, 0};
@@ -215,20 +216,20 @@ bool GameClient::GetOnGround()
 		return true;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<EntityMovementState>();
+	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->onGround;
 	return true;
 }
 
-EntityShape GameClient::GetShape()
+ComponentShape GameClient::GetShape()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
 		return {0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto shape = player.get<EntityShape>();
+	auto shape = player.get<ComponentShape>();
 	if (shape)
 		return *shape;
 	return {0, 0};
@@ -241,7 +242,7 @@ void GameClient::SetRotation(glm::vec3 rotation)
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<EntityMovementState>();
+	auto oldState = player.get<ComponentMovementState>();
 	if (oldState) {
 		auto state = *oldState;
 		state.rot = rotation;
@@ -257,7 +258,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto stateP = player.get<EntityMovementState>();
+	auto stateP = player.get<ComponentMovementState>();
 	if (stateP == nullptr) {
 		return;
 	}
@@ -271,7 +272,8 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	glm::vec3 vel;
 	vel.x = horizontalDirection.x;
 	vel.z = horizontalDirection.y;
-	vel *= player.get<EntityMovementParameters>()->maxMovementSpeedHorizontal;
+	vel *=
+		player.get<ComponentMovementParameters>()->maxMovementSpeedHorizontal;
 
 	glm::vec3 dv = oldVel - vel;
 	dv.y = 0;
@@ -293,7 +295,7 @@ void GameClient::TryPerformJump()
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto stateP = player.get<EntityMovementState>();
+	auto stateP = player.get<ComponentMovementState>();
 	if (stateP == nullptr) {
 		return;
 	}

@@ -3,7 +3,7 @@
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/Peer.hpp>
 
-#include "../../common/include/EntityData.hpp"
+#include "../../common/include/EntityComponents.hpp"
 
 class RealmServer;
 
@@ -25,22 +25,22 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 								icon7::Peer *peer, icon7::ByteReader &reader);
 
 void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
-						const std::string &modelName, EntityShape shape);
+						const std::string &modelName, ComponentShape shape);
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const EntityMovementState &state,
-						   const EntityShape &shape,
-						   const EntityModelName &entityModelName,
-						   const EntityName &entityName,
-						   const EntityMovementParameters &movementParams);
+						   const ComponentMovementState &state,
+						   const ComponentShape &shape,
+						   const ComponentModelName &entityModelName,
+						   const ComponentName &entityName,
+						   const ComponentMovementParameters &movementParams);
 void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm);
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 
 void LoginSuccessfull(icon7::Peer *peer);
 void LoginFailed(icon7::Peer *peer);
 
-void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
-								   const EntityStaticTransform &transform,
-								   const EntityModelName &model,
-								   const EntityStaticCollisionShapeName &shape);
+void Broadcast_SpawnStaticEntities(
+	RealmServer *realm, uint64_t entityId,
+	const ComponentStaticTransform &transform, const ComponentModelName &model,
+	const ComponentStaticCollisionShapeName &shape);
 void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 } // namespace ClientRpcProxy

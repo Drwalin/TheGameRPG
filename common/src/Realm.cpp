@@ -23,32 +23,34 @@ void Realm::Destroy()
 void Realm::Clear()
 {
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityShape &) { entity.destruct(); });
+	ecs.each([](flecs::entity entity, ComponentShape &) { entity.destruct(); });
 	ecs.defer_end();
 	ecs.defer_begin();
-	ecs.each(
-		[](flecs::entity entity, EntityEventsQueue &) { entity.destruct(); });
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each(
-		[](flecs::entity entity, EntityMovementState &) { entity.destruct(); });
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityName &) { entity.destruct(); });
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityStaticCollisionShapeName &) {
+	ecs.each([](flecs::entity entity, ComponentEventsQueue &) {
 		entity.destruct();
 	});
 	ecs.defer_end();
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, EntityStaticTransform &) {
+	ecs.each([](flecs::entity entity, ComponentMovementState &) {
+		entity.destruct();
+	});
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, ComponentName &) { entity.destruct(); });
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, ComponentStaticCollisionShapeName &) {
+		entity.destruct();
+	});
+	ecs.defer_end();
+	ecs.defer_begin();
+	ecs.each([](flecs::entity entity, ComponentStaticTransform &) {
 		entity.destruct();
 	});
 	ecs.defer_end();
 	ecs.defer_begin();
 	ecs.each(
-		[](flecs::entity entity, EntityModelName &) { entity.destruct(); });
+		[](flecs::entity entity, ComponentModelName &) { entity.destruct(); });
 	ecs.defer_end();
 
 	collisionWorld.Clear();
@@ -72,30 +74,30 @@ void Realm::RegisterObservers()
 {
 	collisionWorld.RegisterObservers(this);
 
-	ecs.observer<EntityLastAuthoritativeMovementState>()
+	ecs.observer<ComponentLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const EntityLastAuthoritativeMovementState &lastState) {
-			const EntityShape *shape = ecs.get<EntityShape>();
+					 const ComponentLastAuthoritativeMovementState &lastState) {
+			const ComponentShape *shape = ecs.get<ComponentShape>();
 			if (shape == nullptr) {
 				return;
 			}
 
-			EntityMovementState currentState = lastState.oldState;
-			auto movementParams = entity.get<EntityMovementParameters>();
+			ComponentMovementState currentState = lastState.oldState;
+			auto movementParams = entity.get<ComponentMovementParameters>();
 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
 										  lastState, *movementParams);
-			entity.set<EntityMovementState>(currentState);
+			entity.set<ComponentMovementState>(currentState);
 		});
 
-	ecs.observer<EntityEventsQueue, const EntityMovementParameters>()
+	ecs.observer<ComponentEventsQueue, const ComponentMovementParameters>()
 		.event(flecs::OnAdd)
-		.each([this](flecs::entity entity, EntityEventsQueue &eventsQueue,
-					 const EntityMovementParameters &) {
+		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
+					 const ComponentMovementParameters &) {
 			static EntityEventTemplate defaultMovementEvent{
 				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
 				   uint64_t entityId) {
-					EntityMovementState currentState =
+					ComponentMovementState currentState =
 						realm->ExecuteMovementUpdate(entityId);
 
 					glm::vec3 v = currentState.vel;
@@ -112,8 +114,8 @@ void Realm::RegisterObservers()
 					event.dueTick = realm->timer.currentTick + dt;
 					event.event = &defaultMovementEvent;
 
-					EntityEventsQueue *eventsQueue =
-						realm->AccessComponent<EntityEventsQueue>(entityId);
+					ComponentEventsQueue *eventsQueue =
+						realm->AccessComponent<ComponentEventsQueue>(entityId);
 					if (eventsQueue == nullptr) {
 						return;
 					}
@@ -127,15 +129,15 @@ void Realm::RegisterObservers()
 		});
 
 	RegisterObserver(
-		flecs::OnSet,
-		[this](flecs::entity entity, const EntityStaticTransform &transform) {
+		flecs::OnSet, [this](flecs::entity entity,
+							 const ComponentStaticTransform &transform) {
 			collisionWorld.EntitySetTransform(entity.id(), transform);
 		});
 
 	queryEntityForMovementUpdate =
-		ecs.query<const EntityShape, EntityMovementState,
-				  const EntityLastAuthoritativeMovementState,
-				  const EntityMovementParameters>();
+		ecs.query<const ComponentShape, ComponentMovementState,
+				  const ComponentLastAuthoritativeMovementState,
+				  const ComponentMovementParameters>();
 }
 
 bool Realm::OneEpoch()
@@ -153,7 +155,7 @@ bool Realm::OneEpoch()
 			eventsPriorityQueue.Pop();
 			auto entity = Entity(event.entityId);
 			if (entity.is_alive()) {
-				((EntityEventsQueue *)entity.get<EntityEventsQueue>())
+				((ComponentEventsQueue *)entity.get<ComponentEventsQueue>())
 					->Update(timer.currentTick, event.entityId, this);
 				++executedEvents;
 			}
@@ -179,18 +181,18 @@ bool Realm::OneEpoch()
 }
 
 void Realm::UpdateEntityAuthoritativeState(
-	uint64_t entityId, const EntityLastAuthoritativeMovementState &state)
+	uint64_t entityId, const ComponentLastAuthoritativeMovementState &state)
 {
 	flecs::entity entity = Entity(entityId);
 	if (entity.is_alive()) {
-		entity.set<EntityLastAuthoritativeMovementState>(state);
-		entity.set<EntityMovementState>(state.oldState);
+		entity.set<ComponentLastAuthoritativeMovementState>(state);
+		entity.set<ComponentMovementState>(state.oldState);
 	}
 }
 
-uint64_t Realm::CreateStaticEntity(EntityStaticTransform transform,
-								   EntityModelName model,
-								   EntityStaticCollisionShapeName shape)
+uint64_t Realm::CreateStaticEntity(ComponentStaticTransform transform,
+								   ComponentModelName model,
+								   ComponentStaticCollisionShapeName shape)
 {
 	TerrainCollisionData col;
 	bool r = GetCollisionShape(shape.shapeName, &col);

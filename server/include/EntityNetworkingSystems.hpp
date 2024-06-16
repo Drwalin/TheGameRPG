@@ -2,27 +2,27 @@
 
 #include <flecs.h>
 
-#include "../../common/include/EntityData.hpp"
+#include "../../common/include/EntityComponents.hpp"
 
-#include "EntityDataServer.hpp"
+#include "EntityComponentsServer.hpp"
 
 class RealmServer;
 
 namespace EntityNetworkingSystems
 {
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
-							 const EntityPlayerConnectionPeer &peer);
+							 const ComponentPlayerConnectionPeer &peer);
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
-						const EntityMovementState &state,
-						const EntityShape &shape,
-						const EntityModelName &entityModelName,
-						const EntityName &entityName,
-						const EntityMovementParameters &movementParams);
+						const ComponentMovementState &state,
+						const ComponentShape &shape,
+						const ComponentModelName &entityModelName,
+						const ComponentName &entityName,
+						const ComponentMovementParameters &movementParams);
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
-						const EntityPlayerConnectionPeer &peer,
-						const EntityName &entityName);
+						const ComponentPlayerConnectionPeer &peer,
+						const ComponentName &entityName);
 
 void RegisterObservers(RealmServer *realm);
 }; // namespace EntityNetworkingSystems

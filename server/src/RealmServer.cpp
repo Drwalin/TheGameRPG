@@ -72,14 +72,14 @@ bool RealmServer::OneEpoch()
 		float yv = y / 500.0f;
 
 		flecs::entity e = Entity(GE);
-		auto t = (EntityStaticTransform *)e.get<EntityStaticTransform>();
+		auto t = (ComponentStaticTransform *)e.get<ComponentStaticTransform>();
 		t->pos.y = yv;
-		e.set<EntityStaticTransform>(*t);
+		e.set<ComponentStaticTransform>(*t);
 
 		e = Entity(GE2);
-		t = (EntityStaticTransform *)e.get<EntityStaticTransform>();
+		t = (ComponentStaticTransform *)e.get<ComponentStaticTransform>();
 		t->pos.y = yv;
-		e.set<EntityStaticTransform>(*t);
+		e.set<ComponentStaticTransform>(*t);
 	}
 
 	bool busy = executionQueue.Execute(128) != 0;
@@ -108,26 +108,26 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 	auto pw = peer->shared_from_this();
 	peers[pw] = entityId;
-	SetComponent<EntityPlayerConnectionPeer>(
-		entityId, EntityPlayerConnectionPeer{peer->shared_from_this()});
+	SetComponent<ComponentPlayerConnectionPeer>(
+		entityId, ComponentPlayerConnectionPeer{peer->shared_from_this()});
 
-	entity.add<EntityShape>();
-	entity.add<EntityLastAuthoritativeMovementState>();
-	entity.add<EntityMovementParameters>();
-	entity.set<EntityModelName>(EntityModelName{
+	entity.add<ComponentShape>();
+	entity.add<ComponentLastAuthoritativeMovementState>();
+	entity.add<ComponentMovementParameters>();
+	entity.set<ComponentModelName>(ComponentModelName{
 		"characters/low_poly_medieval_people/city_dwellers_1_model.tscn"});
-	entity.add<EntityEventsQueue>();
+	entity.add<ComponentEventsQueue>();
 
-	auto s = *entity.get<EntityLastAuthoritativeMovementState>();
+	auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
 	s.oldState.timestamp = timer.currentTick;
-	entity.set<EntityLastAuthoritativeMovementState>(s);
-	entity.set<EntityMovementState>(s.oldState);
+	entity.set<ComponentLastAuthoritativeMovementState>(s);
+	entity.set<ComponentMovementState>(s.oldState);
 
 	data->entityId = entityId;
 	// TODO: load player entity from database // TODO: move this line into
 	// 												   code managed by
 	// 												   ServerCore thread
-	SetComponent<EntityName>(entityId, EntityName{data->userName});
+	SetComponent<ComponentName>(entityId, ComponentName{data->userName});
 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
 			 realmName.c_str());
 
@@ -175,26 +175,26 @@ void RealmServer::Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId)
 	}
 }
 
-EntityMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
+ComponentMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
 {
 	auto entity = Entity(entityId);
 
-	const EntityShape *shape = entity.get<EntityShape>();
+	const ComponentShape *shape = entity.get<ComponentShape>();
 	if (shape == nullptr) {
 		return {};
 	}
-	EntityMovementState *currentState =
-		(EntityMovementState *)entity.get<EntityMovementState>();
+	ComponentMovementState *currentState =
+		(ComponentMovementState *)entity.get<ComponentMovementState>();
 	if (currentState == nullptr) {
 		return {};
 	}
-	const EntityLastAuthoritativeMovementState *lastAuthoritativeState =
-		entity.get<EntityLastAuthoritativeMovementState>();
+	const ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
+		entity.get<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		return {};
 	}
-	const EntityMovementParameters *movementParams =
-		entity.get<EntityMovementParameters>();
+	const ComponentMovementParameters *movementParams =
+		entity.get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
 		return {};
 	}
@@ -210,40 +210,40 @@ void RealmServer::RegisterObservers()
 	EntityNetworkingSystems::RegisterObservers(this);
 
 	queryLastAuthoritativeState =
-		ecs.query<const EntityLastAuthoritativeMovementState>();
+		ecs.query<const ComponentLastAuthoritativeMovementState>();
 
 	queryEntityLongState =
-		ecs.query<const EntityLastAuthoritativeMovementState, const EntityName,
-				  const EntityModelName, const EntityShape,
-				  const EntityMovementParameters>();
+		ecs.query<const ComponentLastAuthoritativeMovementState,
+				  const ComponentName, const ComponentModelName,
+				  const ComponentShape, const ComponentMovementParameters>();
 
 	queryStaticEntity =
-		ecs.query<const EntityStaticTransform, const EntityModelName,
-				  const EntityStaticCollisionShapeName>();
+		ecs.query<const ComponentStaticTransform, const ComponentModelName,
+				  const ComponentStaticCollisionShapeName>();
 
-	ecs.observer<EntityLastAuthoritativeMovementState>()
+	ecs.observer<ComponentLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const EntityLastAuthoritativeMovementState &lastState) {
+					 const ComponentLastAuthoritativeMovementState &lastState) {
 			BroadcastReliable(ClientRpcFunctionNames::UpdateEntities,
 							  entity.id(), lastState);
 		});
 
-	ecs.observer<EntityModelName, EntityShape>()
+	ecs.observer<ComponentModelName, ComponentShape>()
 		.event(flecs::OnSet)
-		.each([this](flecs::entity entity, const EntityModelName &model,
-					 const EntityShape &shape) {
+		.each([this](flecs::entity entity, const ComponentModelName &model,
+					 const ComponentShape &shape) {
 			ClientRpcProxy::Broadcast_SetModel(
 				this->shared_from_this(), entity.id(), model.modelName, shape);
 		});
 
-	ecs.observer<EntityStaticTransform, EntityModelName,
-				 EntityStaticCollisionShapeName>()
+	ecs.observer<ComponentStaticTransform, ComponentModelName,
+				 ComponentStaticCollisionShapeName>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const EntityStaticTransform &transform,
-					 const EntityModelName &model,
-					 const EntityStaticCollisionShapeName &shape) {
+					 const ComponentStaticTransform &transform,
+					 const ComponentModelName &model,
+					 const ComponentStaticCollisionShapeName &shape) {
 			// TODO: separate transform broadcast from model and shape broadcast
 			ClientRpcProxy::Broadcast_SpawnStaticEntities(
 				this, entity, transform, model, shape);

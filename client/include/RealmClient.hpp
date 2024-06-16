@@ -23,10 +23,10 @@ public:
 
 	void AddNewAuthoritativeMovementState(
 		uint64_t localId, uint64_t serverId,
-		EntityLastAuthoritativeMovementState state);
+		ComponentLastAuthoritativeMovementState state);
 	void UpdateEntityCurrentState(uint64_t localId, uint64_t serverId);
 
-	virtual EntityMovementState
+	virtual ComponentMovementState
 	ExecuteMovementUpdate(uint64_t entityId) override;
 
 	void RegisterObservers();

@@ -19,7 +19,7 @@
 
 #include <glm/glm.hpp>
 
-#include "../../common/include/EntityData.hpp"
+#include "../../common/include/EntityComponents.hpp"
 
 using namespace godot;
 
@@ -39,10 +39,10 @@ public: // Godot bound functions
 	// void _my_internal_process(double dt);
 	// void _physics_process(double dt) override;
 
-	void Init(uint64_t localEntityId, const EntityModelName &model,
-			  EntityStaticTransform transform);
+	void Init(uint64_t localEntityId, const ComponentModelName &model,
+			  ComponentStaticTransform transform);
 
-	void SetTransform(const EntityStaticTransform &transform);
+	void SetTransform(const ComponentStaticTransform &transform);
 
 public: // variables
 	uint64_t localEntityId = 0;

@@ -43,9 +43,9 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, GetPlayerRotation);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerPosition);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerVelocity);
-	
+
 	METHOD_NO_ARGS(GameFrontend, GetIsPlayerOnGround);
-	
+
 	METHOD_NO_ARGS(GameFrontend, GetPlayerHeight);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerWidth);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerCamera);
@@ -127,10 +127,7 @@ Vector3 GameFrontend::GetPlayerVelocity()
 	return ToGodot(client->GetVelocity());
 }
 
-bool GameFrontend::GetIsPlayerOnGround()
-{
-	return client->GetOnGround();
-}
+bool GameFrontend::GetIsPlayerOnGround() { return client->GetOnGround(); }
 
 float GameFrontend::GetPlayerHeight() { return client->GetShape().height; }
 float GameFrontend::GetPlayerWidth() { return client->GetShape().width; }

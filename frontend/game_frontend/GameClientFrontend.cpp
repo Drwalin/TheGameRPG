@@ -6,7 +6,7 @@
 
 #include "EntityPrefabScript.hpp"
 #include "GameFrontend.hpp"
-#include "EntityDataFrontend.hpp"
+#include "EntityComponentsFrontend.hpp"
 #include "GameFrontend.hpp"
 #include "GodotGlm.hpp"
 #include "EntityPrefabScript.hpp"
@@ -76,9 +76,9 @@ void GameClientFrontend::RunOneEpoch()
 void GameClientFrontend::RegisterObservers()
 {
 	realm->RegisterObserver(
-		flecs::OnSet, +[](flecs::entity entity, const EntityName &name) {
-			EntityGodotNode *node =
-				(EntityGodotNode *)entity.get<EntityGodotNode>();
+		flecs::OnSet, +[](flecs::entity entity, const ComponentName &name) {
+			ComponentGodotNode *node =
+				(ComponentGodotNode *)entity.get<ComponentGodotNode>();
 			if (node) {
 				if (node->node) {
 					node->node->SetName(name);
@@ -88,56 +88,57 @@ void GameClientFrontend::RegisterObservers()
 
 	realm->RegisterObserver(
 		flecs::OnAdd,
-		[this](flecs::entity entity, const EntityModelName &modelName,
-			   const EntityMovementState &movementState) {
-			if (entity.has<EntityGodotNode>() == false) {
+		[this](flecs::entity entity, const ComponentModelName &modelName,
+			   const ComponentMovementState &movementState) {
+			if (entity.has<ComponentGodotNode>() == false) {
 				EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 				node->Init(entity.id());
 				node->frontend = this->frontend;
 				frontend->GetNodeToAddEntities()->add_child(node);
-				realm->SetComponent(entity.id(), EntityGodotNode{node});
-				const EntityName *name =
-					realm->GetComponent<EntityName>(entity.id());
+				realm->SetComponent(entity.id(), ComponentGodotNode{node});
+				const ComponentName *name =
+					realm->GetComponent<ComponentName>(entity.id());
 				if (name) {
 					node->SetName(*name);
 				}
 			}
 		});
 
-	realm->RegisterObserver(flecs::OnSet, [this](flecs::entity entity,
-												 const EntityModelName &model) {
-		auto transform = entity.get<EntityStaticTransform>();
-		if (transform) {
-			EntityStaticGodotNode node;
-			if (auto n = entity.get<EntityStaticGodotNode>()) {
-				node = *n;
+	realm->RegisterObserver(
+		flecs::OnSet,
+		[this](flecs::entity entity, const ComponentModelName &model) {
+			auto transform = entity.get<ComponentStaticTransform>();
+			if (transform) {
+				ComponentStaticGodotNode node;
+				if (auto n = entity.get<ComponentStaticGodotNode>()) {
+					node = *n;
+				}
+				if (node.node == nullptr) {
+					node.node = EntityStaticPrefabScript::CreateNew();
+					frontend->GetNodeToAddStaticMap()->add_child(node.node);
+				}
+				node.node->Init(entity.id(), model, *transform);
+				entity.set<ComponentStaticGodotNode>(node);
+				return;
 			}
-			if (node.node == nullptr) {
-				node.node = EntityStaticPrefabScript::CreateNew();
-				frontend->GetNodeToAddStaticMap()->add_child(node.node);
+			ComponentGodotNode *node =
+				(ComponentGodotNode *)entity.get<ComponentGodotNode>();
+			if (node) {
+				node->node->SetModel(model);
 			}
-			node.node->Init(entity.id(), model, *transform);
-			entity.set<EntityStaticGodotNode>(node);
-			return;
-		}
-		EntityGodotNode *node =
-			(EntityGodotNode *)entity.get<EntityGodotNode>();
-		if (node) {
-			node->node->SetModel(model);
-		}
-	});
+		});
 
 	realm->RegisterObserver(
 		flecs::OnSet,
-		+[](flecs::entity entity, const EntityStaticTransform &transform) {
-			if (auto node = entity.get<EntityStaticGodotNode>()) {
+		+[](flecs::entity entity, const ComponentStaticTransform &transform) {
+			if (auto node = entity.get<ComponentStaticGodotNode>()) {
 				node->node->SetTransform(transform);
 			}
 		});
 
 	realm->RegisterObserver(
 		flecs::OnRemove,
-		+[](flecs::entity entity, EntityStaticGodotNode &node) {
+		+[](flecs::entity entity, ComponentStaticGodotNode &node) {
 			if (node.node) {
 				node.node->localEntityId = 0;
 				if (node.node->get_parent()) {
@@ -149,7 +150,7 @@ void GameClientFrontend::RegisterObservers()
 		});
 
 	realm->RegisterObserver(
-		flecs::OnRemove, +[](flecs::entity entity, EntityGodotNode &node) {
+		flecs::OnRemove, +[](flecs::entity entity, ComponentGodotNode &node) {
 			if (node.node) {
 				node.node->localEntityId = 0;
 				if (node.node->get_parent()) {
@@ -159,6 +160,6 @@ void GameClientFrontend::RegisterObservers()
 				node.node = nullptr;
 			}
 		});
-	
-	// TODO: add ecs::observer(OnSet, EntityShape)
+
+	// TODO: add ecs::observer(OnSet, ComponentShape)
 }

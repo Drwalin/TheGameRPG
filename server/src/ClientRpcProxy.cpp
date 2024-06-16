@@ -64,10 +64,10 @@ void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
 										ClientRpcFunctionNames::SpawnEntities);
 	realm->queryEntityLongState.each(
 		[&](flecs::entity entity,
-			const EntityLastAuthoritativeMovementState state,
-			const EntityName name, const EntityModelName model,
-			const EntityShape shape,
-			const EntityMovementParameters movementParams) {
+			const ComponentLastAuthoritativeMovementState state,
+			const ComponentName name, const ComponentModelName model,
+			const ComponentShape shape,
+			const ComponentMovementParameters movementParams) {
 			writer.op((uint64_t)entity.id());
 			writer.op(state);
 			writer.op(name);
@@ -91,18 +91,20 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 		reader.op(entityId);
 		flecs::entity entity = realm->Entity(entityId);
 		if (entity.is_alive()) {
-			if (entity.has<EntityLastAuthoritativeMovementState>() &&
-				entity.has<EntityName>() && entity.has<EntityModelName>() &&
-				entity.has<EntityShape>() &&
-				entity.has<EntityMovementParameters>()) {
+			if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+				entity.has<ComponentName>() &&
+				entity.has<ComponentModelName>() &&
+				entity.has<ComponentShape>() &&
+				entity.has<ComponentMovementParameters>()) {
 
 				writer.op(entityId);
 
-				writer.op(*entity.get<EntityLastAuthoritativeMovementState>());
-				writer.op(*entity.get<EntityName>());
-				writer.op(*entity.get<EntityModelName>());
-				writer.op(*entity.get<EntityShape>());
-				writer.op(*entity.get<EntityMovementParameters>());
+				writer.op(
+					*entity.get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.get<ComponentName>());
+				writer.op(*entity.get<ComponentModelName>());
+				writer.op(*entity.get<ComponentShape>());
+				writer.op(*entity.get<ComponentMovementParameters>());
 			}
 		}
 	}
@@ -112,18 +114,18 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 }
 
 void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
-						const std::string &modelName, EntityShape shape)
+						const std::string &modelName, ComponentShape shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SetModel, entityId,
 							 modelName, shape);
 }
 
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const EntityMovementState &state,
-						   const EntityShape &shape,
-						   const EntityModelName &entityModelName,
-						   const EntityName &entityName,
-						   const EntityMovementParameters &movementParams)
+						   const ComponentMovementState &state,
+						   const ComponentShape &shape,
+						   const ComponentModelName &entityModelName,
+						   const ComponentName &entityName,
+						   const ComponentMovementParameters &movementParams)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnEntities, entityId,
 							 state, entityName, entityModelName, shape,
@@ -140,7 +142,7 @@ void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm)
 
 	realm->queryLastAuthoritativeState.each(
 		[&](flecs::entity entity,
-			const EntityLastAuthoritativeMovementState &state) {
+			const ComponentLastAuthoritativeMovementState &state) {
 			if (written == 0) {
 				writer.Reinit(1500);
 				realm->rpc->InitializeSerializeSend(
@@ -187,10 +189,10 @@ void LoginFailed(icon7::Peer *peer)
 		ClientRpcFunctionNames::LoginFailed);
 }
 
-void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
-								   const EntityStaticTransform &transform,
-								   const EntityModelName &model,
-								   const EntityStaticCollisionShapeName &shape)
+void Broadcast_SpawnStaticEntities(
+	RealmServer *realm, uint64_t entityId,
+	const ComponentStaticTransform &transform, const ComponentModelName &model,
+	const ComponentStaticCollisionShapeName &shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
 							 entityId, transform, model, shape);
@@ -203,9 +205,9 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 		writer, ClientRpcFunctionNames::SpawnStaticEntities);
 	int written = 0;
 	realm->queryStaticEntity.each(
-		[&](flecs::entity entity, const EntityStaticTransform &transform,
-			const EntityModelName &model,
-			const EntityStaticCollisionShapeName &shape) {
+		[&](flecs::entity entity, const ComponentStaticTransform &transform,
+			const ComponentModelName &model,
+			const ComponentStaticCollisionShapeName &shape) {
 			++written;
 			writer.op(entity.id());
 			writer.op(transform);

@@ -30,13 +30,14 @@ public:
 	virtual bool OneEpoch();
 
 	virtual void UpdateEntityAuthoritativeState(
-		uint64_t entityId, const EntityLastAuthoritativeMovementState &state);
+		uint64_t entityId,
+		const ComponentLastAuthoritativeMovementState &state);
 
-	virtual EntityMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
+	virtual ComponentMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
 
-	uint64_t CreateStaticEntity(EntityStaticTransform transform,
-								EntityModelName model,
-								EntityStaticCollisionShapeName shape);
+	uint64_t CreateStaticEntity(ComponentStaticTransform transform,
+								ComponentModelName model,
+								ComponentStaticCollisionShapeName shape);
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) = 0;
@@ -59,9 +60,9 @@ public:
 	EntityEventPriorityQueue eventsPriorityQueue;
 
 public:
-	flecs::query<const EntityShape, EntityMovementState,
-				 const EntityLastAuthoritativeMovementState,
-				 const EntityMovementParameters>
+	flecs::query<const ComponentShape, ComponentMovementState,
+				 const ComponentLastAuthoritativeMovementState,
+				 const ComponentMovementParameters>
 		queryEntityForMovementUpdate;
 
 public:

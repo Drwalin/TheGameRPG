@@ -18,7 +18,7 @@ static inline float R()
 	return dist(mt);
 }
 
-struct EntityShape {
+struct ComponentShape {
 	float height = 1.75f;
 	float width = 0.5f;
 
@@ -30,20 +30,20 @@ struct EntityShape {
 	}
 };
 
-struct EntityMovementState {
+struct ComponentMovementState {
 	int64_t timestamp = 0;
 	glm::vec3 pos = {R(), 70, R()};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;
 
-	inline bool operator==(const EntityMovementState &o) const
+	inline bool operator==(const ComponentMovementState &o) const
 	{
 		return timestamp == o.timestamp && pos == o.pos && vel == o.vel &&
 			   rot == o.rot && onGround == o.onGround;
 	}
 
-	inline bool operator!=(const EntityMovementState &o) const
+	inline bool operator!=(const ComponentMovementState &o) const
 	{
 		return timestamp != o.timestamp || pos != o.pos || vel != o.vel ||
 			   rot != o.rot || onGround != o.onGround;
@@ -60,8 +60,8 @@ struct EntityMovementState {
 	}
 };
 
-struct EntityLastAuthoritativeMovementState {
-	EntityMovementState oldState;
+struct ComponentLastAuthoritativeMovementState {
+	ComponentMovementState oldState;
 
 	template <typename S> S &__ByteStream_op(S &s)
 	{
@@ -69,7 +69,7 @@ struct EntityLastAuthoritativeMovementState {
 	}
 };
 
-struct EntityName {
+struct ComponentName {
 	std::string name;
 
 	template <typename S> S &__ByteStream_op(S &s)
@@ -79,7 +79,7 @@ struct EntityName {
 	}
 };
 
-struct EntityMovementParameters {
+struct ComponentMovementParameters {
 	float maxMovementSpeedHorizontal = 5.0f;
 	float stepHeight = 0.25f;
 
@@ -91,7 +91,7 @@ struct EntityMovementParameters {
 	}
 };
 
-struct EntityModelName {
+struct ComponentModelName {
 	std::string modelName;
 
 	template <typename S> S &__ByteStream_op(S &s)
@@ -101,7 +101,7 @@ struct EntityModelName {
 	}
 };
 
-struct EntityStaticTransform {
+struct ComponentStaticTransform {
 	glm::vec3 pos = {0, 0, 0};
 	glm::quat rot = {0, 0, 0, 1};
 	glm::vec3 scale = {1, 1, 1};
@@ -115,7 +115,7 @@ struct EntityStaticTransform {
 	}
 };
 
-struct EntityStaticCollisionShapeName {
+struct ComponentStaticCollisionShapeName {
 	std::string shapeName;
 
 	template <typename S> S &__ByteStream_op(S &s)
