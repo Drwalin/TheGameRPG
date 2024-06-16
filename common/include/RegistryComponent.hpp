@@ -15,8 +15,6 @@
 namespace reg
 {
 
-class SpecializedRegistry;
-
 class ComponentConstructorBase
 {
 public:
@@ -114,39 +112,9 @@ private:
 	std::map<std::string, uint16_t> nameToId;
 	std::map<uint16_t, ComponentConstructorBase *> idToComponent;
 };
-
-class SpecializedRegistry
-{
-public:
-	SpecializedRegistry();
-	~SpecializedRegistry();
-
-	template <typename T> void RegisterComponent()
-	{
-		components.insert(&ComponentConstructor<T>::singleton);
-	}
-
-	void SerializeEntity(flecs::entity entity, icon7::ByteWriter &writer) const;
-
-private:
-	std::set<ComponentConstructorBase *> components;
-};
-
-template <typename T>
-void RegisterComponentIntoSpecializedRegistries(
-	std::vector<SpecializedRegistry *> regs)
-{
-	for (auto r : regs) {
-		r->RegisterComponent<T>();
-	}
-}
-
-extern SpecializedRegistry entityPublicRegistry;
-extern SpecializedRegistry entityPrivateRegistry;
-
 } // namespace reg
 
-#define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, ...)                     \
+#define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT)                          \
 	template <>                                                                \
 	reg::ComponentConstructor<COMPONENT>                                       \
 		reg::ComponentConstructor<COMPONENT>::singleton =                      \
@@ -154,6 +122,4 @@ extern SpecializedRegistry entityPrivateRegistry;
 	template <>                                                                \
 	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
 		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(#COMPONENT),  \
-		 reg::RegisterComponentIntoSpecializedRegistries<COMPONENT>(           \
-			 {__VA_ARGS__}),                                                   \
 		 0);
