@@ -1,6 +1,5 @@
 #pragma once
 
-#include <set>
 #include <map>
 #include <string>
 
@@ -29,7 +28,6 @@ public:
 	virtual bool HasComponent(flecs::entity entity) const = 0;
 
 	const std::string name = "";
-	uint16_t id = 0;
 };
 
 template <typename T>
@@ -48,7 +46,10 @@ public:
 		T component;
 		reader.op(component);
 		if (reader.is_valid()) {
+			LOG_TRACE("Successfull deserialization: %s", name.c_str());
 			entity.set<T>(component);
+		} else {
+			LOG_TRACE("Failed deserialization: %s", name.c_str());
 		}
 	}
 
@@ -56,11 +57,14 @@ public:
 	SerializeEntityComponent(flecs::entity entity,
 							 icon7::ByteWriter &writer) const override
 	{
-		writer.op(id);
 		const T *component = entity.get<T>();
 		if (component) {
+			LOG_TRACE("Successfull serialization: %s", name.c_str());
+			writer.op(name);
 			writer.op(*component);
 			return true;
+		} else {
+			LOG_TRACE("Failed serialization: %s", name.c_str());
 		}
 		return false;
 	}
@@ -83,22 +87,15 @@ public:
 
 	template <typename T> void RegisterComponent(std::string name)
 	{
-		uint16_t id = GetNextComponentId();
-		ComponentConstructorBase *com = &ComponentConstructor<T>::singleton;
-		if (nameToId.count(name) != 0) {
+		LOG_TRACE("Register component: %s", name.c_str());
+		if (nameToComponent.count(name) != 0) {
 			LOG_FATAL("Component with name %s already exists", name.c_str());
 			return;
 		}
+		ComponentConstructorBase *com = &ComponentConstructor<T>::singleton;
 		components.push_back(com);
-		nameToId.insert({name, id});
-		idToComponent.insert({id, com});
+		nameToComponent.insert({name, com});
 	}
-
-	uint16_t GetNextComponentId() const;
-	void SetComponentId(std::string name, uint16_t newId);
-
-	void WriteComponentsConfiguration(icon7::ByteWriter &writer);
-	void RestoreComponentsConfiguration(icon7::ByteReader &reader);
 
 	void DeserializeEntityComponent(flecs::entity entity,
 									icon7::ByteReader &reader);
@@ -109,8 +106,7 @@ public:
 
 private:
 	std::vector<ComponentConstructorBase *> components;
-	std::map<std::string, uint16_t> nameToId;
-	std::map<uint16_t, ComponentConstructorBase *> idToComponent;
+	std::map<std::string, ComponentConstructorBase *> nameToComponent;
 };
 } // namespace reg
 

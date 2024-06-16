@@ -20,7 +20,7 @@ public:
 
 	void CreateRealm(std::string realmName);
 
-	void ConnectPeerToRealm(icon7::Peer *peer, std::string realmName);
+	void ConnectPeerToRealm(icon7::Peer *peer);
 
 	void Disconnect(icon7::Peer *peer);
 

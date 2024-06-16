@@ -41,6 +41,9 @@ public:
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
 
+private:
+	void StorePlayerDataInPeerAndFile(icon7::Peer *peer);
+
 public:
 	void Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId);
 

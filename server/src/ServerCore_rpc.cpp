@@ -66,16 +66,17 @@ void ServerCore::UpdatePlayer(
 	}
 }
 
-void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
+void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 {
 	LOG_INFO("TODO: replace ServerCore::ConnectPeerToRealm with something "
 			 "suitable to use with database.");
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");
-		// 		return;
+		return;
 	}
-	std::shared_ptr<RealmServer> newRealm = realmManager.GetRealm(realmName);
+	std::shared_ptr<RealmServer> newRealm =
+		realmManager.GetRealm(data->nextRealm);
 	if (newRealm == nullptr) {
 		LOG_INFO("Invalid realm");
 		return;
@@ -83,25 +84,44 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer, std::string realmName)
 
 	std::shared_ptr<RealmServer> oldRealm = data->realm.lock();
 	if (oldRealm) {
-		oldRealm->DisconnectPeer(peer);
-
-		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
+		class CommandDisconnectPeer : public icon7::commands::ExecuteOnPeer
 		{
 		public:
-			CommandConnectPeerToRealm() = default;
-			~CommandConnectPeerToRealm() = default;
-			std::string realmName;
-			ServerCore *serverCore;
+			CommandDisconnectPeer() = default;
+			~CommandDisconnectPeer() = default;
+
+			std::weak_ptr<RealmServer> newRealm;
+			std::weak_ptr<RealmServer> oldRealm;
 			virtual void Execute() override
 			{
-				serverCore->ConnectPeerToRealm(peer.get(), realmName);
+				std::shared_ptr<RealmServer> oldRealm = this->oldRealm.lock();
+				std::shared_ptr<RealmServer> newRealm = this->newRealm.lock();
+				if (oldRealm) {
+					oldRealm->DisconnectPeer(this->peer.get());
+
+					class CommandConnectPeerToRealm
+						: public icon7::commands::ExecuteOnPeer
+					{
+					public:
+						CommandConnectPeerToRealm() = default;
+						~CommandConnectPeerToRealm() = default;
+						ServerCore *serverCore;
+						virtual void Execute() override
+						{
+							serverCore->ConnectPeerToRealm(peer.get());
+						}
+					};
+					auto com = icon7::CommandHandle<
+						CommandConnectPeerToRealm>::Create();
+					com->peer = peer->shared_from_this();
+					com->serverCore = oldRealm->serverCore;
+
+					if (newRealm) {
+						newRealm->executionQueue.EnqueueCommand(std::move(com));
+					}
+				}
 			}
 		};
-		auto com = icon7::CommandHandle<CommandConnectPeerToRealm>::Create();
-		com->realmName = realmName;
-		com->peer = peer->shared_from_this();
-		com->serverCore = this;
-		newRealm->executionQueue.EnqueueCommand(std::move(com));
 	} else {
 		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
 		{
