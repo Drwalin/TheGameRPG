@@ -8,6 +8,7 @@
 
 #include "BulletPhysicsCallbacks.hpp"
 #include "../include/CollisionWorld.hpp"
+#include "../include/Realm.hpp"
 
 bool CollisionWorld::RayTestFirstHitWithObjects(
 	glm::vec3 start, glm::vec3 direction, glm::vec3 *hitPosition,
@@ -61,10 +62,11 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 									 float *travelFactor, bool *hasNormal,
 									 uint64_t ignoreEntityId) const
 {
+	auto entity = realm->Entity(ignoreEntityId);
 	btCollisionObject *object = nullptr;
-	auto it = entities.find(ignoreEntityId);
-	if (it != entities.end()) {
-		object = it->second;
+	auto obj = entity.get<ComponentBulletCollisionObject>();
+	if (obj) {
+		object = obj->object;
 	}
 	ClosestRayResultNotMe cb(object, start, end);
 	cb.m_collisionFilterMask = btBroadphaseProxy::AllFilter;

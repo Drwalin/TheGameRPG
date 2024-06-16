@@ -128,12 +128,6 @@ void Realm::RegisterObservers()
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 
-	RegisterObserver(
-		flecs::OnSet, [this](flecs::entity entity,
-							 const ComponentStaticTransform &transform) {
-			collisionWorld.EntitySetTransform(entity.id(), transform);
-		});
-
 	queryEntityForMovementUpdate =
 		ecs.query<const ComponentShape, ComponentMovementState,
 				  const ComponentLastAuthoritativeMovementState,
@@ -194,21 +188,12 @@ uint64_t Realm::CreateStaticEntity(ComponentStaticTransform transform,
 								   ComponentModelName model,
 								   ComponentStaticCollisionShapeName shape)
 {
-	TerrainCollisionData col;
-	bool r = GetCollisionShape(shape.shapeName, &col);
-	if (r || shape.shapeName == "") {
-		uint64_t entityId = NewEntity();
-		flecs::entity entity = Entity(entityId);
+	uint64_t entityId = NewEntity();
+	flecs::entity entity = Entity(entityId);
 
-		entity.set(transform);
-		entity.set(model);
-		entity.set(shape);
+	entity.set(transform);
+	entity.set(model);
+	entity.set(shape);
 
-		if (r) {
-			collisionWorld.LoadStaticCollision(entityId, &col, transform);
-		}
-
-		return entityId;
-	}
-	return 0;
+	return entityId;
 }

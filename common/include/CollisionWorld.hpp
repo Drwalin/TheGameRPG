@@ -1,15 +1,19 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
 
 #include <glm/glm.hpp>
+#include <flecs.h>
 
 #include "EntityComponents.hpp"
 
 struct TerrainCollisionData {
 	std::vector<glm::vec3> vertices;
 	std::vector<uint32_t> indices;
+};
+
+struct ComponentBulletCollisionObject {
+	class btCollisionObject *object;
 };
 
 class btCylinderShape;
@@ -28,23 +32,22 @@ public:
 
 	void Clear();
 
-	struct EntityInfo {
-		ComponentShape shape;
-		glm::vec3 pos;
-	};
-
 	void Debug() const;
 
-	void LoadStaticCollision(uint64_t entityId,
-							 const TerrainCollisionData *data,
-							 ComponentStaticTransform transform);
+	void OnStaticCollisionShape(
+		flecs::entity entity,
+		const ComponentStaticCollisionShapeName &collisionName,
+		const ComponentStaticTransform &transform);
 
-	bool AddEntity(uint64_t entityId, ComponentShape shape, glm::vec3 pos);
-	void UpdateEntityBvh(uint64_t entityId, ComponentShape shape,
+	void UpdateEntityBvh(const ComponentBulletCollisionObject obj,
+						 ComponentShape shape, glm::vec3 pos);
+
+	void UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 						 glm::vec3 pos);
-	void DeleteEntity(uint64_t entityId);
 
-	void EntitySetTransform(uint64_t entityId,
+	void OnAddEntity(flecs::entity entity, ComponentShape shape, glm::vec3 pos);
+
+	void EntitySetTransform(const ComponentBulletCollisionObject obj,
 							const ComponentStaticTransform &transform);
 
 	// returns true if any collision happens
@@ -147,7 +150,6 @@ private:
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;
 
-	std::unordered_map<uint64_t, btCollisionObject *> entities;
-
+	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects;
 	class Realm *realm;
 };
