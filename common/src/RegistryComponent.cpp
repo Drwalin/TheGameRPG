@@ -107,9 +107,9 @@ void SpecializedRegistry::SerializeEntity(flecs::entity entity,
 			++count;
 		}
 	}
-	
+
 	count = bitscpp::HostToNetworkUint<uint16_t>(count);
 	writer.Buffer().data()[offset] = ((uint8_t *)&count)[0];
-	writer.Buffer().data()[offset+1] = ((uint8_t *)&count)[1];
+	writer.Buffer().data()[offset + 1] = ((uint8_t *)&count)[1];
 }
-} // namespace Registry
+} // namespace reg

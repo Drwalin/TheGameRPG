@@ -10,4 +10,3 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementParameters, {});
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentModelName, {});
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticTransform, {});
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticCollisionShapeName, {});
-
