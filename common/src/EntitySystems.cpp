@@ -80,7 +80,6 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 			normal = glm::normalize(normal);
-			float dnv = glm::dot(normal, vel);
 			vel -= normal * glm::dot(normal, vel);
 			if (vel.y > 0) {
 				glm::vec3 vv = vel;
