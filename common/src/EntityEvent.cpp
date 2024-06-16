@@ -3,9 +3,9 @@
 
 #include "../include/EntityEvent.hpp"
 
-void EntityEventsQueue::InsertIntoRealmSchedule(Realm *realm,
-												uint64_t thisEntityId,
-												int64_t dueTick)
+void ComponentEventsQueue::InsertIntoRealmSchedule(Realm *realm,
+												   uint64_t thisEntityId,
+												   int64_t dueTick)
 {
 	EntityEventEntry entry;
 	entry.dueTick = dueTick;
@@ -13,8 +13,8 @@ void EntityEventsQueue::InsertIntoRealmSchedule(Realm *realm,
 	realm->eventsPriorityQueue.Push(entry);
 }
 
-void EntityEventsQueue::ScheduleEvent(Realm *realm, uint64_t thisEntityId,
-									  EntityEvent event)
+void ComponentEventsQueue::ScheduleEvent(Realm *realm, uint64_t thisEntityId,
+										 EntityEvent event)
 {
 	if (!events.Empty()) {
 		EntityEvent &top = events.Top();
@@ -34,8 +34,8 @@ void EntityEventsQueue::ScheduleEvent(Realm *realm, uint64_t thisEntityId,
 	InsertIntoRealmSchedule(realm, thisEntityId, event.dueTick);
 }
 
-void EntityEventsQueue::Update(int64_t currentTick, uint64_t entityId,
-							   class Realm *realm)
+void ComponentEventsQueue::Update(int64_t currentTick, uint64_t entityId,
+								  class Realm *realm)
 {
 	if (events.Empty()) {
 		return;

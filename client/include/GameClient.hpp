@@ -33,7 +33,8 @@ private: // rpc methods
 	void SpawnEntities(icon7::ByteReader *reader);
 	void SpawnStaticEntities(icon7::ByteReader *reader);
 	void UpdateEntities(icon7::ByteReader *reader);
-	void SetModel(uint64_t serverId, EntityModelName model, EntityShape shape);
+	void SetModel(uint64_t serverId, ComponentModelName model,
+				  ComponentShape shape);
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t serverId);
 	void SetGravity(float gravity);
@@ -42,15 +43,16 @@ private: // rpc methods
 	void Pong(int64_t localTick, int64_t remoteTick);
 
 	void SpawnEntity(uint64_t serverId,
-					 const EntityLastAuthoritativeMovementState state,
-					 const EntityName name, const EntityModelName model,
-					 const EntityShape shape,
-					 const EntityMovementParameters movementParams);
-	void SpawnStaticEntity(uint64_t serverId, EntityStaticTransform transform,
-						   EntityModelName model,
-						   EntityStaticCollisionShapeName shape);
+					 const ComponentLastAuthoritativeMovementState state,
+					 const ComponentName name, const ComponentModelName model,
+					 const ComponentShape shape,
+					 const ComponentMovementParameters movementParams);
+	void SpawnStaticEntity(uint64_t serverId,
+						   ComponentStaticTransform transform,
+						   ComponentModelName model,
+						   ComponentStaticCollisionShapeName shape);
 	void UpdateEntity(uint64_t serverId,
-					  const EntityLastAuthoritativeMovementState state);
+					  const ComponentLastAuthoritativeMovementState state);
 	void RemoveEntity(uint64_t serverId);
 
 	void RequestSpawnOf(uint64_t serverId);
@@ -72,7 +74,7 @@ public: // client input api
 	glm::vec3 GetRotation();
 	glm::vec3 GetPosition();
 	glm::vec3 GetVelocity();
-	EntityShape GetShape();
+	ComponentShape GetShape();
 	bool GetOnGround();
 
 	void PerformSendPlayerMovementInput();

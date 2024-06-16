@@ -1,5 +1,5 @@
 #include "../include/GameClient.hpp"
-#include "../include/EntityDataClient.hpp"
+#include "../include/EntityComponentsClient.hpp"
 
 #include "../../common/include/EntitySystems.hpp"
 
@@ -46,12 +46,12 @@ bool RealmClient::OneEpoch() { return Realm::OneEpoch(); }
 
 void RealmClient::AddNewAuthoritativeMovementState(
 	uint64_t localId, uint64_t serverId,
-	EntityLastAuthoritativeMovementState _state)
+	ComponentLastAuthoritativeMovementState _state)
 {
 	_state.oldState.timestamp += STATE_UPDATE_DELAY;
-	EntityMovementState state = _state.oldState;
-	EntityMovementHistory *movement =
-		AccessComponent<EntityMovementHistory>(localId);
+	ComponentMovementState state = _state.oldState;
+	ComponentMovementHistory *movement =
+		AccessComponent<ComponentMovementHistory>(localId);
 	auto &states = movement->states;
 	for (int i = states.size() - 1; i >= 0; --i) {
 		if (states[i].timestamp < state.timestamp) {
@@ -77,33 +77,33 @@ void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 	ExecuteMovementUpdate(localId);
 }
 
-EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
+ComponentMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 {
 	auto entity = Entity(entityId);
 
-	const EntityShape *shape = entity.get<EntityShape>();
+	const ComponentShape *shape = entity.get<ComponentShape>();
 	if (shape == nullptr) {
 		return {};
 	}
-	EntityMovementState *currentState =
-		(EntityMovementState *)entity.get<EntityMovementState>();
+	ComponentMovementState *currentState =
+		(ComponentMovementState *)entity.get<ComponentMovementState>();
 	if (currentState == nullptr) {
 		return {};
 	}
-	EntityLastAuthoritativeMovementState *lastAuthoritativeState =
-		(EntityLastAuthoritativeMovementState *)
-			entity.get<EntityLastAuthoritativeMovementState>();
+	ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
+		(ComponentLastAuthoritativeMovementState *)
+			entity.get<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		return {};
 	}
-	const EntityMovementParameters *movementParams =
-		entity.get<EntityMovementParameters>();
+	const ComponentMovementParameters *movementParams =
+		entity.get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
 		return {};
 	}
 
-	EntityMovementHistory *_states =
-		(EntityMovementHistory *)entity.get<EntityMovementHistory>();
+	ComponentMovementHistory *_states =
+		(ComponentMovementHistory *)entity.get<ComponentMovementHistory>();
 	if (entityId != gameClient->localPlayerEntityId && _states != nullptr &&
 		_states->states.size() > 0) {
 		auto &states = _states->states;
@@ -126,13 +126,13 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 									  *lastAuthoritativeState, *movementParams);
 
 		if (id + 1 < states.size()) {
-			EntityMovementState prev;
+			ComponentMovementState prev;
 			if (id >= 0) {
 				prev = states[id];
 			} else {
 				prev = lastAuthoritativeState->oldState;
 			}
-			EntityMovementState next = states[id + 1];
+			ComponentMovementState next = states[id + 1];
 
 			glm::vec3 A = prev.pos;
 			glm::vec3 B = next.pos;
@@ -163,14 +163,15 @@ EntityMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 void RealmClient::RegisterObservers()
 {
 	RegisterObserver(
-		flecs::OnAdd,
-		+[](flecs::entity entity, const EntityMovementState &,
-			const EntityLastAuthoritativeMovementState &, const EntityName,
-			const EntityModelName, const EntityShape,
-			const EntityName &name) { entity.add<EntityMovementHistory>(); });
+		flecs::OnAdd, +[](flecs::entity entity, const ComponentMovementState &,
+						  const ComponentLastAuthoritativeMovementState &,
+						  const ComponentName, const ComponentModelName,
+						  const ComponentShape, const ComponentName &name) {
+			entity.add<ComponentMovementHistory>();
+		});
 
 	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
-											 const EntityMovementState &) {
+											 const ComponentMovementState &) {
 		entity.destruct();
 		auto it =
 			gameClient->mapLocalEntityIdToServerEntityId.find(entity.id());
@@ -181,7 +182,7 @@ void RealmClient::RegisterObservers()
 	});
 
 	RegisterObserver(flecs::OnRemove, [this](flecs::entity entity,
-											 const EntityStaticTransform &) {
+											 const ComponentStaticTransform &) {
 		entity.destruct();
 		auto it =
 			gameClient->mapLocalEntityIdToServerEntityId.find(entity.id());

@@ -7,7 +7,7 @@
 namespace EntityNetworkingSystems
 {
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
-							 const EntityPlayerConnectionPeer &peer)
+							 const ComponentPlayerConnectionPeer &peer)
 {
 	LOG_DEBUG("Created entity");
 	ClientRpcProxy::SetPlayerEntityId(realm, peer.peer.get(), entity.id());
@@ -16,11 +16,11 @@ void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
 }
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
-						const EntityMovementState &state,
-						const EntityShape &shape,
-						const EntityModelName &entityModelName,
-						const EntityName &entityName,
-						const EntityMovementParameters &movementParams)
+						const ComponentMovementState &state,
+						const ComponentShape &shape,
+						const ComponentModelName &entityModelName,
+						const ComponentName &entityName,
+						const ComponentMovementParameters &movementParams)
 {
 	ClientRpcProxy::Broadcast_SpawnEntity(realm, entity, state, shape,
 										  entityModelName, entityName,
@@ -28,8 +28,8 @@ void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
 }
 
 void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
-						const EntityPlayerConnectionPeer &peer,
-						const EntityName &entityName)
+						const ComponentPlayerConnectionPeer &peer,
+						const ComponentName &entityName)
 {
 	ClientRpcProxy::Broadcast_DeleteEntity(realm, entity.id());
 	// TODO: check if this realm->peers.erase() is required
@@ -41,28 +41,27 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 
 void RegisterObservers(RealmServer *realm)
 {
-	realm->RegisterObserver(
-		flecs::OnSet,
-		[realm](flecs::entity entity, const EntityPlayerConnectionPeer &peer) {
-			OnPlayerEntityConnected(realm, entity, peer);
-		});
-
-	realm->RegisterObserver(flecs::OnAdd,
+	realm->RegisterObserver(flecs::OnSet,
 							[realm](flecs::entity entity,
-									const EntityMovementState &state,
-									const EntityShape &shape,
-									const EntityModelName &entityModelName,
-									const EntityName &entityName,
-									const EntityMovementParameters &movementParams) {
-								OnNewEntitySpawned(realm, entity, state, shape,
-												   entityModelName, entityName,
-												   movementParams);
+									const ComponentPlayerConnectionPeer &peer) {
+								OnPlayerEntityConnected(realm, entity, peer);
 							});
 
 	realm->RegisterObserver(
+		flecs::OnAdd,
+		[realm](flecs::entity entity, const ComponentMovementState &state,
+				const ComponentShape &shape,
+				const ComponentModelName &entityModelName,
+				const ComponentName &entityName,
+				const ComponentMovementParameters &movementParams) {
+			OnNewEntitySpawned(realm, entity, state, shape, entityModelName,
+							   entityName, movementParams);
+		});
+
+	realm->RegisterObserver(
 		flecs::OnRemove,
-		[realm](flecs::entity entity, EntityPlayerConnectionPeer &peer,
-				const EntityName &entityName) {
+		[realm](flecs::entity entity, ComponentPlayerConnectionPeer &peer,
+				const ComponentName &entityName) {
 			OnPeerDisconnected(realm, entity, peer, entityName);
 		});
 }

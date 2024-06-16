@@ -15,7 +15,7 @@
  * be at least 4
  */
 bool CollisionWorld::TestCollisionMovementRays(
-	EntityShape shape, glm::vec3 start, glm::vec3 end,
+	ComponentShape shape, glm::vec3 start, glm::vec3 end,
 	glm::vec3 *finalCorrectedPosition, bool *isOnGround, glm::vec3 *normal,
 	int horizontalRaysCountInMovementDirection, float stepHeight,
 	float minNormalYcomponent, int horizontalFromCenterCorrectionRaysCount,

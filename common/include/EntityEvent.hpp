@@ -73,7 +73,7 @@ struct EntityEvent {
 	};
 };
 
-struct EntityEventsQueue {
+struct ComponentEventsQueue {
 	PriorityQueue<EntityEvent, EntityEvent::Comparator> events;
 
 	void InsertIntoRealmSchedule(Realm *realm, uint64_t thisEntityId,

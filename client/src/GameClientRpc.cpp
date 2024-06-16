@@ -41,11 +41,11 @@ void GameClient::JoinRealm(const std::string &realmName)
 void GameClient::SpawnEntities(icon7::ByteReader *reader)
 {
 	uint64_t serverId;
-	EntityLastAuthoritativeMovementState state;
-	EntityName name;
-	EntityModelName model;
-	EntityShape shape;
-	EntityMovementParameters movementParams;
+	ComponentLastAuthoritativeMovementState state;
+	ComponentName name;
+	ComponentModelName model;
+	ComponentShape shape;
+	ComponentMovementParameters movementParams;
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(state);
@@ -63,9 +63,9 @@ void GameClient::SpawnEntities(icon7::ByteReader *reader)
 void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 {
 	uint64_t serverId;
-	EntityStaticTransform transform;
-	EntityModelName model;
-	EntityStaticCollisionShapeName shape;
+	ComponentStaticTransform transform;
+	ComponentModelName model;
+	ComponentStaticCollisionShapeName shape;
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(transform);
@@ -86,7 +86,7 @@ void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 void GameClient::UpdateEntities(icon7::ByteReader *reader)
 {
 	uint64_t serverId;
-	EntityLastAuthoritativeMovementState state;
+	ComponentLastAuthoritativeMovementState state;
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(state);
@@ -97,8 +97,8 @@ void GameClient::UpdateEntities(icon7::ByteReader *reader)
 	}
 }
 
-void GameClient::SetModel(uint64_t serverId, EntityModelName model,
-						  EntityShape shape)
+void GameClient::SetModel(uint64_t serverId, ComponentModelName model,
+						  ComponentShape shape)
 {
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
@@ -170,11 +170,11 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 	}
 }
 
-void GameClient::SpawnEntity(uint64_t serverId,
-							 const EntityLastAuthoritativeMovementState state,
-							 const EntityName name, const EntityModelName model,
-							 const EntityShape shape,
-							 const EntityMovementParameters movementParams)
+void GameClient::SpawnEntity(
+	uint64_t serverId, const ComponentLastAuthoritativeMovementState state,
+	const ComponentName name, const ComponentModelName model,
+	const ComponentShape shape,
+	const ComponentMovementParameters movementParams)
 {
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
@@ -190,7 +190,7 @@ void GameClient::SpawnEntity(uint64_t serverId,
 	realm->SetComponent(localId, state);
 	realm->SetComponent(localId, movementParams);
 	realm->SetComponent(localId, name);
-	realm->AssureComponent<EntityEventsQueue>(localId);
+	realm->AssureComponent<ComponentEventsQueue>(localId);
 	realm->SetComponent(localId, state.oldState);
 	realm->SetComponent(localId, model);
 
@@ -204,17 +204,17 @@ void GameClient::SpawnEntity(uint64_t serverId,
 }
 
 void GameClient::SpawnStaticEntity(uint64_t serverId,
-								   EntityStaticTransform transform,
-								   EntityModelName model,
-								   EntityStaticCollisionShapeName shape)
+								   ComponentStaticTransform transform,
+								   ComponentModelName model,
+								   ComponentStaticCollisionShapeName shape)
 {
 	uint64_t localId = realm->CreateStaticEntity(transform, model, shape);
 	mapServerEntityIdToLocalEntityId[serverId] = localId;
 	mapLocalEntityIdToServerEntityId[localId] = serverId;
 }
 
-void GameClient::UpdateEntity(uint64_t serverId,
-							  const EntityLastAuthoritativeMovementState state)
+void GameClient::UpdateEntity(
+	uint64_t serverId, const ComponentLastAuthoritativeMovementState state)
 {
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);

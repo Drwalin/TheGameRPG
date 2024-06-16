@@ -10,7 +10,7 @@
 #include "../include/CollisionWorld.hpp"
 
 bool CollisionWorld::TestCollisionMovement(
-	EntityShape shape, glm::vec3 start, glm::vec3 end,
+	ComponentShape shape, glm::vec3 start, glm::vec3 end,
 	glm::vec3 *finalCorrectedPosition, bool *isOnGround, glm::vec3 *normal,
 	int approximationSpheresAmount, float stepHeight, float minNormalYcomponent,
 	float maxDistancePerIteration) const

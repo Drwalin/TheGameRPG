@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-#include "EntityData.hpp"
+#include "EntityComponents.hpp"
 
 struct TerrainCollisionData {
 	std::vector<glm::vec3> vertices;
@@ -29,7 +29,7 @@ public:
 	void Clear();
 
 	struct EntityInfo {
-		EntityShape shape;
+		ComponentShape shape;
 		glm::vec3 pos;
 	};
 
@@ -37,17 +37,18 @@ public:
 
 	void LoadStaticCollision(uint64_t entityId,
 							 const TerrainCollisionData *data,
-							 EntityStaticTransform transform);
+							 ComponentStaticTransform transform);
 
-	bool AddEntity(uint64_t entityId, EntityShape shape, glm::vec3 pos);
-	void UpdateEntityBvh(uint64_t entityId, EntityShape shape, glm::vec3 pos);
+	bool AddEntity(uint64_t entityId, ComponentShape shape, glm::vec3 pos);
+	void UpdateEntityBvh(uint64_t entityId, ComponentShape shape,
+						 glm::vec3 pos);
 	void DeleteEntity(uint64_t entityId);
 
 	void EntitySetTransform(uint64_t entityId,
-							const EntityStaticTransform &transform);
+							const ComponentStaticTransform &transform);
 
 	// returns true if any collision happens
-	bool TestCollisionMovementRays(EntityShape shape, glm::vec3 start,
+	bool TestCollisionMovementRays(ComponentShape shape, glm::vec3 start,
 								   glm::vec3 end,
 								   glm::vec3 *finalCorrectedPosition,
 								   bool *isOnGround, glm::vec3 *normal,
@@ -55,7 +56,7 @@ public:
 								   float stepHeight, float minNormalYcomponent,
 								   int horizontalFromCenterCorrectionRaysCount,
 								   float verticalRayTestToGroundDistance) const;
-	bool TestCollisionMovement(EntityShape shape, glm::vec3 start,
+	bool TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,
 							   int approximationSpheresAmount, float stepHeight,

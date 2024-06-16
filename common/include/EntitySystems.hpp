@@ -2,15 +2,15 @@
 
 #include <flecs.h>
 
-#include "EntityData.hpp"
+#include "EntityComponents.hpp"
 
 class Realm;
 
 namespace EntitySystems
 {
 void UpdateMovement(
-	Realm *realm, flecs::entity entity, const EntityShape shape,
-	EntityMovementState &currentState,
-	const EntityLastAuthoritativeMovementState &lastAuthoritativeState,
-	const EntityMovementParameters &movementParams);
+	Realm *realm, flecs::entity entity, const ComponentShape shape,
+	ComponentMovementState &currentState,
+	const ComponentLastAuthoritativeMovementState &lastAuthoritativeState,
+	const ComponentMovementParameters &movementParams);
 };
