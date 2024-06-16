@@ -266,8 +266,8 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 		.each([this](flecs::entity entity,
 					 const ComponentStaticTransform &transform,
 					 const ComponentBulletCollisionObject &obj) {
-			obj.object->setWorldTransform(btTransform(
-				ToBullet(transform.rot), ToBullet(transform.pos)));
+			obj.object->setWorldTransform(
+				btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 			collisionWorld->updateSingleAabb(obj.object);
 		});
 	ecs.observer<ComponentStaticCollisionShapeName>()

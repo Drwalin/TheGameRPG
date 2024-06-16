@@ -96,23 +96,6 @@ void Registry::DeserializeAllEntityComponents(flecs::entity entity,
 	}
 }
 
-void SpecializedRegistry::SerializeEntity(flecs::entity entity,
-										  icon7::ByteWriter &writer) const
-{
-	uint32_t offset = writer.GetSize();
-	uint16_t count = 0;
-	writer.op(count);
-	for (auto c : components) {
-		if (c->SerializeEntityComponent(entity, writer)) {
-			++count;
-		}
-	}
-
-	count = bitscpp::HostToNetworkUint<uint16_t>(count);
-	writer.Buffer().data()[offset] = ((uint8_t *)&count)[0];
-	writer.Buffer().data()[offset + 1] = ((uint8_t *)&count)[1];
-}
-
 void Registry::SerializeEntity(flecs::entity entity,
 							   icon7::ByteWriter &writer) const
 {
