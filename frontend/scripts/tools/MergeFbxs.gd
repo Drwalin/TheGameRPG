@@ -2,8 +2,9 @@
 extends Node3D;
 
 @export var runCode:bool = false;
-@export_file("*.tscn", "*.scn") var pathToSaveModel;
+@export_file("*.tscn", "*.scn") var pathToSavePrefab;
 @export_file("*.tres", "*.res") var pathToSaveAnimations;
+@export_file("*.tres", "*.res") var pathToSaveMesh;
 
 var rootNode:Node3D = null;
 var animationLibrary:AnimationLibrary = null;
@@ -15,9 +16,13 @@ func _process(delta):
 		# find model
 		for c in get_children():
 			if c.scene_file_path != "":
-				var m = FindChildNode(c, "MeshInstance3D");
-				if m != null:
+				if FindChildNode(c, "MeshInstance3D") != null:
 					rootNode = c.duplicate();
+					var m:MeshInstance3D = FindChildNode(rootNode, "MeshInstance3D");
+					m.mesh.surface_get_material(0).resource_local_to_scene = true;
+					ResourceSaver.save(m.mesh, pathToSaveMesh);
+					m.mesh = ResourceLoader.load(pathToSaveMesh);
+					m.mesh.surface_get_material(0).resource_local_to_scene = true;
 					break;
 		
 		animationLibrary = AnimationLibrary.new();
@@ -39,7 +44,7 @@ func _process(delta):
 		
 		var packedScene:PackedScene = PackedScene.new();
 		packedScene.pack(rootNode);
-		ResourceSaver.save(packedScene, pathToSaveModel);
+		ResourceSaver.save(packedScene, pathToSavePrefab);
 		rootNode.free();
 		rootNode = null;
 		
