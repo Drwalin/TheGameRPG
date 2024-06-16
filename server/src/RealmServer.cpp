@@ -8,6 +8,7 @@
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
+#include "../../common/include/RegistryComponent.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -110,24 +111,32 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	peers[pw] = entityId;
 	SetComponent<ComponentPlayerConnectionPeer>(
 		entityId, ComponentPlayerConnectionPeer{peer->shared_from_this()});
-
-	entity.add<ComponentShape>();
-	entity.add<ComponentLastAuthoritativeMovementState>();
-	entity.add<ComponentMovementParameters>();
-	entity.set<ComponentModelName>(ComponentModelName{
-		"characters/low_poly_medieval_people/city_dwellers_1_model.tscn"});
-	entity.add<ComponentEventsQueue>();
-
-	auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
-	s.oldState.timestamp = timer.currentTick;
-	entity.set<ComponentLastAuthoritativeMovementState>(s);
-	entity.set<ComponentMovementState>(s.oldState);
-
 	data->entityId = entityId;
-	// TODO: load player entity from database // TODO: move this line into
-	// 												   code managed by
-	// 												   ServerCore thread
-	SetComponent<ComponentName>(entityId, ComponentName{data->userName});
+
+	icon7::ByteReader reader(data->storedEntityData, 0);
+	if (!(data->storedEntityData.valid() &&
+		  data->storedEntityData.size() > 3) &&
+		(reader.has_any_more() == false || reader.is_valid() == false)) {
+		entity.add<ComponentShape>();
+		entity.add<ComponentLastAuthoritativeMovementState>();
+		entity.add<ComponentMovementParameters>();
+		entity.set<ComponentModelName>(ComponentModelName{
+			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn"});
+		entity.add<ComponentEventsQueue>();
+
+		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
+		s.oldState.timestamp = timer.currentTick;
+		entity.set<ComponentLastAuthoritativeMovementState>(s);
+		entity.set<ComponentMovementState>(s.oldState);
+
+		SetComponent<ComponentName>(entityId, ComponentName{data->userName});
+	} else {
+		std::string_view sv;
+		reader.op(sv);
+		reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
+																  reader);
+	}
+
 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
 			 realmName.c_str());
 
@@ -137,23 +146,58 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	if (data) {
-		data->realm.reset();
+	if (data == nullptr) {
+		LOG_ERROR("peer->userPointer is nullptr when shouldn't");
 	}
-
 	auto pw = peer->shared_from_this();
 	auto it = peers.find(pw);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
+		peers.erase(it);
 
-		peers.erase(pw);
-
-		flecs::entity entity = Entity(entityId);
-		if (entity.is_alive()) {
-			// TODO: store player entity into database here
-		}
-
+		StorePlayerDataInPeerAndFile(peer);
 		RemoveEntity(entityId);
+	}
+	data->realm.reset();
+}
+
+void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
+{
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	if (data == nullptr) {
+		LOG_ERROR("peer->userPointer is nullptr when shouldn't");
+		return;
+	}
+	flecs::entity entity = Entity(data->entityId);
+	if (entity.is_alive()) {
+		icon7::ByteWriter writer(std::move(data->storedEntityData));
+		if (writer.Buffer().valid() == false) {
+			writer.Buffer().Init(4096);
+		}
+		writer.Buffer().resize(0);
+		// TODO: write new realm for player
+		writer.op(data->nextRealm);
+		reg::Registry::Singleton().SerializeEntity(entity, writer);
+		data->storedEntityData = std::move(writer.Buffer());
+
+		FILE *file =
+			fopen(std::string("users/" + data->userName).c_str(), "wb");
+		icon7::ByteBuffer &buffer = data->storedEntityData;
+		if (file) {
+			uint32_t written = 0;
+			while (written < buffer.size()) {
+				int b = fwrite(buffer.data() + written, 1,
+							   buffer.size() - written, file);
+				if (b <= 0) {
+					LOG_ERROR(
+						"Error saving player data to file, fwrite returned: %i",
+						b);
+					break;
+				}
+				written += b;
+			}
+			fclose(file);
+		}
 	}
 }
 

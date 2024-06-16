@@ -10,7 +10,8 @@ namespace peer_transitions
 void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	if (data->userName != "" || username == "" || data->peer.expired()) {
+	if (data->realm.lock().get() != nullptr || data->userName != "" ||
+		username == "" || data->peer.expired()) {
 		// TODO: re-login is not available
 		LOG_INFO("Login failed: '%s' != \"\"  ||  '%s' == \"\"  ||  %s == true",
 				 data->userName.c_str(), username.c_str(),
@@ -22,7 +23,42 @@ void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
 	}
 	data->userName = username;
 	auto core = ((ServerCore *)(peer->host->userPointer));
-	// TODO: get player data from database and call core->ConnectPeerToRealm
-	core->ConnectPeerToRealm(peer, core->spawnRealm);
+
+	{
+		// TODO: read it from database or something
+		data->nextRealm = core->spawnRealm;
+
+		// TODO: replace with async delayed scheduled read from database or file
+		//       and then call core->ConnectPeerToRealm(peer)
+
+		// Load player data from file
+		FILE *file = fopen(std::string("users/" + username).c_str(), "rb");
+		icon7::ByteBuffer &buffer = data->storedEntityData;
+		if (buffer.valid() == false) {
+			buffer.Init(4096);
+		}
+		LOG_INFO("Buffer size before read file = %u", buffer.size());
+		if (file) {
+			const uint32_t COUNT = 4096;
+			while (!feof(file)) {
+				uint32_t oldSize = buffer.size();
+				buffer.resize(oldSize + COUNT);
+				int r = fread(buffer.data() + oldSize, 1, COUNT, file);
+				buffer.resize(oldSize + r);
+				if (r == 0) {
+					break;
+				}
+			}
+			LOG_INFO("Buffer size after read file = %u", buffer.size());
+		}
+		if (file) {
+			fclose(file);
+		}
+		if (buffer.size()) {
+			data->nextRealm = (char *)buffer.data();
+		}
+	}
+
+	core->ConnectPeerToRealm(peer);
 }
 } // namespace peer_transitions
