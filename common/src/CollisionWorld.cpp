@@ -32,9 +32,6 @@ CollisionWorld::~CollisionWorld()
 
 void CollisionWorld::Clear()
 {
-	while (entities.empty() == false) {
-		DeleteEntity(entities.begin()->first);
-	}
 	while (collisionWorld->getNumCollisionObjects() != 0) {
 		btCollisionObject *object =
 			collisionWorld->getCollisionObjectArray()[0];
@@ -44,11 +41,11 @@ void CollisionWorld::Clear()
 
 void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
 {
-	collisionWorld->removeCollisionObject(object);
+	btCollisionShape *shape = object->getCollisionShape();
 
+	collisionWorld->removeCollisionObject(object);
 	delete object;
 
-	btCollisionShape *shape = object->getCollisionShape();
 	if (shape == nullptr) {
 		return;
 	}
@@ -74,103 +71,99 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	return object;
 }
 
-void CollisionWorld::LoadStaticCollision(uint64_t entityId,
-										 const TerrainCollisionData *data,
-										 ComponentStaticTransform transform)
+void CollisionWorld::OnStaticCollisionShape(
+	flecs::entity entity,
+	const ComponentStaticCollisionShapeName &collisionName,
+	const ComponentStaticTransform &transform)
 {
-	auto it = entities.find(entityId);
-	if (it != entities.end()) {
-		LOG_WARN("Error: static entity with ID=%lu already exists in "
-				 "CollisionWorld.",
-				 entityId);
-		return;
-	}
 
-	btTriangleMesh *triangles =
-		new btTriangleMesh((data->vertices.size() / 3) > (1 << 15), false);
-	triangles->preallocateVertices(data->vertices.size());
-	triangles->preallocateIndices(data->indices.size());
-	std::vector<uint32_t> map;
-	map.resize(data->vertices.size());
-	for (int i = 0; i < data->vertices.size(); ++i) {
-		const glm::vec3 &v = data->vertices[i];
-		map[i] = triangles->findOrAddVertex({v.x, v.y, v.z}, false);
+	TerrainCollisionData data;
+	if (realm->GetCollisionShape(collisionName.shapeName, &data)) {
+		btTriangleMesh *triangles =
+			new btTriangleMesh((data.vertices.size() / 3) > (1 << 15), false);
+		triangles->preallocateVertices(data.vertices.size());
+		triangles->preallocateIndices(data.indices.size());
+		std::vector<uint32_t> map;
+		map.resize(data.vertices.size());
+		for (int i = 0; i < data.vertices.size(); ++i) {
+			const glm::vec3 &v = data.vertices[i];
+			map[i] = triangles->findOrAddVertex({v.x, v.y, v.z}, false);
+		}
+		for (int i = 0; i + 2 < data.indices.size(); i += 3) {
+			const uint32_t *idx = &(data.indices[i]);
+			triangles->addTriangleIndices(idx[0], idx[1], idx[2]);
+		}
+		btBvhTriangleMeshShape *shape =
+			new btBvhTriangleMeshShape(triangles, false, true);
+		shape->buildOptimizedBvh();
+		btCollisionObject *object = AllocateNewCollisionObject();
+		shape->setLocalScaling(ToBullet(transform.scale));
+		object->setCollisionShape(shape);
+		object->setWorldTransform(
+			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
+		object->setUserIndex(FILTER_TERRAIN);
+		collisionWorld->addCollisionObject(object,
+										   btBroadphaseProxy::StaticFilter);
+		collisionWorld->updateSingleAabb(object);
+
+		if (entity.has<ComponentBulletCollisionObject>()) {
+			ComponentBulletCollisionObject *obj =
+				(ComponentBulletCollisionObject *)
+					entity.get<ComponentBulletCollisionObject>();
+			if (obj->object) {
+				RemoveAndDestroyCollisionObject(obj->object);
+			}
+			obj->object = object;
+		} else {
+			entity.set<ComponentBulletCollisionObject>({object});
+		}
+	} else {
+		LOG_WARN("No such static collision shape: `%s`",
+				 collisionName.shapeName.c_str());
 	}
-	for (int i = 0; i + 2 < data->indices.size(); i += 3) {
-		const uint32_t *idx = &(data->indices[i]);
-		triangles->addTriangleIndices(idx[0], idx[1], idx[2]);
-	}
-	btBvhTriangleMeshShape *shape =
-		new btBvhTriangleMeshShape(triangles, false, true);
-	shape->buildOptimizedBvh();
-	btCollisionObject *object = AllocateNewCollisionObject();
-	shape->setLocalScaling(ToBullet(transform.scale));
-	object->setCollisionShape(shape);
-	object->setWorldTransform(
-		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
-	object->setUserIndex(FILTER_TERRAIN);
-	collisionWorld->addCollisionObject(object, btBroadphaseProxy::StaticFilter);
-	collisionWorld->updateSingleAabb(object);
-	entities[entityId] = object;
 }
 
-bool CollisionWorld::AddEntity(uint64_t entityId, ComponentShape shape,
-							   glm::vec3 pos)
+void CollisionWorld::OnAddEntity(flecs::entity entity, ComponentShape shape,
+								 glm::vec3 pos)
 {
-	auto it = entities.find(entityId);
-	if (it != entities.end()) {
-		LOG_WARN("Error: entity with ID=%lu already exists in CollisionWorld.",
-				 entityId);
-		UpdateEntityBvh(entityId, shape, pos);
-		return false;
-	}
 	btCapsuleShape *_shape =
 		new btCapsuleShape(shape.width * 0.5, shape.height);
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
-	entities[entityId] = object;
 	object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
 	object->setUserIndex(FILTER_ENTITY);
-	object->setUserIndex2(((uint32_t)(entityId)) & 0xFFFFFFFF);
-	object->setUserIndex3(((uint32_t)(entityId >> 32)) & 0xFFFFFFFF);
+	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
+	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
 	collisionWorld->addCollisionObject(object,
 									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
-	return true;
+	entity.set<ComponentBulletCollisionObject>({object});
 }
 
-void CollisionWorld::UpdateEntityBvh(uint64_t entityId, ComponentShape shape,
+void CollisionWorld::UpdateEntityBvh(const ComponentBulletCollisionObject obj,
+									 ComponentShape shape, glm::vec3 pos)
+{
+	obj.object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
+	collisionWorld->updateSingleAabb(obj.object);
+}
+
+void CollisionWorld::UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 									 glm::vec3 pos)
 {
-	auto it = entities.find(entityId);
-	if (it == entities.end()) {
-		return;
+	auto obj = entity.get<ComponentBulletCollisionObject>();
+	if (obj) {
+		UpdateEntityBvh(*obj, shape, pos);
 	}
-	it->second->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
-	collisionWorld->updateSingleAabb(it->second);
-}
-
-void CollisionWorld::DeleteEntity(uint64_t entityId)
-{
-	auto it = entities.find(entityId);
-	if (it == entities.end()) {
-		return;
-	}
-	RemoveAndDestroyCollisionObject(it->second);
-	entities.erase(it);
 }
 
 void CollisionWorld::EntitySetTransform(
-	uint64_t entityId, const ComponentStaticTransform &transform)
+	const ComponentBulletCollisionObject obj,
+	const ComponentStaticTransform &transform)
 {
-	auto it = entities.find(entityId);
-	if (it == entities.end()) {
-		return;
-	}
-	it->second->setWorldTransform(
+	obj.object->setWorldTransform(
 		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
-	it->second->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
-	collisionWorld->updateSingleAabb(it->second);
+	obj.object->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
+	collisionWorld->updateSingleAabb(obj.object);
 }
 
 void CollisionWorld::GetObjectsInAABB(
@@ -246,21 +239,56 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, const ComponentShape &shape,
 					 const ComponentMovementState &state) {
-			this->AddEntity(entity.id(), shape, state.pos);
+			this->OnAddEntity(entity, shape, state.pos);
 		});
-	ecs.observer<ComponentShape, ComponentMovementState>()
+	ecs.observer<ComponentBulletCollisionObject>()
 		.event(flecs::OnRemove)
-		.each([this](flecs::entity entity, const ComponentShape &shape,
-					 const ComponentMovementState &state) {
-			this->DeleteEntity(entity.id());
-		});
-	ecs.observer<ComponentShape>()
+		.each(
+			[this](flecs::entity entity, ComponentBulletCollisionObject &obj) {
+				if (obj.object) {
+					this->RemoveAndDestroyCollisionObject(obj.object);
+					obj.object = nullptr;
+				}
+			});
+
+	ecs.observer<ComponentShape, ComponentMovementState,
+				 ComponentBulletCollisionObject>()
 		.event(flecs::OnSet)
-		.each([this](flecs::entity entity, const ComponentShape &shape) {
-			const ComponentMovementState *state =
-				entity.get<ComponentMovementState>();
+		.each([this](flecs::entity entity, const ComponentShape &shape,
+					 const ComponentMovementState &state,
+					 const ComponentBulletCollisionObject &obj) {
 			if (entity.has<ComponentMovementState>()) {
-				this->UpdateEntityBvh(entity.id(), shape, state->pos);
+				this->UpdateEntityBvh(obj, shape, state.pos);
 			}
 		});
+	ecs.observer<ComponentStaticTransform, ComponentBulletCollisionObject>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity,
+					 const ComponentStaticTransform &transform,
+					 const ComponentBulletCollisionObject &obj) {
+			obj.object->setWorldTransform(btTransform(
+				ToBullet(transform.rot), ToBullet(transform.pos)));
+			collisionWorld->updateSingleAabb(obj.object);
+		});
+	ecs.observer<ComponentStaticCollisionShapeName>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity,
+					 const ComponentStaticCollisionShapeName &collisionName) {
+			auto transform = entity.get<ComponentStaticTransform>();
+			if (transform && collisionName.shapeName != "") {
+				this->OnStaticCollisionShape(entity, collisionName, *transform);
+			}
+		});
+	ecs.observer<ComponentStaticCollisionShapeName>()
+		.event(flecs::OnAdd)
+		.each([this](flecs::entity entity,
+					 const ComponentStaticCollisionShapeName &collisionName) {
+			auto transform = entity.get<ComponentStaticTransform>();
+			if (transform && collisionName.shapeName != "") {
+				this->OnStaticCollisionShape(entity, collisionName, *transform);
+			}
+		});
+
+	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects =
+		ecs.query<ComponentBulletCollisionObject>();
 }

@@ -114,7 +114,7 @@ void SpecializedRegistry::SerializeEntity(flecs::entity entity,
 }
 
 void Registry::SerializeEntity(flecs::entity entity,
-										  icon7::ByteWriter &writer) const
+							   icon7::ByteWriter &writer) const
 {
 	uint32_t offset = writer.GetSize();
 	uint16_t count = 0;
