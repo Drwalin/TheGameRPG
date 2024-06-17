@@ -46,10 +46,7 @@ public:
 		T component;
 		reader.op(component);
 		if (reader.is_valid()) {
-			LOG_TRACE("Successfull deserialization: %s", name.c_str());
 			entity.set<T>(component);
-		} else {
-			LOG_TRACE("Failed deserialization: %s", name.c_str());
 		}
 	}
 
@@ -59,18 +56,14 @@ public:
 	{
 		const T *component = entity.get<T>();
 		if (component) {
-			LOG_TRACE("Successfull serialization: %s", name.c_str());
 			Serialize(*component, writer);
 			return true;
-		} else {
-			LOG_TRACE("Failed serialization: %s", name.c_str());
 		}
 		return false;
 	}
 	
 	static void Serialize(const T &component, icon7::ByteWriter &writer)
 	{
-		LOG_TRACE("Serialization");
 		writer.op(singleton.name);
 		writer.op(component);
 	}
@@ -93,7 +86,6 @@ public:
 
 	template <typename T> void RegisterComponent(std::string name)
 	{
-		LOG_TRACE("Register component: %s", name.c_str());
 		if (nameToComponent.count(name) != 0) {
 			LOG_FATAL("Component with name %s already exists", name.c_str());
 			return;

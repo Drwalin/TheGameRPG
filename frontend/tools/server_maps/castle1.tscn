@@ -16,3 +16,8 @@ collision_mesh = ExtResource("2_o8eyf")
 transform = Transform3D(0.972403, 0.23331, 0, -0.23331, 0.972403, 0, 0, 0, 1, -287.605, 0, 0)
 
 [node name="GameEditorConfig" type="GameEditorConfig" parent="."]
+
+[node name="PrefabServerStaticMesh3" type="PrefabServerStaticMesh" parent="."]
+graphic_mesh = ExtResource("1_ujydb")
+collision_mesh = ExtResource("2_o8eyf")
+transform = Transform3D(0.812174, -0.0474998, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, -141.365, -1.52588e-05, -169.493)

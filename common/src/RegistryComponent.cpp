@@ -6,13 +6,12 @@ extern void DDD();
 
 namespace reg
 {
-Registry::Registry() { LOG_INFO(""); }
+Registry::Registry() {}
 Registry::~Registry() {}
 Registry &Registry::Singleton()
 {
 	DDD();
 	static Registry reg;
-	LOG_INFO("");
 	return reg;
 }
 
@@ -33,7 +32,6 @@ void Registry::DeserializeEntityComponent(flecs::entity entity,
 void Registry::DeserializeAllEntityComponents(flecs::entity entity,
 											  icon7::ByteReader &reader)
 {
-	LOG_INFO("Deserializing all components of entity");
 	uint16_t count = 0;
 	reader.op(count);
 	for (int i = 0; i < count; ++i) {
