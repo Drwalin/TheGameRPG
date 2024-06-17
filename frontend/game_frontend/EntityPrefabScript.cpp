@@ -102,15 +102,20 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 		n->queue_free();
 	}
 
-	std::string path = std::string("res://assets/") + model.modelName;
+	if (model.modelName != "") {
+		std::string path = std::string("res://assets/") + model.modelName;
 
-	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
-	if (scene.is_null() == false && scene.is_valid()) {
-		Node *node = scene->instantiate();
-		nodeContainingModel->add_child(node);
+		ResourceLoader *rl = ResourceLoader::get_singleton();
+		Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
+		if (scene.is_null() == false && scene.is_valid()) {
+			Node *node = scene->instantiate();
+			nodeContainingModel->add_child(node);
 
-		animationTree = (AnimationTree *)(node->find_child("AnimationTree"));
+			animationTree =
+				(AnimationTree *)(node->find_child("AnimationTree"));
+		} else {
+			LOG_INFO("Failed to load scene: `%s`", model.modelName.c_str());
+		}
 	}
 }
 

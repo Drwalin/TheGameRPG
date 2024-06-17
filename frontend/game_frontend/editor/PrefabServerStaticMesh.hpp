@@ -21,10 +21,12 @@ public: // Godot bound functions
 
 	void _ready() override {
 		while (get_child_count() > 0) {
-			auto child = get_child(0);
+			auto child = get_child(0, true);
 			remove_child(child);
 			child->queue_free();
 		}
+		col = nullptr;
+		graph = nullptr;
 	}
 
 	void _process(double dt) override
