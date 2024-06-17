@@ -60,15 +60,21 @@ public:
 		const T *component = entity.get<T>();
 		if (component) {
 			LOG_TRACE("Successfull serialization: %s", name.c_str());
-			writer.op(name);
-			writer.op(*component);
+			Serialize(*component, writer);
 			return true;
 		} else {
 			LOG_TRACE("Failed serialization: %s", name.c_str());
 		}
 		return false;
 	}
-
+	
+	static void Serialize(const T &component, icon7::ByteWriter &writer)
+	{
+		LOG_TRACE("Serialization");
+		writer.op(singleton.name);
+		writer.op(component);
+	}
+	
 	virtual bool HasComponent(flecs::entity entity) const override
 	{
 		return entity.has<T>();
@@ -96,6 +102,12 @@ public:
 		components.push_back(com);
 		nameToComponent.insert({name, com});
 	}
+	
+	template<typename T>
+	static void Serialize(const T& component, icon7::ByteWriter &writer)
+	{
+		ComponentConstructor<T>::Serialize(component, writer);
+	}
 
 	void DeserializeEntityComponent(flecs::entity entity,
 									icon7::ByteReader &reader);
@@ -110,12 +122,11 @@ private:
 };
 } // namespace reg
 
-#define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT)                          \
+#define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, NAME)                    \
 	template <>                                                                \
 	reg::ComponentConstructor<COMPONENT>                                       \
 		reg::ComponentConstructor<COMPONENT>::singleton =                      \
-			reg::ComponentConstructor<COMPONENT>(#COMPONENT);                  \
+			reg::ComponentConstructor<COMPONENT>(NAME);                        \
 	template <>                                                                \
 	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
-		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(#COMPONENT),  \
-		 0);
+		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);

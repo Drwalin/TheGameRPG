@@ -1,5 +1,6 @@
-#include "../include/RegistryComponent.hpp"
 #include "bitscpp/Endianness.hpp"
+
+#include "../include/RegistryComponent.hpp"
 
 extern void DDD();
 

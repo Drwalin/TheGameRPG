@@ -18,8 +18,10 @@ include_directories(../client/include)
 include_directories(game_frontend)
 
 aux_source_directory(./game_frontend src_files)
+aux_source_directory(./game_frontend/editor src_editor_files)
 add_library(game_frontend SHARED
 	${src_files}
+	${src_editor_files}
 )
 target_link_libraries(game_frontend PUBLIC client)
 target_link_libraries(game_frontend PUBLIC godot::cpp)

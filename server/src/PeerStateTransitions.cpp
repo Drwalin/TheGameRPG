@@ -2,6 +2,7 @@
 #include "../include/RealmServer.hpp"
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
+#include "../include/FileOperations.hpp"
 
 #include "../include/PeerStateTransitions.hpp"
 
@@ -32,30 +33,12 @@ void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
 		//       and then call core->ConnectPeerToRealm(peer)
 
 		// Load player data from file
-		FILE *file = fopen(std::string("users/" + username).c_str(), "rb");
-		icon7::ByteBuffer &buffer = data->storedEntityData;
-		if (buffer.valid() == false) {
-			buffer.Init(4096);
-		}
-		LOG_INFO("Buffer size before read file = %u", buffer.size());
-		if (file) {
-			const uint32_t COUNT = 4096;
-			while (!feof(file)) {
-				uint32_t oldSize = buffer.size();
-				buffer.resize(oldSize + COUNT);
-				int r = fread(buffer.data() + oldSize, 1, COUNT, file);
-				buffer.resize(oldSize + r);
-				if (r == 0) {
-					break;
-				}
+		
+		if (FileOperations::ReadFile(std::string("users/" + username),
+					&(data->storedEntityData))) {
+			if (data->storedEntityData.size()) {
+				data->nextRealm = (char *)data->storedEntityData.data();
 			}
-			LOG_INFO("Buffer size after read file = %u", buffer.size());
-		}
-		if (file) {
-			fclose(file);
-		}
-		if (buffer.size()) {
-			data->nextRealm = (char *)buffer.data();
 		}
 	}
 

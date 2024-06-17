@@ -9,6 +9,7 @@
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../../common/include/RegistryComponent.hpp"
+#include "../include/FileOperations.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -179,24 +180,14 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		writer.op(data->nextRealm);
 		reg::Registry::Singleton().SerializeEntity(entity, writer);
 		data->storedEntityData = std::move(writer.Buffer());
+		
+		LOG_INFO("Buffer size: %u", data->storedEntityData.size());
 
-		FILE *file =
-			fopen(std::string("users/" + data->userName).c_str(), "wb");
-		icon7::ByteBuffer &buffer = data->storedEntityData;
-		if (file) {
-			uint32_t written = 0;
-			while (written < buffer.size()) {
-				int b = fwrite(buffer.data() + written, 1,
-							   buffer.size() - written, file);
-				if (b <= 0) {
-					LOG_ERROR(
-						"Error saving player data to file, fwrite returned: %i",
-						b);
-					break;
-				}
-				written += b;
-			}
-			fclose(file);
+		if (FileOperations::WriteFile(std::string("users/" + data->userName),
+									  data->storedEntityData)) {
+		} else {
+			LOG_INFO("Clear stored entity data");
+			data->storedEntityData.clear();
 		}
 	}
 }
