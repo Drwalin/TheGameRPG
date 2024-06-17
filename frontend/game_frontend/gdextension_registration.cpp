@@ -14,6 +14,9 @@
 #include "EntityPrefabScript.hpp"
 #include "EntityStaticPrefabScript.hpp"
 
+#include "editor/PrefabServerStaticMesh.hpp"
+#include "editor/EditorConfig.hpp"
+
 void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
 	if (p_level !=
@@ -23,6 +26,10 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	godot::ClassDB::register_class<GameFrontend>();
 	godot::ClassDB::register_class<EntityPrefabScript>();
 	godot::ClassDB::register_class<EntityStaticPrefabScript>();
+	
+	godot::ClassDB::register_class<editor::PrefabServerBase>();
+	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
+	godot::ClassDB::register_class<editor::GameEditorConfig>();
 	// REGISTER CLASSES HERE LATER
 }
 
