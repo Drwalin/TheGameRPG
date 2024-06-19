@@ -17,7 +17,10 @@ namespace reg
 class ComponentConstructorBase
 {
 public:
-	ComponentConstructorBase(std::string name) : name(name) {}
+	ComponentConstructorBase(std::string name, std::string fullName)
+		: name(name), fullName(fullName)
+	{
+	}
 	virtual ~ComponentConstructorBase() {}
 
 	virtual void
@@ -28,6 +31,7 @@ public:
 	virtual bool HasComponent(flecs::entity entity) const = 0;
 
 	const std::string name = "";
+	const std::string fullName = "";
 };
 
 template <typename T>
@@ -36,7 +40,10 @@ class ComponentConstructor : public ComponentConstructorBase
 	static uint32_t __dummy;
 
 public:
-	ComponentConstructor(std::string name) : ComponentConstructorBase(name) {}
+	ComponentConstructor(std::string name, std::string fullName)
+		: ComponentConstructorBase(name, fullName)
+	{
+	}
 	virtual ~ComponentConstructor() {}
 
 	virtual void
@@ -47,6 +54,7 @@ public:
 		reader.op(component);
 		if (reader.is_valid()) {
 			entity.set<T>(component);
+			LOG_INFO("Deserialize %s for %lu", fullName.c_str(), entity.id());
 		}
 	}
 
@@ -61,13 +69,13 @@ public:
 		}
 		return false;
 	}
-	
+
 	static void Serialize(const T &component, icon7::ByteWriter &writer)
 	{
 		writer.op(singleton.name);
 		writer.op(component);
 	}
-	
+
 	virtual bool HasComponent(flecs::entity entity) const override
 	{
 		return entity.has<T>();
@@ -94,9 +102,9 @@ public:
 		components.push_back(com);
 		nameToComponent.insert({name, com});
 	}
-	
-	template<typename T>
-	static void Serialize(const T& component, icon7::ByteWriter &writer)
+
+	template <typename T>
+	static void Serialize(const T &component, icon7::ByteWriter &writer)
 	{
 		ComponentConstructor<T>::Serialize(component, writer);
 	}
@@ -118,7 +126,7 @@ private:
 	template <>                                                                \
 	reg::ComponentConstructor<COMPONENT>                                       \
 		reg::ComponentConstructor<COMPONENT>::singleton =                      \
-			reg::ComponentConstructor<COMPONENT>(NAME);                        \
+			reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT);                        \
 	template <>                                                                \
 	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
 		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);

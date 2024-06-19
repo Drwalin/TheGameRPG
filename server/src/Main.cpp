@@ -7,8 +7,8 @@ int main(int argc, char **argv)
 	{
 		ServerCore serverCore;
 		serverCore.BindRpc();
-		serverCore.CreateRealm("World1");
-		serverCore.CreateRealm("Heaven");
+// 		serverCore.CreateRealm("World1");
+// 		serverCore.CreateRealm("Heaven");
 		serverCore.CreateRealm("MiddleEarth");
 
 		serverCore.StartService();
