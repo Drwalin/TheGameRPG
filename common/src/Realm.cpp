@@ -60,6 +60,8 @@ void Realm::Init(const std::string &realmName)
 {
 	this->realmName = realmName;
 	timer.Start();
+	
+	ecs.set<RealmPtr>(RealmPtr{this});
 }
 
 uint64_t Realm::NewEntity()

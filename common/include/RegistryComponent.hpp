@@ -2,8 +2,8 @@
 
 #include <map>
 #include <string>
-
 #include <vector>
+#include <functional>
 
 #include <flecs.h>
 
@@ -71,7 +71,7 @@ public:
 
 	static void Serialize(const T &component, icon7::ByteWriter &writer)
 	{
-		writer.op(singleton.name);
+		writer.op(singleton->name);
 		writer.op(component);
 	}
 
@@ -80,7 +80,35 @@ public:
 		return entity.has<T>();
 	}
 
-	static ComponentConstructor<T> singleton;
+	static ComponentConstructor<T> *singleton;
+};
+
+template <typename T>
+class ComponentConstructorWithCallbackDeserialize
+	: public ComponentConstructor<T>
+{
+public:
+	ComponentConstructorWithCallbackDeserialize(
+		std::string name, std::string fullName,
+		std::function<void(flecs::entity, T *)> callback)
+		: ComponentConstructor<T>(name, fullName), callback(callback)
+	{
+	}
+	virtual ~ComponentConstructorWithCallbackDeserialize() {}
+
+	virtual void
+	DeserializeEntityComponent(flecs::entity entity,
+							   icon7::ByteReader &reader) const override
+	{
+		T component;
+		reader.op(component);
+		if (reader.is_valid()) {
+			callback(entity, &component);
+			entity.set<T>(component);
+		}
+	}
+
+	std::function<void(flecs::entity, T *)> callback;
 };
 
 class Registry
@@ -97,7 +125,7 @@ public:
 			LOG_FATAL("Component with name %s already exists", name.c_str());
 			return;
 		}
-		ComponentConstructorBase *com = &ComponentConstructor<T>::singleton;
+		ComponentConstructorBase *com = ComponentConstructor<T>::singleton;
 		components.push_back(com);
 		nameToComponent.insert({name, com});
 	}
@@ -124,8 +152,19 @@ private:
 #define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, NAME)                    \
 	template <>                                                                \
 	reg::ComponentConstructor<COMPONENT>                                       \
-		reg::ComponentConstructor<COMPONENT>::singleton =                      \
-			reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT);                        \
+		*reg::ComponentConstructor<COMPONENT>::singleton =                     \
+			new reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT);        \
+	template <>                                                                \
+	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
+		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);
+
+#define GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(          \
+	COMPONENT, NAME, CALLBACK)                                                 \
+	template <>                                                                \
+	reg::ComponentConstructor<COMPONENT>                                       \
+		*reg::ComponentConstructor<COMPONENT>::singleton =                     \
+			new reg::ComponentConstructorWithCallbackDeserialize<COMPONENT>(   \
+				NAME, #COMPONENT, CALLBACK);                                   \
 	template <>                                                                \
 	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
 		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);

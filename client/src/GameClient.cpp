@@ -174,12 +174,14 @@ glm::vec3 GameClient::GetRotation()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->rot;
+		LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 
@@ -187,12 +189,14 @@ glm::vec3 GameClient::GetPosition()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->pos;
+		LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 
@@ -200,12 +204,14 @@ glm::vec3 GameClient::GetVelocity()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->vel;
+		LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 
@@ -235,10 +241,16 @@ ComponentShape GameClient::GetShape()
 	return {0, 0};
 }
 
+bool GameClient::IsInPlayerControl()
+{
+	return localPlayerEntityId != 0 && serverPlayerEntityId != 0;
+}
+
 void GameClient::SetRotation(glm::vec3 rotation)
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("Maybe error in SetRotation");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -248,6 +260,8 @@ void GameClient::SetRotation(glm::vec3 rotation)
 		state.rot = rotation;
 		player.set(state);
 		needSendPlayerMovementInput = true;
+	} else {
+		LOG_TRACE("ERROR");
 	}
 }
 
@@ -255,11 +269,13 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("Maybe error in ProvideMovementInputDirection");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto stateP = player.get<ComponentMovementState>();
 	if (stateP == nullptr) {
+		LOG_TRACE("ERROR");
 		return;
 	}
 	auto state = *stateP;
@@ -292,11 +308,13 @@ void GameClient::TryPerformJump()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
+		LOG_TRACE("Maybe error in TryPerformJump");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto stateP = player.get<ComponentMovementState>();
 	if (stateP == nullptr) {
+		LOG_TRACE("ERROR");
 		return;
 	}
 	auto state = *stateP;

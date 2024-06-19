@@ -10,6 +10,11 @@
 #include "CollisionWorld.hpp"
 #include "EntityEvent.hpp"
 
+struct RealmPtr
+{
+	class Realm *realm;
+};
+
 class Realm
 {
 public:
