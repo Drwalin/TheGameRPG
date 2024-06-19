@@ -52,7 +52,8 @@ void RealmServer::Init(const std::string &realmName)
 				++count;
 			}
 		}
-		LOG_INFO("Load bytes of map `%s`: %u;   loaded entities: %u", fileName.c_str(), buffer.size(), count);
+	} else {
+		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
 
 	sendEntitiesToClientsTimer = 0;
@@ -166,12 +167,9 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		reg::Registry::Singleton().SerializeEntity(entity, writer);
 		data->storedEntityData = std::move(writer.Buffer());
 		
-		LOG_INFO("Buffer size: %u", data->storedEntityData.size());
-
 		if (FileOperations::WriteFile(std::string("users/" + data->userName),
 									  data->storedEntityData)) {
 		} else {
-			LOG_INFO("Clear stored entity data");
 			data->storedEntityData.clear();
 		}
 	}

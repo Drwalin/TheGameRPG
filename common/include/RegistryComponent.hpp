@@ -54,7 +54,6 @@ public:
 		reader.op(component);
 		if (reader.is_valid()) {
 			entity.set<T>(component);
-			LOG_INFO("Deserialize %s for %lu", fullName.c_str(), entity.id());
 		}
 	}
 
