@@ -33,7 +33,7 @@ public:
 
 	void BindRpc();
 
-	static void Login(icon7::Peer *peer, const std::string &userName);
+	void Login(icon7::Peer *peer, const std::string &userName);
 	static void
 	UpdatePlayer(icon7::Peer *peer,
 				 const ComponentLastAuthoritativeMovementState &state);
@@ -55,6 +55,7 @@ public:
 	volatile bool requestStop = false;
 
 	std::unordered_map<std::shared_ptr<icon7::Peer>, PeerData *> peersData;
+	std::unordered_map<std::string, std::shared_ptr<icon7::Peer>> usernameToPeer;
 
 	RealmWorkThreadedManager realmManager;
 

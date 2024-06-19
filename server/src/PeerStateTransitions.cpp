@@ -8,7 +8,7 @@
 
 namespace peer_transitions
 {
-void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
+void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer, const std::string &username)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm.lock().get() != nullptr || data->userName != "" ||
@@ -20,7 +20,15 @@ void OnReceivedLogin(icon7::Peer *peer, const std::string &username)
 		ClientRpcProxy::LoginFailed(peer);
 		return;
 	} else {
-		LOG_INFO("Player login successfull: '%s'", username.c_str());
+		auto it = serverCore->usernameToPeer.find(username);
+		if (it == serverCore->usernameToPeer.end()) {
+			serverCore->usernameToPeer[username] = peer->shared_from_this();
+			LOG_INFO("Player login successfull: '%s'", username.c_str());
+		} else {
+			LOG_INFO("User already in-game: `%s`", username.c_str());
+			ClientRpcProxy::LoginFailed(peer);
+			return;
+		}
 	}
 	data->userName = username;
 	auto core = ((ServerCore *)(peer->host->userPointer));

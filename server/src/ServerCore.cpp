@@ -107,6 +107,7 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 					r->DisconnectPeer(peer.get());
 					PeerData *data = ((PeerData *)(peer->userPointer));
 					data->peer.reset();
+					r->serverCore->usernameToPeer.erase(data->userName);
 					data->userName = "";
 					delete data;
 					peer->userPointer = nullptr;
