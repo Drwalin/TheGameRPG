@@ -28,19 +28,19 @@ inline ByteWriter<BT> &op(ByteWriter<BT> &s, const glm::vec3 &v)
 template <>
 inline ByteReader<true> &op<glm::quat>(ByteReader<true> &s, glm::quat &q)
 {
-	s.op(q.w);
 	s.op(q.x);
 	s.op(q.y);
 	s.op(q.z);
+	s.op(q.w);
 	return s;
 }
 template <typename BT>
 inline ByteWriter<BT> &op(ByteWriter<BT> &s, const glm::quat &q)
 {
-	s.op(q.w);
 	s.op(q.x);
 	s.op(q.y);
 	s.op(q.z);
+	s.op(q.w);
 	return s;
 }
 } // namespace bitscpp

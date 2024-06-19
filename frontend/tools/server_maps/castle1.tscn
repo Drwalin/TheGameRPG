@@ -4,19 +4,19 @@
 [ext_resource type="ArrayMesh" uid="uid://qdtoerl6lc38" path="res://assets/map_collision/MiddleEarth.obj" id="2_o8eyf"]
 
 [node name="Castle" type="GameEditorConfig"]
-save_map_file_path = "maps/MiddleEarth.map"
+save_map_file_path = "../build/maps/MiddleEarth.map"
 
 [node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh" parent="."]
-graphic_mesh = ExtResource("1_ujydb")
+graphic_Mesh_or_PackedScene = ExtResource("1_ujydb")
 collision_mesh = ExtResource("2_o8eyf")
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerStaticMesh2" type="PrefabServerStaticMesh" parent="."]
-graphic_mesh = ExtResource("1_ujydb")
+graphic_Mesh_or_PackedScene = ExtResource("2_o8eyf")
 collision_mesh = ExtResource("2_o8eyf")
 transform = Transform3D(0.972403, 0.23331, 0, -0.23331, 0.972403, 0, 0, 0, 1, -287.605, 0, 0)
 
 [node name="PrefabServerStaticMesh3" type="PrefabServerStaticMesh" parent="."]
-graphic_mesh = ExtResource("1_ujydb")
+graphic_Mesh_or_PackedScene = ExtResource("1_ujydb")
 collision_mesh = ExtResource("2_o8eyf")
 transform = Transform3D(0.812174, -0.0474998, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, -141.365, -1.52588e-05, -169.493)
