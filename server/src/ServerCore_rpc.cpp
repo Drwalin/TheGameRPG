@@ -12,7 +12,8 @@
 
 void ServerCore::BindRpc()
 {
-	rpc.RegisterMessage(ServerRpcFunctionNames::Login, &ServerCore::Login);
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Login, this, &ServerCore::Login);
+	
 	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer,
 						&ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueueByRealm);
@@ -45,7 +46,7 @@ void ServerCore::Login(icon7::Peer *peer, const std::string &userName)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
-		peer_transitions::OnReceivedLogin(peer, userName);
+		peer_transitions::OnReceivedLogin(this, peer, userName);
 	} else {
 		LOG_ERROR("Peer received Login request but PeerData is NULL");
 	}
