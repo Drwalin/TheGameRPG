@@ -80,8 +80,8 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 void EntityStaticPrefabScript::SetTransform(
 	const ComponentStaticTransform &transform)
 {
-	set_position(ToGodot(transform.pos));
-	set_rotation(ToGodot(transform.rot).get_euler());
+	set_transform(Transform3D{
+			Basis(ToGodot(transform.rot)), ToGodot(transform.pos)});
 	set_scale(ToGodot(transform.scale));
 }
 
