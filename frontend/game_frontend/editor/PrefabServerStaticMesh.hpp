@@ -12,14 +12,15 @@ public: // Godot bound functions
 	virtual ~PrefabServerStaticMesh();
 	static void _bind_methods()
 	{
-		REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh, graphic_Mesh_or_PackedScene,
-								   Variant::Type::OBJECT, "Resource",
-								   "scene");
+		REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh,
+								   graphic_Mesh_or_PackedScene,
+								   Variant::Type::OBJECT, "Resource", "scene");
 		REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh, collision_mesh,
 								   Variant::Type::OBJECT, "Mesh", "mesh");
 	}
 
-	void _ready() override {
+	void _ready() override
+	{
 		while (get_child_count() > 0) {
 			auto child = get_child(0);
 			remove_child(child);
@@ -43,9 +44,9 @@ public: // Godot bound functions
 		if ((graph != nullptr) != GameEditorConfig::render_graphic) {
 			RecreateGraphic();
 		}
-		
-		set_transform(Transform3D{
-				Basis(get_basis().get_quaternion()), get_position()});
+
+		set_transform(
+			Transform3D{Basis(get_basis().get_quaternion()), get_position()});
 	}
 
 	void RecreateCollision()
@@ -71,15 +72,16 @@ public: // Godot bound functions
 			graph = nullptr;
 		}
 		if (GameEditorConfig::render_graphic) {
-			if (graphic_Mesh_or_PackedScene.is_valid() && !graphic_Mesh_or_PackedScene.is_null()) {
-				
+			if (graphic_Mesh_or_PackedScene.is_valid() &&
+				!graphic_Mesh_or_PackedScene.is_null()) {
+
 				Ref<PackedScene> packedScene = graphic_Mesh_or_PackedScene;
 				if (packedScene.is_null() == false && packedScene.is_valid()) {
 					graph = packedScene->instantiate();
 					add_child(graph);
 					graph->set_owner(this);
 				}
-				
+
 				Ref<Mesh> mesh = graphic_Mesh_or_PackedScene;
 				if (mesh.is_null() == false && mesh.is_valid()) {
 					MeshInstance3D *m = new MeshInstance3D();
@@ -97,11 +99,14 @@ public: // Godot bound functions
 
 public: // variables
 	Ref<Resource> graphic_Mesh_or_PackedScene;
-	inline Ref<Resource> get_graphic_Mesh_or_PackedScene() { return graphic_Mesh_or_PackedScene; }
+	inline Ref<Resource> get_graphic_Mesh_or_PackedScene()
+	{
+		return graphic_Mesh_or_PackedScene;
+	}
 	inline void set_graphic_Mesh_or_PackedScene(Ref<Resource> v)
 	{
 		graphic_Mesh_or_PackedScene = Ref<Resource>{};
-		
+
 		Ref<PackedScene> packedScene = v;
 		if (packedScene.is_null() == false && packedScene.is_valid()) {
 			graphic_Mesh_or_PackedScene = v;
@@ -111,7 +116,7 @@ public: // variables
 		if (mesh.is_null() == false && mesh.is_valid()) {
 			graphic_Mesh_or_PackedScene = v;
 		}
-		
+
 		RecreateGraphic();
 	}
 

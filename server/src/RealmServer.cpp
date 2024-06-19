@@ -24,7 +24,7 @@ bool RealmServer::IsQueuedToDestroy() { return queueDestroy; }
 void RealmServer::DisconnectAllAndDestroy()
 {
 	// TODO: safe all entities and states
-	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> p = this->peers;
+	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> p = peers;
 	for (auto it : p) {
 		DisconnectPeer(it.first.get());
 	}
@@ -34,7 +34,7 @@ void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-	
+
 	std::string fileName = std::string("maps/") + realmName + ".map";
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
@@ -85,7 +85,7 @@ bool RealmServer::OneEpoch()
 void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	data->realm = this->weak_from_this();
+	data->realm = weak_from_this();
 
 	uint64_t entityId = NewEntity();
 
@@ -163,7 +163,7 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		writer.op(data->nextRealm);
 		reg::Registry::Singleton().SerializeEntity(entity, writer);
 		data->storedEntityData = std::move(writer.Buffer());
-		
+
 		if (FileOperations::WriteFile(std::string("users/" + data->userName),
 									  data->storedEntityData)) {
 		} else {
@@ -249,7 +249,7 @@ void RealmServer::RegisterObservers()
 		.each([this](flecs::entity entity, const ComponentModelName &model,
 					 const ComponentShape &shape) {
 			ClientRpcProxy::Broadcast_SetModel(
-				this->shared_from_this(), entity.id(), model.modelName, shape);
+				shared_from_this(), entity.id(), model.modelName, shape);
 		});
 
 	ecs.observer<ComponentStaticTransform, ComponentModelName,

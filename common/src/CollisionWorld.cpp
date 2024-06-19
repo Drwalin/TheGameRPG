@@ -239,14 +239,14 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, const ComponentShape &shape,
 					 const ComponentMovementState &state) {
-			this->OnAddEntity(entity, shape, state.pos);
+			OnAddEntity(entity, shape, state.pos);
 		});
 	ecs.observer<ComponentBulletCollisionObject>()
 		.event(flecs::OnRemove)
 		.each(
 			[this](flecs::entity entity, ComponentBulletCollisionObject &obj) {
 				if (obj.object) {
-					this->RemoveAndDestroyCollisionObject(obj.object);
+					RemoveAndDestroyCollisionObject(obj.object);
 					obj.object = nullptr;
 				}
 			});
@@ -258,7 +258,7 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentMovementState &state,
 					 const ComponentBulletCollisionObject &obj) {
 			if (entity.has<ComponentMovementState>()) {
-				this->UpdateEntityBvh(obj, shape, state.pos);
+				UpdateEntityBvh(obj, shape, state.pos);
 			}
 		});
 	ecs.observer<ComponentStaticTransform, ComponentBulletCollisionObject>()
@@ -276,7 +276,7 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentStaticCollisionShapeName &collisionName) {
 			auto transform = entity.get<ComponentStaticTransform>();
 			if (transform && collisionName.shapeName != "") {
-				this->OnStaticCollisionShape(entity, collisionName, *transform);
+				OnStaticCollisionShape(entity, collisionName, *transform);
 			}
 		});
 	ecs.observer<ComponentStaticCollisionShapeName>()
@@ -285,7 +285,7 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentStaticCollisionShapeName &collisionName) {
 			auto transform = entity.get<ComponentStaticTransform>();
 			if (transform && collisionName.shapeName != "") {
-				this->OnStaticCollisionShape(entity, collisionName, *transform);
+				OnStaticCollisionShape(entity, collisionName, *transform);
 			}
 		});
 

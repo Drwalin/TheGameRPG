@@ -181,7 +181,7 @@ glm::vec3 GameClient::GetRotation()
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->rot;
-		LOG_TRACE("ERROR");
+	LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 
@@ -196,7 +196,7 @@ glm::vec3 GameClient::GetPosition()
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->pos;
-		LOG_TRACE("ERROR");
+	LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 
@@ -211,7 +211,7 @@ glm::vec3 GameClient::GetVelocity()
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->vel;
-		LOG_TRACE("ERROR");
+	LOG_TRACE("ERROR");
 	return {0, 0, 0};
 }
 

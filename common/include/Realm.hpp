@@ -10,8 +10,7 @@
 #include "CollisionWorld.hpp"
 #include "EntityEvent.hpp"
 
-struct RealmPtr
-{
+struct RealmPtr {
 	class Realm *realm;
 };
 

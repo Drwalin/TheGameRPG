@@ -8,7 +8,8 @@
 
 namespace peer_transitions
 {
-void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer, const std::string &username)
+void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
+					 const std::string &username)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm.lock().get() != nullptr || data->userName != "" ||
@@ -41,9 +42,9 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer, const std::strin
 		//       and then call core->ConnectPeerToRealm(peer)
 
 		// Load player data from file
-		
+
 		if (FileOperations::ReadFile(std::string("users/" + username),
-					&(data->storedEntityData))) {
+									 &(data->storedEntityData))) {
 			if (data->storedEntityData.size()) {
 				data->nextRealm = (char *)data->storedEntityData.data();
 			}

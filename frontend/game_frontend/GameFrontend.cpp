@@ -55,7 +55,7 @@ void GameFrontend::_bind_methods()
 
 	METHOD_NO_ARGS(GameFrontend, InternalReady);
 	METHOD_NO_ARGS(GameFrontend, InternalProcess);
-	
+
 	METHOD_NO_ARGS(GameFrontend, IsInPlayerControl);
 }
 
@@ -70,11 +70,11 @@ void GameFrontend::InternalReady()
 	client = new GameClientFrontend(this);
 	client->Init();
 	playerCamera =
-		(Camera3D *)(this->get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
+		(Camera3D *)(get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
 	entitiesContainer =
-		(Node *)(this->get_node_or_null("/root/SceneRoot/EntitiesContainer"));
+		(Node *)(get_node_or_null("/root/SceneRoot/EntitiesContainer"));
 	staticMapContainer =
-		(Node *)(this->get_node_or_null("/root/SceneRoot/Terrain"));
+		(Node *)(get_node_or_null("/root/SceneRoot/Terrain"));
 }
 
 void GameFrontend::InternalProcess()
@@ -140,7 +140,4 @@ bool GameFrontend::IsConnected() { return client->IsConnected(); }
 
 bool GameFrontend::IsDisconnected() { return client->IsDisconnected(); }
 
-bool GameFrontend::IsInPlayerControl()
-{
-	return client->IsInPlayerControl();
-}
+bool GameFrontend::IsInPlayerControl() { return client->IsInPlayerControl(); }

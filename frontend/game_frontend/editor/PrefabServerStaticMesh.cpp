@@ -16,7 +16,8 @@ void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
 	PrefabServerBase::Serialize(higherLevelComponentsCount + 3, writer);
 
 	std::string graphicPath;
-	if (graphic_Mesh_or_PackedScene.is_null() == false && graphic_Mesh_or_PackedScene.is_valid()) {
+	if (graphic_Mesh_or_PackedScene.is_null() == false &&
+		graphic_Mesh_or_PackedScene.is_valid()) {
 		graphicPath = graphic_Mesh_or_PackedScene->get_path().utf8().ptr();
 		if (graphicPath.find(RES_PREFIX) == 0) {
 			graphicPath = graphicPath.replace(0, RES_PREFIX.size(), "");

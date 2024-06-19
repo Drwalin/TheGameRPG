@@ -44,36 +44,36 @@ public: // Godot bound functions
 	~GameEditorConfig() {}
 	static void _bind_methods()
 	{
-		REGISTER_PROPERTY(GameEditorConfig, render_graphic,
-						  Variant::Type::BOOL, "render");
+		REGISTER_PROPERTY(GameEditorConfig, render_graphic, Variant::Type::BOOL,
+						  "render");
 		REGISTER_PROPERTY(GameEditorConfig, render_collision,
 						  Variant::Type::BOOL, "render");
 		REGISTER_PROPERTY(GameEditorConfig, save_map_file_path,
 						  Variant::Type::STRING, "save_map_file_path");
-		REGISTER_PROPERTY(GameEditorConfig, save_scene,
-						  Variant::Type::BOOL, "save_scene");
+		REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
+						  "save_scene");
 	}
-	
+
 	virtual void _process(double dt) override;
-	
+
 	void SaveScene();
 
 public: // variables
 	static bool render_graphic;
 	bool get_render_graphic() { return render_graphic; }
 	void set_render_graphic(bool v) { render_graphic = v; }
-	
+
 	static bool render_collision;
 	bool get_render_collision() { return render_collision; }
 	void set_render_collision(bool v) { render_collision = v; }
-	
+
 	bool save_scene = false;
 	bool get_save_scene() { return save_scene; }
 	void set_save_scene(bool v) { save_scene = v; }
-	
+
 	String save_map_file_path;
 	String get_save_map_file_path() { return save_map_file_path; }
 	void set_save_map_file_path(String v) { save_map_file_path = v; }
 };
 
-}
+} // namespace editor
