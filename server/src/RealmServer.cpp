@@ -30,26 +30,29 @@ void RealmServer::DisconnectAllAndDestroy()
 	}
 }
 
-uint64_t GE = 0, GE2 = 0;
-
 void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-
-	CreateStaticEntity({{}, {0, 0, 0, 1}, {1, 1, 1}},
-					   {"map_collision/" + realmName + ".obj"},
-					   {"map_collision/" + realmName + ".obj"});
-
-	if (realmName == "MiddleEarth") {
-		GE = CreateStaticEntity(
-			{{-65, -10, 100}, {0, 0, 0, 1}, {0.1, 0.01, 0.1}},
-			{"map_collision/" + realmName + ".obj"},
-			{"map_collision/" + realmName + ".obj"});
-		GE2 = CreateStaticEntity(
-			{{-65, -10, 100}, {1, 0, 0, 0}, {0.1, 0.01, 0.1}},
-			{"map_collision/" + realmName + ".obj"},
-			{"map_collision/" + realmName + ".obj"});
+	
+	std::string fileName = std::string("maps/") + realmName + ".map";
+	icon7::ByteBuffer buffer;
+	if (FileOperations::ReadFile(fileName, &buffer)) {
+		icon7::ByteReader reader(buffer, 0);
+		uint32_t count = 0;
+		while (reader.get_remaining_bytes() > 10) {
+			uint64_t entityId = NewEntity();
+			flecs::entity entity = Entity(entityId);
+			reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
+																	  reader);
+			if (reader.is_valid() == false) {
+				RemoveEntity(entity);
+				break;
+			} else {
+				++count;
+			}
+		}
+		LOG_INFO("Load bytes of map `%s`: %u;   loaded entities: %u", fileName.c_str(), buffer.size(), count);
 	}
 
 	sendEntitiesToClientsTimer = 0;
@@ -66,24 +69,6 @@ bool RealmServer::GetCollisionShape(std::string collisionShapeName,
 
 bool RealmServer::OneEpoch()
 {
-	if (realmName == "MiddleEarth") {
-
-		int64_t y = timer.currentTick;
-		y = y % 15000;
-
-		float yv = y / 500.0f;
-
-		flecs::entity e = Entity(GE);
-		auto t = (ComponentStaticTransform *)e.get<ComponentStaticTransform>();
-		t->pos.y = yv;
-		e.set<ComponentStaticTransform>(*t);
-
-		e = Entity(GE2);
-		t = (ComponentStaticTransform *)e.get<ComponentStaticTransform>();
-		t->pos.y = yv;
-		e.set<ComponentStaticTransform>(*t);
-	}
-
 	bool busy = executionQueue.Execute(128) != 0;
 	busy |= Realm::OneEpoch();
 	// TODO: here do other server updates, AI, other mechanics and logic,

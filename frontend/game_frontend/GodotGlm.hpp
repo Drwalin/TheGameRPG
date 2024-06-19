@@ -15,6 +15,6 @@ inline godot::Vector2 ToGodot(glm::vec2 vec) { return {vec.x, vec.y}; }
 
 inline glm::vec2 ToGlm(godot::Vector2 vec) { return {vec.x, vec.y}; }
 
-inline glm::quat ToGlm(godot::Quaternion q) { return {q.w, q.x, q.y, q.z}; }
+inline glm::quat ToGlm(godot::Quaternion q) { return {q.x, q.y, q.z, q.w}; }
 
-inline godot::Quaternion ToGodot(glm::quat q) { return {q.w, q.x, q.y, q.z}; }
+inline godot::Quaternion ToGodot(glm::quat q) { return {q.x, q.y, q.z, q.w}; }

@@ -28,7 +28,6 @@ void EntityStaticPrefabScript::_ready()
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
-	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
 }
 
 void EntityStaticPrefabScript::_process(double dt)
@@ -42,20 +41,40 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 									const ComponentModelName &model,
 									ComponentStaticTransform transform)
 {
+	SetTransform(transform);
+	
+	while (get_child_count(true) > 0) {
+		Node *child = get_child(0, true);
+		remove_child(child);
+		child->queue_free();
+	}
+	
 	if (localEntityId) {
 		this->localEntityId = localEntityId;
 	} else {
 		LOG_ERROR(
 			"trying to initialize EntityStaticPrefabScript with entityId == 0");
 	}
-	meshInstance = (MeshInstance3D *)(get_node<Node>("MeshInstance3D"));
 
 	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Mesh> mesh = rl->load(
-		(std::string("res://assets/") + model.modelName).c_str(), "Mesh");
-
-	meshInstance->set_mesh(mesh);
-	SetTransform(transform);
+	Ref<Resource> resource = rl->load(
+		(std::string("res://assets/") + model.modelName).c_str());
+	
+	if (resource.is_null() == false && resource.is_valid()) {
+		Ref<Mesh> mesh = resource;
+		Ref<PackedScene> packedScene = resource;
+		if (mesh.is_valid() && mesh.is_null() == false) {
+			LOG_INFO("Set mesh instance for %lu", localEntityId);
+			MeshInstance3D *meshInstance = new MeshInstance3D();
+			meshInstance->set_mesh(mesh);
+			add_child(meshInstance);
+		}
+		if (packedScene.is_valid() && packedScene.is_null() == false) {
+			LOG_INFO("Set packed scene for %lu", localEntityId);
+			Node *node = packedScene->instantiate();
+			add_child(node);
+		}
+	}
 }
 
 void EntityStaticPrefabScript::SetTransform(

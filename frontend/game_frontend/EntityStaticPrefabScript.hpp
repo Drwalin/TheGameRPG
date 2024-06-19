@@ -47,8 +47,6 @@ public: // Godot bound functions
 public: // variables
 	uint64_t localEntityId = 0;
 
-	MeshInstance3D *meshInstance = nullptr;
-
 public:
 	static EntityStaticPrefabScript *CreateNew();
 };

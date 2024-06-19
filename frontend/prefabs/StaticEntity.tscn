@@ -4,6 +4,3 @@
 
 [node name="EntityStaticPrefabScript" type="EntityStaticPrefabScript"]
 script = ExtResource("1_f3im5")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-skeleton = NodePath("")
