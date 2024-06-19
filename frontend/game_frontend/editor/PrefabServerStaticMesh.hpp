@@ -21,6 +21,11 @@ public: // Godot bound functions
 
 	void _ready() override {
 		while (get_child_count() > 0) {
+			auto child = get_child(0);
+			remove_child(child);
+			child->queue_free();
+		}
+		while (get_child_count(true) > 0) {
 			auto child = get_child(0, true);
 			remove_child(child);
 			child->queue_free();
@@ -39,7 +44,7 @@ public: // Godot bound functions
 			RecreateGraphic();
 		}
 		
-		this->set_transform(Transform3D{
+		set_transform(Transform3D{
 				Basis(get_basis().get_quaternion()), get_position()});
 	}
 
@@ -54,6 +59,7 @@ public: // Godot bound functions
 			col = new MeshInstance3D();
 			col->set_mesh(collision_mesh);
 			add_child(col);
+			col->set_owner(this);
 		}
 	}
 
@@ -71,6 +77,7 @@ public: // Godot bound functions
 				if (packedScene.is_null() == false && packedScene.is_valid()) {
 					graph = packedScene->instantiate();
 					add_child(graph);
+					graph->set_owner(this);
 				}
 				
 				Ref<Mesh> mesh = graphic_Mesh_or_PackedScene;
@@ -79,6 +86,7 @@ public: // Godot bound functions
 					m->set_mesh(mesh);
 					graph = m;
 					add_child(graph);
+					graph->set_owner(this);
 				}
 			}
 		}
