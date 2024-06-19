@@ -7,8 +7,8 @@
 
 RealmClient::RealmClient(GameClient *gameClient) : gameClient(gameClient)
 {
-	this->minMovementDeltaTicks = 3;
-	this->maxMovementDeltaTicks = 9;
+	minMovementDeltaTicks = 3;
+	maxMovementDeltaTicks = 9;
 	RealmClient::RegisterObservers();
 }
 

@@ -42,13 +42,13 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 									ComponentStaticTransform transform)
 {
 	SetTransform(transform);
-	
+
 	while (get_child_count(true) > 0) {
 		Node *child = get_child(0, true);
 		remove_child(child);
 		child->queue_free();
 	}
-	
+
 	if (localEntityId) {
 		this->localEntityId = localEntityId;
 	} else {
@@ -57,9 +57,9 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 	}
 
 	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Resource> resource = rl->load(
-		(std::string("res://assets/") + model.modelName).c_str());
-	
+	Ref<Resource> resource =
+		rl->load((std::string("res://assets/") + model.modelName).c_str());
+
 	if (resource.is_null() == false && resource.is_valid()) {
 		Ref<Mesh> mesh = resource;
 		Ref<PackedScene> packedScene = resource;
@@ -80,8 +80,8 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 void EntityStaticPrefabScript::SetTransform(
 	const ComponentStaticTransform &transform)
 {
-	set_transform(Transform3D{
-			Basis(ToGodot(transform.rot)), ToGodot(transform.pos)});
+	set_transform(
+		Transform3D{Basis(ToGodot(transform.rot)), ToGodot(transform.pos)});
 	set_scale(ToGodot(transform.scale));
 }
 

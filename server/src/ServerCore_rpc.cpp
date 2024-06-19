@@ -12,8 +12,9 @@
 
 void ServerCore::BindRpc()
 {
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Login, this, &ServerCore::Login);
-	
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Login, this,
+							  &ServerCore::Login);
+
 	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer,
 						&ServerCore::UpdatePlayer, nullptr,
 						SelectExecutionQueueByRealm);
@@ -98,7 +99,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 				std::shared_ptr<RealmServer> oldRealm = this->oldRealm.lock();
 				std::shared_ptr<RealmServer> newRealm = this->newRealm.lock();
 				if (oldRealm) {
-					oldRealm->DisconnectPeer(this->peer.get());
+					oldRealm->DisconnectPeer(peer.get());
 
 					class CommandConnectPeerToRealm
 						: public icon7::commands::ExecuteOnPeer

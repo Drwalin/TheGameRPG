@@ -24,7 +24,7 @@ GameClientFrontend::~GameClientFrontend() {}
 void GameClientFrontend::Init()
 {
 	BindRpc();
-	this->RunNetworkLoopAsync();
+	RunNetworkLoopAsync();
 	GameClientFrontend::RegisterObservers();
 }
 
@@ -93,7 +93,7 @@ void GameClientFrontend::RegisterObservers()
 			if (entity.has<ComponentGodotNode>() == false) {
 				EntityPrefabScript *node = EntityPrefabScript::CreateNew();
 				node->Init(entity.id());
-				node->frontend = this->frontend;
+				node->frontend = frontend;
 				frontend->GetNodeToAddEntities()->add_child(node);
 				realm->SetComponent(entity.id(), ComponentGodotNode{node});
 				const ComponentName *name =

@@ -62,7 +62,7 @@ using namespace godot;
 
 namespace editor
 {
-	
+
 inline const std::string RES_PREFIX = "res://assets/";
 
 class PrefabServerBase : public Node3D
@@ -71,11 +71,9 @@ class PrefabServerBase : public Node3D
 public: // Godot bound functions
 	PrefabServerBase();
 	virtual ~PrefabServerBase();
-	static void _bind_methods()
-	{
-	}
-	
+	static void _bind_methods() {}
+
 	virtual void Serialize(uint16_t higherLevelComponentsCount,
 						   icon7::ByteWriter &writer);
 };
-}
+} // namespace editor

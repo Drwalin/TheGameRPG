@@ -26,7 +26,7 @@ void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	godot::ClassDB::register_class<GameFrontend>();
 	godot::ClassDB::register_class<EntityPrefabScript>();
 	godot::ClassDB::register_class<EntityStaticPrefabScript>();
-	
+
 	godot::ClassDB::register_class<editor::PrefabServerBase>();
 	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
 	godot::ClassDB::register_class<editor::GameEditorConfig>();

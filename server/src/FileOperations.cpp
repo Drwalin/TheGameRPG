@@ -51,6 +51,6 @@ bool FileOperations::WriteFile(std::string filePath,
 		fclose(file);
 		return result;
 	}
-				LOG_ERROR("ERR");
+	LOG_ERROR("ERR");
 	return false;
 }
