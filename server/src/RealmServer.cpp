@@ -39,7 +39,6 @@ void RealmServer::Init(const std::string &realmName)
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
 		icon7::ByteReader reader(buffer, 0);
-		uint32_t count = 0;
 		while (reader.get_remaining_bytes() > 10) {
 			uint64_t entityId = NewEntity();
 			flecs::entity entity = Entity(entityId);
@@ -48,8 +47,6 @@ void RealmServer::Init(const std::string &realmName)
 			if (reader.is_valid() == false) {
 				RemoveEntity(entity);
 				break;
-			} else {
-				++count;
 			}
 		}
 	} else {

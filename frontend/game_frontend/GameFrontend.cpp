@@ -55,6 +55,8 @@ void GameFrontend::_bind_methods()
 
 	METHOD_NO_ARGS(GameFrontend, InternalReady);
 	METHOD_NO_ARGS(GameFrontend, InternalProcess);
+	
+	METHOD_NO_ARGS(GameFrontend, IsInPlayerControl);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
@@ -137,3 +139,8 @@ Camera3D *GameFrontend::GetPlayerCamera() { return playerCamera; }
 bool GameFrontend::IsConnected() { return client->IsConnected(); }
 
 bool GameFrontend::IsDisconnected() { return client->IsDisconnected(); }
+
+bool GameFrontend::IsInPlayerControl()
+{
+	return client->IsInPlayerControl();
+}

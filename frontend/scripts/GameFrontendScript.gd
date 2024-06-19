@@ -44,6 +44,9 @@ func _input(event)->void:
 func _process(delta: float)->void:
 	InternalProcess();
 	
+	if IsInPlayerControl() == false:
+		return;
+	
 	if camera != null:
 		var mov:Vector3 = Vector3.ZERO;
 		var dir = Input.get_vector("movement_left", "movement_right", "movement_forward", "movement_backward");

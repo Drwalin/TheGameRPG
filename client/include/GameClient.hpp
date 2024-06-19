@@ -76,6 +76,7 @@ public: // client input api
 	glm::vec3 GetVelocity();
 	ComponentShape GetShape();
 	bool GetOnGround();
+	bool IsInPlayerControl();
 
 	void PerformSendPlayerMovementInput();
 
