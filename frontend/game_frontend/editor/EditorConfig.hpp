@@ -32,6 +32,16 @@
 							  TO_C_STRING_NAME(get_##NAME));                   \
 	}
 
+#define REGISTER_PROPERTY_WITH_HINT(CLASS, NAME, TYPE, HINT, HINT_STRING,      \
+									SET_NAME)                                  \
+	{                                                                          \
+		METHOD_NO_ARGS(CLASS, get_##NAME);                                     \
+		METHOD_ARGS(CLASS, set_##NAME, SET_NAME);                              \
+		ClassDB::add_property(                                                 \
+			#CLASS, PropertyInfo(TYPE, #NAME, HINT, HINT_STRING),              \
+			TO_C_STRING_NAME(set_##NAME), TO_C_STRING_NAME(get_##NAME));       \
+	}
+
 using namespace godot;
 
 namespace editor
@@ -48,8 +58,10 @@ public: // Godot bound functions
 						  "render");
 		REGISTER_PROPERTY(GameEditorConfig, render_collision,
 						  Variant::Type::BOOL, "render");
-		REGISTER_PROPERTY(GameEditorConfig, save_map_file_path,
-						  Variant::Type::STRING, "save_map_file_path");
+		REGISTER_PROPERTY_WITH_HINT(
+			GameEditorConfig, save_map_file_path, Variant::Type::STRING,
+			PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "",
+			"save_map_file_path");
 		REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
 						  "save_scene");
 	}
