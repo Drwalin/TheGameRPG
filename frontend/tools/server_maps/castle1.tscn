@@ -1,22 +1,22 @@
 [gd_scene load_steps=3 format=3 uid="uid://bvg28534pxuuo"]
 
-[ext_resource type="PackedScene" uid="uid://bcfxxxfybf5yt" path="res://assets/scenes/MiddleEarth.tscn" id="1_ujydb"]
+[ext_resource type="PackedScene" uid="uid://bdvldu4qi3l03" path="res://assets/map_models/MiddleEarth.obj" id="1_04bj7"]
 [ext_resource type="ArrayMesh" uid="uid://qdtoerl6lc38" path="res://assets/map_collision/MiddleEarth.obj" id="2_o8eyf"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../build/maps/MiddleEarth.map"
 
 [node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh" parent="."]
-graphic_Mesh_or_PackedScene = ExtResource("1_ujydb")
+graphic_Mesh_or_PackedScene = ExtResource("1_04bj7")
 collision_mesh = ExtResource("2_o8eyf")
-transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 141.766, 0, 54.5624)
 
 [node name="PrefabServerStaticMesh2" type="PrefabServerStaticMesh" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_o8eyf")
 collision_mesh = ExtResource("2_o8eyf")
-transform = Transform3D(0.972403, 0.23331, 0, -0.23331, 0.972403, 0, 0, 0, 1, -287.605, 0, 0)
+transform = Transform3D(0.972402, 0.23331, 0, -0.23331, 0.972402, 0, 0, 0, 1, -145.839, 0, 54.5624)
 
 [node name="PrefabServerStaticMesh3" type="PrefabServerStaticMesh" parent="."]
-graphic_Mesh_or_PackedScene = ExtResource("1_ujydb")
+graphic_Mesh_or_PackedScene = ExtResource("1_04bj7")
 collision_mesh = ExtResource("2_o8eyf")
-transform = Transform3D(0.812174, -0.0474998, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, -141.365, -1.52588e-05, -169.493)
+transform = Transform3D(0.812173, -0.0474996, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, 0.400841, -1.52588e-05, -114.931)
