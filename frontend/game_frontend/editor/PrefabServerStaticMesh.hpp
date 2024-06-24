@@ -21,22 +21,14 @@ public: // Godot bound functions
 
 	void _ready() override
 	{
-		while (get_child_count() > 0) {
-			auto child = get_child(0);
-			remove_child(child);
-			child->queue_free();
-		}
-		while (get_child_count(true) > 0) {
-			auto child = get_child(0, true);
-			remove_child(child);
-			child->queue_free();
-		}
+		PrefabServerBase::_ready();
 		col = nullptr;
 		graph = nullptr;
 	}
 
 	void _process(double dt) override
 	{
+		PrefabServerBase::_process(dt);
 		if ((col != nullptr) != GameEditorConfig::render_collision) {
 			RecreateCollision();
 		}
@@ -44,9 +36,6 @@ public: // Godot bound functions
 		if ((graph != nullptr) != GameEditorConfig::render_graphic) {
 			RecreateGraphic();
 		}
-
-		set_transform(
-			Transform3D{Basis(get_basis().get_quaternion()), get_position()});
 	}
 
 	void RecreateCollision()
@@ -59,6 +48,7 @@ public: // Godot bound functions
 		if (GameEditorConfig::render_collision) {
 			col = new MeshInstance3D();
 			col->set_mesh(collision_mesh);
+			col->set_name(GetRandomString());
 			add_child(col);
 			col->set_owner(this);
 		}
@@ -78,6 +68,7 @@ public: // Godot bound functions
 				Ref<PackedScene> packedScene = graphic_Mesh_or_PackedScene;
 				if (packedScene.is_null() == false && packedScene.is_valid()) {
 					graph = packedScene->instantiate();
+					graph->set_name(GetRandomString());
 					add_child(graph);
 					graph->set_owner(this);
 				}
@@ -87,6 +78,7 @@ public: // Godot bound functions
 					MeshInstance3D *m = new MeshInstance3D();
 					m->set_mesh(mesh);
 					graph = m;
+					graph->set_name(GetRandomString());
 					add_child(graph);
 					graph->set_owner(this);
 				}

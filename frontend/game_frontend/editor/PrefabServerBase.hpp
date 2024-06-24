@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
@@ -72,8 +74,28 @@ public: // Godot bound functions
 	PrefabServerBase();
 	virtual ~PrefabServerBase();
 	static void _bind_methods() {}
+	
+	void ClearChildren();
+	
+	void _ready() override;
+	void _process(double dt) override;
 
 	virtual void Serialize(uint16_t higherLevelComponentsCount,
 						   icon7::ByteWriter &writer);
+	
+	
+	static String GetRandomString();
+	
+	
+	void RegisterResourceRenderer(Ref<Resource> *resourceReference,
+			std::function<void(Ref<Resource> *resourceReference)> onChanged);
+	
+	struct RenderableResourceReference
+	{
+		Ref<Resource> *resourceReference;
+		std::function<void(Ref<Resource> *resourceReference)> onChanged;
+	};
+	
+	std::vector<RenderableResourceReference> resources;
 };
 } // namespace editor
