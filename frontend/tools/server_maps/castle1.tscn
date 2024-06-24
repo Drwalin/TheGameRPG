@@ -1,22 +1,42 @@
-[gd_scene load_steps=3 format=3 uid="uid://bvg28534pxuuo"]
+[gd_scene load_steps=8 format=3 uid="uid://bvg28534pxuuo"]
 
-[ext_resource type="PackedScene" uid="uid://bdvldu4qi3l03" path="res://assets/map_models/MiddleEarth.obj" id="1_04bj7"]
-[ext_resource type="ArrayMesh" uid="uid://qdtoerl6lc38" path="res://assets/map_collision/MiddleEarth.obj" id="2_o8eyf"]
+[ext_resource type="PackedScene" path="res://tests/test_mesh_prefab.tscn" id="1_s6kcj"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_yiiek"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Bench.tscn" id="3_ekxfp"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Table.tscn" id="4_j4bhk"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Throne.tscn" id="5_4fx2u"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/TorchHolder.tscn" id="6_umxg1"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Torch.tscn" id="7_rard0"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../build/maps/MiddleEarth.map"
 
-[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh" parent="."]
-graphic_Mesh_or_PackedScene = ExtResource("1_04bj7")
-collision_mesh = ExtResource("2_o8eyf")
+[node name="PrefabServerStaticMesh" parent="." instance=ExtResource("1_s6kcj")]
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 141.766, 0, 54.5624)
 
-[node name="PrefabServerStaticMesh2" type="PrefabServerStaticMesh" parent="."]
-graphic_Mesh_or_PackedScene = ExtResource("2_o8eyf")
-collision_mesh = ExtResource("2_o8eyf")
+[node name="PrefabServerStaticMesh2" parent="." instance=ExtResource("1_s6kcj")]
+transform = Transform3D(0.812173, -0.0474995, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, 0.400841, -1.52588e-05, -114.931)
+
+[node name="PrefabServerStaticMesh3" parent="." instance=ExtResource("1_s6kcj")]
 transform = Transform3D(0.972402, 0.23331, 0, -0.23331, 0.972402, 0, 0, 0, 1, -145.839, 0, 54.5624)
 
-[node name="PrefabServerStaticMesh3" type="PrefabServerStaticMesh" parent="."]
-graphic_Mesh_or_PackedScene = ExtResource("1_04bj7")
-collision_mesh = ExtResource("2_o8eyf")
-transform = Transform3D(0.812173, -0.0474996, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, 0.400841, -1.52588e-05, -114.931)
+[node name="PrefabServerStaticMesh4" parent="." instance=ExtResource("2_yiiek")]
+transform = Transform3D(0.12658, 0, 0.991956, 0, 1, 0, -0.991956, 0, 0.12658, 53.444, -11.1244, 122.885)
+
+[node name="PrefabServerStaticMesh5" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 48.5433, -11.0737, 117.818)
+
+[node name="PrefabServerStaticMesh6" parent="." instance=ExtResource("4_j4bhk")]
+transform = Transform3D(-0.0947338, 0, -0.995503, 0, 1, 0, 0.995503, 0, -0.0947338, 48.6779, -11.0703, 115.941)
+
+[node name="PrefabServerStaticMesh7" parent="." instance=ExtResource("5_4fx2u")]
+transform = Transform3D(0.0906673, 0, 0.995881, 0, 1, 0, -0.995881, 0, 0.0906673, 30.5488, -10.921, 119.868)
+
+[node name="PrefabServerStaticMesh8" parent="." instance=ExtResource("6_umxg1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.586, -10.4879, 117.744)
+
+[node name="PrefabServerStaticMesh9" parent="." instance=ExtResource("7_rard0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.5388, -10.4848, 117.785)
+
+[node name="PrefabServerStaticMesh10" parent="." instance=ExtResource("7_rard0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.4323, -10.8612, 117.307)
