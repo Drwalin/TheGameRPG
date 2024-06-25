@@ -110,6 +110,14 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 		if (scene.is_null() == false && scene.is_valid()) {
 			Node *node = scene->instantiate();
 			nodeContainingModel->add_child(node);
+			
+			if (IsPlayer()) {
+				// TODO: Replace hiding players own model with something better
+				// (to hide only animated mesh?)
+				if (Node3D *n = Object::cast_to<Node3D>(node)) {
+					n->hide();
+				}
+			}
 
 			animationTree =
 				(AnimationTree *)(node->find_child("AnimationTree"));

@@ -47,12 +47,14 @@ func _process(delta: float)->void:
 	if IsInPlayerControl() == false:
 		return;
 	
+	var d:Vector3;
+	var rot:Vector3;
 	if camera != null:
 		var mov:Vector3 = Vector3.ZERO;
 		var dir = Input.get_vector("movement_left", "movement_right", "movement_forward", "movement_backward");
 		if dir.length_squared() > 0.01:
-			var d = Vector3(dir.x, 0, dir.y).normalized();
-			var rot = GetPlayerRotation();
+			d = Vector3(dir.x, 0, dir.y).normalized();
+			rot = GetPlayerRotation();
 			mov += d.rotated(Vector3(0,1,0), rot.y+PI);
 		if Input.is_action_pressed("movement_jump"):
 			PlayerTryJump();
@@ -61,9 +63,9 @@ func _process(delta: float)->void:
 		SetPlayerDirectionMovement(Vector2(0,0));
 	
 	var pos = gameFrontend.GetPlayerPosition();
-	var rot = gameFrontend.GetPlayerRotation();
+	rot = gameFrontend.GetPlayerRotation();
 	camera.set_rotation(rot + Vector3(0, PI, 0));
-	var d = camera.basis * Vector3(0, 0, 3);
+	d = camera.basis * Vector3(0, 0, 0);
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + d + Vector3(0, height, 0);
 	

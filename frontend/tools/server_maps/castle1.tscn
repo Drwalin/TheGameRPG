@@ -1,15 +1,16 @@
 [gd_scene load_steps=8 format=3 uid="uid://bvg28534pxuuo"]
 
 [ext_resource type="PackedScene" path="res://tests/test_mesh_prefab.tscn" id="1_s6kcj"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_yiiek"]
+[ext_resource type="PackedScene" uid="uid://b5on135daflu2" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_yiiek"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Bench.tscn" id="3_ekxfp"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Table.tscn" id="4_j4bhk"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Throne.tscn" id="5_4fx2u"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/TorchHolder.tscn" id="6_umxg1"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Torch.tscn" id="7_rard0"]
+[ext_resource type="PackedScene" uid="uid://7eey8y87akjf" path="res://assets/prefabs/Furniture/TorchInHolder.tscn" id="6_vujaq"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="7_6r3np"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../build/maps/MiddleEarth.map"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6202, 0.554779, 1.42403)
 
 [node name="PrefabServerStaticMesh" parent="." instance=ExtResource("1_s6kcj")]
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 141.766, 0, 54.5624)
@@ -21,22 +22,100 @@ transform = Transform3D(0.812173, -0.0474995, 0.581479, 0.17243, 0.971698, -0.16
 transform = Transform3D(0.972402, 0.23331, 0, -0.23331, 0.972402, 0, 0, 0, 1, -145.839, 0, 54.5624)
 
 [node name="PrefabServerStaticMesh4" parent="." instance=ExtResource("2_yiiek")]
-transform = Transform3D(0.12658, 0, 0.991956, 0, 1, 0, -0.991956, 0, 0.12658, 53.444, -11.1244, 122.885)
+transform = Transform3D(0.12658, 0, 0.991956, 0, 1, 0, -0.991956, 0, 0.12658, 53.444, -11.1242, 122.86)
 
 [node name="PrefabServerStaticMesh5" parent="." instance=ExtResource("3_ekxfp")]
-transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 48.5433, -11.0737, 117.818)
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 48.8715, -11.1144, 118.015)
 
 [node name="PrefabServerStaticMesh6" parent="." instance=ExtResource("4_j4bhk")]
-transform = Transform3D(-0.0947338, 0, -0.995503, 0, 1, 0, 0.995503, 0, -0.0947338, 48.6779, -11.0703, 115.941)
+transform = Transform3D(0.112614, 0, 0.993639, 0, 1, 0, -0.993639, 0, 0.112614, 47.6527, -11.1111, 116.586)
 
 [node name="PrefabServerStaticMesh7" parent="." instance=ExtResource("5_4fx2u")]
 transform = Transform3D(0.0906673, 0, 0.995881, 0, 1, 0, -0.995881, 0, 0.0906673, 30.5488, -10.921, 119.868)
 
-[node name="PrefabServerStaticMesh8" parent="." instance=ExtResource("6_umxg1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.586, -10.4879, 117.744)
+[node name="Torch" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(0.993447, 0, -0.114296, 0, 1, 0, 0.114296, 0, 0.993447, 39.9152, -9.19728, 118.361)
 
-[node name="PrefabServerStaticMesh9" parent="." instance=ExtResource("7_rard0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.5388, -10.4848, 117.785)
+[node name="Torch2" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(0.993447, 0, -0.114296, 0, 1, 0, 0.114296, 0, 0.993447, 42.9289, -9.21169, 118.738)
 
-[node name="PrefabServerStaticMesh10" parent="." instance=ExtResource("7_rard0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.4323, -10.8612, 117.307)
+[node name="Torch3" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(0.989362, 0, -0.145479, 0, 1, 0, 0.145479, 0, 0.989362, 45.8606, -9.19728, 119.116)
+
+[node name="Torch4" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(0.986578, 0, -0.163292, 0, 1, 0, 0.163292, 0, 0.986578, 48.8328, -9.19728, 119.503)
+
+[node name="Torch5" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(0.993447, 0, -0.114296, 0, 1, 0, 0.114296, 0, 0.993447, 36.9126, -9.19728, 117.979)
+
+[node name="Torch6" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(-0.9911, 0, 0.133122, 0, 1, 0, -0.133122, 0, -0.9911, 45.162, -9.19728, 124.58)
+
+[node name="Torch7" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(-0.992872, 0, 0.119184, 0, 1, 0, -0.119184, 0, -0.992872, 42.1774, -9.19728, 124.179)
+
+[node name="Torch8" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(-0.992872, 0, 0.119184, 0, 1, 0, -0.119184, 0, -0.992872, 39.2393, -9.19728, 123.816)
+
+[node name="Torch9" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(-0.98748, 0, 0.157745, 0, 1, 0, -0.157745, 0, -0.98748, 36.2393, -9.19728, 123.439)
+
+[node name="Torch10" parent="." instance=ExtResource("6_vujaq")]
+transform = Transform3D(-0.984619, 0, 0.174714, 0, 1, 0, -0.174714, 0, -0.984619, 48.1381, -9.19728, 124.964)
+
+[node name="PrefabServerStaticMesh8" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 46.2312, -11.1172, 117.736)
+
+[node name="PrefabServerStaticMesh9" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 49.1067, -11.1144, 115.484)
+
+[node name="PrefabServerStaticMesh10" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 46.4664, -11.1172, 115.206)
+
+[node name="PrefabServerStaticMesh11" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 41.5398, -11.1144, 116.932)
+
+[node name="PrefabServerStaticMesh12" parent="." instance=ExtResource("4_j4bhk")]
+transform = Transform3D(0.112614, 0, 0.993639, 0, 1, 0, -0.993639, 0, 0.112614, 40.3211, -11.1111, 115.503)
+
+[node name="PrefabServerStaticMesh13" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 38.8995, -11.1172, 116.653)
+
+[node name="PrefabServerStaticMesh14" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 41.775, -11.1144, 114.401)
+
+[node name="PrefabServerStaticMesh15" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 39.1347, -11.1172, 114.123)
+
+[node name="PrefabServerStaticMesh16" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 46.878, -11.1144, 128.647)
+
+[node name="PrefabServerStaticMesh17" parent="." instance=ExtResource("4_j4bhk")]
+transform = Transform3D(0.112614, 0, 0.993639, 0, 1, 0, -0.993639, 0, 0.112614, 45.6593, -11.1111, 127.218)
+
+[node name="PrefabServerStaticMesh18" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 44.2377, -11.1172, 128.369)
+
+[node name="PrefabServerStaticMesh19" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 47.1133, -11.1144, 126.117)
+
+[node name="PrefabServerStaticMesh20" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 44.4729, -11.1172, 125.838)
+
+[node name="PrefabServerStaticMesh21" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 39.5464, -11.1144, 127.564)
+
+[node name="PrefabServerStaticMesh22" parent="." instance=ExtResource("4_j4bhk")]
+transform = Transform3D(0.112614, 0, 0.993639, 0, 1, 0, -0.993639, 0, 0.112614, 38.3276, -11.1111, 126.135)
+
+[node name="PrefabServerStaticMesh23" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 36.9061, -11.1172, 127.286)
+
+[node name="PrefabServerStaticMesh24" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.0927355, 39.7816, -11.1144, 125.033)
+
+[node name="PrefabServerStaticMesh25" parent="." instance=ExtResource("3_ekxfp")]
+transform = Transform3D(-0.117, 0, -0.993132, 0, 1, 0, 0.993132, 0, -0.117, 37.1413, -11.1172, 124.755)
+
+[node name="PrefabServerStaticMesh26" parent="." instance=ExtResource("7_6r3np")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.179, 21.5933, 359.962)

@@ -18,7 +18,7 @@ static inline float R()
 }
 
 struct ComponentShape {
-	float height = 1.75f;
+	float height = 1.65f;
 	float width = 0.5f;
 
 	template <typename S> S &__ByteStream_op(S &s)
