@@ -21,14 +21,9 @@ void PrefabServerBase::ClearChildren()
 	}
 }
 
-void PrefabServerBase::_ready()
-{
-	ClearChildren();
-}
+void PrefabServerBase::_ready() { ClearChildren(); }
 
-void PrefabServerBase::_process(double dt)
-{
-}
+void PrefabServerBase::_process(double dt) {}
 
 void PrefabServerBase::Serialize(uint16_t higherLevelComponentsCount,
 								 icon7::ByteWriter &writer)
@@ -40,7 +35,7 @@ String PrefabServerBase::GetRandomString()
 {
 	static std::random_device rd;
 	static std::mt19937_64 mt64(rd());
-	
+
 	std::string str;
 	str.resize(64);
 	sprintf(str.data(), "Name%lX", (uint64_t)mt64());

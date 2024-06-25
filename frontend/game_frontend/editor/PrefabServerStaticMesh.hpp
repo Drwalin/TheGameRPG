@@ -40,50 +40,14 @@ public: // Godot bound functions
 
 	void RecreateCollision()
 	{
-		if (col) {
-			remove_child(col);
-			col->queue_free();
-			col = nullptr;
-		}
-		if (GameEditorConfig::render_collision) {
-			col = new MeshInstance3D();
-			col->set_mesh(collision_mesh);
-			col->set_name(GetRandomString());
-			add_child(col);
-			col->set_owner(this);
-		}
+		RecreateResourceRenderer(&col, &collision_mesh,
+								 GameEditorConfig::render_collision);
 	}
 
 	void RecreateGraphic()
 	{
-		if (graph) {
-			remove_child(graph);
-			graph->queue_free();
-			graph = nullptr;
-		}
-		if (GameEditorConfig::render_graphic) {
-			if (graphic_Mesh_or_PackedScene.is_valid() &&
-				!graphic_Mesh_or_PackedScene.is_null()) {
-
-				Ref<PackedScene> packedScene = graphic_Mesh_or_PackedScene;
-				if (packedScene.is_null() == false && packedScene.is_valid()) {
-					graph = packedScene->instantiate();
-					graph->set_name(GetRandomString());
-					add_child(graph);
-					graph->set_owner(this);
-				}
-
-				Ref<Mesh> mesh = graphic_Mesh_or_PackedScene;
-				if (mesh.is_null() == false && mesh.is_valid()) {
-					MeshInstance3D *m = new MeshInstance3D();
-					m->set_mesh(mesh);
-					graph = m;
-					graph->set_name(GetRandomString());
-					add_child(graph);
-					graph->set_owner(this);
-				}
-			}
-		}
+		RecreateResourceRenderer(&graph, &graphic_Mesh_or_PackedScene,
+								 GameEditorConfig::render_graphic);
 	}
 
 	virtual void Serialize(uint16_t higherLevelComponentsCount,

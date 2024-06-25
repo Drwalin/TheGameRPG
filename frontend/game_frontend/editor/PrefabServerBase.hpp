@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
@@ -74,28 +72,65 @@ public: // Godot bound functions
 	PrefabServerBase();
 	virtual ~PrefabServerBase();
 	static void _bind_methods() {}
-	
+
 	void ClearChildren();
-	
+
 	void _ready() override;
 	void _process(double dt) override;
 
 	virtual void Serialize(uint16_t higherLevelComponentsCount,
 						   icon7::ByteWriter &writer);
-	
-	
+
 	static String GetRandomString();
-	
-	
-	void RegisterResourceRenderer(Ref<Resource> *resourceReference,
-			std::function<void(Ref<Resource> *resourceReference)> onChanged);
-	
-	struct RenderableResourceReference
+
+	template <typename TNode, typename TRes>
+	void RecreateResourceRenderer(TNode **nodeStorage,
+								  Ref<TRes> *resourceStorage, bool enable)
 	{
-		Ref<Resource> *resourceReference;
-		std::function<void(Ref<Resource> *resourceReference)> onChanged;
-	};
-	
-	std::vector<RenderableResourceReference> resources;
+		if (*nodeStorage) {
+			remove_child((*nodeStorage));
+			(*nodeStorage)->queue_free();
+			(*nodeStorage) = nullptr;
+		}
+		if (GameEditorConfig::render_graphic) {
+			if (resourceStorage->is_valid() && !resourceStorage->is_null()) {
+
+				if constexpr (std::is_same_v<TNode, Node>) {
+					Ref<PackedScene> packedScene = *resourceStorage;
+					if (packedScene.is_null() == false &&
+						packedScene.is_valid()) {
+						(*nodeStorage) = packedScene->instantiate();
+						(*nodeStorage)->set_name(GetRandomString());
+						add_child((*nodeStorage));
+						(*nodeStorage)->set_owner(this);
+					}
+				}
+
+				Ref<Mesh> mesh = *resourceStorage;
+				if (mesh.is_null() == false && mesh.is_valid()) {
+					MeshInstance3D *m = new MeshInstance3D();
+					m->set_mesh(mesh);
+					(*nodeStorage) = m;
+					(*nodeStorage)->set_name(GetRandomString());
+					add_child((*nodeStorage));
+					(*nodeStorage)->set_owner(this);
+				}
+			}
+		}
+		if (*nodeStorage) {
+			GenerateTriCollisionForAll(*nodeStorage);
+		}
+	}
+
+	void GenerateTriCollisionForAll(Node *node)
+	{
+		if (MeshInstance3D *mesh = Object::cast_to<MeshInstance3D>(node)) {
+			mesh->create_trimesh_collision();
+		}
+		TypedArray<Node> children = node->get_children(true);
+		for (int i = 0; i < children.size(); ++i) {
+			GenerateTriCollisionForAll((Node *)(Object *)(children[i]));
+		}
+	}
 };
 } // namespace editor

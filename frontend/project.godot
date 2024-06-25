@@ -61,7 +61,6 @@ common/physics_jitter_fix=0.0
 
 [rendering]
 
-renderer/rendering_method="mobile"
 global_illumination/voxel_gi/quality=1
 camera/depth_of_field/depth_of_field_bokeh_shape=0
 camera/depth_of_field/depth_of_field_bokeh_quality=0

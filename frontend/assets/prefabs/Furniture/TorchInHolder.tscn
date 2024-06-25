@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://7eey8y87akjf"]
+
+[ext_resource type="PackedScene" uid="uid://dxk5evqmnmfqv" path="res://assets/meshes/Furniture/TorchInHolder.tscn" id="1_c8rag"]
+
+[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
+graphic_Mesh_or_PackedScene = ExtResource("1_c8rag")
+
+[node name="NameBFECFA22942A65D5" type="Node3D" parent="." instance=ExtResource("1_c8rag")]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" path="res://assets/map_models/MiddleEarth.obj" id="1_aaaaaa"]
-[ext_resource type="ArrayMesh" path="res://assets/map_collision/MiddleEarth.obj" id="2_bbbbbb"]
+[ext_resource type="PackedScene" uid="uid://bdvldu4qi3l03" path="res://assets/map_models/MiddleEarth.obj" id="1_aaaaaa"]
+[ext_resource type="ArrayMesh" uid="uid://qdtoerl6lc38" path="res://assets/map_collision/MiddleEarth.obj" id="2_bbbbbb"]
 
 [node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_aaaaaa")
