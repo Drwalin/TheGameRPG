@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 project(TheGameRPG-frontend)
 
+include(../precompile_headers.cmake)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -17,14 +19,19 @@ include_directories(../common/include)
 include_directories(../client/include)
 include_directories(game_frontend)
 
-aux_source_directory(./game_frontend src_files)
-aux_source_directory(./game_frontend/editor src_editor_files)
+file(GLOB_RECURSE src_files_cpp "game_frontend/*.cpp")
 add_library(game_frontend SHARED
-	${src_files}
-	${src_editor_files}
+	${src_files_cpp}
 )
 target_link_libraries(game_frontend PUBLIC client)
 target_link_libraries(game_frontend PUBLIC godot::cpp)
+
+if(THEGAMERPG_PRECOMPILE_HEADERS )
+	add_common_precompiled_headers(game_frontend)
+
+	add_precompiled_header_glob_recurse(game_frontend
+		"../thirdparty/godot-cpp/gen/include*.hpp")
+endif()
 
 if(UNIX)
 	add_custom_command(TARGET game_frontend POST_BUILD
