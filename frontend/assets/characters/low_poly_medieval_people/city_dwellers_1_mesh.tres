@@ -1,11 +1,11 @@
 [gd_resource type="ArrayMesh" load_steps=3 format=3 uid="uid://lhl2mpmtq26g"]
 
-[ext_resource type="Texture2D" uid="uid://cg6add6ni6gwf" path="res://assets/characters/people_texture_map.png" id="1_2c1pg"]
+[ext_resource type="Texture2D" uid="uid://cg6add6ni6gwf" path="res://assets/characters/low_poly_medieval_people/people_texture_map.png" id="1_jvuqm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3dtn0"]
 resource_local_to_scene = true
 resource_name = "People_texture_map"
-albedo_texture = ExtResource("1_2c1pg")
+albedo_texture = ExtResource("1_jvuqm")
 metallic = 0.06
 metallic_specular = 0.14
 roughness = 0.84
