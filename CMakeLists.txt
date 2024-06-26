@@ -14,7 +14,13 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 endif()
 
+option(THEGAMERPG_PRECOMPILE_HEADERS "Enable pracompiled headers" OFF)
+
 include_directories(thirdparty/flecs/include)
+
+find_package(Bullet REQUIRED)
+include_directories(${BULLET_INCLUDE_DIR})
+include_directories(${BULLET_INCLUDE_DIR}/LinearMath)
 
 add_subdirectory(thirdparty/godot-cpp)
 
