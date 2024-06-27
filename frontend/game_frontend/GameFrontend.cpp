@@ -73,8 +73,7 @@ void GameFrontend::InternalReady()
 		(Camera3D *)(get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
 	entitiesContainer =
 		(Node *)(get_node_or_null("/root/SceneRoot/EntitiesContainer"));
-	staticMapContainer =
-		(Node *)(get_node_or_null("/root/SceneRoot/Terrain"));
+	staticMapContainer = (Node *)(get_node_or_null("/root/SceneRoot/Terrain"));
 }
 
 void GameFrontend::InternalProcess()

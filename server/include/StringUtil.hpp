@@ -33,8 +33,7 @@ inline std::string to_string(std::string_view sv)
 }
 } // namespace std
 
-inline std::vector<std::string_view>
-ConvertToArgsList(std::string_view str)
+inline std::vector<std::string_view> ConvertToArgsList(std::string_view str)
 {
 	std::vector<std::string_view> args;
 	while (str.size() > 0) {
@@ -45,18 +44,18 @@ ConvertToArgsList(std::string_view str)
 		str = str.substr(offset);
 		if (str[0] == '"') {
 			size_t end = str.find_first_of("\"", 1);
-			args.push_back(str.substr(1, end-1));
+			args.push_back(str.substr(1, end - 1));
 			if (end == std::string::npos) {
 				break;
 			}
-			str = str.substr(end+1);
+			str = str.substr(end + 1);
 		} else if (str[0] == '\'') {
 			size_t end = str.find_first_of("'", 1);
-			args.push_back(str.substr(1, end-1));
+			args.push_back(str.substr(1, end - 1));
 			if (end == std::string::npos) {
 				break;
 			}
-			str = str.substr(end+1);
+			str = str.substr(end + 1);
 		} else {
 			size_t end = str.find_first_of(" \t\n");
 			args.push_back(str.substr(0, end));
