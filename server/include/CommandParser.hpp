@@ -28,7 +28,7 @@ public:
 			function);
 
 	void _InternalParseCommand(const std::string &command);
-	
+
 	std::string GetFullHelp() const;
 	std::string GetCommandsList() const;
 
@@ -36,16 +36,11 @@ public:
 	ServerCore *serverCore;
 
 private:
-	struct CommandStorage
-	{
+	struct CommandStorage {
 		std::function<void(const std::vector<std::string_view> &args)> function;
 		std::vector<std::string> alternatives;
 		std::string description;
 	};
-	
-	std::unordered_map<
-		std::string,
-		std::shared_ptr<CommandStorage>
-			>
-		commands;
+
+	std::unordered_map<std::string, std::shared_ptr<CommandStorage>> commands;
 };

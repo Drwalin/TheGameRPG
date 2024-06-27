@@ -37,7 +37,8 @@ void CommandParser::InitializeCommands()
 			fflush(stdout);
 		});
 
-	RegisterCustomCommand({"list_commands", "list"}, R"(Lists available commands.)",
+	RegisterCustomCommand({"list_commands", "list"},
+						  R"(Lists available commands.)",
 						  [this](const std::vector<std::string_view> &args) {
 							  printf("%s\n", GetCommandsList().c_str());
 							  fflush(stdout);

@@ -63,6 +63,6 @@ public:
 	icon7::Host *host;
 
 	std::string spawnRealm;
-	
+
 	CommandParser commandParser;
 };

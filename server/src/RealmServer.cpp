@@ -248,8 +248,8 @@ void RealmServer::RegisterObservers()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const ComponentModelName &model,
 					 const ComponentShape &shape) {
-			ClientRpcProxy::Broadcast_SetModel(
-				shared_from_this(), entity.id(), model.modelName, shape);
+			ClientRpcProxy::Broadcast_SetModel(shared_from_this(), entity.id(),
+											   model.modelName, shape);
 		});
 
 	ecs.observer<ComponentStaticTransform, ComponentModelName,
