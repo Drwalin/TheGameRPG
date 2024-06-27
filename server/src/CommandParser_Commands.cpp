@@ -84,7 +84,7 @@ arguments:
 			}
 		});
 
-	RegisterCustomCommand({"load_map"},
+	RegisterCustomCommand({"load_map", ".q"},
 						  R"(Load map
 arguments:
 	- realm name)",

@@ -65,24 +65,40 @@ void CommandParser::RegisterCustomCommand(
 	std::shared_ptr<CommandStorage> cmdStorage =
 		std::make_shared<CommandStorage>();
 	cmdStorage->alternatives = commandNames;
-	std::string desc;
 	cmdStorage->function = function;
 
+	std::string conflict = "";
+	for (int i = 0; i < cmdStorage->alternatives.size(); ++i) {
+		std::string &cmd = cmdStorage->alternatives[i];
+		std::string oldCmd = cmd;
+		for (int j = 1; j <= 1000; ++j) {
+			std::transform(cmd.begin(), cmd.end(), cmd.begin(),
+						   [](auto c) { return std::tolower(c); });
+			auto it = commands.find(cmd);
+			if (it != commands.end()) {
+				cmd = oldCmd + "_" + std::to_string(j);
+				cmdStorage->alternatives[i] = cmd;
+				conflict = it->second->alternatives[0];
+			} else {
+				if (j > 1) {
+					LOG_ERROR("There is conflict between `%s` and `%s` of: "
+							  "`%s`, replacing with: `%s` for `%s`",
+							  conflict.c_str(),
+							  cmdStorage->alternatives[0].c_str(),
+							  oldCmd.c_str(), cmd.c_str(),
+							  cmdStorage->alternatives[0].c_str());
+				}
+				commands[cmd] = cmdStorage;
+				break;
+			}
+		}
+	}
+
+	cmdStorage->description = "";
 	for (auto cmd : cmdStorage->alternatives) {
 		cmdStorage->description += cmd + ", ";
 	}
 	cmdStorage->description += "\n" + description;
-
-	for (auto cmd : cmdStorage->alternatives) {
-		std::transform(cmd.begin(), cmd.end(), cmd.begin(),
-					   [](auto c) { return std::tolower(c); });
-		if (commands.find(cmd) != commands.end()) {
-			LOG_ERROR("There is commands conflict between:\n\n%s\n\nAnd:\n\n%s\n\n",
-					  commands.find(cmd)->second->description.c_str(),
-					  cmdStorage->description.c_str());
-		}
-		commands[cmd] = cmdStorage;
-	}
 }
 
 void CommandParser::_InternalParseCommand(const std::string &command)
