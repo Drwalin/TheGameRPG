@@ -6,6 +6,8 @@
 #include <iostream>
 #include <functional>
 
+#include "../include/StringUtil.hpp"
+
 class ServerCore;
 
 class CommandParser

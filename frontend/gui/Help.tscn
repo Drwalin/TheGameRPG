@@ -54,3 +54,5 @@ Do wykonania interakcji (na przykład otwarcia drzwi) należy nacisnąć przcisk
 Aby otworzyć kartę postaci, należy nacisnąć przycisk C. (Nie zaimplementowane)
 
 Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy. (Nie zaimplementowane)"
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
