@@ -5,10 +5,10 @@
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
 #include "../include/GlmBullet.hpp"
-
-#include "BulletPhysicsCallbacks.hpp"
-#include "../include/CollisionWorld.hpp"
 #include "../include/Realm.hpp"
+#include "BulletPhysicsCallbacks.hpp"
+
+#include "../include/CollisionWorld.hpp"
 
 bool CollisionWorld::RayTestFirstHitWithObjects(
 	glm::vec3 start, glm::vec3 direction, glm::vec3 *hitPosition,

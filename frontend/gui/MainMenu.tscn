@@ -1,15 +1,15 @@
 [gd_scene load_steps=2 format=3 uid="uid://4k5megwckldt"]
 
-[ext_resource type="Script" path="res://gui/LoginMenu.gd" id="1_odikw"]
+[ext_resource type="Script" path="res://gui/MainMenu.gd" id="1_akcjy"]
 
-[node name="LoginMenu" type="Control"]
+[node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_odikw")
+script = ExtResource("1_akcjy")
 
 [node name="LabelAddress" type="Label" parent="."]
 layout_mode = 0
@@ -17,7 +17,7 @@ offset_left = 514.0
 offset_top = 52.0
 offset_right = 634.0
 offset_bottom = 75.0
-text = "Server address:"
+text = "Adres serwera:"
 
 [node name="Address" type="LineEdit" parent="."]
 layout_mode = 0
@@ -29,11 +29,11 @@ text = "127.0.0.1"
 
 [node name="LabelPortNumber" type="Label" parent="."]
 layout_mode = 0
-offset_left = 508.0
+offset_left = 523.0
 offset_top = 141.0
-offset_right = 612.0
+offset_right = 627.0
 offset_bottom = 164.0
-text = "Port number:"
+text = "Numer portu:"
 
 [node name="PortNumber" type="LineEdit" parent="."]
 layout_mode = 0
@@ -49,15 +49,15 @@ offset_left = 510.0
 offset_top = 242.0
 offset_right = 655.0
 offset_bottom = 279.0
-text = "Connect to server"
+text = "Połącz"
 
 [node name="LabelUsername" type="Label" parent="."]
 layout_mode = 0
-offset_left = 539.0
-offset_top = 310.0
-offset_right = 659.0
-offset_bottom = 333.0
-text = "Username:"
+offset_left = 507.0
+offset_top = 308.0
+offset_right = 666.0
+offset_bottom = 331.0
+text = "Nazwa użytkownika:"
 
 [node name="Username" type="LineEdit" parent="."]
 layout_mode = 0
@@ -74,7 +74,7 @@ offset_left = 540.0
 offset_top = 400.0
 offset_right = 660.0
 offset_bottom = 423.0
-text = "Password:"
+text = "Hasło:"
 
 [node name="Password" type="LineEdit" parent="."]
 layout_mode = 0
@@ -93,7 +93,7 @@ offset_left = 538.0
 offset_top = 521.0
 offset_right = 652.0
 offset_bottom = 558.0
-text = "Login"
+text = "Zaloguj"
 
 [node name="Exit" type="Button" parent="."]
 layout_mode = 0
@@ -101,7 +101,7 @@ offset_left = 88.0
 offset_top = 451.0
 offset_right = 233.0
 offset_bottom = 488.0
-text = "Quit Game"
+text = "Wyjdź z gry"
 
 [node name="Disconnect" type="Button" parent="."]
 layout_mode = 0
@@ -109,9 +109,27 @@ offset_left = 90.0
 offset_top = 519.0
 offset_right = 235.0
 offset_bottom = 556.0
-text = "Disconnect"
+text = "Rozłącz"
+
+[node name="Settings" type="Button" parent="."]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 89.0
+offset_right = 240.0
+offset_bottom = 126.0
+text = "Ustawienia"
+
+[node name="Help" type="Button" parent="."]
+layout_mode = 0
+offset_left = 94.0
+offset_top = 157.0
+offset_right = 239.0
+offset_bottom = 194.0
+text = "Pomoc"
 
 [connection signal="pressed" from="Button" to="." method="_on_connect_to_server_pressed"]
 [connection signal="pressed" from="ButtonLogin" to="." method="_OnLoginPressed"]
 [connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]
 [connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]
+[connection signal="pressed" from="Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="Help" to="." method="_on_help_pressed"]
