@@ -1,7 +1,13 @@
 #include "../include/ServerCore.hpp"
 
+#include <dlfcn.h>
+
 int main(int argc, char **argv)
 {
+	void *handle = dlopen("./server/libscripts.so", RTLD_NOW);
+	LOG_INFO("Loading shared object (%p) error: %s", handle, dlerror());
+	((void(*)())dlsym(handle, "Register_OnUse_SingleDoor"))();
+	
 	icon7::Initialize();
 	LOG_INFO("Main thread started");
 	{

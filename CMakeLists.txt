@@ -35,3 +35,5 @@ add_subdirectory(common)
 add_subdirectory(server)
 add_subdirectory(client)
 add_subdirectory(frontend)
+
+add_custom_target(game ALL DEPENDS server scripts game_frontend)

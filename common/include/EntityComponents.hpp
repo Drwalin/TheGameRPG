@@ -9,6 +9,8 @@
 
 #include "GlmSerialization.hpp"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
 static inline float R()
 {
 	static std::random_device rd;
@@ -16,6 +18,7 @@ static inline float R()
 	static std::uniform_real_distribution<float> dist(-50, 50);
 	return dist(mt);
 }
+#pragma clang diagnostic pop
 
 struct ComponentShape {
 	float height = 1.65f;
