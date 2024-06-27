@@ -102,6 +102,8 @@ void CollisionWorld::OnStaticCollisionShape(
 		object->setWorldTransform(
 			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 		object->setUserIndex(FILTER_TERRAIN);
+		object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
+		object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
 		collisionWorld->addCollisionObject(object,
 										   btBroadphaseProxy::StaticFilter);
 		collisionWorld->updateSingleAabb(object);

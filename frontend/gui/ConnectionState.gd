@@ -12,7 +12,7 @@ func _process(delta):
 	elif gameFrontend.IsConnected():
 		text = "Connected to server";
 		set("theme_override_colors/font_color", Color(0.85, 0.85, 0.85));
-		var v:bool = get_parent().find_child("LoginMenu", false).visible;
+		var v:bool = get_parent().find_child("MainMenu", false).visible;
 		if visible != v:
 			visible = v;
 	else:
