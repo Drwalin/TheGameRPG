@@ -16,19 +16,39 @@ include_directories(../common/include)
 include_directories(include)
 
 file(GLOB_RECURSE src_files "src/*.cpp")
+file(GLOB_RECURSE script_files "scripts/*.cpp")
 
-add_executable(server
-	${src_files}
-)
-set_target_properties(server PROPERTIES ENABLE_EXPORTS ON)
-target_link_libraries(server common)
+if (WIN32)
+	add_library(server_lib SHARED
+		${src_files}
+	)
+	target_link_libraries(server_lib common)
+	add_executable(server
+		ServerMain.cpp
+	)
+	target_link_libraries(server server_lib)
+	
+	add_library(scripts SHARED
+		${script_files}
+	)
+	target_link_libraries(scripts server_lib)
+else()
+	add_executable(server
+		${src_files}
+		ServerMain.cpp
+	)
+	target_link_libraries(server common)
+	# ENABLE_EXPORTS allows for dlopen(scripts) to link against symbols from within
+	# 				 server executable file
+	set_target_properties(server PROPERTIES ENABLE_EXPORTS ON)
+	
+	add_library(scripts SHARED
+		${script_files}
+	)
+endif()
+
 if(THEGAMERPG_PRECOMPILE_HEADERS )
 	add_common_precompiled_headers(server)
 endif()
-
-file(GLOB_RECURSE script_files "scripts/*.cpp")
-add_library(scripts SHARED
-	${script_files}
-)
 
 add_custom_target(game_server DEPENDS server scripts)

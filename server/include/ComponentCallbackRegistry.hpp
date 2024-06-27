@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <shared_mutex>
+#include <memory>
 #include <atomic>
 #include <string>
 #include <unordered_map>
@@ -9,6 +10,8 @@
 #include <bitscpp/ByteWriter.hpp>
 #include <bitscpp/ByteReader.hpp>
 #include <icon7/Debug.hpp>
+
+#include "SharedObject.hpp"
 
 class RealmServer;
 
@@ -21,9 +24,11 @@ template <typename TFinal, typename TCb> struct EntryBase {
 	const std::string shortName;
 	std::chrono::system_clock::time_point setTimestamp;
 	std::atomic<TCb> callback;
+	std::shared_ptr<SharedObject> sharedObject;
 
 	inline static int Set(const std::string &fullName,
-						  const std::string &shortName, FunctionType cb);
+						  const std::string &shortName, FunctionType cb,
+						  std::shared_ptr<SharedObject> sharedObject);
 	inline static TFinal *Get(const std::string &name);
 
 	template <typename... TArgs> inline void Call(TArgs &&...args)
@@ -37,7 +42,7 @@ template <typename T> struct Registry {
 	using FunctionType = typename T::FunctionType;
 
 	static void Set(const std::string &fullName, const std::string &shortName,
-					FunctionType cb)
+					FunctionType cb, std::shared_ptr<SharedObject> sharedObject)
 	{
 		sharedMutex.lock();
 		auto it1 = registry.find(fullName);
@@ -50,7 +55,7 @@ template <typename T> struct Registry {
 					  it1->second->fullName.c_str(),
 					  it1->second->shortName.c_str(), shortName.c_str(),
 					  it1->second->shortName.c_str(),
-					  it1->second->shortName.c_str());
+					  it1->second->shortName.c_str(), sharedObject);
 			return;
 		}
 
@@ -92,10 +97,12 @@ private:
 };
 
 template <typename TFinal, typename TCb>
-inline int EntryBase<TFinal, TCb>::Set(const std::string &fullName,
-									   const std::string &shortName, TCb cb)
+inline int
+EntryBase<TFinal, TCb>::Set(const std::string &fullName,
+							const std::string &shortName, TCb cb,
+							std::shared_ptr<SharedObject> sharedObject)
 {
-	Registry<TFinal>::Set(fullName, shortName, cb);
+	Registry<TFinal>::Set(fullName, shortName, cb, sharedObject);
 	return 0;
 }
 
@@ -144,7 +151,8 @@ using OnUseFunctionType = void (*)(RealmServer *realm, uint64_t instigatorId,
 struct OnUse final : public EntryBase<OnUse, OnUseFunctionType> {
 };
 
-#define REGISTER_NAMED_CALLBACK(TYPE, FULL_NAME, SHORT_NAME, FUNC)             \
-	TYPE::Set(FULL_NAME, SHORT_NAME, FUNC)
+#define REGISTER_NAMED_CALLBACK(TYPE, FULL_NAME, SHORT_NAME, FUNC,             \
+								SHARED_OBJECT)                                 \
+	TYPE::Set(FULL_NAME, SHORT_NAME, FUNC, SHARED_OBJECT)
 } // namespace registry_entries
 } // namespace named_callbacks
