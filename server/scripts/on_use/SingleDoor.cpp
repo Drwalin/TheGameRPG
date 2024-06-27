@@ -1,9 +1,8 @@
-
 #include <flecs.h>
 
 #include "../include/ComponentCallbackRegistry.hpp"
 #include "../../include/EntityGameComponents.hpp"
-
+#include "../include/SharedObject.hpp"
 #include "../include/RealmServer.hpp"
 
 extern "C" void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
@@ -12,11 +11,13 @@ extern "C" void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 {
 	flecs::entity target = realm->Entity(receiverId);
 	if (target.has<ComponentStaticTransform>()) {
-		const ComponentOpenableState *open = target.get<ComponentOpenableState>();
-		const ComponentSingleDoorTransformStates *states = target.get<ComponentSingleDoorTransformStates>();
-		
+		const ComponentOpenableState *open =
+			target.get<ComponentOpenableState>();
+		const ComponentSingleDoorTransformStates *states =
+			target.get<ComponentSingleDoorTransformStates>();
+
 		bool op = !open->open;
-		
+
 		target.set<ComponentOpenableState>(ComponentOpenableState{op});
 		if (op) {
 			target.set<ComponentStaticTransform>(states->transformOpen);
@@ -24,12 +25,16 @@ extern "C" void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 			target.set<ComponentStaticTransform>(states->transformClosed);
 		}
 	} else {
-		LOG_WARN("Entity %lu does not have ComponentStaticTransform but had called OnUse_SingleDoor", receiverId);
+		LOG_WARN("Entity %lu does not have ComponentStaticTransform but had "
+				 "called OnUse_SingleDoor",
+				 receiverId);
 	}
 }
 
-extern "C" void Register_OnUse_SingleDoor()
+extern "C" void
+Register_OnUse_SingleDoor(class ServerCore *serverCore,
+						  std::shared_ptr<SharedObject> sharedObject)
 {
 	REGISTER_NAMED_CALLBACK(named_callbacks::registry_entries::OnUse,
-							"SingleDoor", "SD", OnUse_SingleDoor);
+							"SingleDoor", "SD", OnUse_SingleDoor, sharedObject);
 }

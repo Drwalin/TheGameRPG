@@ -10,6 +10,7 @@
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
 #include "PeerData.hpp"
+#include "CommandParser.hpp"
 
 class ServerCore
 {
@@ -49,8 +50,6 @@ private:
 								icon7::Peer *peer, icon7::ByteReader &reader,
 								icon7::Flags flags);
 
-	void ParseCommand(const std::string &cmd);
-
 public:
 	volatile bool requestStop = false;
 
@@ -64,4 +63,6 @@ public:
 	icon7::Host *host;
 
 	std::string spawnRealm;
+	
+	CommandParser commandParser;
 };

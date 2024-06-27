@@ -61,10 +61,12 @@ public:
 	SerializeEntityComponent(flecs::entity entity,
 							 icon7::ByteWriter &writer) const override
 	{
-		const T *component = entity.get<T>();
-		if (component) {
-			Serialize(*component, writer);
-			return true;
+		if (entity.has<T>()) {
+			const T *component = entity.get<T>();
+			if (component) {
+				Serialize(*component, writer);
+				return true;
+			}
 		}
 		return false;
 	}

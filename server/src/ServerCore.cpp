@@ -8,7 +8,7 @@
 
 #include "../include/ServerCore.hpp"
 
-ServerCore::ServerCore() { host = nullptr; }
+ServerCore::ServerCore() : commandParser(this) { host = nullptr; }
 
 ServerCore::~ServerCore() { Destroy(); }
 
@@ -64,8 +64,34 @@ void ServerCore::StartService()
 void ServerCore::Listen(const std::string &addressInterface, uint16_t port,
 						int useIpv4)
 {
+	class CommandExecuteListeningResult
+		: public icon7::commands::ExecuteBooleanOnHost
+	{
+	public:
+		CommandExecuteListeningResult() = default;
+		~CommandExecuteListeningResult() = default;
+		ServerCore *serverCore;
+		std::string address;
+		uint16_t port;
+		bool ipv4;
+		virtual void Execute() override
+		{
+			if (result) {
+				LOG_INFO("Listening on %s[:%i] ipv%i", address.c_str(),
+						 (int)port, ipv4 ? 4 : 6);
+			} else {
+				LOG_INFO("Failed to listen on %s[:%i] ipv%i", address.c_str(),
+						 (int)port, ipv4 ? 4 : 6);
+			}
+		}
+	};
+	auto com = icon7::CommandHandle<CommandExecuteListeningResult>::Create();
+	com->serverCore = this;
+	com->address = addressInterface;
+	com->port = port;
+	com->ipv4 = useIpv4;
 	host->ListenOnPort(addressInterface, port,
-					   useIpv4 ? icon7::IPv4 : icon7::IPv6);
+					   useIpv4 ? icon7::IPv4 : icon7::IPv6, std::move(com));
 }
 
 void ServerCore::RunNetworkLoopAsync()
