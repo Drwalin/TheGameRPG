@@ -2,13 +2,14 @@
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
 
-#include "../../common/include/CollisionLoader.hpp"
 #include "../../common/include/EntitySystems.hpp"
 #include "../../common/include/ClientRpcFunctionNames.hpp"
+#include "../../common/include/RegistryComponent.hpp"
 
+#include "../include/CollisionLoader.hpp"
+#include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
-#include "../../common/include/RegistryComponent.hpp"
 #include "../include/FileOperations.hpp"
 
 #include "../include/RealmServer.hpp"
@@ -35,7 +36,14 @@ void RealmServer::Init(const std::string &realmName)
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
 
-	std::string fileName = std::string("maps/") + realmName + ".map";
+	std::string filePrefix, fileSuffix;
+	if (serverCore->configStorage.GetString(
+			"config.realm_map_file.file_path.prefix", &filePrefix)) {
+	}
+	if (serverCore->configStorage.GetString(
+			"config.realm_map_file.file_path.suffix", &fileSuffix)) {
+	}
+	std::string fileName = filePrefix + realmName + fileSuffix;
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
 		icon7::ByteReader reader(buffer, 0);
@@ -60,6 +68,11 @@ bool RealmServer::GetCollisionShape(std::string collisionShapeName,
 									TerrainCollisionData *data)
 {
 	CollisionLoader loader;
+	std::string filePrefix;
+	if (serverCore->configStorage.GetString(
+			"config.collision_shape.file_path.prefix", &filePrefix)) {
+		collisionShapeName = filePrefix + collisionShapeName;
+	}
 	bool res = loader.LoadOBJ(collisionShapeName);
 	std::swap(loader.collisionData, *data);
 	return res && data->vertices.size() >= 3 && data->indices.size() >= 3;
