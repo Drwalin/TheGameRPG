@@ -65,8 +65,11 @@ func _process(delta: float)->void:
 	var pos = gameFrontend.GetPlayerPosition();
 	rot = gameFrontend.GetPlayerRotation();
 	camera.set_rotation(rot + Vector3(0, PI, 0));
-	d = camera.basis * Vector3(0, 0, 0);
 	var height = gameFrontend.GetPlayerHeight();
-	camera.position = pos + d + Vector3(0, height, 0);
+	camera.position = pos + Vector3(0, height, 0);
+	
+	if Input.is_action_just_pressed("input_use"):
+		gameFrontend.PerformInteractionUse();
+		pass;
 	
 	

@@ -31,7 +31,7 @@ transform = Transform3D(-0.0927355, 0, -0.995691, 0, 1, 0, 0.995691, 0, -0.09273
 transform = Transform3D(0.112614, 0, 0.993639, 0, 1, 0, -0.993639, 0, 0.112614, 47.6527, -11.1111, 116.586)
 
 [node name="PrefabServerStaticMesh7" parent="." instance=ExtResource("5_4fx2u")]
-transform = Transform3D(0.0906673, 0, 0.995881, 0, 1, 0, -0.995881, 0, 0.0906673, 30.5488, -10.921, 119.868)
+transform = Transform3D(0.132706, 0, 0.991156, 0, 1, 0, -0.991156, 0, 0.132706, 30.629, -10.921, 119.928)
 
 [node name="Torch" parent="." instance=ExtResource("6_vujaq")]
 transform = Transform3D(0.993447, 0, -0.114296, 0, 1, 0, 0.114296, 0, 0.993447, 39.9152, -9.19728, 118.361)

@@ -1,6 +1,10 @@
 #include <chrono>
 #include <thread>
 
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/mat3x3.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include "../../ICon7/include/icon7/PeerUStcp.hpp"
 #include "../../ICon7/include/icon7/HostUStcp.hpp"
 #include "../../ICon7/include/icon7/Command.hpp"
@@ -331,4 +335,40 @@ void GameClient::TryPerformJump()
 
 	player.set(state);
 	needSendPlayerMovementInput = true;
+}
+
+void GameClient::PerformInteractionUse()
+{
+	glm::vec3 pos = GetPosition();
+	glm::vec3 rot = GetRotation();
+	// TODO: replace 4 with value from some entity component
+	glm::vec3 forward = glm::vec3(0, 0, 4);
+
+	glm::mat4 mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+	mat = glm::rotate(mat, rot.y, glm::vec3(0, 1, 0));
+	mat = glm::rotate(mat, rot.x, glm::vec3(1, 0, 0));
+	glm::vec4 v4 = {forward.x, forward.y, forward.z, 0};
+	forward = mat * v4;
+
+	pos.y += GetShape().height;
+
+	glm::vec3 dst = pos + forward;
+
+	glm::vec3 hitPoint, normal;
+	float td;
+	bool hasNormal;
+	uint64_t entityId = 0;
+	if (realm->collisionWorld.RayTestFirstHit(pos, dst, &hitPoint, &normal,
+											  &entityId, &td, &hasNormal,
+											  localPlayerEntityId)) {
+		if (entityId != 0) {
+			auto it = mapLocalEntityIdToServerEntityId.find(entityId);
+			if (it != mapLocalEntityIdToServerEntityId.end()) {
+				uint64_t serverEntityId = it->second;
+				ServerRpcProxy::InteractInLineOfSight(this, serverEntityId, pos,
+													  hitPoint, normal);
+				LOG_INFO("Hit object: %lu", entityId);
+			}
+		}
+	}
 }

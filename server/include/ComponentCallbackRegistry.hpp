@@ -33,7 +33,12 @@ template <typename TFinal, typename TCb> struct EntryBase {
 
 	template <typename... TArgs> inline void Call(TArgs &&...args)
 	{
-		callback.load()(std::forward<TArgs>(args)...);
+		TCb ptr = callback.load();
+		if (ptr != nullptr) {
+			callback.load()(std::forward<TArgs>(args)...);
+		} else {
+			LOG_ERROR("Callback `%s` is null", fullName.c_str());
+		}
 	}
 };
 
@@ -62,15 +67,18 @@ template <typename T> struct Registry {
 		if (it1 != registry.end()) {
 			it1->second->setTimestamp = std::chrono::system_clock::now();
 			it1->second->callback = cb;
+			it1->second->sharedObject = sharedObject;
 			LOG_TRACE("Re-registering callback '%s' -> '%s'", fullName.c_str(),
 					  shortName.c_str());
 		} else {
 			T *ptr = new T{fullName, shortName,
-						   std::chrono::system_clock::now(), cb};
+						   std::chrono::system_clock::now(), cb, sharedObject};
 			registry[fullName] = ptr;
 			registry[shortName] = ptr;
 			LOG_TRACE("Registering callback '%s' -> '%s'", fullName.c_str(),
 					  shortName.c_str());
+
+			LOG_INFO("Callback ptr: %p", ptr->callback.load());
 		}
 		sharedMutex.unlock();
 	}
@@ -87,6 +95,8 @@ template <typename T> struct Registry {
 		if (ret == nullptr) {
 			LOG_ERROR("No callback named: %s", name.c_str());
 			exit(13);
+		} else {
+			LOG_ERROR("Callback named: %s found", name.c_str());
 		}
 		return ret;
 	}

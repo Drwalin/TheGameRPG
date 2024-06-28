@@ -5,9 +5,8 @@
 #include "../../include/SharedObject.hpp"
 #include "../../include/RealmServer.hpp"
 
-extern "C" void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
-								 uint64_t receiverId,
-								 const std::string &context)
+void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
+					  uint64_t receiverId, const std::string &context)
 {
 	flecs::entity target = realm->Entity(receiverId);
 	if (target.has<ComponentStaticTransform>()) {
@@ -36,5 +35,6 @@ Register_OnUse_SingleDoor(class ServerCore *serverCore,
 						  std::shared_ptr<SharedObject> sharedObject)
 {
 	REGISTER_NAMED_CALLBACK(named_callbacks::registry_entries::OnUse,
-							"SingleDoor", "SD", OnUse_SingleDoor, sharedObject);
+							"SingleDoor", "SD", &OnUse_SingleDoor,
+							sharedObject);
 }

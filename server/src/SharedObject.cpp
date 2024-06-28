@@ -59,7 +59,12 @@ void *SharedObject::GetVoidSymbol(const std::string &symbol)
 bool SharedObject::Open(const std::string &file)
 {
 	handle = dlopen(file.c_str(), RTLD_NOW);
-	errorMessage = dlerror();
+	const char *errStr = dlerror();
+	if (errStr) {
+		errorMessage = errStr;
+	} else {
+		errorMessage = "";
+	}
 	filePath = file;
 	return handle != nullptr;
 }

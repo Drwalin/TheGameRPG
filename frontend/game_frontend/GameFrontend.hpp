@@ -61,6 +61,7 @@ public: // Call functions from godot to game
 	Camera3D *GetPlayerCamera();
 	bool GetIsPlayerOnGround();
 	bool IsInPlayerControl();
+	void PerformInteractionUse();
 
 	bool IsConnected();
 	bool IsDisconnected();
