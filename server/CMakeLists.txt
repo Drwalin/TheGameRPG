@@ -3,12 +3,18 @@ project(TheGameRPG-server)
 
 include(../precompile_headers.cmake)
 
+option(THEGAMERPG_SERVER_SCRIPTS_PCH "Enable pch for server scripts" OFF)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+else()
+endif()
 
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
@@ -45,9 +51,25 @@ else()
 	add_library(scripts SHARED
 		${script_files}
 	)
+	
+	if (THEGAMERPG_SERVER_SCRIPTS_PCH)
+		target_precompile_headers(scripts PUBLIC scripts/BigHeader.hpp)
+	endif()
+	
+	if (THEGAMERPG_TIME_REPORT)
+		target_compile_options(server PUBLIC -ftime-report)
+		target_compile_options(scripts PUBLIC -ftime-report)
+	endif()
+	
+	if (THEGAMERPG_PRECOMPILE_HEADERS )
+		add_common_precompiled_headers(scripts)
+		add_precompiled_header_glob_recurse(scripts "../ICon7/include/*.hpp")
+		add_precompiled_header_glob_recurse(scripts "include/*.hpp")
+		add_precompiled_header_glob_recurse(scripts "../common/include/*.hpp")
+	endif()
 endif()
 
-if(THEGAMERPG_PRECOMPILE_HEADERS )
+if (THEGAMERPG_PRECOMPILE_HEADERS)
 	add_common_precompiled_headers(server)
 endif()
 

@@ -27,8 +27,14 @@ add_library(common STATIC
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PUBLIC flecs)
-target_link_libraries(common PRIVATE ${BULLET_LIBRARIES})
+target_link_libraries(common PRIVATE ${BULLET_COLLISION_LIBRARY})
+target_link_libraries(common PRIVATE ${BULLET_MATH_LIBRARY})
 
 if(THEGAMERPG_PRECOMPILE_HEADERS )
 	add_common_precompiled_headers(common)
+endif()
+
+if (THEGAMERPG_TIME_REPORT)
+	target_compile_options(common PUBLIC -ftime-report)
+	target_compile_options(flecs PUBLIC -ftime-report)
 endif()

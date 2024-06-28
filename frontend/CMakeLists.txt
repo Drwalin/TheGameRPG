@@ -46,3 +46,7 @@ else()
 		COMMENT "Copying libgame_frontend.dll"
 	)
 endif()
+
+if (THEGAMERPG_TIME_REPORT)
+	target_compile_options(game_frontend PUBLIC -ftime-report)
+endif()

@@ -15,6 +15,7 @@ else()
 endif()
 
 option(THEGAMERPG_PRECOMPILE_HEADERS "Enable pracompiled headers" OFF)
+option(THEGAMERPG_TIME_REPORT "Enable time report for compilation" OFF)
 
 include_directories(thirdparty/flecs/include)
 
