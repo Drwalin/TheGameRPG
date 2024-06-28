@@ -47,22 +47,10 @@ bool ConfigStorage::GetBool(const std::string &key, bool *ret)
 	return GetOrDefault<bool>(bools, key, ret);
 }
 
-void ConfigStorage::SetBool(const std::string &key, bool value)
-{
-	std::lock_guard<std::shared_mutex> lock(mb);
-	bools[key] = value;
-}
-
 bool ConfigStorage::GetString(const std::string &key, std::string *ret)
 {
 	std::shared_lock lock(ms);
 	return GetOrDefault<std::string>(strings, key, ret);
-}
-
-void ConfigStorage::SetString(const std::string &key, const std::string &value)
-{
-	std::lock_guard<std::shared_mutex> lock(ms);
-	strings[key] = value;
 }
 
 bool ConfigStorage::GetInteger(const std::string &key, int64_t *ret)
@@ -71,22 +59,10 @@ bool ConfigStorage::GetInteger(const std::string &key, int64_t *ret)
 	return GetOrDefault<int64_t>(ints, key, ret);
 }
 
-void ConfigStorage::SetInteger(const std::string &key, int64_t value)
-{
-	std::lock_guard<std::shared_mutex> lock(mi);
-	ints[key] = value;
-}
-
 bool ConfigStorage::GetFloat(const std::string &key, double *ret)
 {
 	std::shared_lock lock(mf);
 	return GetOrDefault<double>(floats, key, ret);
-}
-
-void ConfigStorage::SetFloat(const std::string &key, double value)
-{
-	std::lock_guard<std::shared_mutex> lock(mf);
-	floats[key] = value;
 }
 
 bool ConfigStorage::GetVec2(const std::string &key, glm::vec2 *ret)
@@ -95,22 +71,10 @@ bool ConfigStorage::GetVec2(const std::string &key, glm::vec2 *ret)
 	return GetOrDefault<glm::vec2>(vec2, key, ret);
 }
 
-void ConfigStorage::SetVec2(const std::string &key, glm::vec2 value)
-{
-	std::lock_guard<std::shared_mutex> lock(mv2);
-	vec2[key] = value;
-}
-
 bool ConfigStorage::GetVec3(const std::string &key, glm::vec3 *ret)
 {
 	std::shared_lock lock(mv3);
 	return GetOrDefault<glm::vec3>(vec3, key, ret);
-}
-
-void ConfigStorage::SetVec3(const std::string &key, glm::vec3 value)
-{
-	std::lock_guard<std::shared_mutex> lock(mv3);
-	vec3[key] = value;
 }
 
 bool ConfigStorage::GetVec4(const std::string &key, glm::vec4 *ret)
@@ -119,10 +83,128 @@ bool ConfigStorage::GetVec4(const std::string &key, glm::vec4 *ret)
 	return GetOrDefault<glm::vec4>(vec4, key, ret);
 }
 
+void ConfigStorage::SetBool(const std::string &key, bool value)
+{
+	std::lock_guard<std::shared_mutex> lock(mb);
+	bools[key] = value;
+}
+
+void ConfigStorage::SetString(const std::string &key, const std::string &value)
+{
+	std::lock_guard<std::shared_mutex> lock(ms);
+	strings[key] = value;
+}
+
+void ConfigStorage::SetInteger(const std::string &key, int64_t value)
+{
+	std::lock_guard<std::shared_mutex> lock(mi);
+	ints[key] = value;
+}
+
+void ConfigStorage::SetFloat(const std::string &key, double value)
+{
+	std::lock_guard<std::shared_mutex> lock(mf);
+	floats[key] = value;
+}
+
+void ConfigStorage::SetVec2(const std::string &key, glm::vec2 value)
+{
+	std::lock_guard<std::shared_mutex> lock(mv2);
+	vec2[key] = value;
+}
+
+void ConfigStorage::SetVec3(const std::string &key, glm::vec3 value)
+{
+	std::lock_guard<std::shared_mutex> lock(mv3);
+	vec3[key] = value;
+}
+
 void ConfigStorage::SetVec4(const std::string &key, glm::vec4 value)
 {
 	std::lock_guard<std::shared_mutex> lock(mv4);
 	vec4[key] = value;
+}
+
+bool ConfigStorage::GetOrSetBool(const std::string &key, bool defaultValue)
+{
+	bool ret;
+	if (GetBool(key, &ret)) {
+		return ret;
+	} else {
+		SetBool(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+std::string ConfigStorage::GetOrSetString(const std::string &key,
+										  std::string defaultValue)
+{
+	std::string ret;
+	if (GetString(key, &ret)) {
+		return ret;
+	} else {
+		SetString(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+int64_t ConfigStorage::GetOrSetInteger(const std::string &key,
+									   int64_t defaultValue)
+{
+	int64_t ret;
+	if (GetInteger(key, &ret)) {
+		return ret;
+	} else {
+		SetInteger(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+double ConfigStorage::GetOrSetFloat(const std::string &key, double defaultValue)
+{
+	double ret;
+	if (GetFloat(key, &ret)) {
+		return ret;
+	} else {
+		SetFloat(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+glm::vec2 ConfigStorage::GetOrSetVec2(const std::string &key,
+									  glm::vec2 defaultValue)
+{
+	glm::vec2 ret;
+	if (GetVec2(key, &ret)) {
+		return ret;
+	} else {
+		SetVec2(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+glm::vec3 ConfigStorage::GetOrSetVec3(const std::string &key,
+									  glm::vec3 defaultValue)
+{
+	glm::vec3 ret;
+	if (GetVec3(key, &ret)) {
+		return ret;
+	} else {
+		SetVec3(key, defaultValue);
+		return defaultValue;
+	}
+}
+
+glm::vec4 ConfigStorage::GetOrSetVec4(const std::string &key,
+									  glm::vec4 defaultValue)
+{
+	glm::vec4 ret;
+	if (GetVec4(key, &ret)) {
+		return ret;
+	} else {
+		SetVec4(key, defaultValue);
+		return defaultValue;
+	}
 }
 
 std::string ConfigStorage::AllConfigsCommand()
@@ -198,8 +280,8 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		{"setb"},
 		"Sets named config variable with boolean value (0 or 1)\n"
 		"arguments:\n"
-		"    - variable name\n"
-		"    - new boolean value",
+		"  - variable name\n"
+		"  - new boolean value",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 3) {
 				LOG_ERROR("Not enaught arguments to setb");
@@ -211,8 +293,8 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 	com->RegisterCustomCommand({"sets"},
 							   "Sets named config variable with string value\n"
 							   "arguments:\n"
-							   "    - variable name\n"
-							   "    - new string value",
+							   "  - variable name\n"
+							   "  - new string value",
 							   [this](const std::vector<std::string> &args) {
 								   if (args.size() < 3) {
 									   LOG_ERROR(
@@ -225,8 +307,8 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 	com->RegisterCustomCommand({"seti"},
 							   "Sets named config variable with integer value\n"
 							   "arguments:\n"
-							   "    - variable name\n"
-							   "    - new integer value",
+							   "  - variable name\n"
+							   "  - new integer value",
 							   [this](const std::vector<std::string> &args) {
 								   if (args.size() < 3) {
 									   LOG_ERROR(
@@ -239,8 +321,8 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 	com->RegisterCustomCommand({"setf"},
 							   "Sets named config variable with float value\n"
 							   "arguments:\n"
-							   "    - variable name\n"
-							   "    - new float value",
+							   "  - variable name\n"
+							   "  - new float value",
 							   [this](const std::vector<std::string> &args) {
 								   if (args.size() < 3) {
 									   LOG_ERROR(
@@ -254,9 +336,9 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		{"setv2"},
 		"Sets named config variable with vec2 value\n"
 		"arguments:\n"
-		"    - variable name\n"
-		"    - new X value\n"
-		"    - new Y value",
+		"  - variable name\n"
+		"  - new X value\n"
+		"  - new Y value",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 4) {
 				LOG_ERROR("Not enaught arguments to setv2");
@@ -269,10 +351,10 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		{"setv3"},
 		"Sets named config variable with vec3 value\n"
 		"arguments:\n"
-		"    - variable name\n"
-		"    - new X value\n"
-		"    - new Y value\n"
-		"    - new Z value",
+		"  - variable name\n"
+		"  - new X value\n"
+		"  - new Y value\n"
+		"  - new Z value",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 4) {
 				LOG_ERROR("Not enaught arguments to setv3");
@@ -286,11 +368,11 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		{"setv4"},
 		"Sets named config variable with vec4 value\n"
 		"arguments:\n"
-		"    - variable name\n"
-		"    - new W value\n"
-		"    - new X value\n"
-		"    - new Y value\n"
-		"    - new Z value",
+		"  - variable name\n"
+		"  - new W value\n"
+		"  - new X value\n"
+		"  - new Y value\n"
+		"  - new Z value",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 4) {
 				LOG_ERROR("Not enaught arguments to setv4");
@@ -312,7 +394,7 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		{"save_variables_to_file"},
 		"Saves all variables to a file\n"
 		"arguments:\n"
-		"    - file name to save variables",
+		"  - file name to save variables",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 2) {
 				LOG_ERROR("Not enaught arguments to save_variables_to_file");

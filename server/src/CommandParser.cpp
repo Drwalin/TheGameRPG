@@ -102,7 +102,7 @@ void CommandParser::RegisterCustomCommand(
 		cmdStorage->description += cmd;
 	}
 	cmdStorage->description +=
-		"\n" + std::replace_all(description, "\n", "\n    ");
+		"\n  " + std::replace_all(description, "\n", "\n  ");
 }
 
 void CommandParser::_InternalParseCommand(const std::string &command)

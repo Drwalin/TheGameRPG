@@ -1,3 +1,5 @@
+#include <thread>
+
 #include "include/FileOperations.hpp"
 #include "include/ServerCore.hpp"
 
@@ -27,7 +29,10 @@ int main(int argc, char **argv)
 			}
 		}
 
-		serverCore.realmManager.RunAsync(1);
+		serverCore.realmManager.RunAsync(std::clamp<int64_t>(
+			serverCore.configStorage.GetOrSetInteger(
+				"config.realm_worker_manager.threads_count", 1),
+			1, std::thread::hardware_concurrency()));
 
 		serverCore.RunNetworkLoopAsync();
 
