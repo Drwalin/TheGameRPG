@@ -51,7 +51,7 @@ void CommandParser::InitializeCommands()
 	RegisterCustomCommand({"source", "run"},
 						  "Executes contents of given path\n"
 						  "arguments:\n"
-						  "    - file path with script)",
+						  "  - file path with script)",
 						  [this](const std::vector<std::string> &args) {
 							  std::ifstream file(std::to_string(args[1]));
 							  ParseCommands(file);
@@ -61,7 +61,7 @@ void CommandParser::InitializeCommands()
 		{"load_symbols", "dlopen", "dlsym"},
 		"Loads shared object and execute symbols given symbols\n"
 		"arguments:\n"
-		"    - shared object file path\n"
+		"  - shared object file path\n"
 		"  ... funtion symbols to execute",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() < 3) {
@@ -92,7 +92,7 @@ void CommandParser::InitializeCommands()
 	RegisterCustomCommand({"load_map"},
 						  "Load map\n"
 						  "arguments:\n"
-						  "    - realm name",
+						  "  - realm name",
 						  [this](const std::vector<std::string> &args) {
 							  for (int i = 1; i < args.size(); ++i) {
 								  serverCore->CreateRealm(
@@ -104,9 +104,9 @@ void CommandParser::InitializeCommands()
 		{"listen"},
 		"Listen on interface and port\n"
 		"arguments:\n"
-		"    - listening address\n"
-		"    - listening port\n"
-		"    - ip protocol: 'ipv4' or 'ipv6'",
+		"  - listening address\n"
+		"  - listening port\n"
+		"  - ip protocol: 'ipv4' or 'ipv6'",
 		[this](const std::vector<std::string> &args) {
 			if (args.size() != 4) {
 				LOG_ERROR("Invalid number of arguments to listen command");

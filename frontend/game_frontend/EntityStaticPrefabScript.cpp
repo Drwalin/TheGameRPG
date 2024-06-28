@@ -64,13 +64,11 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 		Ref<Mesh> mesh = resource;
 		Ref<PackedScene> packedScene = resource;
 		if (mesh.is_valid() && mesh.is_null() == false) {
-			LOG_INFO("Set mesh instance for %lu", localEntityId);
 			MeshInstance3D *meshInstance = new MeshInstance3D();
 			meshInstance->set_mesh(mesh);
 			add_child(meshInstance);
 		}
 		if (packedScene.is_valid() && packedScene.is_null() == false) {
-			LOG_INFO("Set packed scene for %lu", localEntityId);
 			Node *node = packedScene->instantiate();
 			add_child(node);
 		}
