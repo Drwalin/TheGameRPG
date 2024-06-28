@@ -10,6 +10,7 @@ class ConfigStorage
 {
 public:
 	ConfigStorage(class ServerCore *serverCore);
+	~ConfigStorage();
 
 	void InitialiseCommands(class CommandParser *commandsParser);
 

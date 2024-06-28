@@ -13,6 +13,22 @@ ConfigStorage::ConfigStorage(class ServerCore *serverCore)
 {
 }
 
+ConfigStorage::~ConfigStorage()
+{
+	std::string configSaveFileName;
+	if (GetString("config.store_config.file_path", &configSaveFileName)) {
+		FILE *file = fopen(configSaveFileName.c_str(), "wb");
+		if (file) {
+			std::string str = AllConfigsCommand();
+			fprintf(file, "%s\n", str.c_str());
+			fclose(file);
+		} else {
+			LOG_ERROR("Failed to open file `%s` for writing",
+					  configSaveFileName.c_str());
+		}
+	}
+}
+
 template <typename T>
 static bool GetOrDefault(const std::unordered_map<std::string, T> &map,
 						 const std::string &key, T *ret)
@@ -285,7 +301,7 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 		});
 
 	com->RegisterCustomCommand(
-		{"print_all_variables", "print all"}, "Prints all variables",
+		{"print_all_variables", "print_all"}, "Prints all variables",
 		[this](const std::vector<std::string> &args) {
 			std::string str = AllConfigsCommand();
 			std::string ret = std::replace_all(str, "\n", "\n  ");
@@ -305,7 +321,7 @@ void ConfigStorage::InitialiseCommands(CommandParser *com)
 			FILE *file = fopen(args[1].c_str(), "wb");
 			if (file) {
 				std::string str = AllConfigsCommand();
-				fprintf(file, "%s", str.c_str());
+				fprintf(file, "%s\n", str.c_str());
 				fclose(file);
 			} else {
 				LOG_ERROR("Failed to open file `%s` for writing",

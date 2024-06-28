@@ -21,7 +21,6 @@ int main(int argc, char **argv)
 											  "../game_assets/default.cfg"};
 			for (std::string path : files) {
 				if (FileOperations::FileExists(path)) {
-					printf("Exists: %s\n", path.c_str());
 					serverCore.commandParser.ParseSingleCommand(prefix + path);
 					break;
 				}
