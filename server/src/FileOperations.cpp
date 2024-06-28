@@ -54,3 +54,14 @@ bool FileOperations::WriteFile(std::string filePath,
 	LOG_ERROR("ERR");
 	return false;
 }
+
+bool FileOperations::FileExists(std::string filePath)
+{
+	FILE *file = fopen(filePath.c_str(), "rb");
+	if (file != nullptr) {
+		fclose(file);
+		return true;
+	} else {
+		return false;
+	}
+}

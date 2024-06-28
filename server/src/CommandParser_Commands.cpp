@@ -40,7 +40,8 @@ void CommandParser::InitializeCommands()
 	RegisterCustomCommand({"list_commands", "list"},
 						  R"(Lists available commands.)",
 						  [this](const std::vector<std::string_view> &args) {
-							  printf("%s\n", GetCommandsList().c_str());
+							  std::string msg = GetCommandsList();
+							  printf("Available commands:\n  %s\n", GetCommandsList().c_str());
 							  fflush(stdout);
 						  });
 
@@ -85,7 +86,7 @@ arguments:
 			}
 		});
 
-	RegisterCustomCommand({"load_map", ".q"},
+	RegisterCustomCommand({"load_map"},
 						  R"(Load map
 arguments:
 	- realm name)",
@@ -116,4 +117,16 @@ arguments:
 			}
 			serverCore->Listen(address, port, ipv4);
 		});
+
+	RegisterCustomCommand({"list_realms"}, R"(Lists all loaded realm names)",
+						  [this](const std::vector<std::string_view> &args) {
+							  auto realms =
+								  serverCore->realmManager.GetAllRealms();
+							  std::string msg;
+							  for (auto r : realms) {
+								  msg += "\n  ";
+								  msg += r->realmName;
+							  }
+							  printf("Loaded realms:%s\n", msg.c_str());
+						  });
 }

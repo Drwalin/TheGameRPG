@@ -24,7 +24,7 @@ void CommandParser::ParseCommands(std::istream &input)
 {
 	input >> std::ws;
 	std::string line;
-	while (input.eof() == false) {
+	while (input.eof() == false && input.good()) {
 		line = "";
 		std::getline(input, line);
 		input >> std::ws;
@@ -51,9 +51,7 @@ std::string CommandParser::GetCommandsList() const
 	std::string ret;
 	for (const auto &it : commands) {
 		if (it.first == it.second->alternatives[0]) {
-			if (ret.size() > 0) {
-				ret += "\n";
-			}
+			ret += "\n  ";
 			ret += it.first;
 		}
 	}
@@ -98,14 +96,17 @@ void CommandParser::RegisterCustomCommand(
 
 	cmdStorage->description = "";
 	for (auto cmd : cmdStorage->alternatives) {
-		cmdStorage->description += cmd + ", ";
+		if (cmdStorage->description.size() > 0) {
+			cmdStorage->description += ", ";
+		}
+		cmdStorage->description += cmd;
 	}
-	cmdStorage->description += "\n" + description;
+	cmdStorage->description += "\n" + std::replace_all(description, "\n", "\n    ");
 }
 
 void CommandParser::_InternalParseCommand(const std::string &command)
 {
-	auto args = ConvertToArgsList({command.data(), command.size()});
+	auto args = std::convert_to_args_list({command.data(), command.size()});
 	if (args.size() == 0) {
 		return;
 	}
