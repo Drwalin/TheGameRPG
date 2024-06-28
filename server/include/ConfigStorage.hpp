@@ -21,15 +21,16 @@ public:
 	bool GetVec2(const std::string &key, glm::vec2 *ret);
 	bool GetVec3(const std::string &key, glm::vec3 *ret);
 	bool GetVec4(const std::string &key, glm::vec4 *ret);
-	
+
 	bool GetOrSetBool(const std::string &key, bool defaultValue);
-	std::string GetOrSetString(const std::string &key, std::string defaultValue);
+	std::string GetOrSetString(const std::string &key,
+							   std::string defaultValue);
 	int64_t GetOrSetInteger(const std::string &key, int64_t defaultValue);
 	double GetOrSetFloat(const std::string &key, double defaultValue);
 	glm::vec2 GetOrSetVec2(const std::string &key, glm::vec2 defaultValue);
 	glm::vec3 GetOrSetVec3(const std::string &key, glm::vec3 defaultValue);
 	glm::vec4 GetOrSetVec4(const std::string &key, glm::vec4 defaultValue);
-	
+
 	void SetBool(const std::string &key, bool value);
 	void SetString(const std::string &key, const std::string &value);
 	void SetInteger(const std::string &key, int64_t value);
