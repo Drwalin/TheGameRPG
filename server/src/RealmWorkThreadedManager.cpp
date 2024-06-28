@@ -147,3 +147,16 @@ void RealmWorkThreadedManager::SingleRunner()
 		requestStopRunning = false;
 	}
 }
+
+std::vector<std::shared_ptr<RealmServer>> RealmWorkThreadedManager::GetAllRealms()
+{
+	std::vector<std::shared_ptr<RealmServer>> ret;
+	{
+		std::lock_guard lock(mutex);
+		ret.reserve(realms.size());
+		for (auto it : realms) {
+			ret.push_back(it.second);
+		}
+	}
+	return ret;
+}

@@ -30,6 +30,8 @@ public:
 	bool IsRunning();
 
 	std::shared_ptr<RealmServer> GetRealm(const std::string &realmName);
+	
+	std::vector<std::shared_ptr<RealmServer>> GetAllRealms();
 
 private:
 	void SingleRunner();
