@@ -30,7 +30,6 @@ void GameClient::BindRpc()
 							  &GameClient::LoginSuccessfull, &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::Pong, this,
 							  &GameClient::Pong, &executionQueue);
-	
 }
 
 void GameClient::JoinRealm(const std::string &realmName)
