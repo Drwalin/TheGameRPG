@@ -77,6 +77,7 @@ public: // client input api
 	ComponentShape GetShape();
 	bool GetOnGround();
 	bool IsInPlayerControl();
+	void PerformInteractionUse();
 
 	void PerformSendPlayerMovementInput();
 

@@ -1,3 +1,5 @@
+#include <flecs.h>
+
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
 #include <icon7/Command.hpp>
@@ -7,6 +9,7 @@
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
+#include "../include/EntityGameComponents.hpp"
 
 #include "../include/ServerCore.hpp"
 
@@ -29,6 +32,10 @@ void ServerCore::BindRpc()
 			ClientRpcProxy::Pong(peer, flags, payload);
 		},
 		nullptr, nullptr);
+
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::InteractInLineOfSight,
+							  this, &ServerCore::InteractInLineOfSight, nullptr,
+							  SelectExecutionQueueByRealm);
 }
 
 icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueByRealm(
@@ -155,5 +162,30 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm && reader) {
 		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm, peer, *reader);
+	}
+}
+
+void ServerCore::InteractInLineOfSight(icon7::Peer *peer, uint64_t targetId,
+									   uint64_t timestamp, glm::vec3 srcPos,
+									   glm::vec3 dstPos, glm::vec3 normal)
+{
+	// TODO: add server side verification
+
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
+	if (realm) {
+		flecs::entity srcEntity = realm->Entity(data->entityId);
+		flecs::entity targetEntity = realm->Entity(targetId);
+		if (srcEntity.is_valid() && targetEntity.is_valid() &&
+			srcEntity.is_alive() && targetEntity.is_alive()) {
+			if (targetEntity.has<ComponentOnUse>()) {
+				const ComponentOnUse *onUse =
+					targetEntity.get<ComponentOnUse>();
+				if (onUse && onUse->entry) {
+					onUse->entry->Call(realm.get(), data->entityId, targetId,
+									   "");
+				}
+			}
+		}
 	}
 }

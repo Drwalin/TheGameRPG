@@ -46,4 +46,14 @@ void Ping(GameClient *gameClient, bool reliable)
 			icon7::FLAGS_CALL_NO_FEEDBACK,
 		ServerRpcFunctionNames::Ping, currentTick);
 }
+
+void InteractInLineOfSight(GameClient *gameClient, uint64_t targetId,
+						   glm::vec3 srcPos, glm::vec3 dstPos, glm::vec3 normal)
+{
+	int64_t currentTick = gameClient->pingTimer.CalcCurrentTick();
+	gameClient->rpc.Send(gameClient->peer.get(),
+						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
+						 ServerRpcFunctionNames::InteractInLineOfSight,
+						 targetId, currentTick, srcPos, dstPos, normal);
+}
 } // namespace ServerRpcProxy

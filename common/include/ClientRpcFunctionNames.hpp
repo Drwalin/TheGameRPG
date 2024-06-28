@@ -8,11 +8,11 @@ namespace ClientRpcFunctionNames
 inline const std::string JoinRealm = "JoinRealm";
 
 // void SpawnStaticEntities({entityId, EntityStaticTransform, EntityModelName,
-// EntityStaticCollisionShapeName}, ...)
+//                           EntityStaticCollisionShapeName}, ...)
 inline const std::string SpawnStaticEntities = "SpawnStaticEntities";
 
-// void SpawnEntities({entityId, EntityMovementState, EntityName,
-// EntityModel, EntityShape, EntityMovementParams}, ...)
+// void SpawnEntities({entityId, EntityMovementState, EntityName, EntityModel,
+//                     EntityShape, EntityMovementParams}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
 // void UpdateEntities({entityId, EntityMovementState}, ...)

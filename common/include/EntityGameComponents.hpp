@@ -3,5 +3,11 @@
 #include "EntityComponents.hpp"
 
 struct CharacterSheet {
-	template <typename S> S &__ByteStream_op(S &s) { return s; }
+	float useRange = 4.0f;
+
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(useRange);
+		return s;
+	}
 };
