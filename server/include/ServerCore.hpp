@@ -11,6 +11,7 @@
 #include "RealmWorkThreadedManager.hpp"
 #include "PeerData.hpp"
 #include "CommandParser.hpp"
+#include "ConfigStorage.hpp"
 
 class ServerCore
 {
@@ -65,4 +66,5 @@ public:
 	std::string spawnRealm;
 
 	CommandParser commandParser;
+	ConfigStorage configStorage;
 };

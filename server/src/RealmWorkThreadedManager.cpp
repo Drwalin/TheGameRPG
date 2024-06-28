@@ -148,7 +148,8 @@ void RealmWorkThreadedManager::SingleRunner()
 	}
 }
 
-std::vector<std::shared_ptr<RealmServer>> RealmWorkThreadedManager::GetAllRealms()
+std::vector<std::shared_ptr<RealmServer>>
+RealmWorkThreadedManager::GetAllRealms()
 {
 	std::vector<std::shared_ptr<RealmServer>> ret;
 	{

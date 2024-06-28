@@ -16,7 +16,7 @@ void CommandParser::ParseSingleCommand(const std::string &command)
 
 void CommandParser::ParseCommands(const std::string &commands)
 {
-	std::stringstream ss(commands, std::ios::out);
+	std::istringstream ss(commands);
 	ParseCommands(ss);
 }
 
@@ -60,7 +60,7 @@ std::string CommandParser::GetCommandsList() const
 
 void CommandParser::RegisterCustomCommand(
 	const std::vector<std::string> &commandNames, std::string description,
-	std::function<void(const std::vector<std::string_view> &args)> function)
+	std::function<void(const std::vector<std::string> &args)> function)
 {
 	std::shared_ptr<CommandStorage> cmdStorage =
 		std::make_shared<CommandStorage>();
@@ -101,15 +101,40 @@ void CommandParser::RegisterCustomCommand(
 		}
 		cmdStorage->description += cmd;
 	}
-	cmdStorage->description += "\n" + std::replace_all(description, "\n", "\n    ");
+	cmdStorage->description +=
+		"\n" + std::replace_all(description, "\n", "\n    ");
 }
 
 void CommandParser::_InternalParseCommand(const std::string &command)
 {
-	auto args = std::convert_to_args_list({command.data(), command.size()});
-	if (args.size() == 0) {
+	auto _args = std::convert_to_args_list({command.data(), command.size()});
+	if (_args.size() == 0) {
 		return;
 	}
+
+	std::vector<std::string> args;
+	args.resize(_args.size());
+	for (int i = 0; i < args.size(); ++i) {
+		args[i] = std::to_string(_args[i]);
+		if (i > 0) {
+			// TODO: substitute variablies like in bash: ${varname}
+			/*
+			std::string v = std::to_string(_args[i]);
+			int64_t ni = 0;
+			double nf = 0;
+			if (serverCore->configStorage.GetString(v, &(args[i]))) {
+				continue;
+			} else if (serverCore->configStorage.GetInteger(v, &ni)) {
+				args[i] = std::to_string(ni);
+			} else if (serverCore->configStorage.GetFloat(v, &nf)) {
+				args[i] = std::to_string(nf);
+			} else {
+				args[i]
+			}
+			*/
+		}
+	}
+
 	std::string cmd = std::to_string(args[0]);
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(),
 				   [](auto c) { return std::tolower(c); });
@@ -118,7 +143,7 @@ void CommandParser::_InternalParseCommand(const std::string &command)
 		it->second->function(args);
 	} else {
 		std::string s;
-		for (std::string_view sv : args) {
+		for (std::string sv : args) {
 			s += "`";
 			s += std::to_string(sv);
 			s += "`";
