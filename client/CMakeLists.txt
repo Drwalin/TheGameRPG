@@ -28,3 +28,7 @@ target_link_libraries(client PUBLIC common)
 if(THEGAMERPG_PRECOMPILE_HEADERS )
 	add_common_precompiled_headers(client)
 endif()
+
+if (THEGAMERPG_TIME_REPORT)
+	target_compile_options(client PUBLIC -ftime-report)
+endif()

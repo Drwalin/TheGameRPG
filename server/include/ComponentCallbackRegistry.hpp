@@ -55,7 +55,7 @@ template <typename T> struct Registry {
 					  it1->second->fullName.c_str(),
 					  it1->second->shortName.c_str(), shortName.c_str(),
 					  it1->second->shortName.c_str(),
-					  it1->second->shortName.c_str(), sharedObject);
+					  it1->second->shortName.c_str());
 			return;
 		}
 

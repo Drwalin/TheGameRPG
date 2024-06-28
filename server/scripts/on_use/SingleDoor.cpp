@@ -1,9 +1,9 @@
 #include <flecs.h>
 
-#include "../include/ComponentCallbackRegistry.hpp"
+#include "../../include/ComponentCallbackRegistry.hpp"
 #include "../../include/EntityGameComponents.hpp"
-#include "../include/SharedObject.hpp"
-#include "../include/RealmServer.hpp"
+#include "../../include/SharedObject.hpp"
+#include "../../include/RealmServer.hpp"
 
 extern "C" void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 								 uint64_t receiverId,

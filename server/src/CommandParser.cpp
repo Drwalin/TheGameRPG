@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "../include/ServerCore.hpp"
 #include "../include/StringUtil.hpp"
 
