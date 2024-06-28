@@ -30,7 +30,7 @@ inline const std::string SetPlayerEntityId = "SetPlayerEntityId";
 // void SetGravity(float)
 inline const std::string SetGravity = "SetGravity";
 
-// void LoginFailed()
+// void LoginFailed(string reason)
 inline const std::string LoginFailed = "LoginFailed";
 
 // void LoginSuccessfull()

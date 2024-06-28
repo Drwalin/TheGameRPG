@@ -30,6 +30,9 @@ public: // callbacks
 	virtual void OnSetPlayerId(uint64_t localId) override;
 	virtual void OnPlayerIdUnset() override;
 
+	virtual void LoginFailed(std::string reason) override;
+	virtual void LoginSuccessfull() override;
+
 	virtual void RunOneEpoch() override;
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,

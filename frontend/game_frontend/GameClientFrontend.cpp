@@ -65,6 +65,13 @@ void GameClientFrontend::OnPlayerIdUnset()
 	// TODO: ???
 }
 
+void GameClientFrontend::LoginFailed(std::string reason)
+{
+	frontend->OnLoginFailed(reason);
+}
+
+void GameClientFrontend::LoginSuccessfull() { frontend->OnLoginSuccessfull(); }
+
 void GameClientFrontend::RunOneEpoch()
 {
 	if (frontend->IsDisconnected()) {

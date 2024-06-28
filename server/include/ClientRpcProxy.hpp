@@ -36,7 +36,7 @@ void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm);
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 
 void LoginSuccessfull(icon7::Peer *peer);
-void LoginFailed(icon7::Peer *peer);
+void LoginFailed(icon7::Peer *peer, const std::string &reason);
 
 void Broadcast_SpawnStaticEntities(
 	RealmServer *realm, uint64_t entityId,

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5coc52hrtf7c"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_10mmp"]
+font_size = 24
+font_color = Color(1, 0, 0, 1)
+
+[node name="Popup" type="Popup"]
+size = Vector2i(101, 145)
+visible = true
+
+[node name="Label" type="Label" parent="."]
+offset_right = 320.0
+offset_bottom = 145.0
+text = "Test text"
+label_settings = SubResource("LabelSettings_10mmp")
+autowrap_mode = 3

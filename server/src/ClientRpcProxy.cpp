@@ -182,11 +182,11 @@ void LoginSuccessfull(icon7::Peer *peer)
 		ClientRpcFunctionNames::LoginSuccessfull);
 }
 
-void LoginFailed(icon7::Peer *peer)
+void LoginFailed(icon7::Peer *peer, const std::string &reason)
 {
 	peer->host->GetRpcEnvironment()->Send(
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
-		ClientRpcFunctionNames::LoginFailed);
+		ClientRpcFunctionNames::LoginFailed, reason);
 }
 
 void Broadcast_SpawnStaticEntities(

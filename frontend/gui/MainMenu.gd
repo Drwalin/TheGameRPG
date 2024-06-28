@@ -19,7 +19,6 @@ func _OnLoginPressed():
 	password = $Password.text;
 	if username != "":
 		gameFrontend.Login(username, password);
-		get_parent().SwitchToMenu($"../Hud");
 
 func _input(event)->void:
 	if event is InputEventKey:
