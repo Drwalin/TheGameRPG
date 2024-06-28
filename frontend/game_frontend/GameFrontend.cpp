@@ -1,5 +1,9 @@
 #include <godot_cpp/classes/window.hpp>
-#include "godot_cpp/classes/engine.hpp"
+#include <godot_cpp/classes/popup_panel.hpp>
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
+#include <godot_cpp/classes/packed_scene.hpp>
+#include <godot_cpp/classes/label.hpp>
 
 #include "GodotGlm.hpp"
 
@@ -71,9 +75,9 @@ void GameFrontend::InternalReady()
 	client->Init();
 	playerCamera =
 		(Camera3D *)(get_node_or_null("/root/SceneRoot/PlayerCamera3D"));
-	entitiesContainer =
-		(Node *)(get_node_or_null("/root/SceneRoot/EntitiesContainer"));
-	staticMapContainer = (Node *)(get_node_or_null("/root/SceneRoot/Terrain"));
+	entitiesContainer = get_node_or_null("/root/SceneRoot/EntitiesContainer");
+	staticMapContainer = get_node_or_null("/root/SceneRoot/Terrain");
+	nodeUI = get_node_or_null("/root/SceneRoot/UI");
 }
 
 void GameFrontend::InternalProcess()
@@ -140,3 +144,19 @@ bool GameFrontend::IsConnected() { return client->IsConnected(); }
 bool GameFrontend::IsDisconnected() { return client->IsDisconnected(); }
 
 bool GameFrontend::IsInPlayerControl() { return client->IsInPlayerControl(); }
+
+void GameFrontend::OnLoginFailed(std::string reason)
+{
+	nodeUI->call("SwitchToMenu", String::utf8("MainMenu"));
+	Label *label = (Label *)(nodeUI->get_node_or_null("LoginFailed"));
+	label->set_visible(true);
+	label->set_text(String::utf8(reason.c_str()));
+}
+
+void GameFrontend::OnLoginSuccessfull()
+{
+	nodeUI->call("SwitchToMenu", String::utf8("Hud"));
+	Label *label = (Label *)(nodeUI->get_node_or_null("LoginFailed"));
+	label->set_visible(false);
+	label->set_text("");
+}

@@ -45,7 +45,11 @@ public: // Godot bound functions
 	Node *GetNodeToAddEntities();
 	Node *GetNodeToAddStaticMap();
 
-public: // Godot callbacks
+public:
+	void OnLoginFailed(std::string reason);
+	void OnLoginSuccessfull();
+
+public: // Call functions from godot to game
 	void SetPlayerDirectionMovement(const Vector2 &dir);
 	void PlayerTryJump();
 	void SetPlayerRotation(const Vector3 &rot);
@@ -67,4 +71,5 @@ public: // variables
 
 	Node *entitiesContainer = nullptr;
 	Node *staticMapContainer = nullptr;
+	Node *nodeUI = nullptr;
 };

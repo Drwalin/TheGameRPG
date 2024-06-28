@@ -4,6 +4,7 @@
  * Server include
  */
 #include "../include/ClientRpcProxy.hpp"
+#include "../include/CollisionLoader.hpp"
 #include "../include/CommandParser.hpp"
 #include "../include/ComponentCallbackRegistry.hpp"
 #include "../include/EntityComponentsServer.hpp"
@@ -23,7 +24,6 @@
  * Common include
  */
 #include "../../common/include/ClientRpcFunctionNames.hpp"
-#include "../../common/include/CollisionLoader.hpp"
 #include "../../common/include/CollisionWorld.hpp"
 #include "../../common/include/EntityComponents.hpp"
 #include "../../common/include/EntityEvent.hpp"

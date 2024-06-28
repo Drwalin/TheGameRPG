@@ -18,16 +18,19 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
 		LOG_INFO("Login failed: '%s' != \"\"  ||  '%s' == \"\"  ||  %s == true",
 				 data->userName.c_str(), username.c_str(),
 				 data->peer.expired() ? "true" : "false");
-		ClientRpcProxy::LoginFailed(peer);
+		ClientRpcProxy::LoginFailed(
+			peer, "Invalid login or connection or you are already logged in");
 		return;
 	} else {
 		auto it = serverCore->usernameToPeer.find(username);
 		if (it == serverCore->usernameToPeer.end()) {
 			serverCore->usernameToPeer[username] = peer->shared_from_this();
 			LOG_INFO("Player login successfull: '%s'", username.c_str());
+			ClientRpcProxy::LoginSuccessfull(peer);
 		} else {
 			LOG_INFO("User already in-game: `%s`", username.c_str());
-			ClientRpcProxy::LoginFailed(peer);
+			ClientRpcProxy::LoginFailed(
+				peer, "User with this username is already logged in");
 			return;
 		}
 	}

@@ -30,6 +30,7 @@ void GameClient::BindRpc()
 							  &GameClient::LoginSuccessfull, &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::Pong, this,
 							  &GameClient::Pong, &executionQueue);
+	
 }
 
 void GameClient::JoinRealm(const std::string &realmName)
@@ -141,16 +142,6 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 }
 
 void GameClient::SetGravity(float gravity) { realm->gravity = gravity; }
-
-void GameClient::LoginFailed()
-{
-	// TODO: ???
-}
-
-void GameClient::LoginSuccessfull()
-{
-	// TODO: ???
-}
 
 void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 {

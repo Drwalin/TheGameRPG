@@ -28,7 +28,7 @@ public:
 	bool IsConnected();
 	bool IsDisconnected();
 
-private: // rpc methods
+private: // rpc receiving methods
 	void JoinRealm(const std::string &realm);
 	void SpawnEntities(icon7::ByteReader *reader);
 	void SpawnStaticEntities(icon7::ByteReader *reader);
@@ -38,8 +38,6 @@ private: // rpc methods
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t serverId);
 	void SetGravity(float gravity);
-	void LoginFailed();
-	void LoginSuccessfull();
 	void Pong(int64_t localTick, int64_t remoteTick);
 
 	void SpawnEntity(uint64_t serverId,
@@ -63,6 +61,8 @@ public: // game output api
 
 	virtual void OnSetPlayerId(uint64_t localId) = 0;
 	virtual void OnPlayerIdUnset() = 0;
+	virtual void LoginFailed(std::string reason) = 0;
+	virtual void LoginSuccessfull() = 0;
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) = 0;

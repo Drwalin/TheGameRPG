@@ -43,7 +43,7 @@ offset_right = 646.0
 offset_bottom = 214.0
 text = "25369"
 
-[node name="Button" type="Button" parent="."]
+[node name="ButtonConnect" type="Button" parent="."]
 layout_mode = 0
 offset_left = 510.0
 offset_top = 242.0
@@ -127,7 +127,7 @@ offset_right = 239.0
 offset_bottom = 194.0
 text = "Pomoc"
 
-[connection signal="pressed" from="Button" to="." method="_on_connect_to_server_pressed"]
+[connection signal="pressed" from="ButtonConnect" to="." method="_on_connect_to_server_pressed"]
 [connection signal="pressed" from="ButtonLogin" to="." method="_OnLoginPressed"]
 [connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]
 [connection signal="pressed" from="Disconnect" to="." method="_on_disconnect_pressed"]
