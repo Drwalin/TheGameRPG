@@ -61,21 +61,21 @@ std::vector<std::string_view> convert_to_args_list(std::string_view str)
 }
 
 std::string replace_all(const std::string &str, const std::string &src,
-					   const std::string &dst)
+						const std::string &dst)
 {
 	if (src.size() == 0) {
 		return str;
 	}
 	std::string_view sv{str.c_str(), str.size()};
 	std::string ret;
-	ret.reserve(str.size()*2);
+	ret.reserve(str.size() * 2);
 	while (sv.size() > 0) {
 		size_t pos = sv.find(src);
 		if (pos == std::string::npos) {
 			ret.insert(ret.end(), sv.begin(), sv.end());
 			break;
 		} else {
-			ret.insert(ret.end(), sv.begin(), sv.begin()+pos);
+			ret.insert(ret.end(), sv.begin(), sv.begin() + pos);
 			pos += src.size();
 			ret += dst;
 		}

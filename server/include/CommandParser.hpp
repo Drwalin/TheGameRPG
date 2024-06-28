@@ -24,8 +24,7 @@ public:
 
 	void RegisterCustomCommand(
 		const std::vector<std::string> &commandNames, std::string description,
-		std::function<void(const std::vector<std::string_view> &args)>
-			function);
+		std::function<void(const std::vector<std::string> &args)> function);
 
 	void _InternalParseCommand(const std::string &command);
 
@@ -37,7 +36,7 @@ public:
 
 private:
 	struct CommandStorage {
-		std::function<void(const std::vector<std::string_view> &args)> function;
+		std::function<void(const std::vector<std::string> &args)> function;
 		std::vector<std::string> alternatives;
 		std::string description;
 	};

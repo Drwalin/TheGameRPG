@@ -8,7 +8,10 @@
 
 #include "../include/ServerCore.hpp"
 
-ServerCore::ServerCore() : commandParser(this) { host = nullptr; }
+ServerCore::ServerCore() : commandParser(this), configStorage(this)
+{
+	host = nullptr;
+}
 
 ServerCore::~ServerCore() { Destroy(); }
 

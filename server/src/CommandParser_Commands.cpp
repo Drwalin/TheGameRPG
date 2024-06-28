@@ -1,21 +1,24 @@
 #include <fstream>
 
 #include "../include/ServerCore.hpp"
+#include "../include/ConfigStorage.hpp"
 #include "../include/SharedObject.hpp"
 
 #include "../include/CommandParser.hpp"
 
 void CommandParser::InitializeCommands()
 {
-	RegisterCustomCommand({"quit", "exit", "stop", "q", ".q"}, R"(Exits game.)",
-						  [this](const std::vector<std::string_view> &args) {
+	serverCore->configStorage.InitialiseCommands(this);
+
+	RegisterCustomCommand({"quit", "exit", "stop", "q", ".q"}, "Exits game.",
+						  [this](const std::vector<std::string> &args) {
 							  serverCore->requestStop = true;
 							  serverCore->Destroy();
 						  });
 
 	RegisterCustomCommand(
-		{"help"}, R"(Shows help for commands)",
-		[this](const std::vector<std::string_view> &args) {
+		{"help"}, "Shows help for commands",
+		[this](const std::vector<std::string> &args) {
 			std::string helpString;
 			if (args.size() > 1) {
 				for (int i = 1; i < args.size(); ++i) {
@@ -37,30 +40,30 @@ void CommandParser::InitializeCommands()
 			fflush(stdout);
 		});
 
-	RegisterCustomCommand({"list_commands", "list"},
-						  R"(Lists available commands.)",
-						  [this](const std::vector<std::string_view> &args) {
-							  std::string msg = GetCommandsList();
-							  printf("Available commands:\n  %s\n", GetCommandsList().c_str());
-							  fflush(stdout);
-						  });
+	RegisterCustomCommand(
+		{"list_commands", "list"}, "Lists available commands.",
+		[this](const std::vector<std::string> &args) {
+			std::string msg = GetCommandsList();
+			printf("Available commands:\n  %s\n", GetCommandsList().c_str());
+			fflush(stdout);
+		});
 
 	RegisterCustomCommand({"source", "run"},
-						  R"(Executes contents of given path
-arguments:
-	- file path with script)",
-						  [this](const std::vector<std::string_view> &args) {
+						  "Executes contents of given path\n"
+						  "arguments:\n"
+						  "    - file path with script)",
+						  [this](const std::vector<std::string> &args) {
 							  std::ifstream file(std::to_string(args[1]));
 							  ParseCommands(file);
 						  });
 
 	RegisterCustomCommand(
 		{"load_symbols", "dlopen", "dlsym"},
-		R"(Loads shared object and execute symbols given symbols
-arguments:
-	- shared object file path
-  ... funtion symbols to execute)",
-		[this](const std::vector<std::string_view> &args) {
+		"Loads shared object and execute symbols given symbols\n"
+		"arguments:\n"
+		"    - shared object file path\n"
+		"  ... funtion symbols to execute",
+		[this](const std::vector<std::string> &args) {
 			if (args.size() < 3) {
 				LOG_ERROR("Not enaugh arguments to load_components command");
 				return;
@@ -87,10 +90,10 @@ arguments:
 		});
 
 	RegisterCustomCommand({"load_map"},
-						  R"(Load map
-arguments:
-	- realm name)",
-						  [this](const std::vector<std::string_view> &args) {
+						  "Load map\n"
+						  "arguments:\n"
+						  "    - realm name",
+						  [this](const std::vector<std::string> &args) {
 							  for (int i = 1; i < args.size(); ++i) {
 								  serverCore->CreateRealm(
 									  std::to_string(args[i]));
@@ -99,12 +102,12 @@ arguments:
 
 	RegisterCustomCommand(
 		{"listen"},
-		R"(Listen on interface and port
-arguments:
-	- listening address
-	- listening port
-	- ip protocol: 'ipv4' or 'ipv6')",
-		[this](const std::vector<std::string_view> &args) {
+		"Listen on interface and port\n"
+		"arguments:\n"
+		"    - listening address\n"
+		"    - listening port\n"
+		"    - ip protocol: 'ipv4' or 'ipv6'",
+		[this](const std::vector<std::string> &args) {
 			if (args.size() != 4) {
 				LOG_ERROR("Invalid number of arguments to listen command");
 			}
@@ -118,8 +121,8 @@ arguments:
 			serverCore->Listen(address, port, ipv4);
 		});
 
-	RegisterCustomCommand({"list_realms"}, R"(Lists all loaded realm names)",
-						  [this](const std::vector<std::string_view> &args) {
+	RegisterCustomCommand({"list_realms"}, "Lists all loaded realm names",
+						  [this](const std::vector<std::string> &args) {
 							  auto realms =
 								  serverCore->realmManager.GetAllRealms();
 							  std::string msg;
