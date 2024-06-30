@@ -5,20 +5,27 @@
 #include "../../include/SharedObject.hpp"
 #include "../../include/RealmServer.hpp"
 
+inline float TransformDistance(const ComponentStaticTransform &l,
+							   const ComponentStaticTransform &r)
+{
+	glm::vec3 a = l.pos - r.pos;
+	glm::quat b = l.rot - r.rot;
+	glm::vec3 c = l.scale - r.scale;
+	return glm::dot(a, a) + glm::dot(b, b) + glm::dot(c, c);
+}
+
 void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 					  uint64_t receiverId, const std::string &context)
 {
 	flecs::entity target = realm->Entity(receiverId);
 	if (target.has<ComponentStaticTransform>()) {
-		const ComponentOpenableState *open =
-			target.get<ComponentOpenableState>();
 		const ComponentSingleDoorTransformStates *states =
 			target.get<ComponentSingleDoorTransformStates>();
+		const ComponentStaticTransform *transform =
+			target.get<ComponentStaticTransform>();
 
-		bool op = !open->open;
-
-		target.set<ComponentOpenableState>(ComponentOpenableState{op});
-		if (op) {
+		if (TransformDistance(*transform, states->transformOpen)
+				> TransformDistance(*transform, states->transformClosed)) {
 			target.set<ComponentStaticTransform>(states->transformOpen);
 		} else {
 			target.set<ComponentStaticTransform>(states->transformClosed);
