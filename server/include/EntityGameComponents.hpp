@@ -4,10 +4,6 @@
 
 #include "../../common/include/EntityComponents.hpp"
 
-struct ComponentTagCanBeUsed {
-	template <typename S> S &__ByteStream_op(S &s) { return s; }
-};
-
 struct ComponentOnUse {
 	named_callbacks::registry_entries::OnUse *entry = nullptr;
 
