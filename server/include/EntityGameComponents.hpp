@@ -34,16 +34,6 @@ struct ComponentOnUse {
 	}
 };
 
-struct ComponentOpenableState {
-	bool open;
-
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(open);
-		return s;
-	}
-};
-
 struct ComponentSingleDoorTransformStates {
 	ComponentStaticTransform transformClosed;
 	ComponentStaticTransform transformOpen;

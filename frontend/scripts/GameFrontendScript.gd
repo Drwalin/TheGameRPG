@@ -37,9 +37,6 @@ func _input(event)->void:
 	if event is InputEventMouseMotion:
 		if isDraggingCameraRotationButton:
 			Rotate(-event.relative.y * SENSITIVITY, -event.relative.x * SENSITIVITY);
-	if event is InputEventKey:
-		if event.keycode == KEY_ESCAPE:
-			pass;
 
 func _process(delta: float)->void:
 	InternalProcess();
@@ -70,6 +67,3 @@ func _process(delta: float)->void:
 	
 	if Input.is_action_just_pressed("input_use"):
 		gameFrontend.PerformInteractionUse();
-		pass;
-	
-	
