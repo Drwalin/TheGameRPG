@@ -42,6 +42,6 @@ Register_OnUse_SingleDoor(class ServerCore *serverCore,
 						  std::shared_ptr<SharedObject> sharedObject)
 {
 	REGISTER_NAMED_CALLBACK(named_callbacks::registry_entries::OnUse,
-							"SingleDoor", "SD", &OnUse_SingleDoor,
+							"OpenableSingleDoor", "OpSD", &OnUse_SingleDoor,
 							sharedObject);
 }

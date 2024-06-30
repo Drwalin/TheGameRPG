@@ -11,7 +11,6 @@ func SetMouseSensitivity(value: float):
 	$VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Slider.value = value;
 	$VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Numerical.text = "%d" % int(value);
 	gameFrontend.SENSITIVITY = value/9000.0;
-	
 
 func _on_mouse_sensitivity_numerical_changed(value: String):
 	SetMouseSensitivity(int(value));

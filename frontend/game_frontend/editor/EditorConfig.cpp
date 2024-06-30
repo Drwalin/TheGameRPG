@@ -37,17 +37,23 @@ void GameEditorConfig::SaveScene()
 	}
 
 	icon7::ByteWriter writer(1024 * 1024);
-
-	auto children = get_children();
-	for (int i = 0; i < children.size(); ++i) {
-		auto c = children[i];
-		Object *o = c.operator Object *();
-		if (PrefabServerBase *pref = Object::cast_to<PrefabServerBase>(o)) {
-			pref->Serialize(0, writer);
-		}
-	}
-
+	SaveNode(this, writer);
 	fwrite(writer.Buffer().data(), 1, writer.Buffer().size(), file);
 	fclose(file);
 }
+
+void GameEditorConfig::SaveNode(Node3D *node, icon7::ByteWriter &writer)
+{
+	auto children = node->get_children();
+	for (int i = 0; i < children.size(); ++i) {
+		auto c = children[i];
+		Node3D *n = Object::cast_to<Node3D>(c.operator Object *());
+		if (PrefabServerBase *pref = Object::cast_to<PrefabServerBase>(n)) {
+			pref->Serialize(0, writer);
+		} else {
+			SaveNode(n, writer);
+		}
+	}
+}
+
 } // namespace editor
