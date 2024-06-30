@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://cc7kmfkyvb075"]
+[gd_scene load_steps=2 format=3 uid="uid://cc7kmfkyvb075"]
+
+[ext_resource type="Script" path="res://scripts/performance_monitor/FullPerformanceMonitoring.gd" id="1_hp731"]
 
 [node name="Hud" type="Control"]
 layout_mode = 3
@@ -24,3 +26,10 @@ grow_vertical = 2
 text = "+"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="PerformanceStatistics" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_hp731")

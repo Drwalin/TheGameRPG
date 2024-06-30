@@ -63,6 +63,20 @@ size_flags_horizontal = 8
 min_value = 1.0
 value = 1.0
 
+[node name="Monitoring" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Monitoring"]
+layout_mode = 2
+
+[node name="EnableMonitoring" type="CheckBox" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer"]
+layout_mode = 2
+text = "Statystyki wydajności"
+
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
 [connection signal="text_submitted" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Numerical" to="." method="_on_mouse_sensitivity_numerical_changed"]
 [connection signal="value_changed" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Slider" to="." method="_on_mouse_sensitivity_slider_changed"]
+[connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer/EnableMonitoring" to="." method="_on_enable_monitoring_toggled"]
