@@ -44,6 +44,11 @@
 
 using namespace godot;
 
+namespace icon7
+{
+	class ByteWriter;
+}
+
 namespace editor
 {
 class GameEditorConfig : public Node3D
@@ -69,6 +74,7 @@ public: // Godot bound functions
 	virtual void _process(double dt) override;
 
 	void SaveScene();
+	static void SaveNode(Node3D *node, icon7::ByteWriter &writer);
 
 public: // variables
 	static bool render_graphic;

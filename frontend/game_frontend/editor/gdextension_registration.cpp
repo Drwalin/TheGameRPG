@@ -10,9 +10,8 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 
-#include "GameFrontend.hpp"
-#include "EntityPrefabScript.hpp"
-#include "EntityStaticPrefabScript.hpp"
+#include "PrefabServerStaticMesh.hpp"
+#include "EditorConfig.hpp"
 
 static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
@@ -20,9 +19,9 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	godot::ClassDB::register_class<GameFrontend>();
-	godot::ClassDB::register_class<EntityPrefabScript>();
-	godot::ClassDB::register_class<EntityStaticPrefabScript>();
+	godot::ClassDB::register_class<editor::PrefabServerBase>();
+	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
+	godot::ClassDB::register_class<editor::GameEditorConfig>();
 	// REGISTER CLASSES HERE LATER
 }
 
@@ -34,7 +33,7 @@ static void unregister_gameplay_types(godot::ModuleInitializationLevel p_level)
 extern "C" {
 
 GDExtensionBool GDE_EXPORT
-game_frontend_library_init(GDExtensionInterfaceGetProcAddress p_interface,
+map_editor_library_init(GDExtensionInterfaceGetProcAddress p_interface,
 						   GDExtensionClassLibraryPtr p_library,
 						   GDExtensionInitialization *r_initialization)
 {
@@ -49,3 +48,4 @@ game_frontend_library_init(GDExtensionInterfaceGetProcAddress p_interface,
 	return init_object.init();
 }
 }
+

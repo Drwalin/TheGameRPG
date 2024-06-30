@@ -80,7 +80,7 @@ void RealmServer::Init(const std::string &realmName)
 				});
 		entity.set<ComponentOnUse>(
 				{
-					named_callbacks::registry_entries::OnUse::Get("SingleDoor")
+					named_callbacks::registry_entries::OnUse::Get("OpenableSingleDoor")
 				}
 				);
 		entity.set<ComponentSingleDoorTransformStates>(

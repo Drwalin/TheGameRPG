@@ -10,7 +10,6 @@
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../build/maps/MiddleEarth.map"
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6202, 0.554779, 1.42403)
 
 [node name="PrefabServerStaticMesh" parent="." instance=ExtResource("1_s6kcj")]
 transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 141.766, 0, 54.5624)

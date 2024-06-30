@@ -31,10 +31,11 @@ void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
 			collisionPath = collisionPath.replace(0, RES_PREFIX.size(), "");
 		}
 	}
-
-	ComponentStaticTransform transform{ToGlm(get_position()),
-									   ToGlm(get_basis().get_quaternion()),
-									   ToGlm(get_scale())};
+	
+	ComponentStaticTransform transform{
+		ToGlm(get_global_position()),
+		ToGlm(get_global_basis().get_quaternion()),
+		ToGlm(get_scale())};
 	ComponentModelName model{graphicPath};
 	ComponentStaticCollisionShapeName collision{collisionPath};
 

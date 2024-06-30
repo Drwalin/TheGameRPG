@@ -24,6 +24,10 @@ include_directories(include)
 file(GLOB_RECURSE src_files "src/*.cpp")
 file(GLOB_RECURSE script_files "scripts/*.cpp")
 
+add_library(scripts SHARED
+	${script_files}
+)
+
 if (WIN32)
 	add_library(server_lib SHARED
 		${src_files}
@@ -34,23 +38,20 @@ if (WIN32)
 	)
 	target_link_libraries(server server_lib)
 	
-	add_library(scripts SHARED
-		${script_files}
-	)
 	target_link_libraries(scripts server_lib)
 else()
-	add_executable(server
-		${src_files}
+	add_library(server_lib STATIC
 		ServerMain.cpp
 	)
-	target_link_libraries(server common)
+	target_link_libraries(server_lib common)
+	
+	add_executable(server
+		${src_files}
+	)
+	target_link_libraries(server server_lib)
 	# ENABLE_EXPORTS allows for dlopen(scripts) to link against symbols from within
 	# 				 server executable file
 	set_target_properties(server PROPERTIES ENABLE_EXPORTS ON)
-	
-	add_library(scripts SHARED
-		${script_files}
-	)
 	
 	if (THEGAMERPG_SERVER_SCRIPTS_PCH)
 		target_precompile_headers(scripts PUBLIC scripts/BigHeader.hpp)

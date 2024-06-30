@@ -19,7 +19,7 @@ include_directories(../common/include)
 include_directories(../client/include)
 include_directories(game_frontend)
 
-file(GLOB_RECURSE src_files_cpp "game_frontend/*.cpp")
+file(GLOB src_files_cpp "game_frontend/*.cpp")
 add_library(game_frontend SHARED
 	${src_files_cpp}
 )
@@ -50,3 +50,39 @@ endif()
 if (THEGAMERPG_TIME_REPORT)
 	target_compile_options(game_frontend PUBLIC -ftime-report)
 endif()
+
+
+# editor script
+
+
+
+
+file(GLOB src_files_cpp "game_frontend/editor/*.cpp")
+add_library(map_editor SHARED
+	${src_files_cpp}
+)
+target_link_libraries(map_editor PUBLIC game_frontend)
+target_link_libraries(map_editor PUBLIC server_lib)
+
+if(THEGAMERPG_PRECOMPILE_HEADERS )
+	add_common_precompiled_headers(map_editor)
+
+	add_precompiled_header_glob_recurse(map_editor
+		"../thirdparty/godot-cpp/gen/include*.hpp")
+endif()
+
+if(UNIX)
+	add_custom_command(TARGET map_editor POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
+		${PROJECT_SOURCE_DIR}/libmap_editor.so
+		COMMENT "Copying libmap_editor.so"
+	)
+else()
+	add_custom_command(TARGET map_editor POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
+		${PROJECT_SOURCE_DIR}/libmap_editor.dll
+		COMMENT "Copying libmap_editor.dll"
+	)
+endif()
+
+

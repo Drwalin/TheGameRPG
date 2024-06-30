@@ -64,6 +64,7 @@ min_value = 1.0
 value = 1.0
 
 [node name="Monitoring" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Monitoring"]
