@@ -18,3 +18,7 @@ func _on_mouse_sensitivity_numerical_changed(value: String):
 
 func _on_mouse_sensitivity_slider_changed(value: float):
 	SetMouseSensitivity(value);
+
+func _on_enable_monitoring_toggled(toggled_on):
+	print(toggled_on);
+	$"../Hud/PerformanceStatistics".visible = toggled_on;
