@@ -1,218 +1,225 @@
-[gd_scene load_steps=10 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=9 format=3 uid="uid://clkxybhmklyt3"]
 
-[ext_resource type="PackedScene" path="res://tests/test_mesh_prefab.tscn" id="1_s6kcj"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_yiiek"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Bench.tscn" id="3_ekxfp"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Table.tscn" id="4_j4bhk"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Throne.tscn" id="5_4fx2u"]
-[ext_resource type="PackedScene" uid="uid://7eey8y87akjf" path="res://assets/prefabs/Furniture/TorchInHolder.tscn" id="6_vujaq"]
-[ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="7_6r3np"]
-[ext_resource type="PackedScene" uid="uid://b2ay6dg0vntql" path="res://assets/prefabs/Furniture/BigWoodenDoor.tscn" id="8_figs3"]
-[ext_resource type="PackedScene" uid="uid://cnpc8o3vuebb2" path="res://assets/prefabs/Furniture/SmallWoodenDoor.tscn" id="9_obw70"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Throne.tscn" id="3_u1g6r"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Table.tscn" id="4_hgr8e"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Furniture/Bench.tscn" id="5_v11lw"]
+[ext_resource type="PackedScene" uid="uid://7eey8y87akjf" path="res://assets/prefabs/Furniture/TorchInHolder.tscn" id="6_1f1vy"]
+[ext_resource type="PackedScene" uid="uid://b2ay6dg0vntql" path="res://assets/prefabs/Furniture/BigWoodenDoor.tscn" id="7_jhy7w"]
+[ext_resource type="PackedScene" uid="uid://cnpc8o3vuebb2" path="res://assets/prefabs/Furniture/SmallWoodenDoor.tscn" id="8_t7u7h"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../build/maps/MiddleEarth.map"
 
 [node name="Terrain" type="Node3D" parent="."]
 
-[node name="PrefabServerStaticMesh" parent="Terrain" instance=ExtResource("1_s6kcj")]
-transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 141.766, 0, 54.5624)
-
-[node name="PrefabServerStaticMesh2" parent="Terrain" instance=ExtResource("1_s6kcj")]
-transform = Transform3D(0.812173, -0.0474995, 0.581479, 0.17243, 0.971698, -0.161464, -0.557353, 0.231401, 0.797378, 0.400841, -1.52588e-05, -114.931)
-
-[node name="PrefabServerStaticMesh3" parent="Terrain" instance=ExtResource("1_s6kcj")]
-transform = Transform3D(0.972402, 0.23331, 0, -0.23331, 0.972402, 0, 0, 0, 1, -145.839, 0, 54.5624)
-
-[node name="PrefabServerStaticMesh26" parent="Terrain" instance=ExtResource("7_6r3np")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -55.179, 21.5933, 359.962)
+[node name="PrefabServerStaticMesh26" parent="Terrain" instance=ExtResource("1_bcne0")]
 
 [node name="MeadHall" type="Node3D" parent="."]
-transform = Transform3D(0.12658, 0, 0.991956, 0, 1, 0, -0.991956, 0, 0.12658, 53.444, -11.1242, 122.86)
+transform = Transform3D(-0.0359285, 0, 0.999354, 0, 1, 0, -0.999354, 0, -0.0359285, -90.8739, -1.59111, 54.138)
 rotation_edit_mode = 2
 
 [node name="Building" type="Node3D" parent="MeadHall"]
 
-[node name="MeadHall" parent="MeadHall/Building" instance=ExtResource("2_yiiek")]
+[node name="MeadHall" parent="MeadHall/Building" instance=ExtResource("2_se3qd")]
 rotation_edit_mode = 2
 
 [node name="Furniture" type="Node3D" parent="MeadHall"]
 
-[node name="Throne" parent="MeadHall/Furniture" instance=ExtResource("5_4fx2u")]
+[node name="Throne" parent="MeadHall/Furniture" instance=ExtResource("3_u1g6r")]
 transform = Transform3D(0.999982, 0, -0.00617807, 0, 1, 0, 0.00617807, 0, 0.999982, 0.0204926, 0.2032, -23.0026)
 
-[node name="Table1" parent="MeadHall/Furniture" instance=ExtResource("4_j4bhk")]
+[node name="Table1" parent="MeadHall/Furniture" instance=ExtResource("4_hgr8e")]
 transform = Transform3D(0.999902, 0, 0.0140667, 0, 1, 0, -0.0140667, 0, 0.999902, 5.49048, 0.0130997, -6.53887)
 
-[node name="Table2" parent="MeadHall/Furniture" instance=ExtResource("4_j4bhk")]
+[node name="Table2" parent="MeadHall/Furniture" instance=ExtResource("4_hgr8e")]
 transform = Transform3D(0.999902, 0, 0.0140667, 0, 1, 0, -0.0140667, 0, 0.999902, 5.63676, 0.0130997, -13.9486)
 
-[node name="Table3" parent="MeadHall/Furniture" instance=ExtResource("4_j4bhk")]
+[node name="Table3" parent="MeadHall/Furniture" instance=ExtResource("4_hgr8e")]
 transform = Transform3D(0.999902, 0, 0.0140667, 0, 1, 0, -0.0140667, 0, 0.999902, -5.30833, 0.0130997, -7.17045)
 
-[node name="Table4" parent="MeadHall/Furniture" instance=ExtResource("4_j4bhk")]
+[node name="Table4" parent="MeadHall/Furniture" instance=ExtResource("4_hgr8e")]
 transform = Transform3D(0.999902, 0, 0.0140667, 0, 1, 0, -0.0140667, 0, 0.999902, -5.16206, 0.0130997, -14.5803)
 
-[node name="Bench5" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench5" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, 4.22724, 0.00979996, -5.14901)
 
-[node name="Bench8" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench8" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, 4.16979, 0.00699997, -7.80338)
 
-[node name="Bench9" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench9" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, 6.76768, 0.00979996, -5.23607)
 
-[node name="Bench10" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench10" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, 6.70921, 0.00699997, -7.89032)
 
-[node name="Bench11" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench11" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, 4.37353, 0.00979996, -12.5588)
 
-[node name="Bench13" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench13" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, 4.31608, 0.00699997, -15.2132)
 
-[node name="Bench14" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench14" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, 6.91389, 0.00979996, -12.6459)
 
-[node name="Bench15" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench15" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, 6.85546, 0.00699997, -15.3001)
 
-[node name="Bench16" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench16" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, -6.57158, 0.00979996, -5.78067)
 
-[node name="Bench18" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench18" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, -6.63003, 0.00699997, -8.43492)
 
-[node name="Bench19" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench19" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, -4.0321, 0.00979996, -5.86752)
 
-[node name="Bench20" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench20" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, -4.08956, 0.00699997, -8.522)
 
-[node name="Bench21" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench21" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, -6.42532, 0.00979996, -13.1904)
 
-[node name="Bench23" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench23" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, -6.48376, 0.00699997, -15.8446)
 
-[node name="Bench24" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench24" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999421, 0, -0.034045, 0, 1, 0, 0.034045, 0, -0.999421, -3.8849, 0.00979996, -13.2775)
 
-[node name="Bench25" parent="MeadHall/Furniture" instance=ExtResource("3_ekxfp")]
+[node name="Bench25" parent="MeadHall/Furniture" instance=ExtResource("5_v11lw")]
 transform = Transform3D(-0.999954, 0, -0.00965181, 0, 1, 0, 0.00965181, 0, -0.999954, -3.94335, 0.00699997, -15.9317)
 
 [node name="Lights" type="Node3D" parent="MeadHall"]
 
-[node name="Torch" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.0123739, 0, -0.999924, 0, 1, 0, 0.999924, 0, 0.0123739, 2.75034, 1.92692, -13.9895)
 
-[node name="Torch2" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch2" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.0123739, 0, -0.999924, 0, 1, 0, 0.999924, 0, 0.0123739, 2.75787, 1.91251, -10.9523)
 
-[node name="Torch3" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch3" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(-0.0190753, 0, -0.999819, 0, 1, 0, 0.999819, 0, -0.0190753, 2.75398, 1.92692, -7.99632)
 
-[node name="Torch4" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch4" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(-0.0370975, 0, -0.999312, 0, 1, 0, 0.999312, 0, -0.0370975, 2.74632, 1.92692, -4.99904)
 
-[node name="Torch5" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch5" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.0123739, 0, -0.999924, 0, 1, 0, 0.999924, 0, 0.0123739, 2.74921, 1.92692, -17.0163)
 
-[node name="Torch6" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch11" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(-0.00467738, 0, 0.999989, 0, 1, 0, -0.999989, 0, -0.00467738, 9.96813, 1.3159, -18.5164)
+
+[node name="Torch12" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(-0.00467738, 0, 0.999989, 0, 1, 0, -0.999989, 0, -0.00467738, 10.0003, 2.26643, -11.9881)
+
+[node name="Torch13" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(0.0162135, 0, 0.999868, 0, 1, 0, -0.999868, 0, 0.0162135, 9.98796, 1.65257, -4.46275)
+
+[node name="Torch14" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(0.00240846, 0, -0.999996, 0, 1, 0, 0.999996, 0, 0.00240846, -9.99302, 1.65257, -4.48792)
+
+[node name="Torch15" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(-0.00401434, 0, -0.999992, 0, 1, 0, 0.999992, 0, -0.00401434, -10.0271, 2.43647, -12.0023)
+
+[node name="Torch16" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
+transform = Transform3D(-0.0260375, 0, -0.999661, 0, 1, 0, 0.999661, 0, -0.0260375, -10.111, 1.42606, -18.4902)
+
+[node name="Torch6" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.00659774, 0, 0.999979, 0, 1, 0, -0.999979, 0, 0.00659774, -2.75448, 1.92692, -7.99767)
 
-[node name="Torch7" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch7" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(-0.00745244, 0, 0.999972, 0, 1, 0, -0.999972, 0, -0.00745244, -2.7345, 1.92692, -11.009)
 
-[node name="Torch8" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch8" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(-0.00745244, 0, 0.999972, 0, 1, 0, -0.999972, 0, -0.00745244, -2.74635, 1.92692, -13.9694)
 
-[node name="Torch9" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch9" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.0314809, 0, 0.999505, 0, 1, 0, -0.999505, 0, 0.0314809, -2.75208, 1.92692, -16.993)
 
-[node name="Torch10" parent="MeadHall/Lights" instance=ExtResource("6_vujaq")]
+[node name="Torch10" parent="MeadHall/Lights" instance=ExtResource("6_1f1vy")]
 transform = Transform3D(0.0486756, 0, 0.998815, 0, 1, 0, -0.998815, 0, 0.0486756, -2.75871, 1.92692, -4.9969)
 
 [node name="Doors" type="Node3D" parent="MeadHall"]
 
-[node name="BigWoodenDoor" parent="MeadHall/Doors" instance=ExtResource("8_figs3")]
+[node name="BigWoodenDoor" parent="MeadHall/Doors" instance=ExtResource("7_jhy7w")]
 transformClosed = Transform3D(-0.999775, 0, -0.0212392, 0, 1, 0, 0.0212392, 0, -0.999775, -1.51797, 0.0264282, -0.0368958)
 relativeTransformOpened = Transform3D(-0.584933, 0, -0.811089, 0, 1, 0, 0.811089, 0, -0.584933, -2.28882e-05, 0, -9.0152e-07)
 transform = Transform3D(-0.999775, 0, -0.0212392, 0, 1, 0, 0.0212392, 0, -0.999775, -1.51797, 0.0264282, -0.0368958)
 
-[node name="BigWoodenDoor2" parent="MeadHall/Doors" instance=ExtResource("8_figs3")]
+[node name="BigWoodenDoor2" parent="MeadHall/Doors" instance=ExtResource("7_jhy7w")]
 transformClosed = Transform3D(0.998918, 0, -0.0465312, 0, 1, 0, 0.0465312, 0, 0.998918, 1.47105, 0.0264282, -0.0038681)
 relativeTransformOpened = Transform3D(-0.799839, 0, 0.60023, 0, 1, 0, -0.60023, 0, -0.799839, -2.28882e-05, 0, 1.06543e-06)
 transform = Transform3D(0.998918, 0, -0.0465312, 0, 1, 0, 0.0465312, 0, 0.998918, 1.47105, 0.0264282, -0.0038681)
 
-[node name="SmallWoodenDoor" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(-0.999665, 0, 0.0259326, 0, 1, 0, -0.0259326, 0, -0.999665, 5.01353, -0.00439358, -23.0472)
 relativeTransformOpened = Transform3D(0.01295, 0, 0.999926, 0, 1, 0, -0.999926, 0, 0.01295, -1.52588e-05, 0, 0)
 transform = Transform3D(-0.999665, 0, 0.0259326, 0, 1, 0, -0.0259326, 0, -0.999665, 5.01353, -0.00439358, -23.0472)
 
-[node name="SmallWoodenDoor2" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor2" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.999987, 0, -0.0053581, 0, 1, 0, 0.0053581, 0, 0.999987, 6.96555, -0.00439358, -22.9941)
 relativeTransformOpened = Transform3D(0.0125138, 0, -0.999935, 0, 1, 0, 0.999935, 0, 0.0125138, 3.05176e-05, 0, 0)
 transform = Transform3D(0.999987, 0, -0.0053581, 0, 1, 0, 0.0053581, 0, 0.999987, 6.96555, -0.00439358, -22.9941)
 
-[node name="SmallWoodenDoor3" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor3" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.00488673, 0, 0.99999, 0, 1, 0, -0.99999, 0, 0.00488673, 9.0113, -0.00439358, -20.9933)
 relativeTransformOpened = Transform3D(0.0129501, 0, 0.999929, 0, 1, 0, -0.999929, 0, 0.0129501, -1.52588e-05, 0, 0)
 transform = Transform3D(0.00488673, 0, 0.99999, 0, 1, 0, -0.99999, 0, 0.00488673, 9.0113, -0.00439358, -20.9933)
 
-[node name="SmallWoodenDoor4" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor4" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.0156899, 0, -0.999879, 0, 1, 0, 0.999879, 0, 0.0156899, 8.99927, -0.00439358, -19.0406)
 relativeTransformOpened = Transform3D(0.0125138, 0, -0.999938, 0, 1, 0, 0.999938, 0, 0.0125138, 3.05176e-05, 0, -9.53674e-07)
 transform = Transform3D(0.0156899, 0, -0.999879, 0, 1, 0, 0.999879, 0, 0.0156899, 8.99927, -0.00439358, -19.0406)
 
-[node name="SmallWoodenDoor5" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor5" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.00488673, 0, 0.99999, 0, 1, 0, -0.99999, 0, 0.00488673, 9.02583, -0.00439358, -3.99285)
 relativeTransformOpened = Transform3D(0.0129501, 0, 0.999932, 0, 1, 0, -0.999932, 0, 0.0129501, -1.52588e-05, 0, 0)
 transform = Transform3D(0.00488673, 0, 0.99999, 0, 1, 0, -0.99999, 0, 0.00488673, 9.02583, -0.00439358, -3.99285)
 
-[node name="SmallWoodenDoor6" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor6" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.0156898, 0, -0.999879, 0, 1, 0, 0.999879, 0, 0.0156898, 9.01649, -0.00439358, -2.01868)
 relativeTransformOpened = Transform3D(0.0125139, 0, -0.999943, 0, 1, 0, 0.999943, 0, 0.0125139, 3.06368e-05, 0, -1.90735e-06)
 transform = Transform3D(0.0156898, 0, -0.999879, 0, 1, 0, 0.999879, 0, 0.0156898, 9.01649, -0.00439358, -2.01868)
 
-[node name="SmallWoodenDoor7" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor7" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.00261807, 0, -0.999998, 0, 1, 0, 0.999998, 0, 0.00261807, -9.03084, -0.00439358, -2.03342)
 relativeTransformOpened = Transform3D(0.0129502, 0, 0.999935, 0, 1, 0, -0.999935, 0, 0.0129502, -1.52588e-05, 0, 0)
 transform = Transform3D(0.00261807, 0, -0.999998, 0, 1, 0, 0.999998, 0, 0.00261807, -9.03084, -0.00439358, -2.03342)
 
-[node name="SmallWoodenDoor8" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor8" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(-0.0231931, 0, 0.999734, 0, 1, 0, -0.999734, 0, -0.0231931, -9.03635, -0.00439358, -4.00761)
 relativeTransformOpened = Transform3D(0.012514, 0, -0.999949, 0, 1, 0, 0.999949, 0, 0.012514, 3.05176e-05, 0, -1.90735e-06)
 transform = Transform3D(-0.0231931, 0, 0.999734, 0, 1, 0, -0.999734, 0, -0.0231931, -9.03635, -0.00439358, -4.00761)
 
-[node name="SmallWoodenDoor9" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor9" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(-0.00565481, 0, -0.999986, 0, 1, 0, 0.999986, 0, -0.00565481, -9.02048, -0.00439358, -19.0113)
 relativeTransformOpened = Transform3D(0.0129502, 0, 0.999939, 0, 1, 0, -0.999939, 0, 0.0129502, -1.52588e-05, 0, 0)
 transform = Transform3D(-0.00565481, 0, -0.999986, 0, 1, 0, 0.999986, 0, -0.00565481, -9.02048, -0.00439358, -19.0113)
 
-[node name="SmallWoodenDoor10" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor10" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(-0.0149217, 0, 0.999892, 0, 1, 0, -0.999892, 0, -0.0149217, -9.00974, -0.00439358, -20.9855)
 relativeTransformOpened = Transform3D(0.0125143, 0, -0.999982, 0, 1, 0, 0.999982, 0, 0.0125143, 3.05176e-05, 0, 1.90735e-06)
 transform = Transform3D(-0.0149217, 0, 0.999892, 0, 1, 0, -0.999892, 0, -0.0149217, -9.00974, -0.00439358, -20.9855)
 
-[node name="SmallWoodenDoor11" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor11" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, -14.0105, -0.00439358, -16.0338)
 relativeTransformOpened = Transform3D(-0.017593, 0, -0.999889, 0, 1, 0, 0.999889, 0, -0.017593, 1.52588e-05, 0, 1.90735e-06)
 transform = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, -14.0105, -0.00439358, -16.0338)
 
-[node name="SmallWoodenDoor12" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor12" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 openedState = true
 transformClosed = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, -13.9896, -0.00439358, -7.97983)
 relativeTransformOpened = Transform3D(0.0420877, 0, 0.999171, 0, 1, 0, -0.999171, 0, 0.0420877, 0.000100136, 0, 9.53674e-07)
 transform = Transform3D(0.0308197, 0, 0.999579, 0, 1, 0, -0.999579, 0, 0.0308197, -13.9895, -0.00439358, -7.97983)
 
-[node name="SmallWoodenDoor13" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor13" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 openedState = true
 transformClosed = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, 14.957, -0.00439358, -16.0231)
 relativeTransformOpened = Transform3D(-0.0175935, 0, -0.999919, 0, 1, 0, 0.999919, 0, -0.0175935, 0, 0, 0)
 transform = Transform3D(-0.00631873, 0, -1.00005, 0, 1, 0, 1.00005, 0, -0.00631873, 14.957, -0.00439358, -16.0231)
 
-[node name="SmallWoodenDoor14" parent="MeadHall/Doors" instance=ExtResource("9_obw70")]
+[node name="SmallWoodenDoor14" parent="MeadHall/Doors" instance=ExtResource("8_t7u7h")]
 transformClosed = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, 14.9766, -0.00439358, -7.96024)
 relativeTransformOpened = Transform3D(0.0420876, 0, 0.999171, 0, 1, 0, -0.999171, 0, 0.0420876, 1.52588e-05, 0, 0)
 transform = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, 14.9766, -0.00439358, -7.96024)
