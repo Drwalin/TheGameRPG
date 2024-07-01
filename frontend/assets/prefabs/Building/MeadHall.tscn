@@ -1,8 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://b5on135daflu2"]
+[gd_scene load_steps=3 format=3]
 
-[ext_resource type="PackedScene" uid="uid://dmjf3mhdh6yi5" path="res://assets/meshes/Building/MeadHall.glb" id="1_a"]
-[ext_resource type="ArrayMesh" uid="uid://bar8kb47bvd2h" path="res://assets/collisions/Building/MeadHall/_.col.obj" id="2_b"]
+[ext_resource type="PackedScene" path="res://assets/meshes/Building/MeadHall.glb" id="1_a"]
+[ext_resource type="ArrayMesh" path="res://assets/collisions/Building/MeadHall/_.col.obj" id="2_b"]
 
-[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
+[node name="MeadHall" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")

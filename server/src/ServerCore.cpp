@@ -8,6 +8,12 @@
 
 #include "../include/ServerCore.hpp"
 
+int RegisterEntityGameComponents();
+namespace
+{
+int initializer = RegisterEntityGameComponents();
+}
+
 ServerCore::ServerCore() : commandParser(this), configStorage(this)
 {
 	host = nullptr;

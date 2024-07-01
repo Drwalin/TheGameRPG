@@ -8,13 +8,33 @@
 
 #include "EditorConfig.hpp"
 
+int RegisterEntityGameComponents();
+namespace
+{
+int initializer = RegisterEntityGameComponents();
+}
+
 namespace editor
 {
 bool GameEditorConfig::render_graphic = true;
 bool GameEditorConfig::render_collision = false;
 
+void GameEditorConfig::_bind_methods()
+{
+	REGISTER_PROPERTY(GameEditorConfig, render_graphic, Variant::Type::BOOL,
+					  "render");
+	REGISTER_PROPERTY(GameEditorConfig, render_collision, Variant::Type::BOOL,
+					  "render");
+	REGISTER_PROPERTY_WITH_HINT(
+		GameEditorConfig, save_map_file_path, Variant::Type::STRING,
+		PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "", "save_map_file_path");
+	REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
+					  "save_scene");
+}
+
 void GameEditorConfig::_process(double dt)
 {
+	set_transform({});
 	if (save_scene) {
 		SaveScene();
 		save_scene = false;

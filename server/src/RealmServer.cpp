@@ -6,7 +6,6 @@
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 #include "../../common/include/RegistryComponent.hpp"
 
-#include "../include/EntityGameComponents.hpp"
 #include "../include/CollisionLoader.hpp"
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
@@ -60,42 +59,6 @@ void RealmServer::Init(const std::string &realmName)
 		}
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
-	}
-
-	// spawn test door
-	{
-		uint64_t entityId = NewEntity();
-		flecs::entity entity = Entity(entityId);
-		entity.set<ComponentStaticCollisionShapeName>({
-				"collisions/Furniture/_BigWoodenDoor.col.obj"
-				});
-		entity.set<ComponentStaticTransform>({
-				{53.6, -11.1, 121.3},
-				glm::quat{0.768, 0, 0.641, 0},
-				{1, 1, 1}
-				});
-		entity.set<ComponentModelName>(
-				{
-				"meshes/Furniture/BigWoodenDoor.glb"
-				});
-		entity.set<ComponentOnUse>(
-				{
-					named_callbacks::registry_entries::OnUse::Get("OpenableSingleDoor")
-				}
-				);
-		entity.set<ComponentSingleDoorTransformStates>(
-				{
-				{
-				{53.6, -11.1, 121.3},
-				glm::quat{0.768, 0, 0.641, 0},
-				{1, 1, 1}
-				},
-				{
-				{53.6, -11.1, 121.3},
-				glm::quat{-0.26, 0, 0.966, 0},
-				{1, 1, 1}
-				}
-				});
 	}
 
 	sendEntitiesToClientsTimer = 0;

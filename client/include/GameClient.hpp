@@ -97,7 +97,7 @@ public:
 	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput;
 	int64_t lastTickAuthoritativeSent = 0;
-	Timer pingTimer;
+	::Timer pingTimer;
 	int64_t pingMs = 10;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;

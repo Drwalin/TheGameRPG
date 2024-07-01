@@ -25,4 +25,4 @@ GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
 		state->oldState.timestamp = realm.realm->timer.currentTick;
 	});
 
-void DDD() {}
+int RegisterEntityComponents() { return 0; }

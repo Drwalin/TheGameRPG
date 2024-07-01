@@ -54,13 +54,14 @@ template <typename T> struct Registry {
 		auto it2 = registry.find(shortName);
 
 		if (it1 != it2) {
-			LOG_FATAL("Named callback registry entries of `%s` and `%s` differ:"
-					  "   `%s`:{'%s' , '%s'} != `%s`:{'%s' , '%s'}",
-					  fullName.c_str(), shortName.c_str(), fullName.c_str(),
-					  it1->second->fullName.c_str(),
-					  it1->second->shortName.c_str(), shortName.c_str(),
-					  it1->second->shortName.c_str(),
-					  it1->second->shortName.c_str());
+			LOG_FATAL(
+				"Trying to re-register existing named collback with differing "
+				"full and short names. Named callback registry entries of `%s` "
+				"and `%s` differ:   `%s`:{'%s' , '%s'} != `%s`:{'%s' , '%s'}",
+				fullName.c_str(), shortName.c_str(), fullName.c_str(),
+				it1->second->fullName.c_str(), it1->second->shortName.c_str(),
+				shortName.c_str(), it1->second->shortName.c_str(),
+				it1->second->shortName.c_str());
 			return;
 		}
 
@@ -77,8 +78,6 @@ template <typename T> struct Registry {
 			registry[shortName] = ptr;
 			LOG_TRACE("Registering callback '%s' -> '%s'", fullName.c_str(),
 					  shortName.c_str());
-
-			LOG_INFO("Callback ptr: %p", ptr->callback.load());
 		}
 		sharedMutex.unlock();
 	}
@@ -94,9 +93,7 @@ template <typename T> struct Registry {
 		sharedMutex.unlock_shared();
 		if (ret == nullptr) {
 			LOG_ERROR("No callback named: %s", name.c_str());
-			exit(13);
-		} else {
-			LOG_ERROR("Callback named: %s found", name.c_str());
+			return nullptr;
 		}
 		return ret;
 	}

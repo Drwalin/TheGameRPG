@@ -2,7 +2,7 @@
 
 #include "../include/RegistryComponent.hpp"
 
-extern void DDD();
+int RegisterEntityComponents();
 
 namespace reg
 {
@@ -10,7 +10,7 @@ Registry::Registry() {}
 Registry::~Registry() {}
 Registry &Registry::Singleton()
 {
-	DDD();
+	RegisterEntityComponents();
 	static Registry reg;
 	return reg;
 }
