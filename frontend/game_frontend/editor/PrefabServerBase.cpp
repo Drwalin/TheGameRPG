@@ -122,7 +122,8 @@ godot::Transform3D ToGodot(ComponentStaticTransform t)
 
 ComponentStaticTransform ToGame(godot::Transform3D t)
 {
-	return {ToGlm(t.get_origin()), ToGlm(t.get_basis().get_quaternion()),
+	return {ToGlm(t.get_origin()),
+			ToGlm(t.get_basis().get_rotation_quaternion()),
 			ToGlm(t.get_basis().get_scale())};
 }
 
