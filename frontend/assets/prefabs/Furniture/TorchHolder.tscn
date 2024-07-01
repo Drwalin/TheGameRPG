@@ -2,5 +2,5 @@
 
 [ext_resource type="PackedScene" path="res://assets/meshes/Furniture/TorchHolder.glb" id="1_a"]
 
-[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
+[node name="TorchHolder" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")

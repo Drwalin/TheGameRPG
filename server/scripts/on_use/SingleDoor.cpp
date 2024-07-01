@@ -24,8 +24,8 @@ void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 		const ComponentStaticTransform *transform =
 			target.get<ComponentStaticTransform>();
 
-		if (TransformDistance(*transform, states->transformOpen)
-				> TransformDistance(*transform, states->transformClosed)) {
+		if (TransformDistance(*transform, states->transformOpen) >
+			TransformDistance(*transform, states->transformClosed)) {
 			target.set<ComponentStaticTransform>(states->transformOpen);
 		} else {
 			target.set<ComponentStaticTransform>(states->transformClosed);

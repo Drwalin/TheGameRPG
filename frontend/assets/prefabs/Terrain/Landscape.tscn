@@ -3,6 +3,6 @@
 [ext_resource type="PackedScene" path="res://assets/meshes/Terrain/Landscape.glb" id="1_a"]
 [ext_resource type="ArrayMesh" path="res://assets/collisions/Terrain/Landscape.col.obj" id="2_b"]
 
-[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
+[node name="Landscape" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")

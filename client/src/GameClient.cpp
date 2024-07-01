@@ -346,7 +346,7 @@ void GameClient::PerformInteractionUse()
 
 	glm::mat4 mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 	mat = glm::rotate(mat, rot.y, glm::vec3(0, 1, 0));
-	mat = glm::rotate(mat, rot.x, glm::vec3(1, 0, 0));
+	mat = glm::rotate(mat, rot.x, glm::vec3(-1, 0, 0));
 	glm::vec4 v4 = {forward.x, forward.y, forward.z, 0};
 	forward = mat * v4;
 
@@ -367,7 +367,6 @@ void GameClient::PerformInteractionUse()
 				uint64_t serverEntityId = it->second;
 				ServerRpcProxy::InteractInLineOfSight(this, serverEntityId, pos,
 													  hitPoint, normal);
-				LOG_INFO("Hit object: %lu", entityId);
 			}
 		}
 	}

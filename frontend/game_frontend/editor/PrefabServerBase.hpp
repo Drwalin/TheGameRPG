@@ -28,6 +28,8 @@
 
 #include <icon7/ByteWriter.hpp>
 
+#include "../../../common/include/EntityComponents.hpp"
+
 #include "EditorConfig.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -71,7 +73,7 @@ class PrefabServerBase : public Node3D
 public: // Godot bound functions
 	PrefabServerBase();
 	virtual ~PrefabServerBase();
-	static void _bind_methods() {}
+	static void _bind_methods();
 
 	void ClearChildren();
 
@@ -83,54 +85,20 @@ public: // Godot bound functions
 
 	static String GetRandomString();
 
+	void RecreateResourceRenderer(MeshInstance3D **nodeStorage,
+								  Ref<Mesh> *resourceStorage, bool enable);
+	void RecreateResourceRenderer(Node3D **nodeStorage,
+								  Ref<Resource> *resourceStorage, bool enable);
+
+	void GenerateTriCollisionForAll(Node3D *node);
+
+private:
 	template <typename TNode, typename TRes>
-	void RecreateResourceRenderer(TNode **nodeStorage,
-								  Ref<TRes> *resourceStorage, bool enable)
-	{
-		if (*nodeStorage) {
-			remove_child((*nodeStorage));
-			(*nodeStorage)->queue_free();
-			(*nodeStorage) = nullptr;
-		}
-		if (GameEditorConfig::render_graphic) {
-			if (resourceStorage->is_valid() && !resourceStorage->is_null()) {
-
-				if constexpr (std::is_same_v<TNode, Node>) {
-					Ref<PackedScene> packedScene = *resourceStorage;
-					if (packedScene.is_null() == false &&
-						packedScene.is_valid()) {
-						(*nodeStorage) = packedScene->instantiate();
-						(*nodeStorage)->set_name(GetRandomString());
-						add_child((*nodeStorage));
-						(*nodeStorage)->set_owner(this);
-					}
-				}
-
-				Ref<Mesh> mesh = *resourceStorage;
-				if (mesh.is_null() == false && mesh.is_valid()) {
-					MeshInstance3D *m = new MeshInstance3D();
-					m->set_mesh(mesh);
-					(*nodeStorage) = m;
-					(*nodeStorage)->set_name(GetRandomString());
-					add_child((*nodeStorage));
-					(*nodeStorage)->set_owner(this);
-				}
-			}
-		}
-		if (*nodeStorage) {
-			GenerateTriCollisionForAll(*nodeStorage);
-		}
-	}
-
-	void GenerateTriCollisionForAll(Node *node)
-	{
-		if (MeshInstance3D *mesh = Object::cast_to<MeshInstance3D>(node)) {
-			mesh->create_trimesh_collision();
-		}
-		TypedArray<Node> children = node->get_children(true);
-		for (int i = 0; i < children.size(); ++i) {
-			GenerateTriCollisionForAll((Node *)(Object *)(children[i]));
-		}
-	}
+	void _RecreateResourceRenderer(TNode **nodeStorage,
+								   Ref<TRes> *resourceStorage, bool enable);
 };
+
+extern godot::Transform3D ToGodot(ComponentStaticTransform t);
+extern ComponentStaticTransform ToGame(godot::Transform3D t);
+
 } // namespace editor

@@ -1,5 +1,3 @@
-#include "../GodotGlm.hpp"
-
 #include "../../../common/include/EntityComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 
@@ -31,11 +29,8 @@ void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
 			collisionPath = collisionPath.replace(0, RES_PREFIX.size(), "");
 		}
 	}
-	
-	ComponentStaticTransform transform{
-		ToGlm(get_global_position()),
-		ToGlm(get_global_basis().get_quaternion()),
-		ToGlm(get_scale())};
+
+	ComponentStaticTransform transform = ToGame(get_global_transform());
 	ComponentModelName model{graphicPath};
 	ComponentStaticCollisionShapeName collision{collisionPath};
 
@@ -43,4 +38,78 @@ void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
 	reg::Registry::Serialize(model, writer);
 	reg::Registry::Serialize(collision, writer);
 }
+
+void PrefabServerStaticMesh::_bind_methods()
+{
+	REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh,
+							   graphic_Mesh_or_PackedScene,
+							   Variant::Type::OBJECT, "Resource", "scene");
+	REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh, collision_mesh,
+							   Variant::Type::OBJECT, "Mesh", "mesh");
+}
+
+void PrefabServerStaticMesh::_ready()
+{
+	PrefabServerBase::_ready();
+	col = nullptr;
+	graph = nullptr;
+}
+
+void PrefabServerStaticMesh::_process(double dt)
+{
+	PrefabServerBase::_process(dt);
+	if ((col != nullptr) != GameEditorConfig::render_collision) {
+		RecreateCollision();
+	}
+
+	if ((graph != nullptr) != GameEditorConfig::render_graphic) {
+		RecreateGraphic();
+	}
+}
+
+void PrefabServerStaticMesh::RecreateCollision()
+{
+	RecreateResourceRenderer(&col, &collision_mesh,
+							 GameEditorConfig::render_collision);
+}
+
+void PrefabServerStaticMesh::RecreateGraphic()
+{
+	RecreateResourceRenderer(&graph, &graphic_Mesh_or_PackedScene,
+							 GameEditorConfig::render_graphic);
+}
+
+Ref<Resource> graphic_Mesh_or_PackedScene;
+Ref<Resource> PrefabServerStaticMesh::get_graphic_Mesh_or_PackedScene()
+{
+	return graphic_Mesh_or_PackedScene;
+}
+void PrefabServerStaticMesh::set_graphic_Mesh_or_PackedScene(Ref<Resource> v)
+{
+	graphic_Mesh_or_PackedScene = Ref<Resource>{};
+
+	Ref<PackedScene> packedScene = v;
+	if (packedScene.is_null() == false && packedScene.is_valid()) {
+		graphic_Mesh_or_PackedScene = v;
+	}
+
+	Ref<Mesh> mesh = v;
+	if (mesh.is_null() == false && mesh.is_valid()) {
+		graphic_Mesh_or_PackedScene = v;
+	}
+
+	RecreateGraphic();
+}
+
+Ref<Mesh> collision_mesh;
+Ref<Mesh> PrefabServerStaticMesh::get_collision_mesh()
+{
+	return collision_mesh;
+}
+void PrefabServerStaticMesh::set_collision_mesh(Ref<Mesh> v)
+{
+	collision_mesh = v;
+	RecreateCollision();
+}
+
 } // namespace editor

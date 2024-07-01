@@ -14,7 +14,9 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
 endif()
 
-include_directories(../godot-cpp/include)
+include_directories(../thirdparty/godot-cpp/include)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../thirdparty/godot-cpp/gen/include)
+include_directories(../thirdparty/godot-cpp/gdextension)
 include_directories(../common/include)
 include_directories(../client/include)
 include_directories(game_frontend)
@@ -30,7 +32,7 @@ if(THEGAMERPG_PRECOMPILE_HEADERS )
 	add_common_precompiled_headers(game_frontend)
 
 	add_precompiled_header_glob_recurse(game_frontend
-		"../thirdparty/godot-cpp/gen/include*.hpp")
+		"../thirdparty/godot-cpp/gen/include/*.hpp")
 endif()
 
 if(UNIX)
@@ -52,37 +54,38 @@ if (THEGAMERPG_TIME_REPORT)
 endif()
 
 
+
 # editor script
 
-
-
-
-file(GLOB src_files_cpp "game_frontend/editor/*.cpp")
-add_library(map_editor SHARED
-	${src_files_cpp}
-)
-target_link_libraries(map_editor PUBLIC game_frontend)
-target_link_libraries(map_editor PUBLIC server_lib)
-
-if(THEGAMERPG_PRECOMPILE_HEADERS )
-	add_common_precompiled_headers(map_editor)
-
-	add_precompiled_header_glob_recurse(map_editor
-		"../thirdparty/godot-cpp/gen/include*.hpp")
-endif()
-
-if(UNIX)
-	add_custom_command(TARGET map_editor POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
-		${PROJECT_SOURCE_DIR}/libmap_editor.so
-		COMMENT "Copying libmap_editor.so"
+if (THEGAMERPG_MAP_EDITOR)
+	file(GLOB editor_src_files_cpp "game_frontend/editor/*.cpp")
+	add_library(map_editor SHARED
+		${editor_src_files_cpp}
 	)
-else()
-	add_custom_command(TARGET map_editor POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
-		${PROJECT_SOURCE_DIR}/libmap_editor.dll
-		COMMENT "Copying libmap_editor.dll"
-	)
+	target_link_libraries(map_editor PUBLIC game_frontend)
+	target_link_libraries(map_editor PUBLIC server_lib_shared)
+	target_link_libraries(map_editor PUBLIC godot::cpp)
+	
+	target_include_directories(map_editor PUBLIC game_frontend/editor)
+
+	if(THEGAMERPG_PRECOMPILE_HEADERS )
+		add_common_precompiled_headers(map_editor)
+
+		add_precompiled_header_glob_recurse(map_editor
+			"../thirdparty/godot-cpp/gen/include/*.hpp")
+	endif()
+
+	if(UNIX)
+		add_custom_command(TARGET map_editor POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
+			${PROJECT_SOURCE_DIR}/libmap_editor.so
+			COMMENT "Copying libmap_editor.so"
+		)
+	else()
+		add_custom_command(TARGET map_editor POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:map_editor>
+			${PROJECT_SOURCE_DIR}/libmap_editor.dll
+			COMMENT "Copying libmap_editor.dll"
+		)
+	endif()
 endif()
-
-

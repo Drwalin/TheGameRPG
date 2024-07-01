@@ -46,7 +46,7 @@ using namespace godot;
 
 namespace icon7
 {
-	class ByteWriter;
+class ByteWriter;
 }
 
 namespace editor
@@ -57,19 +57,7 @@ class GameEditorConfig : public Node3D
 public: // Godot bound functions
 	GameEditorConfig() {}
 	~GameEditorConfig() {}
-	static void _bind_methods()
-	{
-		REGISTER_PROPERTY(GameEditorConfig, render_graphic, Variant::Type::BOOL,
-						  "render");
-		REGISTER_PROPERTY(GameEditorConfig, render_collision,
-						  Variant::Type::BOOL, "render");
-		REGISTER_PROPERTY_WITH_HINT(
-			GameEditorConfig, save_map_file_path, Variant::Type::STRING,
-			PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "",
-			"save_map_file_path");
-		REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
-						  "save_scene");
-	}
+	static void _bind_methods();
 
 	virtual void _process(double dt) override;
 

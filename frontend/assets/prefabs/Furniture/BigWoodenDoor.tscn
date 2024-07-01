@@ -1,8 +1,10 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://b2ay6dg0vntql"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/BigWoodenDoor.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/_BigWoodenDoor.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://biwdlnowa4dnp" path="res://assets/meshes/Furniture/BigWoodenDoor.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://bhfamdwr8dj5r" path="res://assets/collisions/Furniture/_BigWoodenDoor.col.obj" id="2_b"]
+[ext_resource type="Script" path="res://tools/scripts/OpenableSingleDoor.gd" id="3_k4h0s"]
 
-[node name="PrefabServerStaticMesh" type="PrefabServerStaticMesh"]
+[node name="BigWoodenDoor" type="PrefabServerOpenableSingleDoor"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+script = ExtResource("3_k4h0s")

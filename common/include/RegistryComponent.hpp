@@ -43,6 +43,8 @@ public:
 	ComponentConstructor(std::string name, std::string fullName)
 		: ComponentConstructorBase(name, fullName)
 	{
+		LOG_TRACE("Registering component: %s -> %s", fullName.c_str(),
+				  name.c_str());
 	}
 	virtual ~ComponentConstructor() {}
 

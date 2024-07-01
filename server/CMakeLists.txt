@@ -32,7 +32,12 @@ if (WIN32)
 	add_library(server_lib SHARED
 		${src_files}
 	)
-	target_link_libraries(server_lib common)
+	target_link_libraries(server_lib PUBLIC common)
+	add_library(server_lib_shared SHARED
+		${src_files}
+	)
+	target_link_libraries(server_lib_shared PUBLIC common)
+
 	add_executable(server
 		ServerMain.cpp
 	)
@@ -41,12 +46,16 @@ if (WIN32)
 	target_link_libraries(scripts server_lib)
 else()
 	add_library(server_lib STATIC
-		ServerMain.cpp
+		${src_files}
 	)
-	target_link_libraries(server_lib common)
+	target_link_libraries(server_lib PUBLIC common)
+	add_library(server_lib_shared SHARED
+		${src_files}
+	)
+	target_link_libraries(server_lib_shared PUBLIC common)
 	
 	add_executable(server
-		${src_files}
+		ServerMain.cpp
 	)
 	target_link_libraries(server server_lib)
 	# ENABLE_EXPORTS allows for dlopen(scripts) to link against symbols from within
@@ -75,3 +84,14 @@ if (THEGAMERPG_PRECOMPILE_HEADERS)
 endif()
 
 add_custom_target(game_server DEPENDS server scripts)
+
+if (THEGAMERPG_MAP_EDITOR)
+	if(UNIX)
+	else()
+		add_custom_command(TARGET server_lib POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:server_lib>
+			${PROJECT_SOURCE_DIR}/../frontend/libserver_lib.dll
+			COMMENT "Copying libserver_lib.dll"
+		)
+	endif()
+endif()
