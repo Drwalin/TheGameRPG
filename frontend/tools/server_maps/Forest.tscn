@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/SmallStonePillar1.tscn" id="10_377l7"]
 
 [node name="Forest" type="GameEditorConfig"]
-save_map_file_path = "../build/maps/Forest.map"
+save_map_file_path = "../game_assets/maps/Forest.map"
 
 [node name="Terrain" type="Node3D" parent="."]
 

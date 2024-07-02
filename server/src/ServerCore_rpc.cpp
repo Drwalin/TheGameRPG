@@ -92,7 +92,11 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 	}
 
 	std::shared_ptr<RealmServer> oldRealm = data->realm.lock();
-	if (oldRealm) {
+	if (oldRealm == newRealm) {
+		LOG_TRACE("old realm is the new realm");
+		return;
+	} else if (oldRealm) {
+// 		LOG_TRACE("Disconnecting from old realm path");
 		class CommandDisconnectPeer : public icon7::commands::ExecuteOnPeer
 		{
 		public:
@@ -103,6 +107,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 			std::weak_ptr<RealmServer> oldRealm;
 			virtual void Execute() override
 			{
+// 				LOG_TRACE("");
 				std::shared_ptr<RealmServer> oldRealm = this->oldRealm.lock();
 				std::shared_ptr<RealmServer> newRealm = this->newRealm.lock();
 				if (oldRealm) {
@@ -117,6 +122,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 						ServerCore *serverCore;
 						virtual void Execute() override
 						{
+// 							LOG_TRACE("");
 							serverCore->ConnectPeerToRealm(peer.get());
 						}
 					};
@@ -126,12 +132,19 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 					com->serverCore = oldRealm->serverCore;
 
 					if (newRealm) {
+// 						LOG_TRACE("");
 						newRealm->executionQueue.EnqueueCommand(std::move(com));
 					}
 				}
 			}
 		};
+		auto com = icon7::CommandHandle<CommandDisconnectPeer>::Create();
+		com->peer = peer->shared_from_this();
+		com->oldRealm = oldRealm;
+		com->newRealm = newRealm;
+		newRealm->executionQueue.EnqueueCommand(std::move(com));
 	} else {
+// 		LOG_TRACE("Connecting to new realm");
 		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
 		{
 		public:
@@ -142,6 +155,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 			{
 				auto r = realm.lock();
 				if (r) {
+// 					LOG_TRACE("");
 					r->ConnectPeer(peer.get());
 				} else {
 					LOG_FATAL("Realm object already destroyed");

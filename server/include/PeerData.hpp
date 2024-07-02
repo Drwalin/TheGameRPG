@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <glm/glm.hpp>
+
 #include <flecs.h>
 
 #include <icon7/Peer.hpp>
@@ -29,6 +31,10 @@ public:
 	std::weak_ptr<RealmServer> realm;
 	std::atomic<uint32_t> peerState = 0;
 	uint64_t entityId = 0;
+	
 	icon7::ByteBuffer storedEntityData;
+	
 	std::string nextRealm = "";
+	bool useNextRealmPosition = false;
+	glm::vec3 nextRealmlPosition;
 };
