@@ -8,4 +8,4 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	text = "Ping: %d ms    " % gameFrontend.GetPing();
+	text = "Tick: %d\nPing: %d ms" % [gameFrontend.GetCurrentTick(), gameFrontend.GetPing()];

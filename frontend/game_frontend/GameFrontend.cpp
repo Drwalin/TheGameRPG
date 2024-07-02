@@ -64,6 +64,7 @@ void GameFrontend::_bind_methods()
 
 	METHOD_NO_ARGS(GameFrontend, PerformInteractionUse);
 	METHOD_NO_ARGS(GameFrontend, GetPing);
+	METHOD_NO_ARGS(GameFrontend, GetCurrentTick);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
@@ -151,6 +152,7 @@ bool GameFrontend::IsInPlayerControl() { return client->IsInPlayerControl(); }
 void GameFrontend::PerformInteractionUse() { client->PerformInteractionUse(); }
 
 int64_t GameFrontend::GetPing() { return client->GetPing(); }
+int64_t GameFrontend::GetCurrentTick() { return client->GetCurrentTick(); }
 
 void GameFrontend::OnLoginFailed(std::string reason)
 {
