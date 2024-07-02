@@ -195,7 +195,12 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		reg::Registry::Singleton().SerializeEntity(entity, writer);
 		data->storedEntityData = std::move(writer.Buffer());
 
-		if (FileOperations::WriteFile(std::string("users/" + data->userName),
+		
+		std::string filePrefix;
+		if (serverCore->configStorage.GetString(
+				"config.users_directory_storage.prefix", &filePrefix)) {
+		}
+		if (FileOperations::WriteFile(filePrefix + data->userName,
 									  data->storedEntityData)) {
 		} else {
 			data->storedEntityData.clear();
