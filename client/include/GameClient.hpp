@@ -79,6 +79,7 @@ public: // client input api
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
 	int64_t GetPing();
+	int64_t GetCurrentTick();
 
 	void PerformSendPlayerMovementInput();
 

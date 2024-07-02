@@ -376,3 +376,8 @@ int64_t GameClient::GetPing()
 {
 	return pingMs;
 }
+
+int64_t GameClient::GetCurrentTick()
+{
+	return realm->timer.currentTick;
+}
