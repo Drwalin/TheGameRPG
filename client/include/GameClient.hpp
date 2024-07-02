@@ -78,6 +78,7 @@ public: // client input api
 	bool GetOnGround();
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
+	int64_t GetPing();
 
 	void PerformSendPlayerMovementInput();
 
@@ -98,7 +99,7 @@ public:
 	bool needSendPlayerMovementInput;
 	int64_t lastTickAuthoritativeSent = 0;
 	::Timer pingTimer;
-	int64_t pingMs = 10;
+	int64_t pingMs = 70;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;
 	std::unordered_map<uint64_t, uint64_t> mapLocalEntityIdToServerEntityId;

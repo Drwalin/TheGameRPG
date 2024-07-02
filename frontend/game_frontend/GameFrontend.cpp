@@ -63,6 +63,7 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, IsInPlayerControl);
 
 	METHOD_NO_ARGS(GameFrontend, PerformInteractionUse);
+	METHOD_NO_ARGS(GameFrontend, GetPing);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
@@ -148,6 +149,8 @@ bool GameFrontend::IsDisconnected() { return client->IsDisconnected(); }
 bool GameFrontend::IsInPlayerControl() { return client->IsInPlayerControl(); }
 
 void GameFrontend::PerformInteractionUse() { client->PerformInteractionUse(); }
+
+int64_t GameFrontend::GetPing() { return client->GetPing(); }
 
 void GameFrontend::OnLoginFailed(std::string reason)
 {

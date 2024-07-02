@@ -62,6 +62,7 @@ public: // Call functions from godot to game
 	bool GetIsPlayerOnGround();
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
+	int64_t GetPing();
 
 	bool IsConnected();
 	bool IsDisconnected();
