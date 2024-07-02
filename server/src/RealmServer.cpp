@@ -134,10 +134,28 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 																  reader);
 	}
 
-	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
-			 realmName.c_str());
+// 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
+// 			 realmName.c_str());
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
+	
+	if (data->useNextRealmPosition) {
+		auto *_ls = entity.get<ComponentLastAuthoritativeMovementState>();
+		if (_ls) {
+			auto ls = *_ls;
+			ls.oldState.pos = data->nextRealmlPosition;
+			entity.set<ComponentLastAuthoritativeMovementState>(ls);
+		}
+		
+		auto *_ms = entity.get<ComponentMovementState>();
+		if (_ms) {
+			auto ms = *_ms;
+			ms.pos = data->nextRealmlPosition;
+			entity.set<ComponentMovementState>(ms);
+		}
+		
+		data->useNextRealmPosition = false;
+	}
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)

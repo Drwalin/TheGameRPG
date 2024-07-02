@@ -5,6 +5,7 @@
 #include "../include/SharedObject.hpp"
 
 #include "../include/CommandParser.hpp"
+#include "icon7/Command.hpp"
 
 void CommandParser::InitializeCommands()
 {
@@ -132,4 +133,62 @@ void CommandParser::InitializeCommands()
 							  }
 							  printf("Loaded realms:%s\n", msg.c_str());
 						  });
+
+	RegisterCustomCommand(
+		{"teleport"},
+		"Teleport a player into realm and location\n"
+		"arguments:\n"
+		"  - player name\n"
+		"  - realm name\n"
+		"  - new player position.x\n"
+		"  - new player position.y\n"
+		"  - new player position.z",
+		[this](const std::vector<std::string> &args) {
+			if (args.size() < 6) {
+				LOG_ERROR("To little arguments to teleport command.");
+			}
+
+			class CommandTeleportPlayer : public icon7::commands::ExecuteOnHost
+			{
+			public:
+				CommandTeleportPlayer() = default;
+				~CommandTeleportPlayer() = default;
+
+				ServerCore *serverCore;
+				std::string userName;
+				std::string realmName;
+				glm::vec3 position;
+
+				virtual void Execute() override
+				{
+					auto it = serverCore->usernameToPeer.find(userName);
+					if (it == serverCore->usernameToPeer.end()) {
+						LOG_INFO("No username %s found to teleport",
+								 userName.c_str());
+						return;
+					}
+					auto peer = it->second;
+					PeerData *data = ((PeerData *)(peer->userPointer));
+					if (data) {
+						data->nextRealm = realmName;
+						data->nextRealmlPosition = position;
+						data->useNextRealmPosition = true;
+						serverCore->ConnectPeerToRealm(peer.get());
+// 						LOG_INFO("Connecting %s to %s", userName.c_str(),
+// 								 realmName.c_str());
+					} else {
+						LOG_ERROR(
+							"Peer 0x%p does not have initialised userData",
+							peer.get());
+					}
+				}
+			};
+			auto com = icon7::CommandHandle<CommandTeleportPlayer>::Create();
+			com->serverCore = serverCore;
+			com->userName = args[1];
+			com->realmName = args[2];
+			com->position = {std::stof(args[3]), std::stof(args[4]),
+							 std::stof(args[5])};
+			serverCore->host->EnqueueCommand(std::move(com));
+		});
 }

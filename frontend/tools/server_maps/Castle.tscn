@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cnpc8o3vuebb2" path="res://assets/prefabs/Furniture/SmallWoodenDoor.tscn" id="8_t7u7h"]
 
 [node name="Castle" type="GameEditorConfig"]
-save_map_file_path = "../build/maps/MiddleEarth.map"
+save_map_file_path = "../game_assets/maps/Castle.map"
 
 [node name="Terrain" type="Node3D" parent="."]
 
