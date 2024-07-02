@@ -153,6 +153,10 @@ void GameClient::RunOneEpoch()
 	PerformSendPlayerMovementInput();
 	realm->OneEpoch();
 	PerformSendPlayerMovementInput();
+	
+	if ((rand())%200 == 0) {
+		ServerRpcProxy::Ping(this, true);
+	}
 }
 
 void GameClient::PerformSendPlayerMovementInput()
@@ -178,7 +182,6 @@ glm::vec3 GameClient::GetRotation()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -193,7 +196,6 @@ glm::vec3 GameClient::GetPosition()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -208,7 +210,6 @@ glm::vec3 GameClient::GetVelocity()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("ERROR");
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -229,6 +230,7 @@ bool GameClient::GetOnGround()
 	auto oldState = player.get<ComponentMovementState>();
 	if (oldState)
 		return oldState->onGround;
+	LOG_TRACE("ERROR");
 	return true;
 }
 
@@ -242,6 +244,7 @@ ComponentShape GameClient::GetShape()
 	auto shape = player.get<ComponentShape>();
 	if (shape)
 		return *shape;
+	LOG_TRACE("ERROR");
 	return {0, 0};
 }
 
@@ -254,7 +257,6 @@ void GameClient::SetRotation(glm::vec3 rotation)
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("Maybe error in SetRotation");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -273,7 +275,6 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("Maybe error in ProvideMovementInputDirection");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -312,7 +313,6 @@ void GameClient::TryPerformJump()
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
-		LOG_TRACE("Maybe error in TryPerformJump");
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -370,4 +370,9 @@ void GameClient::PerformInteractionUse()
 			}
 		}
 	}
+}
+
+int64_t GameClient::GetPing()
+{
+	return pingMs;
 }

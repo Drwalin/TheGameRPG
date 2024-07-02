@@ -34,14 +34,12 @@ void GameClient::BindRpc()
 
 void GameClient::JoinRealm(const std::string &realmName)
 {
-// 	LOG_INFO("JoinRealm(%s)", realmName.c_str());
 	realm->Reinit(realmName);
 	ServerRpcProxy::Ping(this, true);
 }
 
 void GameClient::SpawnEntities(icon7::ByteReader *reader)
 {
-// 	LOG_INFO("Spawn entities");
 	uint64_t serverId;
 	ComponentLastAuthoritativeMovementState state;
 	ComponentName name;
@@ -64,7 +62,6 @@ void GameClient::SpawnEntities(icon7::ByteReader *reader)
 
 void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 {
-// 	LOG_INFO("Spawn static entities");
 	uint64_t serverId;
 	ComponentStaticTransform transform;
 	ComponentModelName model;
@@ -130,7 +127,6 @@ void GameClient::DeleteEntities(icon7::ByteReader *reader)
 
 void GameClient::SetPlayerEntityId(uint64_t serverId)
 {
-// 	LOG_INFO("Set player id: %lu", serverId);
 	serverPlayerEntityId = serverId;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
 	if (it == mapServerEntityIdToLocalEntityId.end()) {
@@ -151,16 +147,22 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 {
 	int64_t currentTick = pingTimer.CalcCurrentTick();
 	pingMs = currentTick - localTick;
-	LOG_DEBUG("ping = %ld ms", pingMs);
 	if (remoteTick != 0) {
 		// TODO: consider not adding latency?
-		int64_t newCurrentTick = remoteTick + pingMs / 2;
-		if (newCurrentTick < realm->timer.currentTick) {
-			// TODO: time error??
-			LOG_DEBUG("Ping/Pong received time invalid");
-		} else {
+		int64_t newCurrentTick = remoteTick; // + pingMs / 2;
+		if (abs(newCurrentTick - realm->timer.currentTick) > 1000) {
 			realm->timer.Start(newCurrentTick);
-			LOG_DEBUG("current tick = %lu", newCurrentTick);
+		} else if (newCurrentTick < realm->timer.currentTick) {
+			// TODO: time error??
+			if (newCurrentTick+5< realm->timer.currentTick) {
+				newCurrentTick = realm->timer.currentTick - 5;
+			}
+			realm->timer.Start(newCurrentTick);
+		} else {
+			if (newCurrentTick > realm->timer.currentTick + 5) {
+				newCurrentTick = realm->timer.currentTick + 5;
+			}
+			realm->timer.Start(newCurrentTick);
 		}
 	}
 }
@@ -194,7 +196,11 @@ void GameClient::SpawnEntity(
 		OnSetPlayerId(localPlayerEntityId);
 		LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
 	} else {
-		LOG_DEBUG("Spawn   entity: [%lu>%lu]    (server id == pleyer server id):%s = %lu == %lu", serverId, localId, (serverId == serverPlayerEntityId)?"true":"false", serverId, serverPlayerEntityId);
+		LOG_DEBUG("Spawn   entity: [%lu>%lu]    (server id == pleyer server "
+				  "id):%s = %lu == %lu",
+				  serverId, localId,
+				  (serverId == serverPlayerEntityId) ? "true" : "false",
+				  serverId, serverPlayerEntityId);
 	}
 }
 
@@ -239,7 +245,6 @@ void GameClient::RemoveEntity(uint64_t serverId)
 	}
 
 	if (serverId == serverPlayerEntityId) {
-// 		LOG_INFO("Set player id: %lu", serverId);
 		OnPlayerIdUnset();
 		serverPlayerEntityId = 0;
 		localPlayerEntityId = 0;

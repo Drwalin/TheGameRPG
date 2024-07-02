@@ -31,14 +31,9 @@ void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data)
 		auto realm = peerData->realm.lock();
 		if (realm.get() != nullptr) {
 			currentTick = realm->timer.CalcCurrentTick();
-		} else {
-			LOG_DEBUG("Peer has no realm");
 		}
-	} else {
-		LOG_DEBUG("No peer data");
 	}
 
-	LOG_DEBUG("Pong %lu %lu", data, currentTick);
 	peer->host->GetRpcEnvironment()->Send(
 		peer, flags, ClientRpcFunctionNames::Pong, data, currentTick);
 }
