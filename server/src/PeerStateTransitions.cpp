@@ -46,7 +46,11 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
 
 		// Load player data from file
 
-		if (FileOperations::ReadFile(std::string("users/" + username),
+		std::string filePrefix;
+		if (serverCore->configStorage.GetString(
+				"config.users_directory_storage.prefix", &filePrefix)) {
+		}
+		if (FileOperations::ReadFile(filePrefix + username,
 									 &(data->storedEntityData))) {
 			if (data->storedEntityData.size()) {
 				data->nextRealm = (char *)data->storedEntityData.data();
