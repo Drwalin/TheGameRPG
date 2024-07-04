@@ -525,3 +525,9 @@ transform = Transform3D(-0.588833, -0.237344, -2.73574, -0.331439, 6.9505, -0.02
 
 [node name="SmallStonePillar1" parent="StoneCircle" instance=ExtResource("10_377l7")]
 transform = Transform3D(1.77572e-08, -1.27935, 8.44447e-08, 0, -5.59223e-08, -1.93187, 1.48909, 1.52561e-08, -1.00699e-15, 1.577, 0.968, 4.521)
+
+[node name="PrefabServerTrigger" type="PrefabServerTrigger" parent="StoneCircle"]
+onTriggerEnter = "TriggerTeleportPlayer"
+teleportRealm = "Castle"
+teleportPosition = Vector3(-111.803, -1.58022, 41.9164)
+transform = Transform3D(1.99968e-08, -3.03056, 2.71822e-07, -6.22437e-22, -1.3247e-07, -6.21857, 1.6769, 3.6139e-08, -3.24143e-15, 0.0471783, 3.06413, 9.1267)

@@ -18,7 +18,8 @@ include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
 include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(include)
 
-add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP)
+add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP
+	FLECS_LOG FLECS_APP FLECS_META FELCS_META_C FLECS_EXPR)
 add_library(flecs STATIC ../thirdparty/flecs/flecs.c)
 
 file(GLOB_RECURSE src_files "src/*.cpp")

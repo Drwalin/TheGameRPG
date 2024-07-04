@@ -52,11 +52,26 @@ public:
 	DeserializeEntityComponent(flecs::entity entity,
 							   icon7::ByteReader &reader) const override
 	{
-		T component;
-		reader.op(component);
-		if (reader.is_valid()) {
-			entity.set<T>(component);
+// 		LOG_INFO("A %p", entity.world().m_world);
+		{
+			T component;
+			reader.op(component);
+			if (reader.is_valid()) {
+// 				LOG_INFO("A.2");
+// 				LOG_INFO("A.3: %s", entity.has<T>()?"TRUE":"FALSE");
+				
+// 				LOG_INFO("B");
+				entity.add<T>();
+// 				LOG_INFO("C");
+				T *p = entity.get_mut<T>();
+// 				LOG_INFO("D");
+			   	*p = std::move(component);
+// 				LOG_INFO("E");
+				entity.set<T>(component);
+			}
+// 			LOG_INFO("F");
 		}
+// 		LOG_INFO("G");
 	}
 
 	virtual bool
@@ -108,7 +123,7 @@ public:
 		reader.op(component);
 		if (reader.is_valid()) {
 			callback(entity, &component);
-			entity.set<T>(component);
+			entity.set<T>(std::move(component));
 		}
 	}
 

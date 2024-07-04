@@ -21,3 +21,10 @@ func _on_mouse_sensitivity_slider_changed(value: float):
 func _on_enable_monitoring_toggled(toggled_on):
 	print(toggled_on);
 	$"../Hud/PerformanceStatistics".visible = toggled_on;
+
+func _on_show_player_position_toggled(toggled_on):
+	print(toggled_on);
+	$"../Hud/Position".visible = toggled_on;
+
+func _on_show_ping_toggled(toggled_on):
+	$"../Hud/Ping".visible = toggled_on;

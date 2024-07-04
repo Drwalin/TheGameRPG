@@ -79,7 +79,6 @@ void PrefabServerStaticMesh::RecreateGraphic()
 							 GameEditorConfig::render_graphic);
 }
 
-Ref<Resource> graphic_Mesh_or_PackedScene;
 Ref<Resource> PrefabServerStaticMesh::get_graphic_Mesh_or_PackedScene()
 {
 	return graphic_Mesh_or_PackedScene;
@@ -101,7 +100,6 @@ void PrefabServerStaticMesh::set_graphic_Mesh_or_PackedScene(Ref<Resource> v)
 	RecreateGraphic();
 }
 
-Ref<Mesh> collision_mesh;
 Ref<Mesh> PrefabServerStaticMesh::get_collision_mesh()
 {
 	return collision_mesh;

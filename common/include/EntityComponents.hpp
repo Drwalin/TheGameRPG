@@ -7,6 +7,8 @@
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/ext/quaternion_common.hpp>
 
+#include <icon7/Debug.hpp>
+
 #include "GlmSerialization.hpp"
 
 #pragma clang diagnostic push
@@ -98,8 +100,64 @@ struct ComponentModelName {
 
 	template <typename S> S &__ByteStream_op(S &s)
 	{
+// 		if constexpr (std::is_same_v<S, bitscpp::ByteReader<true>> == false) {
+// 			LOG_INFO("Write (%p, %lu %lu) component model: %s", modelName.c_str(), modelName.capacity(), modelName.size(), modelName.c_str());
+// 			s.op(modelName);
+// 		} else if constexpr (std::is_same_v<S, bitscpp::ByteReader<true>> == true) {
+// 			s.op(modelName);
+// 			LOG_INFO("Read (%p, %lu %lu) component model: %s", modelName.c_str(), modelName.capacity(), modelName.size(), modelName.c_str());
+// 		}
 		s.op(modelName);
 		return s;
+	}
+	
+	inline ComponentModelName(std::string modelName)
+	{
+// 		LOG_INFO("\t\tctor_args \t\t%p", this);
+		this->modelName = modelName;
+	}
+
+	inline ComponentModelName()
+	{
+// 		LOG_INFO("\t\tctor \t\t%p", this);
+		modelName = "";
+	}
+	inline ~ComponentModelName() {
+// 		LOG_INFO("\t\tdtor \t\t%p", this);
+	}
+	inline ComponentModelName(const ComponentModelName &o)
+		: modelName(o.modelName)
+	{
+// 		LOG_INFO("\t\tctor_copy \t%p (%p)", this, &o);
+	}
+	inline ComponentModelName(ComponentModelName &o)
+		: modelName(o.modelName)
+	{
+// 		LOG_INFO("\t\tctor2_copy \t%p (%p)", this, &o);
+	}
+	inline ComponentModelName(ComponentModelName &&o)
+		: modelName(std::move(o.modelName))
+	{
+// 		LOG_INFO("\t\tctor_move \t%p (%p)", this, &o);
+	}
+
+	inline ComponentModelName &operator=(const ComponentModelName &o)
+	{
+// 		LOG_INFO("\t\t\tcopy \t\t%p (%p)", this, &o);
+		modelName = o.modelName;
+		return *this;
+	}
+	inline ComponentModelName &operator=(ComponentModelName &o)
+	{
+// 		LOG_INFO("\t\t\t\tcopy2 \t\t%p (%p)", this, &o);
+		modelName = o.modelName;
+		return *this;
+	}
+	inline ComponentModelName &operator=(ComponentModelName &&o)
+	{
+// 		LOG_INFO("\t\t\tmove \t\t%p (%p)", this, &o);
+		modelName = o.modelName;
+		return *this;
 	}
 };
 
@@ -123,6 +181,65 @@ struct ComponentStaticCollisionShapeName {
 	template <typename S> S &__ByteStream_op(S &s)
 	{
 		s.op(shapeName);
+		return s;
+	}
+	
+	inline ComponentStaticCollisionShapeName(std::string shapeName)
+	{
+// 		LOG_INFO("\t\tctor_args \t\t%p", this);
+		this->shapeName = shapeName;
+	}
+
+	inline ComponentStaticCollisionShapeName()
+	{
+// 		LOG_INFO("\t\tctor \t\t%p", this);
+		shapeName = "";
+	}
+	inline ~ComponentStaticCollisionShapeName() {
+// 		LOG_INFO("\t\tdtor \t\t%p", this);
+	}
+	inline ComponentStaticCollisionShapeName(const ComponentStaticCollisionShapeName &o)
+		: shapeName(o.shapeName)
+	{
+// 		LOG_INFO("\t\tctor_copy \t%p (%p)", this, &o);
+	}
+	inline ComponentStaticCollisionShapeName(ComponentStaticCollisionShapeName &o)
+		: shapeName(o.shapeName)
+	{
+// 		LOG_INFO("\t\tctor2_copy \t%p (%p)", this, &o);
+	}
+	inline ComponentStaticCollisionShapeName(ComponentStaticCollisionShapeName &&o)
+		: shapeName(std::move(o.shapeName))
+	{
+// 		LOG_INFO("\t\tctor_move \t%p (%p)", this, &o);
+	}
+
+	inline ComponentStaticCollisionShapeName &operator=(const ComponentStaticCollisionShapeName &o)
+	{
+// 		LOG_INFO("\t\t\tcopy \t\t%p (%p)", this, &o);
+		shapeName = o.shapeName;
+		return *this;
+	}
+	inline ComponentStaticCollisionShapeName &operator=(ComponentStaticCollisionShapeName &o)
+	{
+// 		LOG_INFO("\t\t\t\tcopy2 \t\t%p (%p)", this, &o);
+		shapeName = o.shapeName;
+		return *this;
+	}
+	inline ComponentStaticCollisionShapeName &operator=(ComponentStaticCollisionShapeName &&o)
+	{
+// 		LOG_INFO("\t\t\tmove \t\t%p (%p)", this, &o);
+		shapeName = o.shapeName;
+		return *this;
+	}
+};
+
+struct ComponentCharacterSheet {
+	float useRange = 4.0f;
+
+	template <typename S> S &__ByteStream_op(S &s)
+	{
+		s.op(useRange);
 		return s;
 	}
 };

@@ -35,11 +35,16 @@ template <typename TFinal, typename TCb> struct EntryBase {
 	{
 		TCb ptr = callback.load();
 		if (ptr != nullptr) {
+			LOG_ERROR("Non null callback: %s", fullName.c_str());
 			callback.load()(std::forward<TArgs>(args)...);
 		} else {
 			LOG_ERROR("Callback `%s` is null", fullName.c_str());
 		}
 	}
+
+	static inline void Deserialize(TFinal **cb, bitscpp::ByteReader<true> &s);
+	template <typename BT>
+	static inline void Serialize(TFinal **cb, bitscpp::ByteWriter<BT> &s);
 };
 
 template <typename T> struct Registry {
@@ -104,6 +109,31 @@ private:
 };
 
 template <typename TFinal, typename TCb>
+inline void EntryBase<TFinal, TCb>::Deserialize(TFinal **cb,
+												bitscpp::ByteReader<true> &s)
+{
+	std::string name;
+	s.op(name);
+	if (s.is_valid()) {
+		*cb = TFinal::Get(name);
+	} else {
+		*cb = nullptr;
+	}
+}
+
+template <typename TFinal, typename TCb>
+template <typename BT>
+inline void EntryBase<TFinal, TCb>::Serialize(TFinal **cb,
+											  bitscpp::ByteWriter<BT> &s)
+{
+	if (*cb) {
+		s.op((*cb)->shortName);
+	} else {
+		s.op("");
+	}
+}
+
+template <typename TFinal, typename TCb>
 inline int
 EntryBase<TFinal, TCb>::Set(const std::string &fullName,
 							const std::string &shortName, TCb cb,
@@ -156,6 +186,13 @@ using OnUseFunctionType = void (*)(RealmServer *realm, uint64_t instigatorId,
 								   uint64_t receiverId,
 								   const std::string &context);
 struct OnUse final : public EntryBase<OnUse, OnUseFunctionType> {
+};
+
+using OnTriggerEnterExitFunctionType = void (*)(RealmServer *realm,
+												uint64_t entityId,
+												uint64_t triggerId);
+struct OnTriggerEnterExit final
+	: public EntryBase<OnTriggerEnterExit, OnTriggerEnterExitFunctionType> {
 };
 
 #define REGISTER_NAMED_CALLBACK(TYPE, FULL_NAME, SHORT_NAME, FUNC,             \

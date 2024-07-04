@@ -77,7 +77,31 @@ layout_mode = 2
 layout_mode = 2
 text = "Statystyki wydajności"
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/TabContainer/Monitoring"]
+layout_mode = 2
+
+[node name="ShowPlayerPosition" type="CheckBox" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer2"]
+layout_mode = 2
+button_pressed = true
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer2"]
+layout_mode = 2
+text = "Pokaż pozycję gracza"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/TabContainer/Monitoring"]
+layout_mode = 2
+
+[node name="ShowPing" type="CheckBox" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer3"]
+layout_mode = 2
+button_pressed = true
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Monitoring/HBoxContainer3"]
+layout_mode = 2
+text = "Pokaż ping"
+
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
 [connection signal="text_submitted" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Numerical" to="." method="_on_mouse_sensitivity_numerical_changed"]
 [connection signal="value_changed" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Slider" to="." method="_on_mouse_sensitivity_slider_changed"]
 [connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer/EnableMonitoring" to="." method="_on_enable_monitoring_toggled"]
+[connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer2/ShowPlayerPosition" to="." method="_on_show_player_position_toggled"]
+[connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer3/ShowPing" to="." method="_on_show_ping_toggled"]

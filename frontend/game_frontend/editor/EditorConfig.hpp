@@ -73,6 +73,10 @@ public: // variables
 	bool get_render_collision() { return render_collision; }
 	void set_render_collision(bool v) { render_collision = v; }
 
+	static bool render_triggers;
+	bool get_render_triggers() { return render_triggers; }
+	void set_render_triggers(bool v) { render_triggers = v; }
+
 	bool save_scene = false;
 	bool get_save_scene() { return save_scene; }
 	void set_save_scene(bool v) { save_scene = v; }

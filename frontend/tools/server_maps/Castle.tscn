@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=10 format=3 uid="uid://clkxybhmklyt3"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://7eey8y87akjf" path="res://assets/prefabs/Furniture/TorchInHolder.tscn" id="6_1f1vy"]
 [ext_resource type="PackedScene" uid="uid://b2ay6dg0vntql" path="res://assets/prefabs/Furniture/BigWoodenDoor.tscn" id="7_jhy7w"]
 [ext_resource type="PackedScene" uid="uid://cnpc8o3vuebb2" path="res://assets/prefabs/Furniture/SmallWoodenDoor.tscn" id="8_t7u7h"]
+[ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/BigStonePillar4.tscn" id="9_yxgao"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
@@ -223,3 +224,12 @@ transform = Transform3D(-0.00631873, 0, -1.00005, 0, 1, 0, 1.00005, 0, -0.006318
 transformClosed = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, 14.9766, -0.00439358, -7.96024)
 relativeTransformOpened = Transform3D(0.0420876, 0, 0.999171, 0, 1, 0, -0.999171, 0, 0.0420876, 1.52588e-05, 0, 0)
 transform = Transform3D(0.99994, 0, 0.0112746, 0, 1, 0, -0.0112746, 0, 0.99994, 14.9766, -0.00439358, -7.96024)
+
+[node name="BigStonePillar4" parent="MeadHall" instance=ExtResource("9_yxgao")]
+transform = Transform3D(-0.15366, -0.978881, -0.000104674, 0, 0.000102595, -0.999999, 4.27406, -0.0351925, -3.7632e-06, 8.08565, -0.467399, -27.1676)
+
+[node name="PrefabServerTrigger" type="PrefabServerTrigger" parent="MeadHall"]
+onTriggerEnter = "TriggerTeleportPlayer"
+teleportRealm = "Forest"
+teleportPosition = Vector3(-17.5126, 4.68235, -107.226)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 6.00498, 0.987754, -24.2568)
