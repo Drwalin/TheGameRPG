@@ -29,7 +29,7 @@ public:
 	bool IsDisconnected();
 
 private: // rpc receiving methods
-	void JoinRealm(const std::string &realm);
+	void JoinRealm(const std::string &realm, int64_t currentTick);
 	void SpawnEntities(icon7::ByteReader *reader);
 	void SpawnStaticEntities(icon7::ByteReader *reader);
 	void UpdateEntities(icon7::ByteReader *reader);
