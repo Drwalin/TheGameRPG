@@ -20,6 +20,8 @@ struct ComponentOnUse {
 		entry->Serialize(&entry, s);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentOnUse, MV(entry));
 };
 
 struct ComponentSingleDoorTransformStates {
@@ -32,6 +34,9 @@ struct ComponentSingleDoorTransformStates {
 		s.op(transformOpen);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentSingleDoorTransformStates,
+								  {MV(transformClosed) MV(transformOpen)});
 };
 
 struct ComponentTrigger {
@@ -40,6 +45,10 @@ struct ComponentTrigger {
 
 	std::unordered_set<uint64_t> entitiesInside = {};
 	int64_t tickUntilIgnore = 0;
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTrigger,
+								  {MV(onEnter) MV(onExit) MV(entitiesInside)
+									   MV(tickUntilIgnore)});
 
 	void Tick(int64_t entityId, class RealmServer *realm);
 
@@ -71,54 +80,10 @@ struct ComponentTeleport {
 
 	inline ComponentTeleport(std::string realmName, glm::vec3 position)
 	{
-// 		LOG_INFO("\t\tctor_args \t\t%p", this);
 		this->realmName = realmName;
 		this->position = position;
 	}
 
-	inline ComponentTeleport()
-	{
-// 		LOG_INFO("\t\tctor \t\t%p", this);
-		realmName = "";
-	}
-	inline ~ComponentTeleport() {
-// 		LOG_INFO("\t\tdtor \t\t%p", this);
-	}
-	inline ComponentTeleport(const ComponentTeleport &o)
-		: realmName(o.realmName), position(o.position)
-	{
-// 		LOG_INFO("\t\tctor_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentTeleport(ComponentTeleport &o)
-		: realmName(o.realmName), position(o.position)
-	{
-// 		LOG_INFO("\t\tctor2_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentTeleport(ComponentTeleport &&o)
-		: realmName(std::move(o.realmName)), position(o.position)
-	{
-// 		LOG_INFO("\t\tctor_move \t%p (%p)", this, &o);
-	}
-
-	inline ComponentTeleport &operator=(const ComponentTeleport &o)
-	{
-// 		LOG_INFO("\t\t\tcopy \t\t%p (%p)", this, &o);
-		realmName = o.realmName;
-		position = o.position;
-		return *this;
-	}
-	inline ComponentTeleport &operator=(ComponentTeleport &o)
-	{
-// 		LOG_INFO("\t\t\t\tcopy2 \t\t%p (%p)", this, &o);
-		realmName = o.realmName;
-		position = o.position;
-		return *this;
-	}
-	inline ComponentTeleport &operator=(ComponentTeleport &&o)
-	{
-// 		LOG_INFO("\t\t\tmove \t\t%p (%p)", this, &o);
-		realmName = o.realmName;
-		position = o.position;
-		return *this;
-	}
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTeleport,
+								  {MV(realmName) MV(position)});
 };
