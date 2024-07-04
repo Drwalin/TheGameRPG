@@ -32,8 +32,9 @@ void GameClient::BindRpc()
 							  &GameClient::Pong, &executionQueue);
 }
 
-void GameClient::JoinRealm(const std::string &realmName)
+void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick)
 {
+	realm->timer.Start(currentTick);
 	realm->Reinit(realmName);
 	ServerRpcProxy::Ping(this, true);
 }
@@ -145,22 +146,23 @@ void GameClient::SetGravity(float gravity) { realm->gravity = gravity; }
 
 void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 {
-	int64_t currentTick = pingTimer.CalcCurrentTick();
-	pingMs = currentTick - localTick;
+	realm->timer.Update();
+	int64_t currentTick = realm->timer.currentTick;
+	pingMs = pingTimer.CalcCurrentTick() - localTick;
 	if (remoteTick != 0) {
 		// TODO: consider not adding latency?
 		int64_t newCurrentTick = remoteTick; // + pingMs / 2;
-		if (abs(newCurrentTick - realm->timer.currentTick) > 1000) {
+		if (abs(newCurrentTick - currentTick) > 500) {
 			realm->timer.Start(newCurrentTick);
-		} else if (newCurrentTick < realm->timer.currentTick) {
+		} else if (newCurrentTick < currentTick) {
 			// TODO: time error??
-			if (newCurrentTick+5< realm->timer.currentTick) {
-				newCurrentTick = realm->timer.currentTick - 5;
+			if (newCurrentTick+5< currentTick) {
+				newCurrentTick = currentTick - 5;
 			}
 			realm->timer.Start(newCurrentTick);
 		} else {
-			if (newCurrentTick > realm->timer.currentTick + 5) {
-				newCurrentTick = realm->timer.currentTick + 5;
+			if (newCurrentTick > currentTick + 25) {
+				newCurrentTick = currentTick + ((newCurrentTick - currentTick) >> 2);
 			}
 			realm->timer.Start(newCurrentTick);
 		}

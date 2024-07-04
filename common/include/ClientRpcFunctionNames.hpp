@@ -4,7 +4,7 @@
 
 namespace ClientRpcFunctionNames
 {
-// void JoinRealm(std::string)
+// void JoinRealm(std::string, int64_t currentTick)
 inline const std::string JoinRealm = "JoinRealm";
 
 // void SpawnStaticEntities({entityId, EntityStaticTransform, EntityModelName,

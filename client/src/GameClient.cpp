@@ -154,7 +154,7 @@ void GameClient::RunOneEpoch()
 	realm->OneEpoch();
 	PerformSendPlayerMovementInput();
 	
-	if ((rand())%200 == 0) {
+	if ((rand())%80 == 0) {
 		ServerRpcProxy::Ping(this, true);
 	}
 }
