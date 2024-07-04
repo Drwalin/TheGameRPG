@@ -139,13 +139,12 @@ void CollisionWorld::OnAddEntity(flecs::entity entity, ComponentShape shape,
 									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
 	entity.set<ComponentBulletCollisionObject>({object});
-	LOG_INFO("ADDED PLAYER ENTITY COLLISION OBJECT");
 }
 
 void CollisionWorld::OnAddTrigger(flecs::entity entity,
 								  const ComponentStaticTransform &transform)
 {
-	btBoxShape *_shape = new btBoxShape({1, 1, 1});
+	btBoxShape *_shape = new btBoxShape({0.5, 0.5, 0.5});
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
 	object->setUserIndex(FILTER_TRIGGER);
@@ -306,14 +305,6 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 
 	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects =
 		ecs.query<ComponentBulletCollisionObject>();
-
-	ecs.observer<ComponentModelName>()
-		.event(flecs::OnSet)
-		.each(+[](flecs::entity entity, const ComponentModelName &name) {
-			LOG_INFO("On set ModelName (%p, %lu %lu) component model: %s",
-					 name.modelName.c_str(), name.modelName.capacity(),
-					 name.modelName.size(), name.modelName.c_str());
-		});
 }
 
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)

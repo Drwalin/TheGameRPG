@@ -22,6 +22,18 @@ static inline float R()
 }
 #pragma clang diagnostic pop
 
+#define MV(VAR) this->VAR = o.VAR;
+
+#define DEFAULT_CONSTRUCTORS_AND_MOVE(STRUCT, CODE)                            \
+	inline STRUCT(const STRUCT &o) { CODE }                                    \
+	inline STRUCT(STRUCT &o) { CODE }                                          \
+	inline STRUCT(STRUCT &&o) { CODE }                                         \
+	inline STRUCT() {}                                                         \
+	inline ~STRUCT() {}                                                        \
+	inline STRUCT &operator=(const STRUCT &o) { CODE return *this; }           \
+	inline STRUCT &operator=(STRUCT &o) { CODE return *this; }                 \
+	inline STRUCT &operator=(STRUCT &&o) { CODE return *this; }
+
 struct ComponentShape {
 	float height = 1.65f;
 	float width = 0.5f;
@@ -32,6 +44,10 @@ struct ComponentShape {
 		s.op(width);
 		return s;
 	}
+
+	ComponentShape(float h, float w) : height(h), width(w) {}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentShape, {MV(height) MV(width)});
 };
 
 struct ComponentMovementState {
@@ -62,6 +78,10 @@ struct ComponentMovementState {
 		s.op(onGround);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementState,
+								  {MV(timestamp) MV(pos) MV(vel) MV(rot)
+									   MV(onGround)});
 };
 
 struct ComponentLastAuthoritativeMovementState {
@@ -71,6 +91,9 @@ struct ComponentLastAuthoritativeMovementState {
 	{
 		return oldState.__ByteStream_op(s);
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentLastAuthoritativeMovementState,
+								  MV(oldState));
 };
 
 struct ComponentName {
@@ -81,6 +104,10 @@ struct ComponentName {
 		s.op(name);
 		return s;
 	}
+
+	ComponentName(std::string n) : name(n) {}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentName, MV(name));
 };
 
 struct ComponentMovementParameters {
@@ -93,6 +120,10 @@ struct ComponentMovementParameters {
 		s.op(stepHeight);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementParameters,
+								  {MV(maxMovementSpeedHorizontal)
+									   MV(stepHeight)});
 };
 
 struct ComponentModelName {
@@ -100,65 +131,16 @@ struct ComponentModelName {
 
 	template <typename S> S &__ByteStream_op(S &s)
 	{
-// 		if constexpr (std::is_same_v<S, bitscpp::ByteReader<true>> == false) {
-// 			LOG_INFO("Write (%p, %lu %lu) component model: %s", modelName.c_str(), modelName.capacity(), modelName.size(), modelName.c_str());
-// 			s.op(modelName);
-// 		} else if constexpr (std::is_same_v<S, bitscpp::ByteReader<true>> == true) {
-// 			s.op(modelName);
-// 			LOG_INFO("Read (%p, %lu %lu) component model: %s", modelName.c_str(), modelName.capacity(), modelName.size(), modelName.c_str());
-// 		}
 		s.op(modelName);
 		return s;
 	}
-	
+
 	inline ComponentModelName(std::string modelName)
 	{
-// 		LOG_INFO("\t\tctor_args \t\t%p", this);
 		this->modelName = modelName;
 	}
 
-	inline ComponentModelName()
-	{
-// 		LOG_INFO("\t\tctor \t\t%p", this);
-		modelName = "";
-	}
-	inline ~ComponentModelName() {
-// 		LOG_INFO("\t\tdtor \t\t%p", this);
-	}
-	inline ComponentModelName(const ComponentModelName &o)
-		: modelName(o.modelName)
-	{
-// 		LOG_INFO("\t\tctor_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentModelName(ComponentModelName &o)
-		: modelName(o.modelName)
-	{
-// 		LOG_INFO("\t\tctor2_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentModelName(ComponentModelName &&o)
-		: modelName(std::move(o.modelName))
-	{
-// 		LOG_INFO("\t\tctor_move \t%p (%p)", this, &o);
-	}
-
-	inline ComponentModelName &operator=(const ComponentModelName &o)
-	{
-// 		LOG_INFO("\t\t\tcopy \t\t%p (%p)", this, &o);
-		modelName = o.modelName;
-		return *this;
-	}
-	inline ComponentModelName &operator=(ComponentModelName &o)
-	{
-// 		LOG_INFO("\t\t\t\tcopy2 \t\t%p (%p)", this, &o);
-		modelName = o.modelName;
-		return *this;
-	}
-	inline ComponentModelName &operator=(ComponentModelName &&o)
-	{
-// 		LOG_INFO("\t\t\tmove \t\t%p (%p)", this, &o);
-		modelName = o.modelName;
-		return *this;
-	}
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentModelName, MV(modelName));
 };
 
 struct ComponentStaticTransform {
@@ -173,6 +155,9 @@ struct ComponentStaticTransform {
 		s.op(scale);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticTransform,
+								  {MV(pos) MV(rot) MV(scale)});
 };
 
 struct ComponentStaticCollisionShapeName {
@@ -183,55 +168,14 @@ struct ComponentStaticCollisionShapeName {
 		s.op(shapeName);
 		return s;
 	}
-	
+
 	inline ComponentStaticCollisionShapeName(std::string shapeName)
 	{
-// 		LOG_INFO("\t\tctor_args \t\t%p", this);
 		this->shapeName = shapeName;
 	}
 
-	inline ComponentStaticCollisionShapeName()
-	{
-// 		LOG_INFO("\t\tctor \t\t%p", this);
-		shapeName = "";
-	}
-	inline ~ComponentStaticCollisionShapeName() {
-// 		LOG_INFO("\t\tdtor \t\t%p", this);
-	}
-	inline ComponentStaticCollisionShapeName(const ComponentStaticCollisionShapeName &o)
-		: shapeName(o.shapeName)
-	{
-// 		LOG_INFO("\t\tctor_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentStaticCollisionShapeName(ComponentStaticCollisionShapeName &o)
-		: shapeName(o.shapeName)
-	{
-// 		LOG_INFO("\t\tctor2_copy \t%p (%p)", this, &o);
-	}
-	inline ComponentStaticCollisionShapeName(ComponentStaticCollisionShapeName &&o)
-		: shapeName(std::move(o.shapeName))
-	{
-// 		LOG_INFO("\t\tctor_move \t%p (%p)", this, &o);
-	}
-
-	inline ComponentStaticCollisionShapeName &operator=(const ComponentStaticCollisionShapeName &o)
-	{
-// 		LOG_INFO("\t\t\tcopy \t\t%p (%p)", this, &o);
-		shapeName = o.shapeName;
-		return *this;
-	}
-	inline ComponentStaticCollisionShapeName &operator=(ComponentStaticCollisionShapeName &o)
-	{
-// 		LOG_INFO("\t\t\t\tcopy2 \t\t%p (%p)", this, &o);
-		shapeName = o.shapeName;
-		return *this;
-	}
-	inline ComponentStaticCollisionShapeName &operator=(ComponentStaticCollisionShapeName &&o)
-	{
-// 		LOG_INFO("\t\t\tmove \t\t%p (%p)", this, &o);
-		shapeName = o.shapeName;
-		return *this;
-	}
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticCollisionShapeName,
+								  MV(shapeName));
 };
 
 struct ComponentCharacterSheet {
@@ -242,4 +186,6 @@ struct ComponentCharacterSheet {
 		s.op(useRange);
 		return s;
 	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet, MV(useRange));
 };
