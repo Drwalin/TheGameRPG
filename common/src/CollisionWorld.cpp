@@ -5,7 +5,6 @@
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
 #include "../include/GlmBullet.hpp"
-
 #include "../include/Realm.hpp"
 
 #include "BulletPhysicsCallbacks.hpp"
@@ -133,13 +132,29 @@ void CollisionWorld::OnAddEntity(flecs::entity entity, ComponentShape shape,
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
 	object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
-	object->setUserIndex(FILTER_ENTITY);
+	object->setUserIndex(FILTER_CHARACTER);
 	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
 	collisionWorld->addCollisionObject(object,
 									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
 	entity.set<ComponentBulletCollisionObject>({object});
+	LOG_INFO("ADDED PLAYER ENTITY COLLISION OBJECT");
+}
+
+void CollisionWorld::OnAddTrigger(flecs::entity entity,
+								  const ComponentStaticTransform &transform)
+{
+	btBoxShape *_shape = new btBoxShape({1, 1, 1});
+	btCollisionObject *object = AllocateNewCollisionObject();
+	object->setCollisionShape(_shape);
+	object->setUserIndex(FILTER_TRIGGER);
+	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
+	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
+	collisionWorld->addCollisionObject(object, 0);
+	ComponentBulletCollisionObject obj{object};
+	EntitySetTransform(obj, transform);
+	entity.set<ComponentBulletCollisionObject>(obj);
 }
 
 void CollisionWorld::UpdateEntityBvh(const ComponentBulletCollisionObject obj,
@@ -176,7 +191,7 @@ void CollisionWorld::GetObjectsInAABB(
 	if (filter & FILTER_TERRAIN) {
 		f |= btBroadphaseProxy::StaticFilter;
 	}
-	if (filter & FILTER_ENTITY) {
+	if (filter & FILTER_CHARACTER) {
 		f |= btBroadphaseProxy::CharacterFilter;
 	}
 	BroadphaseAabbAgregate broadphaseCallback(f);
@@ -291,4 +306,20 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 
 	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects =
 		ecs.query<ComponentBulletCollisionObject>();
+
+	ecs.observer<ComponentModelName>()
+		.event(flecs::OnSet)
+		.each(+[](flecs::entity entity, const ComponentModelName &name) {
+			LOG_INFO("On set ModelName (%p, %lu %lu) component model: %s",
+					 name.modelName.c_str(), name.modelName.capacity(),
+					 name.modelName.size(), name.modelName.c_str());
+		});
+}
+
+int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)
+{
+	LOG_INFO("Registering components");
+	ecs.component<ComponentBulletCollisionObject>();
+	LOG_INFO("Done");
+	return 0;
 }

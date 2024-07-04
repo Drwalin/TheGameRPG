@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <unordered_set>
 
 #include <glm/glm.hpp>
 #include <flecs.h>
@@ -38,14 +39,14 @@ public:
 		flecs::entity entity,
 		const ComponentStaticCollisionShapeName &collisionName,
 		const ComponentStaticTransform &transform);
+	void OnAddEntity(flecs::entity entity, ComponentShape shape, glm::vec3 pos);
+	void OnAddTrigger(flecs::entity entity,
+					  const ComponentStaticTransform &transform);
 
 	void UpdateEntityBvh(const ComponentBulletCollisionObject obj,
 						 ComponentShape shape, glm::vec3 pos);
-
 	void UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 						 glm::vec3 pos);
-
-	void OnAddEntity(flecs::entity entity, ComponentShape shape, glm::vec3 pos);
 
 	void EntitySetTransform(const ComponentBulletCollisionObject obj,
 							const ComponentStaticTransform &transform);
@@ -85,6 +86,9 @@ public:
 	bool TestForEntities(class CustomShape &shape,
 						 std::vector<uint64_t> *testedEntityIds) const;
 	*/
+
+	void TriggerTestBoxForCharacters(flecs::entity entity,
+									 std::vector<uint64_t> &entities);
 
 	void RegisterObservers(Realm *realm);
 
@@ -138,9 +142,12 @@ private:
 	friend class BroadphaseAabbAgregate;
 
 private:
-	inline const static int32_t FILTER_ALL = 3;
+	inline const static int32_t FILTER_ALL =
+		1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256;
 	inline const static int32_t FILTER_TERRAIN = 1;
-	inline const static int32_t FILTER_ENTITY = 2;
+	inline const static int32_t FILTER_CHARACTER = 2;
+	inline const static int32_t FILTER_STATIC_OBJECT = 4;
+	inline const static int32_t FILTER_TRIGGER = 8;
 
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
 	class btCollisionObject *AllocateNewCollisionObject();

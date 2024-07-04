@@ -2,7 +2,7 @@
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
-#include "../include/CollisionWorld.hpp"
+#include "../../include/CollisionWorld.hpp"
 
 #if not __unix__
 #define M_PI 3.141292

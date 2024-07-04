@@ -1,6 +1,8 @@
+#include <flecs.h>
 
 #include "godot_cpp/variant/utility_functions.hpp"
 #include "godot_cpp/classes/project_settings.hpp"
+#include "godot_cpp/classes/engine.hpp"
 
 #include <icon7/Debug.hpp>
 
@@ -8,23 +10,29 @@
 
 #include "EditorConfig.hpp"
 
-int RegisterEntityGameComponents();
-namespace
-{
-int initializer = RegisterEntityGameComponents();
-}
+int RegisterEntityGameComponents(flecs::world &ecs);
 
 namespace editor
 {
 bool GameEditorConfig::render_graphic = true;
 bool GameEditorConfig::render_collision = false;
+bool GameEditorConfig::render_triggers = false;
 
 void GameEditorConfig::_bind_methods()
 {
+	if (Engine::get_singleton()->is_editor_hint() == true) {
+		flecs::world ecs;
+		RegisterEntityGameComponents(ecs);
+	}
+	
+	
+	
 	REGISTER_PROPERTY(GameEditorConfig, render_graphic, Variant::Type::BOOL,
-					  "render");
+					  "render graphics");
 	REGISTER_PROPERTY(GameEditorConfig, render_collision, Variant::Type::BOOL,
-					  "render");
+					  "render collision");
+	REGISTER_PROPERTY(GameEditorConfig, render_triggers, Variant::Type::BOOL,
+					  "render triggers");
 	REGISTER_PROPERTY_WITH_HINT(
 		GameEditorConfig, save_map_file_path, Variant::Type::STRING,
 		PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "", "save_map_file_path");

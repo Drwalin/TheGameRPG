@@ -4,10 +4,10 @@
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
-#include "../include/GlmBullet.hpp"
+#include "../../include/GlmBullet.hpp"
 
 #include "BulletPhysicsCallbacks.hpp"
-#include "../include/CollisionWorld.hpp"
+#include "../../include/CollisionWorld.hpp"
 
 bool CollisionWorld::TestCollisionMovement(
 	ComponentShape shape, glm::vec3 start, glm::vec3 end,

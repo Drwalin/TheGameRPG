@@ -3,9 +3,9 @@
 #include "../include/ServerCore.hpp"
 #include "../include/ConfigStorage.hpp"
 #include "../include/SharedObject.hpp"
+#include "../include/commands/TeleportPlayer.hpp"
 
 #include "../include/CommandParser.hpp"
-#include "icon7/Command.hpp"
 
 void CommandParser::InitializeCommands()
 {
@@ -148,41 +148,6 @@ void CommandParser::InitializeCommands()
 				LOG_ERROR("To little arguments to teleport command.");
 			}
 
-			class CommandTeleportPlayer : public icon7::commands::ExecuteOnHost
-			{
-			public:
-				CommandTeleportPlayer() = default;
-				~CommandTeleportPlayer() = default;
-
-				ServerCore *serverCore;
-				std::string userName;
-				std::string realmName;
-				glm::vec3 position;
-
-				virtual void Execute() override
-				{
-					auto it = serverCore->usernameToPeer.find(userName);
-					if (it == serverCore->usernameToPeer.end()) {
-						LOG_INFO("No username %s found to teleport",
-								 userName.c_str());
-						return;
-					}
-					auto peer = it->second;
-					PeerData *data = ((PeerData *)(peer->userPointer));
-					if (data) {
-						data->nextRealm = realmName;
-						data->nextRealmlPosition = position;
-						data->useNextRealmPosition = true;
-						serverCore->ConnectPeerToRealm(peer.get());
-// 						LOG_INFO("Connecting %s to %s", userName.c_str(),
-// 								 realmName.c_str());
-					} else {
-						LOG_ERROR(
-							"Peer 0x%p does not have initialised userData",
-							peer.get());
-					}
-				}
-			};
 			auto com = icon7::CommandHandle<CommandTeleportPlayer>::Create();
 			com->serverCore = serverCore;
 			com->userName = args[1];

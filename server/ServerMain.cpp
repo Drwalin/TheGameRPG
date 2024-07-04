@@ -3,10 +3,16 @@
 #include "include/FileOperations.hpp"
 #include "include/ServerCore.hpp"
 
+int RegisterEntityGameComponents(flecs::world &ecs);
+
 int main(int argc, char **argv)
 {
 	icon7::Initialize();
 	LOG_INFO("Main thread started");
+	{
+		flecs::world initializer;
+		RegisterEntityGameComponents(initializer);
+	}
 	{
 		ServerCore serverCore;
 		serverCore.BindRpc();

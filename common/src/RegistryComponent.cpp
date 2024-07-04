@@ -2,15 +2,12 @@
 
 #include "../include/RegistryComponent.hpp"
 
-int RegisterEntityComponents();
-
 namespace reg
 {
 Registry::Registry() {}
 Registry::~Registry() {}
 Registry &Registry::Singleton()
 {
-	RegisterEntityComponents();
 	static Registry reg;
 	return reg;
 }

@@ -11,6 +11,7 @@
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../include/FileOperations.hpp"
+#include "../include/EntityGameComponents.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -85,6 +86,10 @@ bool RealmServer::OneEpoch()
 	// TODO: here do other server updates, AI, other mechanics and logic,
 	// defer some work to other worker threads (ai, db)  maybe?
 
+	ecs.each([this](flecs::entity entity, ComponentTrigger &trigger) {
+		trigger.Tick(entity.id(), this);
+	});
+
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;
@@ -134,11 +139,11 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 																  reader);
 	}
 
-// 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
-// 			 realmName.c_str());
+	// 	LOG_INFO("Client '%s' connected to '%s'", data->userName.c_str(),
+	// 			 realmName.c_str());
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
-	
+
 	if (data->useNextRealmPosition) {
 		auto *_ls = entity.get<ComponentLastAuthoritativeMovementState>();
 		if (_ls) {
@@ -146,14 +151,14 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 			ls.oldState.pos = data->nextRealmlPosition;
 			entity.set<ComponentLastAuthoritativeMovementState>(ls);
 		}
-		
+
 		auto *_ms = entity.get<ComponentMovementState>();
 		if (_ms) {
 			auto ms = *_ms;
 			ms.pos = data->nextRealmlPosition;
 			entity.set<ComponentMovementState>(ms);
 		}
-		
+
 		data->useNextRealmPosition = false;
 	}
 }
@@ -195,7 +200,6 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		reg::Registry::Singleton().SerializeEntity(entity, writer);
 		data->storedEntityData = std::move(writer.Buffer());
 
-		
 		std::string filePrefix;
 		if (serverCore->configStorage.GetString(
 				"config.users_directory_storage.prefix", &filePrefix)) {
@@ -298,5 +302,19 @@ void RealmServer::RegisterObservers()
 			// TODO: separate transform broadcast from model and shape broadcast
 			ClientRpcProxy::Broadcast_SpawnStaticEntities(
 				this, entity, transform, model, shape);
+		});
+
+	ecs.observer<const ComponentStaticTransform, ComponentTrigger>()
+		.event(flecs::OnAdd)
+		.each([this](flecs::entity entity,
+					 const ComponentStaticTransform &transform,
+					 ComponentTrigger &trigger) {
+			collisionWorld.OnAddTrigger(entity, transform);
+		});
+
+	ecs.observer<ComponentTrigger>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
+			trigger.tickUntilIgnore = timer.currentTick + 1000;
 		});
 }
