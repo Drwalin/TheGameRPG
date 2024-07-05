@@ -41,7 +41,6 @@ extern "C" void
 Register_OnUse_SingleDoor(class ServerCore *serverCore,
 						  std::shared_ptr<SharedObject> sharedObject)
 {
-	REGISTER_NAMED_CALLBACK(named_callbacks::registry_entries::OnUse,
-							"OpenableSingleDoor", "OpSD", &OnUse_SingleDoor,
-							sharedObject);
+	named_callbacks::registry_entries::OnUse::Set(
+		"OpenableSingleDoor", "OpSD", &OnUse_SingleDoor, sharedObject);
 }
