@@ -9,11 +9,11 @@
 
 namespace ClientRpcProxy
 {
-void JoinRealm(RealmServer *realm, icon7::Peer *peer)
+void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::JoinRealm, realm->realmName,
-					 realm->timer.currentTick);
+					 realm->timer.currentTick, playerEntityId);
 }
 
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,

@@ -23,7 +23,7 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 			PeerData *data = ((PeerData *)(peer->userPointer));
 			if (data) {
 				data->nextRealm = tp->realmName;
-				data->nextRealmlPosition = tp->position;
+				data->nextRealmPosition = tp->position;
 				data->useNextRealmPosition = true;
 				auto p = tp->position;
 				LOG_INFO("Teleport %s into %s -> {%.1f %.1f %.1f}",

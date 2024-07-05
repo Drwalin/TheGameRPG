@@ -16,7 +16,7 @@ void CommandTeleportPlayer::Execute()
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data) {
 		data->nextRealm = realmName;
-		data->nextRealmlPosition = position;
+		data->nextRealmPosition = position;
 		data->useNextRealmPosition = true;
 		serverCore->ConnectPeerToRealm(peer.get());
 	} else {

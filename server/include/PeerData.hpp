@@ -36,5 +36,5 @@ public:
 
 	std::string nextRealm = "";
 	bool useNextRealmPosition = false;
-	glm::vec3 nextRealmlPosition;
+	glm::vec3 nextRealmPosition;
 };
