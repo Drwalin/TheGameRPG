@@ -51,8 +51,7 @@ struct EntityEvent {
 };
 
 struct ComponentEventsQueue {
-	struct EntityEventPriorityQueue
-	{
+	struct EntityEventPriorityQueue {
 	public:
 		EntityEvent &Top() { return storage.front(); }
 		void Push(const EntityEvent &v);
@@ -66,12 +65,11 @@ struct ComponentEventsQueue {
 								 int64_t dueTick);
 	void ScheduleEvent(Realm *realm, uint64_t thisEntityId, EntityEvent event);
 	void Update(int64_t currentTick, uint64_t entityId, class Realm *realm);
-	
+
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEventsQueue, MV(events));
 };
 
-struct EntityEventPriorityQueue
-{
+struct EntityEventPriorityQueue {
 public:
 	EntityEventEntry &Top() { return storage.front(); }
 	void Push(const EntityEventEntry &v);

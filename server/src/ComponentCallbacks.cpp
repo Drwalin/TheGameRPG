@@ -1,4 +1,4 @@
-#include "../include/ComponentCallbackRegistry.hpp"
+#include "../include/ComponentCallbacks.hpp"
 
 namespace named_callbacks
 {

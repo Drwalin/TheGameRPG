@@ -99,10 +99,12 @@ void ComponentEventsQueue::EntityEventPriorityQueue::Pop()
 void EntityEventPriorityQueue::Push(const EntityEventEntry &v)
 {
 	storage.push_back(v);
-	std::push_heap(storage.begin(), storage.end(), EntityEventEntry::Comparator());
+	std::push_heap(storage.begin(), storage.end(),
+				   EntityEventEntry::Comparator());
 }
 void EntityEventPriorityQueue::Pop()
 {
-	std::pop_heap(storage.begin(), storage.end(), EntityEventEntry::Comparator());
+	std::pop_heap(storage.begin(), storage.end(),
+				  EntityEventEntry::Comparator());
 	storage.resize(storage.size() - 1);
 }
