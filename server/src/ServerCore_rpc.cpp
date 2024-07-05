@@ -93,6 +93,55 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 
 	std::shared_ptr<RealmServer> oldRealm = data->realm.lock();
 	if (oldRealm == newRealm) {
+		if (data->useNextRealmPosition) {
+			class CommandTeleport : public icon7::commands::ExecuteOnPeer
+			{
+			public:
+				CommandTeleport() = default;
+				~CommandTeleport() = default;
+
+				std::weak_ptr<RealmServer> realm;
+				virtual void Execute() override
+				{
+					std::shared_ptr<RealmServer> realm = this->realm.lock();
+					PeerData *data = ((PeerData *)(peer->userPointer));
+					if (realm && realm == data->realm.lock()) {
+						flecs::entity entity = realm->Entity(data->entityId);
+						if (entity.is_alive()) {
+
+							if (data->useNextRealmPosition) {
+
+								data->useNextRealmPosition = false;
+								auto *_ls = entity.get<
+									ComponentLastAuthoritativeMovementState>();
+								if (_ls) {
+									auto ls = *_ls;
+									ls.oldState.pos = data->nextRealmPosition;
+									ls.oldState.onGround = false;
+
+									entity.set(ls);
+
+									if (entity.has<ComponentMovementState>()) {
+										entity.set(ls.oldState);
+									}
+								}
+
+								icon7::ByteWriter writer(16);
+								writer.op(entity.id());
+								icon7::ByteReader reader(
+									std::move(writer.Buffer()), 0);
+								ClientRpcProxy::SpawnEntities_ForPeerByIds(
+									realm, peer.get(), reader);
+							}
+						}
+					}
+				}
+			};
+			auto com = icon7::CommandHandle<CommandTeleport>::Create();
+			com->peer = peer->shared_from_this();
+			com->realm = newRealm;
+			newRealm->executionQueue.EnqueueCommand(std::move(com));
+		}
 		return;
 	} else if (oldRealm) {
 		class CommandDisconnectPeer : public icon7::commands::ExecuteOnPeer

@@ -9,9 +9,8 @@ namespace EntityNetworkingSystems
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
 							 const ComponentPlayerConnectionPeer &peer)
 {
-	ClientRpcProxy::SetPlayerEntityId(realm, peer.peer.get(), entity.id());
 	ClientRpcProxy::SetGravity(realm, peer.peer.get(), realm->gravity);
-	ClientRpcProxy::JoinRealm(realm, peer.peer.get());
+	ClientRpcProxy::JoinRealm(realm, peer.peer.get(), entity.id());
 }
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,

@@ -9,7 +9,7 @@ class RealmServer;
 
 namespace ClientRpcProxy
 {
-void JoinRealm(RealmServer *realm, icon7::Peer *peer);
+void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId);
 
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId);

@@ -32,11 +32,18 @@ void GameClient::BindRpc()
 							  &GameClient::Pong, &executionQueue);
 }
 
-void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick)
+void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
+						   uint64_t playerEntityId)
 {
+	if (serverPlayerEntityId || localPlayerEntityId) {
+		OnPlayerIdUnset();
+		serverPlayerEntityId = 0;
+		localPlayerEntityId = 0;
+	}
 	realm->timer.Start(currentTick);
 	realm->Reinit(realmName);
 	ServerRpcProxy::Ping(this, true);
+	SetPlayerEntityId(playerEntityId);
 }
 
 void GameClient::SpawnEntities(icon7::ByteReader *reader)
