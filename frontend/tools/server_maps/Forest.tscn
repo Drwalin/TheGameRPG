@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://mkc10byrbtkd"]
+[gd_scene load_steps=12 format=3 uid="uid://mkc10byrbtkd"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_hc6ya"]
 [ext_resource type="Script" path="res://tools/server_maps/Randomize.gd" id="2_bpoiu"]
@@ -10,9 +10,14 @@
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="8_j2rnv"]
 [ext_resource type="PackedScene" uid="uid://cfmkbdbv8lsf7" path="res://assets/prefabs/Furniture/TorchWithEffects.tscn" id="9_qpmpd"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/SmallStonePillar1.tscn" id="10_377l7"]
+[ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="11_xjy62"]
 
 [node name="Forest" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Forest.map"
+
+[node name="TeleportEffect" type="PrefabServerStaticMesh" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("11_xjy62")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.2199, 5.01761, -97.3453)
 
 [node name="Terrain" type="Node3D" parent="."]
 
