@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=11 format=3 uid="uid://clkxybhmklyt3"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
@@ -9,9 +9,14 @@
 [ext_resource type="PackedScene" uid="uid://b2ay6dg0vntql" path="res://assets/prefabs/Furniture/BigWoodenDoor.tscn" id="7_jhy7w"]
 [ext_resource type="PackedScene" uid="uid://cnpc8o3vuebb2" path="res://assets/prefabs/Furniture/SmallWoodenDoor.tscn" id="8_t7u7h"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/BigStonePillar4.tscn" id="9_yxgao"]
+[ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="10_0ymu3"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
+
+[node name="PortalEffect" type="PrefabServerStaticMesh" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("10_0ymu3")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -115.331, -0.603356, 49.0084)
 
 [node name="Terrain" type="Node3D" parent="."]
 

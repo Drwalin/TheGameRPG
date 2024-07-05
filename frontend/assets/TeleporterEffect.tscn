@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://dkhmfaf5ex6x5"]
+
+[ext_resource type="Shader" path="res://assets/TeleporterEffect.gdshader" id="1_fybux"]
+
+[sub_resource type="Curve" id="Curve_0fluy"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.476293, 1), 1.14644, 1.14644, 0, 0, Vector2(0.69181, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_dbyxh"]
+texture_mode = 1
+curve = SubResource("Curve_0fluy")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hsxuq"]
+lifetime_randomness = 0.3
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 0, 0)
+tangential_accel_max = 1.0
+alpha_curve = SubResource("CurveTexture_dbyxh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e54ei"]
+render_priority = 0
+shader = ExtResource("1_fybux")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_y7qof"]
+material = SubResource("ShaderMaterial_e54ei")
+orientation = 2
+
+[node name="PortalEffect" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+amount = 16
+visibility_aabb = AABB(-2, -2, -2, 4, 4, 4)
+transform_align = 1
+trail_lifetime = 0.6
+process_material = SubResource("ParticleProcessMaterial_hsxuq")
+draw_pass_1 = SubResource("PlaneMesh_y7qof")
