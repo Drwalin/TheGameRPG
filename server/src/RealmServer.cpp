@@ -234,34 +234,39 @@ void RealmServer::Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId)
 	}
 }
 
-ComponentMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
+void RealmServer::ExecuteMovementUpdate(uint64_t entityId,
+										ComponentMovementState *state)
 {
 	auto entity = Entity(entityId);
 
 	const ComponentShape *shape = entity.get<ComponentShape>();
 	if (shape == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	ComponentMovementState *currentState =
 		(ComponentMovementState *)entity.get<ComponentMovementState>();
 	if (currentState == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	const ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
 		entity.get<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 
 	EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
 								  *lastAuthoritativeState, *movementParams);
 
-	return *currentState;
+	*state = *currentState;
 }
 
 void RealmServer::RegisterObservers()

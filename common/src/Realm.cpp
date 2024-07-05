@@ -2,6 +2,7 @@
 
 #include "../include/EntitySystems.hpp"
 #include "../include/EntityEvent.hpp"
+#include "../include/EntityComponents.hpp"
 
 #include "../include/Realm.hpp"
 
@@ -99,8 +100,8 @@ void Realm::RegisterObservers()
 			static EntityEventTemplate defaultMovementEvent{
 				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
 				   uint64_t entityId) {
-					ComponentMovementState currentState =
-						realm->ExecuteMovementUpdate(entityId);
+					ComponentMovementState currentState;
+					realm->ExecuteMovementUpdate(entityId, &currentState);
 
 					glm::vec3 v = currentState.vel;
 					int64_t dt = realm->maxMovementDeltaTicks;
@@ -186,9 +187,10 @@ void Realm::UpdateEntityAuthoritativeState(
 	}
 }
 
-uint64_t Realm::CreateStaticEntity(ComponentStaticTransform transform,
-								   ComponentModelName model,
-								   ComponentStaticCollisionShapeName shape)
+uint64_t
+Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
+						  const ComponentModelName &model,
+						  const ComponentStaticCollisionShapeName &shape)
 {
 	uint64_t entityId = NewEntity();
 	flecs::entity entity = Entity(entityId);

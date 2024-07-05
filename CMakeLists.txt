@@ -17,6 +17,7 @@ endif()
 option(THEGAMERPG_PRECOMPILE_HEADERS "Enable pracompiled headers" OFF)
 option(THEGAMERPG_TIME_REPORT "Enable time report for compilation" OFF)
 option(THEGAMERPG_MAP_EDITOR "Enable map editor" OFF)
+option(THEGAMERPG_UNITY_BUILD "Enable unity build" OFF)
 
 include_directories(thirdparty/flecs/include)
 
@@ -24,11 +25,18 @@ find_package(Bullet REQUIRED)
 include_directories(${BULLET_INCLUDE_DIR})
 include_directories(${BULLET_INCLUDE_DIR}/LinearMath)
 
+set(CMAKE_UNITY_BUILD ON)
 add_subdirectory(thirdparty/godot-cpp)
 
 set(ICON7_IGNORE_COMMON_LOG_PATH 1)
 add_subdirectory(ICon7)
 target_compile_definitions(icon7 PUBLIC ICON7_LOG_IGNORE_COMMON_PATH="${PROJECT_SOURCE_DIR}")
+
+if (THEGAMERPG_UNITY_BUILD)
+	set(CMAKE_UNITY_BUILD ON)
+else()
+	unset(CMAKE_UNITY_BUILD)
+endif()
 
 include_directories(ICon7/bitscpp/include)
 include_directories(ICon7/include)

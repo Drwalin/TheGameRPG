@@ -41,10 +41,10 @@ private: // rpc receiving methods
 	void Pong(int64_t localTick, int64_t remoteTick);
 
 	void SpawnEntity(uint64_t serverId,
-					 const ComponentLastAuthoritativeMovementState state,
-					 const ComponentName name, const ComponentModelName model,
-					 const ComponentShape shape,
-					 const ComponentMovementParameters movementParams);
+					 const ComponentLastAuthoritativeMovementState &state,
+					 const ComponentName &name, const ComponentModelName &model,
+					 const ComponentShape &shape,
+					 const ComponentMovementParameters &movementParams);
 	void SpawnStaticEntity(uint64_t serverId,
 						   ComponentStaticTransform transform,
 						   ComponentModelName model,

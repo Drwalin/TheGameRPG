@@ -30,8 +30,8 @@ public:
 
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
-	virtual ComponentMovementState
-	ExecuteMovementUpdate(uint64_t entityId) override;
+	virtual void ExecuteMovementUpdate(uint64_t entityId,
+									   ComponentMovementState *state) override;
 
 	void RegisterObservers();
 

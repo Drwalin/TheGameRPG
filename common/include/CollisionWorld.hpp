@@ -1,12 +1,9 @@
 #pragma once
 
 #include <vector>
-#include <unordered_set>
 
 #include <glm/glm.hpp>
 #include <flecs.h>
-
-#include "EntityComponents.hpp"
 
 struct TerrainCollisionData {
 	std::vector<glm::vec3> vertices;
@@ -25,6 +22,10 @@ class btCollisionObject;
 
 class Realm;
 
+class ComponentStaticCollisionShapeName;
+class ComponentStaticTransform;
+class ComponentShape;
+
 class CollisionWorld
 {
 public:
@@ -39,7 +40,8 @@ public:
 		flecs::entity entity,
 		const ComponentStaticCollisionShapeName &collisionName,
 		const ComponentStaticTransform &transform);
-	void OnAddEntity(flecs::entity entity, ComponentShape shape, glm::vec3 pos);
+	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
+					 glm::vec3 pos);
 	void OnAddTrigger(flecs::entity entity,
 					  const ComponentStaticTransform &transform);
 
