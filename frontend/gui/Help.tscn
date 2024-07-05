@@ -49,10 +49,12 @@ Aby poruszyć kamera należy nacisnąć i przytrzymać prawy przycisk myszy.
 Poruszanie się postaci wykonuje się naciskają klawisze WASD.
 Do skakania należy użyć spację.
 
-Do wykonania interakcji (na przykład otwarcia drzwi) należy nacisnąć przcisk E. (Nie zaimplementowane)
+Do wykonania interakcji (na przykład otwarcia drzwi) należy nacisnąć przcisk E.
 
 Aby otworzyć kartę postaci, należy nacisnąć przycisk C. (Nie zaimplementowane)
 
-Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy. (Nie zaimplementowane)"
+Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy. (Nie zaimplementowane)
+
+Wejście we fioletową poświatę skutkuje teleportacją."
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
