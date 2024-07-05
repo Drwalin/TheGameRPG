@@ -45,8 +45,7 @@ extern "C" void
 Register_OnTrigger_Teleport(class ServerCore *serverCore,
 							std::shared_ptr<SharedObject> sharedObject)
 {
-	REGISTER_NAMED_CALLBACK(
-		named_callbacks::registry_entries::OnTriggerEnterExit,
+	named_callbacks::registry_entries::OnTriggerEnterExit::Set(
 		"TriggerTeleportPlayer", "TTPPL", &OnTrigger_TeleportPlayer,
 		sharedObject);
 }

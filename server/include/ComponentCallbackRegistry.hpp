@@ -3,7 +3,6 @@
 #include <chrono>
 #include <shared_mutex>
 #include <memory>
-#include <atomic>
 #include <string>
 #include <unordered_map>
 
@@ -17,36 +16,6 @@ class RealmServer;
 
 namespace named_callbacks
 {
-template <typename TFinal, typename TCb> struct EntryBase {
-	using FunctionType = TCb;
-
-	const std::string fullName;
-	const std::string shortName;
-	std::chrono::system_clock::time_point setTimestamp;
-	std::atomic<TCb> callback;
-	std::shared_ptr<SharedObject> sharedObject;
-
-	inline static int Set(const std::string &fullName,
-						  const std::string &shortName, FunctionType cb,
-						  std::shared_ptr<SharedObject> sharedObject);
-	inline static TFinal *Get(const std::string &name);
-
-	template <typename... TArgs> inline void Call(TArgs &&...args)
-	{
-		TCb ptr = callback.load();
-		if (ptr != nullptr) {
-			LOG_ERROR("Non null callback: %s", fullName.c_str());
-			callback.load()(std::forward<TArgs>(args)...);
-		} else {
-			LOG_ERROR("Callback `%s` is null", fullName.c_str());
-		}
-	}
-
-	static inline void Deserialize(TFinal **cb, bitscpp::ByteReader<true> &s);
-	template <typename BT>
-	static inline void Serialize(TFinal **cb, bitscpp::ByteWriter<BT> &s);
-};
-
 template <typename T> struct Registry {
 	using Map = std::unordered_map<std::string, T *>;
 	using FunctionType = typename T::FunctionType;
@@ -107,96 +76,4 @@ private:
 	static Map registry;
 	static std::shared_mutex sharedMutex;
 };
-
-template <typename TFinal, typename TCb>
-inline void EntryBase<TFinal, TCb>::Deserialize(TFinal **cb,
-												bitscpp::ByteReader<true> &s)
-{
-	std::string name;
-	s.op(name);
-	if (s.is_valid()) {
-		*cb = TFinal::Get(name);
-	} else {
-		*cb = nullptr;
-	}
-}
-
-template <typename TFinal, typename TCb>
-template <typename BT>
-inline void EntryBase<TFinal, TCb>::Serialize(TFinal **cb,
-											  bitscpp::ByteWriter<BT> &s)
-{
-	if (*cb) {
-		s.op((*cb)->shortName);
-	} else {
-		s.op("");
-	}
-}
-
-template <typename TFinal, typename TCb>
-inline int
-EntryBase<TFinal, TCb>::Set(const std::string &fullName,
-							const std::string &shortName, TCb cb,
-							std::shared_ptr<SharedObject> sharedObject)
-{
-	Registry<TFinal>::Set(fullName, shortName, cb, sharedObject);
-	return 0;
-}
-
-template <typename TFinal, typename TCb>
-inline TFinal *EntryBase<TFinal, TCb>::Get(const std::string &name)
-{
-	return Registry<TFinal>::Get(name);
-}
-
-template <typename TFinal, typename TCb> struct ComponentCallbackBase {
-	TFinal *entry = nullptr;
-
-	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s)
-	{
-		std::string name;
-		s.op(name);
-		if (s.is_valid()) {
-			entry = TFinal::Get(name);
-		} else {
-			entry = nullptr;
-		}
-		return s;
-	}
-	template <typename BT>
-	inline bitscpp::ByteWriter<BT> &__ByteStream_op(bitscpp::ByteWriter<BT> &s)
-	{
-		if (entry) {
-			s.op(entry->shortName);
-		} else {
-			s.op("");
-		}
-		return s;
-	}
-
-	template <typename... TArgs> inline void Call(TArgs &&...args)
-	{
-		entry->Call(std::forward<TArgs>(args)...);
-	}
-};
-
-namespace registry_entries
-{
-using OnUseFunctionType = void (*)(RealmServer *realm, uint64_t instigatorId,
-								   uint64_t receiverId,
-								   const std::string &context);
-struct OnUse final : public EntryBase<OnUse, OnUseFunctionType> {
-};
-
-using OnTriggerEnterExitFunctionType = void (*)(RealmServer *realm,
-												uint64_t entityId,
-												uint64_t triggerId);
-struct OnTriggerEnterExit final
-	: public EntryBase<OnTriggerEnterExit, OnTriggerEnterExitFunctionType> {
-};
-
-#define REGISTER_NAMED_CALLBACK(TYPE, FULL_NAME, SHORT_NAME, FUNC,             \
-								SHARED_OBJECT)                                 \
-	TYPE::Set(FULL_NAME, SHORT_NAME, FUNC, SHARED_OBJECT)
-} // namespace registry_entries
 } // namespace named_callbacks

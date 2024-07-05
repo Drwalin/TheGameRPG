@@ -2,7 +2,7 @@
 
 #include <unordered_set>
 
-#include "ComponentCallbackRegistry.hpp"
+#include "ComponentCallbacks.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
