@@ -5,9 +5,10 @@
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
 #include "../include/GlmBullet.hpp"
+#include "../include/EntityComponents.hpp"
 #include "../include/Realm.hpp"
 
-#include "BulletPhysicsCallbacks.hpp"
+#include "bullet/BulletPhysicsCallbacks.hpp"
 #include "../include/CollisionWorld.hpp"
 
 CollisionWorld::CollisionWorld(Realm *realm)
@@ -124,8 +125,8 @@ void CollisionWorld::OnStaticCollisionShape(
 	}
 }
 
-void CollisionWorld::OnAddEntity(flecs::entity entity, ComponentShape shape,
-								 glm::vec3 pos)
+void CollisionWorld::OnAddEntity(flecs::entity entity,
+								 const ComponentShape &shape, glm::vec3 pos)
 {
 	btCapsuleShape *_shape =
 		new btCapsuleShape(shape.width * 0.5, shape.height);

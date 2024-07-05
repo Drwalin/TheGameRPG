@@ -14,6 +14,13 @@ struct RealmPtr {
 	class Realm *realm;
 };
 
+class ComponentShape;
+class ComponentModelName;
+class ComponentMovementState;
+class ComponentLastAuthoritativeMovementState;
+class ComponentMovementParameters;
+class ComponentName;
+
 class Realm
 {
 public:
@@ -37,11 +44,12 @@ public:
 		uint64_t entityId,
 		const ComponentLastAuthoritativeMovementState &state);
 
-	virtual ComponentMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
+	virtual void ExecuteMovementUpdate(uint64_t entityId,
+									   ComponentMovementState *stateOut) = 0;
 
-	uint64_t CreateStaticEntity(ComponentStaticTransform transform,
-								ComponentModelName model,
-								ComponentStaticCollisionShapeName shape);
+	uint64_t CreateStaticEntity(const ComponentStaticTransform &transform,
+								const ComponentModelName &model,
+								const ComponentStaticCollisionShapeName &shape);
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) = 0;
@@ -84,11 +92,6 @@ public:
 	}
 
 public: // accessors
-	template <typename T, typename... Args>
-	void EmplaceComponent(uint64_t entity, Args &&...args)
-	{
-		Entity(entity).emplace<T>(args...);
-	}
 	template <typename T> void AssureComponent(uint64_t entity)
 	{
 		Entity(entity).add<T>();

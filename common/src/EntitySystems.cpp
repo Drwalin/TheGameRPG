@@ -1,6 +1,7 @@
 #include <icon7/Debug.hpp>
 
 #include "../include/Realm.hpp"
+#include "../include/EntityComponents.hpp"
 
 #include "../include/EntitySystems.hpp"
 

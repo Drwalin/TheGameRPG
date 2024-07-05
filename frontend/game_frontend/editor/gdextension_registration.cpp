@@ -23,7 +23,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	
+
 	godot::ClassDB::register_class<editor::PrefabServerBase>();
 	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
 	godot::ClassDB::register_class<editor::PrefabServerOpenableSingleDoor>();

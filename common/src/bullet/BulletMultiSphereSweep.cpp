@@ -6,6 +6,7 @@
 
 #include "../../include/GlmBullet.hpp"
 
+#include "../../include/EntityComponents.hpp"
 #include "BulletPhysicsCallbacks.hpp"
 #include "../../include/CollisionWorld.hpp"
 

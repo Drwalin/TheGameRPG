@@ -171,10 +171,10 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 }
 
 void GameClient::SpawnEntity(
-	uint64_t serverId, const ComponentLastAuthoritativeMovementState state,
-	const ComponentName name, const ComponentModelName model,
-	const ComponentShape shape,
-	const ComponentMovementParameters movementParams)
+	uint64_t serverId, const ComponentLastAuthoritativeMovementState &state,
+	const ComponentName &name, const ComponentModelName &model,
+	const ComponentShape &shape,
+	const ComponentMovementParameters &movementParams)
 {
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);

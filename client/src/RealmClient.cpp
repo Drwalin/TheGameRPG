@@ -74,32 +74,38 @@ bool RealmClient::GetCollisionShape(std::string collisionShapeName,
 
 void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 {
-	ExecuteMovementUpdate(localId);
+	ComponentMovementState state;
+	ExecuteMovementUpdate(localId, &state);
 }
 
-ComponentMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
+void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
+										ComponentMovementState *state)
 {
 	auto entity = Entity(entityId);
 
 	const ComponentShape *shape = entity.get<ComponentShape>();
 	if (shape == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	ComponentMovementState *currentState =
 		(ComponentMovementState *)entity.get<ComponentMovementState>();
 	if (currentState == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
 		(ComponentLastAuthoritativeMovementState *)
 			entity.get<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		return {};
+		*state = {};
+		return;
 	}
 
 	ComponentMovementHistory *_states =
@@ -157,7 +163,7 @@ ComponentMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 		EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
 									  *lastAuthoritativeState, *movementParams);
 	}
-	return *currentState;
+	*state = *currentState;
 }
 
 void RealmClient::RegisterObservers()

@@ -26,8 +26,8 @@ public:
 		ComponentLastAuthoritativeMovementState state);
 	void UpdateEntityCurrentState(uint64_t localId, uint64_t serverId);
 
-	virtual ComponentMovementState
-	ExecuteMovementUpdate(uint64_t entityId) override;
+	virtual void ExecuteMovementUpdate(uint64_t entityId,
+									   ComponentMovementState *state) override;
 
 	void RegisterObservers();
 
