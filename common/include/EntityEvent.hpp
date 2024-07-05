@@ -4,31 +4,8 @@
 
 #include <functional>
 #include <vector>
-#include <algorithm>
 
-template <typename T, typename TComp> class PriorityQueue
-{
-public:
-	T &Top() { return storage[0]; }
-
-	void Push(const T &v)
-	{
-		storage.push_back(v);
-		std::push_heap(storage.begin(), storage.end(), TComp());
-	}
-
-	void Pop()
-	{
-		std::pop_heap(storage.begin(), storage.end(), TComp());
-		storage.resize(storage.size() - 1);
-	}
-
-	size_t Size() const { return storage.size(); }
-
-	bool Empty() const { return storage.empty(); }
-
-	std::vector<T> storage;
-};
+#include "ComponentsUtility.hpp"
 
 struct EntityEventEntry {
 	/*
@@ -74,13 +51,32 @@ struct EntityEvent {
 };
 
 struct ComponentEventsQueue {
-	PriorityQueue<EntityEvent, EntityEvent::Comparator> events;
+	struct EntityEventPriorityQueue
+	{
+	public:
+		EntityEvent &Top() { return storage.front(); }
+		void Push(const EntityEvent &v);
+		void Pop();
+		size_t Size() const { return storage.size(); }
+		bool Empty() const { return storage.empty(); }
+		std::vector<EntityEvent> storage;
+	} events;
 
 	void InsertIntoRealmSchedule(Realm *realm, uint64_t thisEntityId,
 								 int64_t dueTick);
 	void ScheduleEvent(Realm *realm, uint64_t thisEntityId, EntityEvent event);
 	void Update(int64_t currentTick, uint64_t entityId, class Realm *realm);
+	
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEventsQueue, MV(events));
 };
 
-using EntityEventPriorityQueue =
-	PriorityQueue<EntityEventEntry, EntityEventEntry::Comparator>;
+struct EntityEventPriorityQueue
+{
+public:
+	EntityEventEntry &Top() { return storage.front(); }
+	void Push(const EntityEventEntry &v);
+	void Pop();
+	size_t Size() const { return storage.size(); }
+	bool Empty() const { return storage.empty(); }
+	std::vector<EntityEventEntry> storage;
+};

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../common/include/EntityComponents.hpp"
+#include "../../common/include/ComponentsUtility.hpp"
 
 #include "../../ICon7/include/icon7/Peer.hpp"
 

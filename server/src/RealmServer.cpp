@@ -130,6 +130,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
 		s.oldState.timestamp = timer.currentTick;
+		s.oldState.pos = {-87, 0, 54};
 		entity.set<ComponentLastAuthoritativeMovementState>(s);
 		entity.set<ComponentMovementState>(s.oldState);
 

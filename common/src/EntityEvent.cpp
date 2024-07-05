@@ -1,4 +1,6 @@
-#include <icon7/Debug.hpp>
+#include <algorithm>
+
+#include <flecs.h>
 
 #include "../include/Realm.hpp"
 
@@ -81,4 +83,26 @@ int RegisterEntityEventQueueComponent(flecs::world &ecs)
 {
 	ecs.component<ComponentEventsQueue>();
 	return 0;
+}
+
+void ComponentEventsQueue::EntityEventPriorityQueue::Push(const EntityEvent &v)
+{
+	storage.push_back(v);
+	std::push_heap(storage.begin(), storage.end(), EntityEvent::Comparator());
+}
+void ComponentEventsQueue::EntityEventPriorityQueue::Pop()
+{
+	std::pop_heap(storage.begin(), storage.end(), EntityEvent::Comparator());
+	storage.resize(storage.size() - 1);
+}
+
+void EntityEventPriorityQueue::Push(const EntityEventEntry &v)
+{
+	storage.push_back(v);
+	std::push_heap(storage.begin(), storage.end(), EntityEventEntry::Comparator());
+}
+void EntityEventPriorityQueue::Pop()
+{
+	std::pop_heap(storage.begin(), storage.end(), EntityEventEntry::Comparator());
+	storage.resize(storage.size() - 1);
 }
