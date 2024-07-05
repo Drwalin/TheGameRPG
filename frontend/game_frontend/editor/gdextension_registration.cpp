@@ -9,6 +9,7 @@
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/classes/engine.hpp>
 
 #include "PrefabServerBase.hpp"
 #include "PrefabServerStaticMesh.hpp"
@@ -22,6 +23,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
+	
 	godot::ClassDB::register_class<editor::PrefabServerBase>();
 	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
 	godot::ClassDB::register_class<editor::PrefabServerOpenableSingleDoor>();

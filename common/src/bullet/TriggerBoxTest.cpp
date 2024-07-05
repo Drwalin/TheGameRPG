@@ -50,8 +50,8 @@ public:
 	int filter;
 };
 
-void CollisionWorld::TriggerTestBoxForCharacters(flecs::entity entity,
-												 std::vector<uint64_t> &entities)
+void CollisionWorld::TriggerTestBoxForCharacters(
+	flecs::entity entity, std::vector<uint64_t> &entities)
 {
 	entities.clear();
 

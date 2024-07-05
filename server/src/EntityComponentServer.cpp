@@ -4,9 +4,8 @@
 
 #include "../include/EntityComponentsServer.hpp"
 
-int RegisterEntityComponentsServer(flecs::world &ecs) {
-	LOG_INFO("Registering components");
+int RegisterEntityComponentsServer(flecs::world &ecs)
+{
 	ecs.component<ComponentPlayerConnectionPeer>();
-	LOG_INFO("Done");
 	return 0;
 }

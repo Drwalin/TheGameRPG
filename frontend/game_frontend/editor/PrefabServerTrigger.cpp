@@ -14,23 +14,27 @@ PrefabServerTrigger::PrefabServerTrigger() {}
 PrefabServerTrigger::~PrefabServerTrigger() {}
 
 void PrefabServerTrigger::Serialize(uint16_t higherLevelComponentsCount,
-									   icon7::ByteWriter &writer)
+									icon7::ByteWriter &writer)
 {
 	PrefabServerBase::Serialize(higherLevelComponentsCount + 3, writer);
-	
+
 	std::string onEnter = onTriggerEnter.utf8().ptr();
 	named_callbacks::registry_entries::OnTriggerEnterExit onTriggerEnter{
 		onEnter, onEnter, {}, nullptr, nullptr};
 	std::string onExit = onTriggerExit.utf8().ptr();
 	named_callbacks::registry_entries::OnTriggerEnterExit onTriggerExit{
 		onExit, onExit, {}, nullptr, nullptr};
-	ComponentTrigger onTrigger{&onTriggerEnter, &onTriggerExit};
+	ComponentTrigger onTrigger;
+	onTrigger.onEnter = &onTriggerEnter;
+	onTrigger.onExit = &onTriggerExit;
 	reg::Registry::Serialize(onTrigger, writer);
-	
+
 	std::string realmName = teleportRealm.utf8().ptr();
-	ComponentTeleport teleport{realmName, ToGlm(teleportPosition)};
+	ComponentTeleport teleport;
+	teleport.realmName = realmName;
+	teleport.position = ToGlm(teleportPosition);
 	reg::Registry::Serialize(teleport, writer);
-	
+
 	ComponentStaticTransform transform = ToGame(get_global_transform());
 	reg::Registry::Serialize(transform, writer);
 }
@@ -39,10 +43,10 @@ void PrefabServerTrigger::_bind_methods()
 {
 	REGISTER_PROPERTY(PrefabServerTrigger, onTriggerEnter,
 					  Variant::Type::STRING, "OnEnter");
-	REGISTER_PROPERTY(PrefabServerTrigger, onTriggerExit,
-					  Variant::Type::STRING, "OnExit");
-	REGISTER_PROPERTY(PrefabServerTrigger, teleportRealm,
-					  Variant::Type::STRING, "TeleportRealmName");
+	REGISTER_PROPERTY(PrefabServerTrigger, onTriggerExit, Variant::Type::STRING,
+					  "OnExit");
+	REGISTER_PROPERTY(PrefabServerTrigger, teleportRealm, Variant::Type::STRING,
+					  "TeleportRealmName");
 	REGISTER_PROPERTY(PrefabServerTrigger, teleportPosition,
 					  Variant::Type::VECTOR3, "TeleportPosition");
 }
@@ -70,6 +74,9 @@ String PrefabServerTrigger::get_teleportRealm() { return teleportRealm; }
 void PrefabServerTrigger::set_teleportRealm(String v) { teleportRealm = v; }
 
 Vector3 PrefabServerTrigger::get_teleportPosition() { return teleportPosition; }
-void PrefabServerTrigger::set_teleportPosition(Vector3 v) { teleportPosition = v; }
+void PrefabServerTrigger::set_teleportPosition(Vector3 v)
+{
+	teleportPosition = v;
+}
 
 } // namespace editor

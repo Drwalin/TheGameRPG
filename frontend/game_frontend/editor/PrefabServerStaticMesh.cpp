@@ -31,8 +31,10 @@ void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
 	}
 
 	ComponentStaticTransform transform = ToGame(get_global_transform());
-	ComponentModelName model{graphicPath};
-	ComponentStaticCollisionShapeName collision{collisionPath};
+	ComponentModelName model;
+	model.modelName = graphicPath;
+	ComponentStaticCollisionShapeName collision;
+	collision.shapeName = collisionPath;
 
 	reg::Registry::Serialize(transform, writer);
 	reg::Registry::Serialize(model, writer);

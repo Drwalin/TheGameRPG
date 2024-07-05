@@ -11,15 +11,14 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTrigger, "TRIGGER");
 int RegisterEntityComponents(flecs::world &ecs);
 int RegisterEntityComponentsServer(flecs::world &ecs);
 
-int RegisterEntityGameComponents(flecs::world &ecs) {
-	LOG_INFO("Registering components");
+int RegisterEntityGameComponents(flecs::world &ecs)
+{
 	RegisterEntityComponents(ecs);
 	RegisterEntityComponentsServer(ecs);
 	ecs.component<ComponentOnUse>();
 	ecs.component<ComponentSingleDoorTransformStates>();
 	ecs.component<ComponentTeleport>();
 	ecs.component<ComponentTrigger>();
-	LOG_INFO("Done");
 	return 0;
 }
 

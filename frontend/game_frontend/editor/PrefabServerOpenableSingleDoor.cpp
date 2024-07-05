@@ -16,7 +16,8 @@ void PrefabServerOpenableSingleDoor::Serialize(
 	std::string onUseCallbackName = OnUse.utf8().ptr();
 	named_callbacks::registry_entries::OnUse onUseEntry{
 		onUseCallbackName, onUseCallbackName, {}, nullptr, nullptr};
-	ComponentOnUse onUse{&onUseEntry};
+	ComponentOnUse onUse;
+	onUse.entry = &onUseEntry;
 	reg::Registry::Serialize(onUse, writer);
 
 	Transform3D a = transformClosed;
@@ -29,7 +30,9 @@ void PrefabServerOpenableSingleDoor::Serialize(
 	b = get_global_transform();
 	set_transform(tmp);
 
-	ComponentSingleDoorTransformStates transforms{ToGame(a), ToGame(b)};
+	ComponentSingleDoorTransformStates transforms;
+	transforms.transformClosed = ToGame(a);
+	transforms.transformOpen = ToGame(b);
 	reg::Registry::Serialize(transforms, writer);
 }
 

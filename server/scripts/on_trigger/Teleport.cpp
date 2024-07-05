@@ -12,7 +12,7 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 {
 	flecs::entity entity = realm->Entity(entityId);
 	flecs::entity trigger = realm->Entity(triggerId);
-	
+
 	if (trigger.has<ComponentTeleport>()) {
 		if (entity.has<ComponentPlayerConnectionPeer>()) {
 			const ComponentPlayerConnectionPeer *_peer =
@@ -27,7 +27,8 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 				data->useNextRealmPosition = true;
 				auto p = tp->position;
 				LOG_INFO("Teleport %s into %s -> {%.1f %.1f %.1f}",
-						 data->userName.c_str(), tp->realmName.c_str(), p.x, p.y, p.z);
+						 data->userName.c_str(), tp->realmName.c_str(), p.x,
+						 p.y, p.z);
 				realm->serverCore->ConnectPeerToRealm(peer.get());
 			} else {
 				LOG_ERROR("Peer 0x%p does not have initialised userData",

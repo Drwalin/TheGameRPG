@@ -36,7 +36,7 @@ public: // variables
 	Vector3 teleportPosition = {0, 0, 0};
 	Vector3 get_teleportPosition();
 	void set_teleportPosition(Vector3 v);
-	
+
 private:
 	class CSGBox3D *renderBox = nullptr;
 };
