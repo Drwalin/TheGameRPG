@@ -69,8 +69,14 @@ void ServerCore::UpdatePlayer(
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
 			// TODO: verify movement state
-			entity.set<ComponentLastAuthoritativeMovementState>(state);
-			entity.set<ComponentMovementState>(state.oldState);
+
+			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
+			if (s && glm::length(s->oldState.pos - state.oldState.pos) < 5) {
+				entity.set<ComponentLastAuthoritativeMovementState>(state);
+				entity.set<ComponentMovementState>(state.oldState);
+			} else {
+				ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm, peer);
+			}
 		}
 	}
 }
@@ -126,12 +132,8 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 									}
 								}
 
-								icon7::ByteWriter writer(16);
-								writer.op(entity.id());
-								icon7::ByteReader reader(
-									std::move(writer.Buffer()), 0);
-								ClientRpcProxy::SpawnEntities_ForPeerByIds(
-									realm, peer.get(), reader);
+								ClientRpcProxy::SpawnPlayerEntity_ForPlayer(
+									realm, peer.get());
 							}
 						}
 					}

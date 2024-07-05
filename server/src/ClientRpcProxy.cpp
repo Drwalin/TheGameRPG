@@ -109,6 +109,35 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
+void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
+								 icon7::Peer *peer)
+{
+	icon7::ByteWriter writer(1000);
+	realm->rpc->InitializeSerializeSend(writer,
+										ClientRpcFunctionNames::SpawnEntities);
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	uint64_t entityId = data->entityId;
+	flecs::entity entity = realm->Entity(entityId);
+	if (entity.is_alive()) {
+		if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+			entity.has<ComponentName>() && entity.has<ComponentModelName>() &&
+			entity.has<ComponentShape>() &&
+			entity.has<ComponentMovementParameters>()) {
+
+			writer.op(entityId);
+
+			writer.op(*entity.get<ComponentLastAuthoritativeMovementState>());
+			writer.op(*entity.get<ComponentName>());
+			writer.op(*entity.get<ComponentModelName>());
+			writer.op(*entity.get<ComponentShape>());
+			writer.op(*entity.get<ComponentMovementParameters>());
+		}
+	}
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	realm->rpc->FinalizeSerializeSend(writer, flags);
+	peer->Send(std::move(writer.Buffer()));
+}
+
 void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape)
 {

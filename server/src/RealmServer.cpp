@@ -157,7 +157,6 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	auto it = peers.find(pw);
 	if (it != peers.end()) {
 		uint64_t entityId = it->second;
-		peers.erase(it);
 
 		flecs::entity entity = Entity(data->entityId);
 		if (entity.is_alive()) {
@@ -178,6 +177,8 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 				}
 			}
 		}
+
+		peers.erase(it);
 
 		StorePlayerDataInPeerAndFile(peer);
 		RemoveEntity(entityId);
