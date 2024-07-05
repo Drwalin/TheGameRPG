@@ -122,8 +122,10 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entity.add<ComponentShape>();
 		entity.add<ComponentLastAuthoritativeMovementState>();
 		entity.add<ComponentMovementParameters>();
-		entity.set<ComponentModelName>(ComponentModelName{
-			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn"});
+		ComponentModelName modelName;
+		modelName.modelName =
+			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn";
+		entity.set<ComponentModelName>(modelName);
 		entity.add<ComponentEventsQueue>();
 
 		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
@@ -131,7 +133,9 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entity.set<ComponentLastAuthoritativeMovementState>(s);
 		entity.set<ComponentMovementState>(s.oldState);
 
-		SetComponent<ComponentName>(entityId, ComponentName{data->userName});
+		ComponentName name;
+		name.name = data->userName;
+		SetComponent<ComponentName>(entityId, name);
 	} else {
 		std::string_view sv;
 		reader.op(sv);

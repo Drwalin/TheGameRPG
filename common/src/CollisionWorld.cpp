@@ -309,8 +309,6 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)
 {
-	LOG_INFO("Registering components");
 	ecs.component<ComponentBulletCollisionObject>();
-	LOG_INFO("Done");
 	return 0;
 }

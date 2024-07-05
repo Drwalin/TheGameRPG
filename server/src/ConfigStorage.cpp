@@ -3,8 +3,8 @@
 
 #include <icon7/Debug.hpp>
 
+#include "../include/StringUtil.hpp"
 #include "../include/CommandParser.hpp"
-#include "../include/ServerCore.hpp"
 
 #include "../include/ConfigStorage.hpp"
 

@@ -153,8 +153,8 @@ void GameClient::RunOneEpoch()
 	PerformSendPlayerMovementInput();
 	realm->OneEpoch();
 	PerformSendPlayerMovementInput();
-	
-	if ((rand())%80 == 0) {
+
+	if ((rand()) % 80 == 0) {
 		ServerRpcProxy::Ping(this, true);
 	}
 }
@@ -372,12 +372,6 @@ void GameClient::PerformInteractionUse()
 	}
 }
 
-int64_t GameClient::GetPing()
-{
-	return pingMs;
-}
+int64_t GameClient::GetPing() { return pingMs; }
 
-int64_t GameClient::GetCurrentTick()
-{
-	return realm->timer.currentTick;
-}
+int64_t GameClient::GetCurrentTick() { return realm->timer.currentTick; }

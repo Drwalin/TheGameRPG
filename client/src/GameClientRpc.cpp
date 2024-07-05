@@ -156,13 +156,14 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 			realm->timer.Start(newCurrentTick);
 		} else if (newCurrentTick < currentTick) {
 			// TODO: time error??
-			if (newCurrentTick+5< currentTick) {
+			if (newCurrentTick + 5 < currentTick) {
 				newCurrentTick = currentTick - 5;
 			}
 			realm->timer.Start(newCurrentTick);
 		} else {
 			if (newCurrentTick > currentTick + 25) {
-				newCurrentTick = currentTick + ((newCurrentTick - currentTick) >> 2);
+				newCurrentTick =
+					currentTick + ((newCurrentTick - currentTick) >> 2);
 			}
 			realm->timer.Start(newCurrentTick);
 		}

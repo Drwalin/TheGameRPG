@@ -105,8 +105,6 @@ struct ComponentName {
 		return s;
 	}
 
-	ComponentName(std::string n) : name(n) {}
-
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentName, MV(name));
 };
 
@@ -133,11 +131,6 @@ struct ComponentModelName {
 	{
 		s.op(modelName);
 		return s;
-	}
-
-	inline ComponentModelName(std::string modelName)
-	{
-		this->modelName = modelName;
 	}
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentModelName, MV(modelName));
@@ -167,11 +160,6 @@ struct ComponentStaticCollisionShapeName {
 	{
 		s.op(shapeName);
 		return s;
-	}
-
-	inline ComponentStaticCollisionShapeName(std::string shapeName)
-	{
-		this->shapeName = shapeName;
 	}
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticCollisionShapeName,

@@ -28,8 +28,8 @@ GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);
 
-int RegisterEntityComponents(flecs::world &ecs) {
-	LOG_INFO("Registering components");
+int RegisterEntityComponents(flecs::world &ecs)
+{
 	RegisterEntityEventQueueComponent(ecs);
 	RegisterEntityComponentsCollisionWorld(ecs);
 	ecs.component<ComponentShape>();
@@ -41,6 +41,5 @@ int RegisterEntityComponents(flecs::world &ecs) {
 	ecs.component<ComponentMovementState>();
 	ecs.component<ComponentLastAuthoritativeMovementState>();
 	ecs.component<ComponentCharacterSheet>();
-	LOG_INFO("Done");
 	return 0;
 }

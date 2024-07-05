@@ -78,12 +78,6 @@ struct ComponentTeleport {
 		return s;
 	}
 
-	inline ComponentTeleport(std::string realmName, glm::vec3 position)
-	{
-		this->realmName = realmName;
-		this->position = position;
-	}
-
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTeleport,
 								  {MV(realmName) MV(position)});
 };

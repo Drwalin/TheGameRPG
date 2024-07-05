@@ -24,9 +24,7 @@ void GameEditorConfig::_bind_methods()
 		flecs::world ecs;
 		RegisterEntityGameComponents(ecs);
 	}
-	
-	
-	
+
 	REGISTER_PROPERTY(GameEditorConfig, render_graphic, Variant::Type::BOOL,
 					  "render graphics");
 	REGISTER_PROPERTY(GameEditorConfig, render_collision, Variant::Type::BOOL,

@@ -22,7 +22,6 @@ void RealmClient::Init(const std::string &realmName)
 
 void RealmClient::Clear()
 {
-// 	LOG_INFO("Clear realm");
 	auto ar = gameClient->mapLocalEntityIdToServerEntityId;
 	for (auto it = ar.begin(); it != ar.end(); ++it) {
 		flecs::entity entity = Entity(it->first);
@@ -38,7 +37,6 @@ void RealmClient::Clear()
 
 void RealmClient::Reinit(const std::string &realmName)
 {
-// 	LOG_INFO("Reinint realm");
 	Clear();
 	Init(realmName);
 	gameClient->OnEnterRealm(realmName);

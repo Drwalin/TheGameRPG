@@ -79,8 +79,6 @@ void ComponentEventsQueue::Update(int64_t currentTick, uint64_t entityId,
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs)
 {
-	LOG_INFO("Registering components");
 	ecs.component<ComponentEventsQueue>();
-	LOG_INFO("Done");
 	return 0;
 }
