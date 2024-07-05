@@ -1,6 +1,5 @@
 #pragma once
 
-#include <random>
 #include <string>
 
 #include <glm/glm.hpp>
@@ -10,29 +9,7 @@
 #include <icon7/Debug.hpp>
 
 #include "GlmSerialization.hpp"
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
-static inline float R()
-{
-	static std::random_device rd;
-	static std::mt19937_64 mt(rd());
-	static std::uniform_real_distribution<float> dist(-50, 50);
-	return dist(mt);
-}
-#pragma clang diagnostic pop
-
-#define MV(VAR) this->VAR = o.VAR;
-
-#define DEFAULT_CONSTRUCTORS_AND_MOVE(STRUCT, CODE)                            \
-	inline STRUCT(const STRUCT &o) { CODE }                                    \
-	inline STRUCT(STRUCT &o) { CODE }                                          \
-	inline STRUCT(STRUCT &&o) { CODE }                                         \
-	inline STRUCT() {}                                                         \
-	inline ~STRUCT() {}                                                        \
-	inline STRUCT &operator=(const STRUCT &o) { CODE return *this; }           \
-	inline STRUCT &operator=(STRUCT &o) { CODE return *this; }                 \
-	inline STRUCT &operator=(STRUCT &&o) { CODE return *this; }
+#include "ComponentsUtility.hpp"
 
 struct ComponentShape {
 	float height = 1.65f;
@@ -52,7 +29,7 @@ struct ComponentShape {
 
 struct ComponentMovementState {
 	int64_t timestamp = 0;
-	glm::vec3 pos = {R(), 70, R()};
+	glm::vec3 pos = {0, 0, 0};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
 	bool onGround = false;
