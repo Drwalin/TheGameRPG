@@ -23,6 +23,8 @@ void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
 
 void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 								icon7::Peer *peer, icon7::ByteReader &reader);
+void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
+								 icon7::Peer *peer);
 
 void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);

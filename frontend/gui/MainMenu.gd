@@ -9,6 +9,7 @@ func _on_connect_to_server_pressed():
 	gameFrontend.Connect(address, port);
 	
 func _on_exit_pressed():
+	gameFrontend.Disconnect();
 	get_tree().quit();
 	
 func _on_disconnect_pressed():
