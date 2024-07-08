@@ -36,7 +36,7 @@ void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-
+	
 	std::string filePrefix, fileSuffix;
 	if (serverCore->configStorage.GetString(
 			"config.realm_map_file.file_path.prefix", &filePrefix)) {
@@ -44,9 +44,10 @@ void RealmServer::Init(const std::string &realmName)
 	if (serverCore->configStorage.GetString(
 			"config.realm_map_file.file_path.suffix", &fileSuffix)) {
 	}
-	std::string fileName = filePrefix + realmName + fileSuffix;
+	const std::string fileName = filePrefix + realmName + fileSuffix;
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
+		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(), fileName.c_str());
 		icon7::ByteReader reader(buffer, 0);
 		while (reader.get_remaining_bytes() > 10) {
 			uint64_t entityId = NewEntity();
@@ -58,6 +59,7 @@ void RealmServer::Init(const std::string &realmName)
 				break;
 			}
 		}
+		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}

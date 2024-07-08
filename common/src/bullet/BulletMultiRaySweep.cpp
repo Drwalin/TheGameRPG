@@ -6,7 +6,7 @@
 #include "../../include/EntityComponents.hpp"
 
 #if not __unix__
-#define M_PI 3.141292
+#define M_PI 3.141592653589793
 #else
 #endif
 
@@ -69,6 +69,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 
 	glm::vec3 endWithMargin = end + travelDirNorm * maxSingleCorrectionLength;
 
+	bool hasCollision = false;
 	// Test rays with travel direction on travel path
 	for (int i = 0; i < horizontalRaysCountInMovementDirection; ++i) {
 		const float h = heightStart + heightRaysDistance * i;
@@ -79,6 +80,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 		float tf;
 		if (RayTestFirstHitWithObjects(startVec, dirVec, &hp, &n, &tf,
 									   objects)) {
+			hasCollision = true;
 			endWithMargin = hp - offset;
 			if (normal) {
 				if (glm::dot(n, end - start) < glm::dot(*normal, end - start)) {
@@ -101,6 +103,7 @@ bool CollisionWorld::TestCollisionMovementRays(
 			float tf;
 			if (RayTestFirstHitWithObjects(startVec, dirVec, &hp, &n, &tf,
 										   objects)) {
+				hasCollision = true;
 				end -= (end - start) * tf;
 				end -= n * (maxSingleCorrectionLength * 0.25f);
 				if (normal) {
@@ -115,7 +118,6 @@ bool CollisionWorld::TestCollisionMovementRays(
 
 	// TODO: test vertical rays on travel path
 
-	bool hasCollision = false;
 	// test horizontal 'crown' of rays outward to push out of walls
 	{
 		const float deltaAngle =

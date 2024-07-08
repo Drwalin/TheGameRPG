@@ -42,7 +42,6 @@ template <typename TFinal, typename TCb> struct EntryBase {
 	{
 		TCb ptr = callback.load();
 		if (ptr != nullptr) {
-			LOG_ERROR("Non null callback: %s", fullName.c_str());
 			callback.load()(std::forward<TArgs>(args)...);
 		} else {
 			LOG_ERROR("Callback `%s` is null", fullName.c_str());
