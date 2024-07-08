@@ -66,7 +66,7 @@ template <typename T> struct Registry {
 		}
 		sharedMutex.unlock_shared();
 		if (ret == nullptr) {
-			LOG_ERROR("No callback named: %s", name.c_str());
+			LOG_INFO("No callback named: %s", name.c_str());
 			return nullptr;
 		}
 		return ret;
