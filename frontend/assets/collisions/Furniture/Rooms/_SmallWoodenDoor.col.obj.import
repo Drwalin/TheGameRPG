@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dxr011fm4w8c2"
+path="res://.godot/imported/_SmallWoodenDoor.col.obj-3040e492f87eb19c7db1339ee12557e1.mesh"
+
+[deps]
+
+files=["res://.godot/imported/_SmallWoodenDoor.col.obj-3040e492f87eb19c7db1339ee12557e1.mesh"]
+
+source_file="res://assets/collisions/Furniture/Rooms/_SmallWoodenDoor.col.obj"
+dest_files=["res://.godot/imported/_SmallWoodenDoor.col.obj-3040e492f87eb19c7db1339ee12557e1.mesh", "res://.godot/imported/_SmallWoodenDoor.col.obj-3040e492f87eb19c7db1339ee12557e1.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
