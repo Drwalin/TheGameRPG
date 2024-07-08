@@ -1,14 +1,14 @@
 [gd_scene load_steps=12 format=3 uid="uid://mkc10byrbtkd"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_hc6ya"]
-[ext_resource type="Script" path="res://tools/server_maps/Randomize.gd" id="2_bpoiu"]
+[ext_resource type="Script" path="res://tools/server_maps/RandomizeMeshRotation180Degree.gd" id="2_bpoiu"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/BigStonePillar1.tscn" id="3_np1v3"]
 [ext_resource type="PackedScene" uid="uid://c6f620g3uvsjg" path="res://assets/meshes/Environmental/Stones/BigStonePillar4.glb" id="4_63ug2"]
 [ext_resource type="PackedScene" uid="uid://djyd3ic10sp41" path="res://assets/meshes/Environmental/Stones/BigStonePillar2.glb" id="5_e6mui"]
 [ext_resource type="PackedScene" uid="uid://bry655li3ku1v" path="res://assets/meshes/Environmental/Stones/BigStonePillar3.glb" id="6_hbk3a"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/BigStonePillar2.tscn" id="7_ubfeo"]
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="8_j2rnv"]
-[ext_resource type="PackedScene" uid="uid://cfmkbdbv8lsf7" path="res://assets/prefabs/Furniture/TorchWithEffects.tscn" id="9_qpmpd"]
+[ext_resource type="PackedScene" uid="uid://cfmkbdbv8lsf7" path="res://assets/prefabs/Furniture/Lights/TorchWithEffects.tscn" id="9_qpmpd"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/SmallStonePillar1.tscn" id="10_377l7"]
 [ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="11_xjy62"]
 

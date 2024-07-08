@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cfmkbdbv8lsf7"]
-
-[ext_resource type="PackedScene" uid="uid://msmw3ibsyvix" path="res://assets/meshes/Furniture/TorchWithEffects.tscn" id="1_lb1w8"]
-
-[node name="Torch" type="PrefabServerStaticMesh"]
-graphic_Mesh_or_PackedScene = ExtResource("1_lb1w8")
-
-[node name="NameFC249B269669368FC10A4E44E38E7712" type="Node3D" parent="." instance=ExtResource("1_lb1w8")]

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c7km3d6kgp6di"
+path="res://.godot/imported/_BigWoodenDoor.col.obj-377e73c5423faa751c149550ec5ec8cb.mesh"
+
+[deps]
+
+files=["res://.godot/imported/_BigWoodenDoor.col.obj-377e73c5423faa751c149550ec5ec8cb.mesh"]
+
+source_file="res://assets/collisions/Furniture/Rooms/_BigWoodenDoor.col.obj"
+dest_files=["res://.godot/imported/_BigWoodenDoor.col.obj-377e73c5423faa751c149550ec5ec8cb.mesh", "res://.godot/imported/_BigWoodenDoor.col.obj-377e73c5423faa751c149550ec5ec8cb.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
