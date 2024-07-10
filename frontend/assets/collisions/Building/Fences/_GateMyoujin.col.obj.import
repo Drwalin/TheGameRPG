@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://btc0rxr7nvj8t"
+path="res://.godot/imported/_GateMyoujin.col.obj-6dc596dc15a88885f058bca990ecbcaa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/_GateMyoujin.col.obj-6dc596dc15a88885f058bca990ecbcaa.mesh"]
+
+source_file="res://assets/collisions/Building/Fences/_GateMyoujin.col.obj"
+dest_files=["res://.godot/imported/_GateMyoujin.col.obj-6dc596dc15a88885f058bca990ecbcaa.mesh", "res://.godot/imported/_GateMyoujin.col.obj-6dc596dc15a88885f058bca990ecbcaa.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

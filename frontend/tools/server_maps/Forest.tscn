@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://mkc10byrbtkd"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_hc6ya"]
-[ext_resource type="Script" path="res://tools/server_maps/RandomizeMeshRotation180Degree.gd" id="2_bpoiu"]
+[ext_resource type="Script" path="res://tools/scripts/RandomizeMeshRotation180Degree.gd" id="2_bpoiu"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Environmental/Stones/BigStonePillar1.tscn" id="3_np1v3"]
 [ext_resource type="PackedScene" uid="uid://c6f620g3uvsjg" path="res://assets/meshes/Environmental/Stones/BigStonePillar4.glb" id="4_63ug2"]
 [ext_resource type="PackedScene" uid="uid://djyd3ic10sp41" path="res://assets/meshes/Environmental/Stones/BigStonePillar2.glb" id="5_e6mui"]

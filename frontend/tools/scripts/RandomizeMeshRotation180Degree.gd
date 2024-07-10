@@ -1,7 +1,7 @@
 @tool
 extends Node3D
 
-@export var meshes:Array[Resource] = [];
+@export var meshes:Array[PackedScene] = [];
 @export var execute:bool = false;
 
 func _process(delta):
@@ -24,4 +24,7 @@ func RandomizeSingleNode(node:PrefabServerStaticMesh):
 		node.rotate(node.basis.get_rotation_quaternion()*Vector3(0,1,0), PI);
 	if (randi()%2) == 0:
 		node.rotate(node.basis.get_rotation_quaternion()*Vector3(0,0,1), PI);
-	node.graphic_Mesh_or_PackedScene = meshes[randi()%meshes.size()];
+	var mesh = meshes[randi()%meshes.size()].instantiate();
+	node.graphic_Mesh_or_PackedScene = mesh.graphic_Mesh_or_PackedScene;
+	node.collision_mesh = mesh.collision_mesh;
+	mesh.queue_free();

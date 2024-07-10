@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Outdoor/Lamp01Lit.glb" id="1_a"]
+[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Outdoor/_Lamp01.col.obj" id="2_b"]
+
+[node name="Lamp01Lit" type="PrefabServerStaticMesh"]
+graphic_Mesh_or_PackedScene = ExtResource("1_a")
+collision_mesh = ExtResource("2_b")

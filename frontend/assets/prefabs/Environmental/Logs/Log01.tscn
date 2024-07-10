@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dn52xaipys27d"]
+
+[ext_resource type="PackedScene" uid="uid://wwakq03t1ydn" path="res://assets/meshes/Environmental/Logs/Log01.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://dd7s6lc43tp4r" path="res://assets/collisions/Environmental/Logs/_Log01.col.obj" id="2_b"]
+
+[node name="Log01" type="PrefabServerStaticMesh"]
+graphic_Mesh_or_PackedScene = ExtResource("1_a")
+collision_mesh = ExtResource("2_b")
+
+[node name="NameF76D99F4EE0A6A4846B31F9289FBCF32" type="Node3D" parent="." instance=ExtResource("1_a")]
