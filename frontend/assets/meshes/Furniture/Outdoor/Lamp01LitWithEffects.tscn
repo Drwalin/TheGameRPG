@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2wjeltim7mc1"]
+
+[ext_resource type="PackedScene" uid="uid://jq4k6ds76dyo" path="res://assets/meshes/Furniture/Outdoor/Lamp01Lit.glb" id="1_7bpet"]
+[ext_resource type="Script" path="res://scripts/vfx/FlickeringOmniLight3D.gd" id="2_a2upi"]
+
+[node name="Lamp01Lit" instance=ExtResource("1_7bpet")]
+
+[node name="Lamp01Lit" parent="." index="0"]
+cast_shadow = 0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00556942, 0.161948, 0)
+light_color = Color(1, 0.941176, 0.788235, 1)
+light_energy = 1.17064
+omni_range = 8.0
+omni_attenuation = 1.21551
+script = ExtResource("2_a2upi")
+movementAmplitude = 0.0
+energyMax = 1.5

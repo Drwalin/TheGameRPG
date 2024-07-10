@@ -29,17 +29,19 @@ func _process(delta):
 		energyStartTime = energyTime;
 		dstEnergy = randf_range(energyMin, energyMax);
 	
-	if positionTime <= 0:
-		oldPosition = position;
-		positionTime = randf_range(0.1, movementSpeed);
-		positionStartTime = positionTime;
-		dstPosition = Vector3(
-			randf_range(-movementAmplitude, movementAmplitude),
-			randf_range(-movementAmplitude, movementAmplitude),
-			randf_range(-movementAmplitude, movementAmplitude));
-	
-	var dX = (dstPosition - oldPosition)*(1-positionTime/positionStartTime);
-	position = oldPosition + dX;
-	
 	var dE = (dstEnergy - oldEnergy)*(1-energyTime/energyStartTime);
 	light_energy = oldEnergy + dE;
+	
+	
+	if movementAmplitude > 0.0001:
+		if positionTime <= 0:
+			oldPosition = position;
+			positionTime = randf_range(0.1, movementSpeed);
+			positionStartTime = positionTime;
+			dstPosition = Vector3(
+				randf_range(-movementAmplitude, movementAmplitude),
+				randf_range(-movementAmplitude, movementAmplitude),
+				randf_range(-movementAmplitude, movementAmplitude));
+		
+		var dX = (dstPosition - oldPosition)*(1-positionTime/positionStartTime);
+		position = oldPosition + dX;
