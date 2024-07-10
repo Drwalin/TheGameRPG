@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dd7s6lc43tp4r"
+path="res://.godot/imported/_Log01.col.obj-efbb05a6abd7f4fcf2fdf04ae52d4e29.mesh"
+
+[deps]
+
+files=["res://.godot/imported/_Log01.col.obj-efbb05a6abd7f4fcf2fdf04ae52d4e29.mesh"]
+
+source_file="res://assets/collisions/Environmental/Logs/_Log01.col.obj"
+dest_files=["res://.godot/imported/_Log01.col.obj-efbb05a6abd7f4fcf2fdf04ae52d4e29.mesh", "res://.godot/imported/_Log01.col.obj-efbb05a6abd7f4fcf2fdf04ae52d4e29.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cnjiq13g2pho2"
+path="res://.godot/imported/_Boulder02.col.obj-1107f1cb758af592b5095b5515809669.mesh"
+
+[deps]
+
+files=["res://.godot/imported/_Boulder02.col.obj-1107f1cb758af592b5095b5515809669.mesh"]
+
+source_file="res://assets/collisions/Environmental/Boulders/_Boulder02.col.obj"
+dest_files=["res://.godot/imported/_Boulder02.col.obj-1107f1cb758af592b5095b5515809669.mesh", "res://.godot/imported/_Boulder02.col.obj-1107f1cb758af592b5095b5515809669.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
