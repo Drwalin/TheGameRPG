@@ -1010,116 +1010,88 @@ script = ExtResource("31_wxnec")
 meshes = Array[PackedScene]([ExtResource("31_nbaxe")])
 
 [node name="TreeOak01" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.52719, 0.0209267, 1.26161, 0.0572614, 1.97985, 0.0364753, -1.26048, 0.0645862, -1.5269, -81.7138, -3.58257, 61.0396)
+transform = Transform3D(-0.900986, -0.0215012, 0.630731, -0.0404352, 1.0991, -0.0202933, -0.629801, -0.039806, -0.901014, -81.7138, -3.58257, 61.0396)
 
 [node name="TreeOak03" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.355911, -0.0377744, -1.43043, 0.00402273, 1.47403, -0.037925, 1.43092, 0.00525164, 0.355895, -52.5533, -6.27603, 56.4273)
+transform = Transform3D(1.28836, 0.00852476, 1.01778, 0.0328381, 1.64064, -0.0553098, -1.01729, 0.0637562, 1.2872, -52.5533, -6.27603, 56.4273)
 
 [node name="TreeOak02" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.04691, -0.0358857, -0.958994, 0.0104846, 1.41956, -0.0416741, 0.959608, 0.0236406, 1.0467, -87.3866, -7.96411, 29.1224)
+transform = Transform3D(0.312158, 0.0289689, 0.979401, 0.00373427, 1.02786, -0.0315924, -0.979822, 0.0131464, 0.311903, -87.3866, -7.96411, 29.1224)
 
 [node name="TreeOak04" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.70824, -0.0819071, -0.412271, 0.0697104, 1.75678, -0.0601807, 0.414508, 0.0421009, 1.70914, -51.9743, -11.0435, 26.5163)
+transform = Transform3D(0.276537, -0.0242907, 1.39504, 0.00569838, 1.42218, 0.0236337, -1.39524, 0.000994004, 0.276593, -51.9743, -11.0435, 26.5163)
 
 [node name="TreeOak05" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.413184, 0.0364173, 1.56009, 0.00830789, 1.61377, -0.0398708, -1.56049, 0.0182341, 0.412865, -39.3151, -10.0029, 30.5085)
+transform = Transform3D(-1.46814, -0.0890592, -0.456248, -0.0640393, 1.53579, -0.0937151, 0.460427, -0.0703705, -1.46785, -39.3151, -10.0029, 30.5085)
 
 [node name="TreeOak06" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.868206, -0.0176292, 1.45187, 0.0407213, 1.69126, -0.00381503, -1.45141, 0.0369052, 0.868376, -34.498, -9.32094, 22.2419)
+transform = Transform3D(1.0588, -0.00984773, -0.725302, 0.00282358, 1.28337, -0.0133029, 0.725364, 0.00937884, 1.05876, -34.498, -9.32094, 22.2419)
 
 [node name="TreeOak07" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.23384, -0.0126677, 0.765924, -0.0319611, 1.45168, -0.0274771, -0.765362, -0.0402, -1.2336, -44.7167, -11.4208, 14.5577)
+transform = Transform3D(-1.35724, -0.0382167, -0.721053, -0.00779879, 1.53589, -0.0667245, 0.722023, -0.0552491, -1.35614, -44.7167, -11.4208, 14.5577)
 
 [node name="TreeOak08" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-0.754217, -0.171332, -1.69689, -0.0372382, 1.85662, -0.170909, 1.70511, -0.0352379, -0.754313, -60.8644, -10.7924, 7.44209)
+transform = Transform3D(1.25594, -0.0156835, -0.580347, 0.00989353, 1.3835, -0.0159776, 0.580475, 0.0103533, 1.25594, -60.8644, -10.7924, 7.44209)
 
 [node name="TreeOak09" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-0.277419, -0.0359837, -1.17812, -0.0064662, 1.21034, -0.0354451, 1.17865, -0.00182943, -0.277488, -55.9194, -11.657, 12.9079)
+transform = Transform3D(0.418592, -0.0642204, -1.05646, 0.00517552, 1.13619, -0.0670166, 1.05839, 0.0198431, 0.418153, -55.9194, -11.657, 12.9079)
 
 [node name="TreeOak10" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.02086, -0.0645343, -0.419884, 0.0484164, 1.10345, -0.05188, 0.422046, 0.0295129, 1.02159, -70.795, -9.62442, 13.8245)
+transform = Transform3D(1.1661, -0.0291553, -0.157115, 0.0281385, 1.17662, -0.00949957, 0.157301, 0.00565545, 1.16642, -70.795, -9.62442, 13.8245)
 
 [node name="TreeOak11" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.72938, -0.0340462, 0.0587009, 0.0342651, 1.73036, -0.00587927, -0.0585734, 0.00703692, 1.72971, -76.6583, -9.04197, -3.01558)
+transform = Transform3D(0.139583, -0.0125114, 1.29546, 0.0039244, 1.30296, 0.012161, -1.29552, 0.00259893, 0.139614, -76.6583, -9.04197, -3.01558)
 
 [node name="TreeOak12" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.01676, -0.0576027, -0.498849, -0.0359675, 1.13198, -0.0574016, 0.500874, -0.0356446, -1.01677, -53.9539, -10.5165, -8.36281)
+transform = Transform3D(-0.535747, -0.078308, -0.998905, -0.0265833, 1.13344, -0.0745976, 1.00162, -0.0118035, -0.536277, -53.9539, -10.5165, -8.36281)
 
 [node name="TreeOak13" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.73091, -0.000922609, 0.37915, -0.0180272, 1.77014, -0.0779908, -0.378722, -0.0800418, -1.72915, -35.0639, -5.77835, -6.92155)
+transform = Transform3D(0.606525, -0.0397499, 1.24843, 0.0258841, 1.38793, 0.0316164, -1.24879, 0.00946192, 0.607004, -35.0639, -5.77835, -6.92155)
 
 [node name="TreeOak14" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.28457, -0.105507, -1.1568, -0.0480903, 1.72808, -0.104209, 1.16061, -0.0451721, -1.28468, -31.4769, -5.18131, 2.19364)
+transform = Transform3D(1.13144, -0.0542869, -1.50132, 0.0304488, 1.87992, -0.0450299, 1.50199, 0.00278378, 1.13185, -31.4769, -5.18131, 2.19364)
 
 [node name="TreeOak15" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.957919, -0.101291, -1.74662, 0.00913531, 1.99155, -0.110484, 1.74953, 0.0450606, 0.956902, -41.9108, -8.88051, 2.14927)
+transform = Transform3D(-0.1714, -0.093884, -1.95455, -0.00187247, 1.96204, -0.0940796, 1.9568, -0.00634599, -0.171293, -41.9108, -8.88051, 2.14927)
 
 [node name="TreeOak16" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.17665, -0.067091, -0.564094, 0.0405448, 1.30406, -0.0705273, 0.566621, 0.0460084, 1.17645, -29.8041, -5.96454, 9.98573)
+transform = Transform3D(-0.1618, 0.0128308, 1.03069, -0.0025553, 1.0433, -0.0133889, -1.03076, -0.00460044, -0.161754, -29.8041, -5.96454, 9.98573)
 
 [node name="TreeOak17" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.906191, -0.0988869, -1.31038, 0.0413401, 1.5931, -0.0916331, 1.31346, 0.0180832, 0.906953, -24.6447, -5.29723, 22.5535)
+transform = Transform3D(-0.0754097, -0.070925, -1.18897, -0.00137517, 1.19135, -0.0709801, 1.19108, -0.00311491, -0.0753579, -24.6447, -5.29723, 22.5535)
 
 [node name="TreeOak18" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.62954, -0.0384622, -0.196997, 0.0322108, 1.64066, -0.0538808, 0.198115, 0.0496119, 1.62911, -20.232, -4.41151, 34.0548)
+transform = Transform3D(-1.16525, -0.0494574, 0.166771, -0.0504037, 1.17708, -0.00310336, -0.166488, -0.0102041, -1.1663, -20.232, -4.41151, 34.0548)
 
 [node name="TreeOak19" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.6134, -0.0575815, -0.492926, 0.0429898, 1.68652, -0.0563014, 0.494413, 0.0412594, 1.61345, -10.9384, -3.48974, 31.7813)
+transform = Transform3D(-1.80031, -0.0278699, 0.625262, -0.0277448, 1.9058, 0.00506194, -0.625268, -0.0043204, -1.80052, -10.9384, -3.48974, 31.7813)
 
 [node name="TreeOak20" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-0.769895, -0.00935288, -1.17687, -0.00458321, 1.40633, -0.00817817, 1.1769, -0.000641718, -0.769909, -12.504, -3.19258, 19.0921)
+transform = Transform3D(-0.53659, -0.0400884, -1.78953, -0.0024662, 1.86823, -0.0411117, 1.78998, -0.00944345, -0.536512, -12.504, -3.19258, 19.0921)
 
 [node name="TreeOak21" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.80948, -0.0744071, -0.0955183, 0.0724686, 1.81167, -0.0384284, 0.0969973, 0.0345257, 1.8106, -19.0954, -3.17502, 9.88467)
+transform = Transform3D(-0.296986, 0.00064311, 1.05996, -0.000590227, 1.10078, -0.00083325, -1.05996, -0.000793147, -0.296986, -19.0954, -3.17502, 9.88467)
 
 [node name="TreeOak22" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(1.15007, -0.0105488, -0.320749, 0.00924389, 1.19396, -0.00612206, 0.32079, 0.00341357, 1.1501, -4.32088, -5.08901, 39.0884)
+transform = Transform3D(0.0489418, -0.0591817, -1.07534, 0.000997563, 1.07646, -0.0591975, 1.07697, 0.00169236, 0.0489227, -4.32088, -5.08901, 39.0884)
 
 [node name="TreeOak23" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.271083, -0.0246855, -1.34058, 0.00125277, 1.36771, -0.0249317, 1.34081, 0.00371297, 0.271061, 4.81639, -8.70758, 47.343)
+transform = Transform3D(0.872886, -0.12108, -1.62814, 0.0292816, 1.8471, -0.121665, 1.63237, 0.0316123, 0.872805, 4.81639, -8.70758, 47.343)
 
 [node name="TreeOak24" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-1.67931, -0.0216514, -0.690862, -0.0168119, 1.81585, -0.0160427, 0.690997, -0.00843944, -1.67938, -0.207891, -10.7856, 55.4854)
+transform = Transform3D(-0.965422, -0.0108927, 1.49184, -0.0107348, 1.77696, 0.00602766, -1.49184, -0.0057374, -0.965465, -0.207891, -10.7856, 55.4854)
 
 [node name="TreeOak25" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.700451, -0.0728899, -1.26583, 0.0284745, 1.44668, -0.0675476, 1.2676, 0.00778028, 0.700986, -10.0502, -8.68074, 54.925)
+transform = Transform3D(-0.959301, -0.0353616, 0.943949, -0.0342647, 1.34578, 0.0155929, -0.943989, -0.0129137, -0.959826, -10.0502, -8.68074, 54.925)
 
 [node name="TreeOak26" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-0.931772, -0.010558, -0.659775, -0.00523149, 1.1417, -0.0108816, 0.659839, -0.00585727, -0.931768, -14.171, -5.10991, 43.316)
+transform = Transform3D(-0.0201372, 0.00790884, 1.18138, -0.000281076, 1.18155, -0.00791478, -1.18141, -0.000415917, -0.0201348, -14.171, -5.10991, 43.316)
 
 [node name="TreeOak27" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(0.549739, -0.142634, -1.84805, 0.0247337, 1.92801, -0.141448, 1.85338, 0.0165776, 0.550046, -23.5192, -6.18832, 45.3541)
+transform = Transform3D(0.589369, -0.045082, -0.982669, 0.00801382, 1.14572, -0.0477561, 0.98367, 0.017677, 0.589158, -23.5192, -6.18832, 45.3541)
 
 [node name="TreeOak28" parent="Trees" instance=ExtResource("31_nbaxe")]
-graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
-transform = Transform3D(-0.319863, -0.0526349, -1.31159, -0.011107, 1.35003, -0.0514688, 1.3126, -0.0014027, -0.320052, -29.95, -7.70488, 37.8822)
+transform = Transform3D(-0.920203, -0.0465648, 0.805461, -0.0350889, 1.22292, 0.0306114, -0.806042, -7.68062e-05, -0.920872, -29.95, -7.70488, 37.8822)
 
 [node name="Boulders" type="Node3D" parent="."]
 script = ExtResource("32_s0lge")

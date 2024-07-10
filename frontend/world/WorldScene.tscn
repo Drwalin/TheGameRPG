@@ -1,6 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://m0gckaqqjvd4"]
+[gd_scene load_steps=6 format=3 uid="uid://m0gckaqqjvd4"]
 
 [ext_resource type="PackedScene" uid="uid://dlqxx5gv1iniy" path="res://gui/UI.tscn" id="1_8f0hh"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mw8nm"]
+
+[sub_resource type="Sky" id="Sky_2wxwl"]
+sky_material = SubResource("ProceduralSkyMaterial_mw8nm")
+
+[sub_resource type="Environment" id="Environment_7i8e1"]
+background_mode = 2
+sky = SubResource("Sky_2wxwl")
+ambient_light_color = Color(1, 0.964706, 0.901961, 1)
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_e2e8w"]
 
 [node name="SceneRoot" type="Node3D"]
 
@@ -17,3 +29,7 @@ shadow_enabled = true
 
 [node name="PlayerCamera3D" type="Camera3D" parent="."]
 transform = Transform3D(-0.649185, 0.0934647, -0.754866, -0.000607168, 0.992358, 0.123392, 0.76063, 0.0805627, -0.644167, -41.704, 100, -32.225)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7i8e1")
+camera_attributes = SubResource("CameraAttributesPractical_e2e8w")

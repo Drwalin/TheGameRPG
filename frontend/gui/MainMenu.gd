@@ -32,10 +32,6 @@ func _input(event)->void:
 func _ready():
 	_on_connect_to_server_pressed();
 
-func _process(delta):
-	pass;
-
-
 func _on_settings_pressed():
 	get_parent().SwitchToMenu($"../Settings");
 

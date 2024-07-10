@@ -7,11 +7,9 @@ func _ready():
 
 func SwitchToMenu(menu):
 	if menu is String:
-		var found:bool = false;
 		for child in get_children():
 			if child is Control:
 				if menu == child.name:
-					found = true;
 					currentMenu = child;
 					SwitchToMenu(child);
 					return;

@@ -12,5 +12,5 @@ func SetMonitor(text: String, unit: String, _monitor: int, _format:String = "%f"
 	format = _format;
 	multiplier = _multiplier;
 
-func _process(dt)->void:
+func _process(_dt: float)->void:
 	$Value.text = format % (Performance.get_monitor(monitor) * multiplier);

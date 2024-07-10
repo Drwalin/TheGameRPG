@@ -18,6 +18,13 @@ var positionStartTime:float = 0;
 var oldPosition:Vector3 = Vector3.ZERO;
 
 
+func _ready():
+	shadow_enabled = ProjectSettings.get_setting("game_settings/graphics/point_shadows", true);
+	ProjectSettings.settings_changed.connect(_On_SettingsChanged);
+
+func _On_SettingsChanged():
+	shadow_enabled = ProjectSettings.get_setting("game_settings/graphics/point_shadows", shadow_enabled);
+	pass;
 
 func _process(delta):
 	energyTime -= delta;

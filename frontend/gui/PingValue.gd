@@ -1,4 +1,4 @@
 extends Label
 
-func _process(delta):
+func _process(_delta: float)->void:
 	text = "Tick: %d\nPing: %d ms" % [gameFrontend.GetCurrentTick(), gameFrontend.GetPing()];
