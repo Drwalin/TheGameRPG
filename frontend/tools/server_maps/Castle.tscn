@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=71 format=3 uid="uid://clkxybhmklyt3"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
@@ -64,6 +64,12 @@
 [ext_resource type="ArrayMesh" uid="uid://dd7s6lc43tp4r" path="res://assets/collisions/Environmental/Logs/_Log01.col.obj" id="56_br0xi"]
 [ext_resource type="PackedScene" uid="uid://cac1lxvu27xka" path="res://assets/meshes/Environmental/Flowers/Dandelion.glb" id="57_7573t"]
 [ext_resource type="PackedScene" uid="uid://cgocqgfqi5ffs" path="res://assets/prefabs/Furniture/Outdoor/LampPostHanging_Lit.tscn" id="64_7y4qw"]
+[ext_resource type="PackedScene" uid="uid://cdkgn57klqw2p" path="res://assets/meshes/Environmental/Paths/Pebbles02.glb" id="64_pjxsx"]
+[ext_resource type="PackedScene" uid="uid://c2ui7y4prsh73" path="res://assets/meshes/Environmental/Paths/GreenPatch02.glb" id="65_d3y8f"]
+[ext_resource type="PackedScene" uid="uid://nx1veglhkrte" path="res://assets/meshes/Environmental/Paths/DirtPatch02.glb" id="66_xrfan"]
+[ext_resource type="PackedScene" uid="uid://b3rved58b8ndq" path="res://assets/meshes/Environmental/Paths/DirtPatch.glb" id="67_x743h"]
+[ext_resource type="PackedScene" uid="uid://b1fuv4kivs482" path="res://assets/meshes/Environmental/Paths/Pebbles.glb" id="68_nt227"]
+[ext_resource type="PackedScene" uid="uid://cmi84hkaptoxe" path="res://assets/meshes/Environmental/Paths/GreenPatch.glb" id="69_423dg"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
@@ -1001,7 +1007,7 @@ transform = Transform3D(-0.178961, 0.0206134, -0.98364, 0.0213291, 0.999627, 0.0
 
 [node name="Trees" type="Node3D" parent="."]
 script = ExtResource("31_wxnec")
-meshes = Array[Resource]([ExtResource("31_nbaxe")])
+meshes = Array[PackedScene]([ExtResource("31_nbaxe")])
 
 [node name="TreeOak01" parent="Trees" instance=ExtResource("31_nbaxe")]
 graphic_Mesh_or_PackedScene = ExtResource("31_nbaxe")
@@ -1117,7 +1123,7 @@ transform = Transform3D(-0.319863, -0.0526349, -1.31159, -0.011107, 1.35003, -0.
 
 [node name="Boulders" type="Node3D" parent="."]
 script = ExtResource("32_s0lge")
-meshes = Array[Resource]([ExtResource("27_kgv6s"), ExtResource("28_ufcql")])
+meshes = Array[PackedScene]([ExtResource("27_kgv6s"), ExtResource("28_ufcql")])
 
 [node name="Boulder01" parent="Boulders" instance=ExtResource("27_kgv6s")]
 graphic_Mesh_or_PackedScene = ExtResource("28_ufcql")
@@ -1422,130 +1428,476 @@ transform = Transform3D(0.691965, 0.310529, 1.11531, -0.0585009, 1.30706, -0.327
 graphic_Mesh_or_PackedScene = ExtResource("57_7573t")
 transform = Transform3D(1.07021, 0.0841145, 0.359244, 0.00717348, 1.09726, -0.278286, -0.368891, 0.265366, 1.03681, -63.8557, -6.33655, 61.9419)
 
+[node name="Flowers2" type="Node3D" parent="."]
+script = ExtResource("34_qec53")
+meshes = Array[PackedScene]([ExtResource("35_4mj8j"), ExtResource("36_wxf2a"), ExtResource("37_tcy3f"), ExtResource("38_tfej8"), ExtResource("39_fmdkf"), ExtResource("40_x8f7i"), ExtResource("41_d5o3s"), ExtResource("42_tcnue"), ExtResource("43_0dt21"), ExtResource("44_farep"), ExtResource("45_v6fc2")])
+
+[node name="Bush01" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("55_esqk6")
+collision_mesh = ExtResource("56_br0xi")
+transform = Transform3D(0.636574, 0.238133, -1.12272, -0.0110908, 1.28507, 0.26628, 1.14764, -0.119669, 0.625323, -71.1925, -8.76145, 22.614)
+
+[node name="Bush02" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("48_7dre8")
+transform = Transform3D(-1.11699, 0.130411, -0.114194, 0.136891, 1.12047, -0.0594065, 0.106341, -0.072533, -1.12301, -68.188, -9.36527, 20.242)
+
+[node name="Bush03" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("53_ah0cq")
+transform = Transform3D(1.91587, 0.341455, 0.413857, -0.348435, 1.95883, -0.00312937, -0.407997, -0.0694652, 1.94606, -61.7046, -10.4254, 19.5568)
+
+[node name="Bush04" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("52_y7515")
+transform = Transform3D(-0.878735, 0.177251, -0.6412, 0.16253, 1.08732, 0.0778341, 0.645089, -0.0324988, -0.893048, -60.7031, -10.6724, 16.7631)
+
+[node name="Bush05" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("55_esqk6")
+collision_mesh = ExtResource("56_br0xi")
+transform = Transform3D(0.785478, 0.0454477, -1.43479, 0.0160095, 1.63516, 0.0605589, 1.43542, -0.0431067, 0.784458, -51.795, -11.5021, 16.7104)
+
+[node name="Bush06" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+transform = Transform3D(-0.0449103, -0.018988, -1.05357, -0.0666765, 1.05247, -0.0161259, 1.05163, 0.0659185, -0.0460156, -50.0029, -11.3594, 13.5478)
+
+[node name="Bush07" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("51_irupq")
+transform = Transform3D(-1.17853, 0.0401085, 0.177401, 0.0541468, 1.18776, 0.0911742, -0.173632, 0.0981627, -1.17568, -52.533, -11.1965, 9.96346)
+
+[node name="Bush08" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("48_7dre8")
+transform = Transform3D(-1.57376, 0.246269, -0.0842096, 0.242247, 1.57471, 0.0779439, 0.0951647, 0.0641108, -1.591, -67.2392, -9.60596, 11.4394)
+
+[node name="Bush09" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(0.993407, 0.100361, 1.23086, -0.0990527, 1.58105, -0.0489715, -1.23096, -0.0462304, 0.997262, -73.2482, -8.76585, 17.9755)
+
+[node name="Bush10" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("52_y7515")
+transform = Transform3D(-1.4626, 0.0561199, 0.717226, -0.0135283, 1.62256, -0.154546, -0.719291, -0.144631, -1.4555, -76.938, -8.45885, 21.9815)
+
+[node name="Bush11" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(-0.554442, -0.0732324, -1.37702, 0.0611047, 1.4814, -0.103386, 1.37761, -0.0951815, -0.549618, -77.9922, -8.62712, 16.7631)
+
+[node name="Bush12" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(-0.907922, 0.133879, 0.903628, -0.0739057, 1.25909, -0.260801, -0.910497, -0.235702, -0.879903, -58.7001, -9.30217, 30.0989)
+
+[node name="Bush13" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("57_7573t")
+transform = Transform3D(0.080908, 0.11167, 1.20154, -0.27441, 1.17439, -0.0906693, -1.17511, -0.266555, 0.103901, -54.4833, -9.03539, 32.998)
+
+[node name="Bush14" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(-0.171652, 0.0840217, 1.03757, -0.242292, 1.01947, -0.12264, -1.01238, -0.258238, -0.146573, -48.2634, -9.67234, 32.4709)
+
+[node name="Bush15" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("51_irupq")
+transform = Transform3D(1.71306, -0.177899, -1.00122, 0.303553, 1.96146, 0.170853, 0.97054, -0.299478, 1.71377, -43.783, -10.3729, 28.5176)
+
+[node name="Bush16" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(1.684, -0.0280303, -0.964755, 0.153997, 1.92311, 0.212931, 0.952797, -0.261283, 1.67072, -46.0496, -10.9061, 25.6185)
+
+[node name="Bush17" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(-0.52877, 0.0885563, 0.875948, -0.128409, 1.00311, -0.178927, -0.870998, -0.201647, -0.505396, -49.0541, -10.543, 28.2013)
+
+[node name="Bush18" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(-1.85808, -0.0255311, 0.0998694, -0.0443249, 1.82565, -0.357953, -0.0930647, -0.359783, -1.82346, -45.0541, -9.92408, 31.2013)
+
+[node name="Bush19" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("57_7573t")
+transform = Transform3D(-1.05102, -0.0105826, 0.445393, -0.101479, 1.11691, -0.212928, -0.433807, -0.235637, -1.02928, -44.7378, -9.19612, 34.7856)
+
+[node name="Bush20" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("57_7573t")
+transform = Transform3D(-0.758885, -0.380907, -0.589952, -0.337059, 0.959602, -0.185998, 0.616055, 0.055803, -0.828493, -32.4035, -8.2192, 29.8309)
+
+[node name="Bush21" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("51_irupq")
+transform = Transform3D(-1.17196, -0.111551, -0.716172, -0.0397866, 1.36941, -0.148192, 0.723714, -0.105358, -1.16789, -35.8297, -8.32344, 36.5251)
+
+[node name="Bush22" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(-0.973439, 0.105982, 1.50937, 0.198622, 1.78817, 0.00253933, -1.5, 0.168003, -0.979188, -55.1745, -10.6825, 5.37314)
+
+[node name="Bush23" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+transform = Transform3D(0.620504, 0.180924, -1.61525, -0.126561, 1.72909, 0.145056, 1.62042, 0.0657672, 0.629855, -68.7211, -9.2973, 9.11559)
+
+[node name="Bush24" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(1.56973, 0.0746994, -0.91985, -0.0272689, 1.81791, 0.101095, 0.922476, -0.0733739, 1.56826, -73.0961, -9.06888, 9.1683)
+
+[node name="Bush25" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("55_esqk6")
+collision_mesh = ExtResource("56_br0xi")
+transform = Transform3D(0.85084, 0.0796897, -1.60608, 0.039396, 1.81546, 0.110949, 1.60757, -0.0866682, 0.847331, -75.7316, -8.84893, 11.7511)
+
+[node name="Bush26" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(-1.82022, 0.301366, -0.441792, 0.309861, 1.87168, 0.000105338, 0.435876, -0.0720565, -1.845, -66.2964, -9.76034, 16.3897)
+
+[node name="Bush27" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(1.45688, -0.0783401, 0.180601, 0.0600573, 1.46128, 0.149392, -0.187475, -0.140669, 1.45132, -83.4801, -8.58266, 20.9228)
+
+[node name="Bush28" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("52_y7515")
+transform = Transform3D(1.01439, 0.00423354, 1.20289, -0.0999263, 1.56836, 0.0787472, -1.19874, -0.127155, 1.01133, -84.4289, -8.89056, 15.4409)
+
+[node name="Bush29" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("51_irupq")
+transform = Transform3D(-1.71876, -0.251972, -0.517418, -0.208159, 1.79145, -0.180936, 0.536545, -0.112152, -1.72768, -79.8431, -9.28617, 9.90625)
+
+[node name="Bush30" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("49_qi2p2")
+collision_mesh = ExtResource("50_uod8s")
+transform = Transform3D(0.709978, -0.0742497, 0.755429, 0.101137, 1.0344, 0.00661699, -0.752301, 0.068989, 0.71382, -75.6789, -9.20742, 5.10959)
+
+[node name="Bush31" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("52_y7515")
+transform = Transform3D(1.12815, -0.0214512, 0.845846, 0.0940295, 1.40418, -0.089801, -0.840876, 0.12824, 1.12477, -70.935, -8.95551, 3.52827)
+
+[node name="Bush32" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+transform = Transform3D(0.545612, 0.232354, 0.825729, -0.0186081, 0.981586, -0.263915, -0.857595, 0.126528, 0.531064, -66.4019, -8.75104, 0.892738)
+
+[node name="Bush33" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("52_y7515")
+transform = Transform3D(0.949726, 0.162939, 1.01824, -0.037311, 1.38882, -0.187439, -1.03052, 0.0998814, 0.945196, -59.4019, -9.9504, -0.107262)
+
+[node name="Bush34" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("49_qi2p2")
+collision_mesh = ExtResource("50_uod8s")
+transform = Transform3D(-1.28701, 0.0204539, 0.0941871, 0.0255371, 1.28851, 0.0691336, -0.0929378, 0.0708042, -1.28532, -54.7106, -10.366, 1.89574)
+
+[node name="Bush37" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("57_7573t")
+transform = Transform3D(-0.175399, -0.143692, 1.87419, 0.262923, 1.86195, 0.16736, -1.86121, 0.276569, -0.15298, -47.3311, -10.5432, 7.64119)
+
+[node name="Bush38" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+transform = Transform3D(0.828595, -0.300861, -0.789797, 0.047727, 1.12094, -0.376933, 0.843812, 0.232033, 0.796874, -42.4818, -10.0758, 10.224)
+
+[node name="Bush39" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+transform = Transform3D(0.599588, -0.428489, -1.21644, -0.0467849, 1.33336, -0.492735, 1.28885, 0.247738, 0.548015, -38.4231, -8.96173, 11.0674)
+
+[node name="Bush40" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("54_ryr2b")
+transform = Transform3D(0.0555607, -0.627139, 1.78488, 0.355638, 1.75728, 0.60637, -1.85812, 0.317584, 0.169428, -35.4186, -8.15439, 12.4379)
+
+[node name="Bush41" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("46_sqqmu")
+transform = Transform3D(0.583057, -0.544559, -1.30943, -0.0290847, 1.4109, -0.599704, 1.41786, 0.252878, 0.526169, -30.5692, -6.81902, 14.9153)
+
+[node name="Bush42" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("46_sqqmu")
+transform = Transform3D(-1.1072, -0.0932693, -0.100584, -0.0826959, 1.10655, -0.115791, 0.109443, -0.107457, -1.10507, -41.5692, -10.6818, 23.9153)
+
+[node name="Bush43" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("47_bi48u")
+transform = Transform3D(1.79232, 0.243261, -0.662696, -0.18095, 1.90624, 0.210344, 0.682349, -0.13346, 1.79648, -65.5692, -9.4326, 23.9153)
+
+[node name="Bush35" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("53_ah0cq")
+transform = Transform3D(-0.0779137, -0.0746745, -1.36881, -0.211743, 1.35522, -0.0618805, 1.35439, 0.207577, -0.0884173, -50.9682, -10.7118, 6.90325)
+
+[node name="Bush36" parent="Flowers2" instance=ExtResource("36_wxf2a")]
+graphic_Mesh_or_PackedScene = ExtResource("49_qi2p2")
+collision_mesh = ExtResource("50_uod8s")
+transform = Transform3D(1.45166, -0.14674, -0.593499, 0.0909607, 1.56392, -0.16419, 0.604566, 0.117045, 1.44979, -50.4938, -10.4198, 3.89874)
+
 [node name="Paths" type="Node3D" parent="."]
+script = ExtResource("34_qec53")
+meshes = Array[PackedScene]([ExtResource("31_jkt8p"), ExtResource("32_f7l6s"), ExtResource("35_v0p3c"), ExtResource("36_vku62"), ExtResource("33_3howi"), ExtResource("34_s3af4")])
+scaleMin = 0.8
+scaleMax = 1.2
 
 [node name="DirtPatch02" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.533, -1.71452, 54.1819)
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(-0.458082, -0.0472469, 1.02351, -0.00896725, 1.12128, 0.047747, -1.02456, 0.0113103, -0.45803, -88.533, -1.71452, 54.1819)
 
 [node name="DirtPatch" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -87.3044, -1.70285, 53.3004)
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.282868, 0.117345, -1.02059, 0.168683, 1.0389, 0.166203, 1.01337, -0.205687, 0.257217, -87.3044, -1.70285, 53.3004)
 
 [node name="DirtPatch2" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -87.1131, -1.65741, 54.4516)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(0.890898, -0.0442928, 0.558018, 0.0431688, 1.05118, 0.0145165, -0.558106, 0.0106031, 0.89188, -87.1131, -1.65741, 54.4516)
 
 [node name="DirtPatch03" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -86.1981, -1.72254, 53.8321)
+transform = Transform3D(-0.526669, 0.104097, 0.777988, -0.0947787, 0.921603, -0.187474, -0.779178, -0.182465, -0.503061, -86.1981, -1.72254, 53.8321)
 
 [node name="DirtPatch3" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84.5846, -1.93196, 53.5419)
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(-0.364193, 0.0659597, 0.711685, -0.111355, 0.783761, -0.129624, -0.706007, -0.157644, -0.346677, -84.5846, -1.95897, 53.5419)
 
 [node name="Pebbles02" parent="Paths" instance=ExtResource("33_3howi")]
-transform = Transform3D(0.999352, 0.0359809, 4.65661e-10, -0.0351674, 0.976757, 0.211444, 0.00760796, -0.211307, 0.97739, -83.451, -2.15287, 52.9601)
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.132709, 0.0902904, -1.08628, 0.225664, 1.07287, 0.0616068, 1.06641, -0.215795, -0.148218, -83.451, -2.1714, 52.9601)
 
 [node name="Pebbles" parent="Paths" instance=ExtResource("34_s3af4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.7375, -1.69839, 53.0074)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(-0.835756, 0.0371011, -0.469895, 0.0210462, 0.95852, 0.0382483, 0.470888, 0.0230082, -0.835705, -88.7375, -1.69839, 53.0074)
 
 [node name="DirtPatch04" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.9156, -2.5639, 51.6448)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.520368, 0.0826248, -0.882313, 0.132266, 1.00448, 0.172073, 0.876247, -0.200691, 0.497997, -81.9156, -2.5639, 51.6448)
 
 [node name="DirtPatch4" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -81.0925, -2.42447, 52.6815)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(0.949454, 0.0803188, -0.300071, -0.0161189, 0.976446, 0.210359, 0.310216, -0.195089, 0.929335, -81.0925, -2.42447, 52.6815)
 
 [node name="Pebbles03" parent="Paths" instance=ExtResource("33_3howi")]
-transform = Transform3D(0.999742, 0.0227048, 0, -0.0221413, 0.974933, 0.221395, 0.00502673, -0.221338, 0.975184, -80.2488, -2.8307, 50.9956)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.962081, 0.0842511, 0.406656, -0.00383259, 1.02425, -0.221272, -0.415274, -0.204641, -0.940073, -80.2488, -2.83071, 50.9956)
 
 [node name="Pebbles2" parent="Paths" instance=ExtResource("34_s3af4")]
-transform = Transform3D(0.992527, 0.122025, 0, -0.118822, 0.966473, 0.22762, 0.0277754, -0.225919, 0.97375, -76.6139, -3.86547, 48.2094)
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.812904, 0.221971, -0.66266, 0.283376, 1.03388, -0.00130895, 0.638817, -0.176161, -0.842664, -76.6139, -3.89946, 48.2094)
 
 [node name="Pebbles04" parent="Paths" instance=ExtResource("33_3howi")]
-transform = Transform3D(0.551063, 0.0948402, -0.829056, 3.72529e-09, 0.99352, 0.113654, 0.834463, -0.0626306, 0.547493, -72.9972, -5.14638, 44.8207)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(0.339654, 0.111254, -1.00575, 0.069816, 1.05579, 0.140367, 1.00947, -0.110453, 0.328693, -72.9972, -5.16005, 44.8207)
 
 [node name="Pebbles3" parent="Paths" instance=ExtResource("34_s3af4")]
-transform = Transform3D(0.994102, 0.10845, 0, -0.107765, 0.987819, 0.112249, 0.0121735, -0.111587, 0.99368, -70.7766, -5.80197, 41.0409)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.800583, 0.115085, 0.0358535, -0.118305, 0.796335, 0.0855468, -0.0231054, -0.0898324, 0.804276, -70.7766, -5.80196, 41.0409)
 
 [node name="Pebbles05" parent="Paths" instance=ExtResource("33_3howi")]
-transform = Transform3D(0.989374, 0.145392, 0, -0.14226, 0.968058, 0.20646, 0.0300178, -0.204267, 0.978455, -66.813, -6.74001, 38.3885)
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.781119, 0.21492, 0.677225, 0.0540325, 1.02151, -0.261858, -0.708452, -0.159056, -0.76666, -66.813, -6.74001, 38.3885)
 
 [node name="Pebbles4" parent="Paths" instance=ExtResource("34_s3af4")]
-transform = Transform3D(0.9815, 0.19146, -1.86265e-09, -0.188936, 0.968563, 0.161828, 0.0309835, -0.158834, 0.986819, -66.6848, -7.4976, 34.0286)
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.908643, 0.246327, 0.693853, -0.323498, 1.1236, 0.0247469, -0.661406, -0.211154, 0.941114, -66.6848, -7.49974, 34.0286)
 
 [node name="GreenPatch02" parent="Paths" instance=ExtResource("35_v0p3c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -84.9497, -1.75875, 54.3614)
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(0.627107, 0.11836, 0.864773, -0.237142, 1.04788, 0.0285469, -0.840003, -0.207466, 0.63754, -84.9497, -1.75876, 54.3614)
 
 [node name="GreenPatch" parent="Paths" instance=ExtResource("36_vku62")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.37, -3.22671, 50.5272)
+transform = Transform3D(0.661656, 0.179891, -0.442633, -0.0987388, 0.791238, 0.173972, 0.467478, -0.0874911, 0.663237, -78.37, -3.22671, 50.5272)
 
 [node name="DirtPatch05" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74.7518, -4.51625, 46.9358)
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(0.491695, 0.178878, -0.687422, 0.0154352, 0.833163, 0.227843, 0.710146, -0.141962, 0.471009, -74.7518, -4.51626, 46.9358)
 
 [node name="DirtPatch06" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.9358, -3.16247, 49.9449)
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(0.374843, 0.245796, 1.02108, -0.199244, 1.08112, -0.187106, -1.03117, -0.119544, 0.407326, -78.9358, -3.16246, 49.9449)
 
 [node name="DirtPatch5" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -71.5907, -5.34864, 44.4347)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(-0.919917, 0.105741, 0.41441, 0.0525321, 1.00347, -0.139436, -0.424449, -0.10498, -0.915416, -71.5907, -5.34864, 44.4347)
 
 [node name="GreenPatch03" parent="Paths" instance=ExtResource("35_v0p3c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -71.9655, -5.46042, 42.9888)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(0.737434, 0.118202, -0.853358, 0.012411, 1.12172, 0.166098, 0.861416, -0.11735, 0.728143, -71.9655, -5.46041, 42.9888)
 
 [node name="GreenPatch2" parent="Paths" instance=ExtResource("36_vku62")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74.9877, -4.6028, 46.0288)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.897674, 0.239327, -0.541378, -0.123005, 1.0374, 0.254648, 0.578996, -0.15066, 0.893448, -74.9877, -4.60281, 46.0288)
 
 [node name="DirtPatch07" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.7836, -6.02711, 41.5983)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(-1.04991, 0.159022, 0.351998, 0.109961, 1.10036, -0.169129, -0.370269, -0.124129, -1.04833, -68.7836, -6.02711, 41.5983)
 
 [node name="DirtPatch6" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.4561, -6.19374, 39.3362)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(-0.895492, 0.132878, 0.0267546, 0.128276, 0.888553, -0.119573, -0.0437914, -0.114437, -0.897366, -69.4561, -6.19375, 39.3362)
 
 [node name="GreenPatch04" parent="Paths" instance=ExtResource("35_v0p3c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75.4972, -4.18531, 47.9389)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(-0.765781, 0.183925, -0.410811, 0.230305, 0.856668, -0.0457644, 0.386722, -0.145967, -0.786228, -75.4972, -4.18531, 47.9389)
 
 [node name="DirtPatch08" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75.9123, -4.2176, 47.2125)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.930128, 0.223052, -0.298986, -0.16607, 0.966858, 0.204669, 0.334014, -0.140415, 0.934345, -75.9123, -4.2176, 47.2125)
 
 [node name="GreenPatch05" parent="Paths" instance=ExtResource("35_v0p3c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -73.677, -4.84521, 46.3595)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(0.152184, 0.211889, 0.989505, -0.201639, 0.986916, -0.180322, -0.991644, -0.16816, 0.188522, -73.677, -4.84521, 46.3595)
 
 [node name="DirtPatch09" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.9861, -7.81612, 34.0738)
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(-0.832129, 0.193226, -0.840368, 0.28049, 1.165, -0.00987198, 0.815401, -0.203558, -0.854211, -64.9861, -7.81611, 34.0738)
 
 [node name="DirtPatch7" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66.161, -8.01089, 31.8438)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(-0.432032, 0.135613, -0.708726, 0.193137, 0.817639, 0.0387188, 0.695256, -0.142865, -0.451158, -66.161, -8.01089, 31.8438)
 
 [node name="DirtPatch10" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64.6537, -8.16849, 32.3726)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(-0.915962, 0.151377, -0.13943, 0.171737, 0.912686, -0.137305, 0.113412, -0.159472, -0.918177, -64.6537, -8.16849, 32.3726)
+
+[node name="DirtPatch17" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(0.282201, 0.131678, -0.849181, 0.0939723, 0.88371, 0.168261, 0.854176, -0.140725, 0.26204, -63.2727, -9.17417, 27.9071)
+
+[node name="DirtPatch18" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(-0.454636, 0.13287, -0.780138, 0.190075, 0.89171, 0.0411034, 0.768207, -0.141999, -0.471868, -63.2333, -9.53629, 25.67)
+
+[node name="DirtPatch19" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.158571, 0.100222, 0.892004, -0.145903, 0.890892, -0.126034, -0.88568, -0.164705, -0.138941, -60.9028, -9.6343, 27.0177)
+
+[node name="DirtPatch20" parent="Paths" instance=ExtResource("31_jkt8p")]
+transform = Transform3D(0.827191, 0.163859, -0.745462, -0.0017127, 1.09968, 0.239818, 0.763257, -0.175117, 0.808444, -61.5291, -9.89342, 25.0219)
+
+[node name="DirtPatch21" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(-0.944283, 0.112349, 0.518838, 0.00231946, 1.0596, -0.225225, -0.530857, -0.195216, -0.923887, -59.6454, -10.0568, 25.4789)
+
+[node name="DirtPatch22" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.131551, 0.0789568, 0.97854, -0.166041, 0.974852, -0.0563374, -0.967577, -0.156555, 0.142709, -58.6135, -10.3697, 24.0646)
+
+[node name="DirtPatch23" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(-0.282653, 0.12658, -0.831517, 0.128746, 0.873387, 0.0891895, 0.831184, -0.0922384, -0.296581, -60.6135, -10.1475, 24.0646)
+
+[node name="DirtPatch24" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.485585, 0.108027, -0.725528, 0.0132228, 0.868667, 0.13819, 0.733407, -0.0871858, 0.477877, -59.6743, -10.4177, 22.5744)
+
+[node name="DirtPatch25" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(1.08213, 0.141304, -0.364763, -0.0965268, 1.13625, 0.153802, 0.37908, -0.114042, 1.08043, -57.6743, -10.6664, 22.5744)
+
+[node name="DirtPatch26" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(-1.07205, 0.105574, 0.146257, 0.0961635, 1.08026, -0.0749102, -0.15261, -0.0609344, -1.07463, -58.186, -10.7335, 20.7024)
+
+[node name="DirtPatch27" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.0323806, 0.109825, 1.01803, -0.0807603, 1.01509, -0.112077, -1.02075, -0.0837968, -0.023427, -56.0319, -10.9702, 21.1321)
+
+[node name="DirtPatch28" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(0.432844, 0.0946506, -0.988887, 0.0726046, 1.07278, 0.13446, 0.99075, -0.119968, 0.422177, -54.8504, -10.9385, 22.5088)
+
+[node name="DirtPatch29" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.910432, 0.0798854, -0.0342252, -0.0755163, 0.905431, 0.104552, 0.0430155, -0.101253, 0.90793, -54.3486, -11.1324, 21.1703)
+
+[node name="DirtPatch30" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.326253, 0.0524778, -1.07037, 0.130488, 1.1125, 0.0147699, 1.06368, -0.12038, -0.330117, -52.976, -11.1665, 21.9218)
+
+[node name="DirtPatch31" parent="Paths" instance=ExtResource("31_jkt8p")]
+transform = Transform3D(-0.0683077, 0.0508585, 1.08231, -0.113377, 1.07817, -0.0578195, -1.07755, -0.116665, -0.0625255, -51.976, -11.3218, 20.9218)
+
+[node name="DirtPatch32" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.284409, 0.0223145, -1.0708, 0.0544248, 1.10678, 0.00860884, 1.06964, -0.0503809, -0.285153, -51.976, -11.4012, 19.9218)
+
+[node name="DirtPatch33" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(-0.367619, 0.0203462, -0.940928, 0.0501923, 1.00915, 0.00221128, 0.939809, -0.0459368, -0.368175, -49.7617, -11.4911, 18.9276)
+
+[node name="DirtPatch34" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(-0.332608, 0.0212094, -0.999147, 0.0521358, 1.05197, 0.00497502, 0.998012, -0.0478858, -0.333247, -48.5415, -11.4499, 20.3737)
+
+[node name="DirtPatch35" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.311443, 0.0383732, 0.756647, -0.0960098, 0.813488, -0.00173741, -0.751511, -0.088025, 0.313793, -50.078, -11.3729, 21.2775)
+
+[node name="DirtPatch36" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.79288, 0.0177824, 0.388403, -0.0336183, 0.881989, 0.0282475, -0.387354, -0.0401484, 0.792576, -48.4963, -11.3829, 21.865)
+
+[node name="DirtPatch37" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.773329, -0.131969, -0.592781, -0.0843256, 0.973822, -0.10679, 0.601411, -0.0331514, -0.777206, -45.8753, -11.2301, 19.967)
+
+[node name="DirtPatch38" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.145564, -0.0989499, -1.18559, -0.0276851, 1.19439, -0.0962852, 1.18939, 0.0156915, -0.14734, -46.4176, -11.2738, 21.3227)
+
+[node name="DirtPatch39" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.116197, -0.0949586, -1.04603, 0.115422, 1.04719, -0.0822426, 1.04397, -0.105209, 0.125519, -45.7849, -11.1838, 22.6333)
+
+[node name="DirtPatch40" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.90253, -0.0777102, 0.255858, 0.0781301, 0.938015, 0.00929634, -0.25573, 0.0123233, 0.905822, -42.7849, -10.9769, 21.6333)
+
+[node name="DirtPatch41" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(0.491006, -0.0977319, 1.07276, 0.0548111, 1.17969, 0.082386, -1.07581, 0.0154983, 0.493812, -43.7791, -11.0503, 20.9554)
+
+[node name="DirtPatch42" parent="Paths" instance=ExtResource("31_jkt8p")]
+transform = Transform3D(-0.878102, -0.244773, 0.549766, -0.190444, 1.03554, 0.156872, -0.570866, 0.0310467, -0.89798, -41.2484, -10.6777, 19.4641)
+
+[node name="DirtPatch43" parent="Paths" instance=ExtResource("31_jkt8p")]
+transform = Transform3D(0.572227, -0.186357, 0.542859, 0.151853, 0.788404, 0.110581, -0.553503, 0.0236373, 0.591561, -40.2484, -10.4713, 20.4641)
+
+[node name="DirtPatch44" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(0.0368277, -0.264343, 1.11823, 0.0431306, 1.11833, 0.262947, -1.14824, 0.0335289, 0.0457421, -39.8869, -10.3357, 18.792)
+
+[node name="DirtPatch45" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("69_423dg")
+transform = Transform3D(0.672039, -0.274839, -0.949495, 0.129471, 1.16274, -0.244927, 0.979956, 0.0348603, 0.683508, -37.311, -9.70244, 17.9786)
+
+[node name="DirtPatch46" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.967883, -0.250977, 0.196142, -0.221436, 0.981185, 0.162794, -0.22897, 0.11201, -0.986552, -37.9437, -9.68884, 16.3065)
+
+[node name="DirtPatch47" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.306459, -0.314933, -0.825934, -0.245185, 0.870148, -0.240817, 0.849255, 0.137571, -0.367569, -35.0966, -8.76416, 16.8036)
+
+[node name="DirtPatch48" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(-0.456984, -0.366837, -0.920947, -0.314379, 1.01537, -0.248451, 0.940148, 0.161223, -0.530732, -36.136, -8.89534, 15.2614)
+
+[node name="DirtPatch49" parent="Paths" instance=ExtResource("31_jkt8p")]
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.197619, -0.304464, -0.830089, -0.207851, 0.842731, -0.259618, 0.859386, 0.133811, -0.253674, -34.0005, -8.07356, 14.945)
 
 [node name="GreenPatch06" parent="Paths" instance=ExtResource("35_v0p3c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.0016, -8.31319, 31.2199)
+graphic_Mesh_or_PackedScene = ExtResource("66_xrfan")
+transform = Transform3D(-1.16539, 0.198102, -0.192847, 0.226851, 1.16275, -0.176459, 0.158027, -0.208219, -1.16887, -65.0016, -8.3132, 31.2199)
 
 [node name="DirtPatch11" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66.2329, -7.04039, 37.2433)
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(-0.915494, 0.204317, 0.35749, 0.131879, 0.971115, -0.217296, -0.390068, -0.151209, -0.9125, -66.2329, -7.04038, 37.2433)
 
 [node name="DirtPatch8" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.1146, -6.98582, 36.4023)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.920493, 0.230606, -0.619011, 0.286355, 1.09606, -0.0174947, 0.595277, -0.170665, -0.948779, -67.1146, -6.98582, 36.4023)
 
 [node name="GreenPatch3" parent="Paths" instance=ExtResource("36_vku62")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -67.5725, -6.34477, 40.3506)
+graphic_Mesh_or_PackedScene = ExtResource("67_x743h")
+transform = Transform3D(0.760991, 0.132913, 0.473219, -0.173053, 0.888786, 0.028656, -0.460059, -0.114467, 0.77198, -67.5725, -6.34478, 40.3506)
 
 [node name="Pebbles5" parent="Paths" instance=ExtResource("34_s3af4")]
-transform = Transform3D(0.977849, 0.209311, -3.72529e-09, -0.206601, 0.965188, 0.160398, 0.0335731, -0.156845, 0.987052, -69.0331, -6.41806, 37.9221)
+transform = Transform3D(-0.181673, 0.167254, 1.11293, -0.11699, 1.11842, -0.187177, -1.11933, -0.144042, -0.161071, -69.0331, -6.43913, 37.9221)
 
 [node name="DirtPatch12" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -69.8479, -5.66681, 43.4287)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.829651, 0.139783, 0.509051, -0.176041, 0.967237, 0.0213124, -0.497676, -0.109111, 0.841074, -69.8479, -5.66682, 43.4287)
 
 [node name="DirtPatch9" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -74.9018, -4.81764, 44.5651)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(-0.336395, 0.206438, -0.87812, 0.176619, 0.934127, 0.151945, 0.8846, -0.108003, -0.364268, -74.9018, -4.81763, 44.5651)
 
 [node name="DirtPatch13" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -76.9005, -3.57641, 50.0742)
+transform = Transform3D(-0.408131, 0.197393, 0.909485, -0.0162252, 0.991436, -0.222461, -0.930518, -0.103865, -0.395027, -76.9005, -3.5764, 50.0742)
 
 [node name="DirtPatch14" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -78.3634, -3.5008, 48.2761)
+graphic_Mesh_or_PackedScene = ExtResource("65_d3y8f")
+transform = Transform3D(0.837946, 0.137582, 0.338682, -0.177364, 0.893635, 0.0758042, -0.31965, -0.135187, 0.845775, -78.3634, -3.50081, 48.2761)
 
 [node name="DirtPatch15" parent="Paths" instance=ExtResource("31_jkt8p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.3453, -2.78105, 52.5522)
+graphic_Mesh_or_PackedScene = ExtResource("68_nt227")
+transform = Transform3D(-0.286372, 0.231717, 0.984601, -0.0466197, 1.01919, -0.253416, -1.01042, -0.112697, -0.267361, -79.3453, -2.78106, 52.5522)
 
 [node name="DirtPatch16" parent="Paths" instance=ExtResource("32_f7l6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.3541, -2.41197, 51.8046)
+graphic_Mesh_or_PackedScene = ExtResource("64_pjxsx")
+transform = Transform3D(0.633385, 0.0804119, 0.740752, -0.197796, 0.955487, 0.0654044, -0.718371, -0.192185, 0.63511, -83.3541, -2.41197, 51.8046)
 
 [node name="Lamps" type="Node3D" parent="."]
 
