@@ -1,6 +1,8 @@
 extends GameFrontend;
 class_name GameFrontendScript;
 
+var enablePointShadows:bool = true;
+
 var camera:Camera3D;
 
 var SENSITIVITY:float = 0.01;
@@ -38,7 +40,7 @@ func _input(event)->void:
 		if isDraggingCameraRotationButton:
 			Rotate(-event.relative.y * SENSITIVITY, -event.relative.x * SENSITIVITY);
 
-func _process(delta: float)->void:
+func _process(_delta: float)->void:
 	InternalProcess();
 	
 	if IsInPlayerControl() == false:

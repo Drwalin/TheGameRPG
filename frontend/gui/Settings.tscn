@@ -40,7 +40,39 @@ horizontal_alignment = 1
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
 
+[node name="Graphics" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/TabContainer/Graphics"]
+layout_mode = 2
+
+[node name="EnablePointShadows" type="CheckBox" parent="VBoxContainer/TabContainer/Graphics/HBoxContainer4"]
+layout_mode = 2
+button_pressed = true
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Graphics/HBoxContainer4"]
+layout_mode = 2
+text = "Pokaż cienie świateł"
+
+[node name="RendererDriver" type="HBoxContainer" parent="VBoxContainer/TabContainer/Graphics"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="VBoxContainer/TabContainer/Graphics/RendererDriver"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+max_value = 2.0
+value = 1.0
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Graphics/RendererDriver"]
+layout_mode = 2
+text = "Silnik renderowania
+0 - 'opengl3', najniższej jakości, dobry dla starszego sprzętu
+1 - 'mobile', średniej jakości
+2 - 'forward_plus', wysoka jakość, wymaga lepszego i nowszego sprzętu)"
+
 [node name="Sterowanie" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 alignment = 1
 
@@ -99,7 +131,10 @@ button_pressed = true
 layout_mode = 2
 text = "Pokaż ping"
 
+[connection signal="visibility_changed" from="." to="." method="Save"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
+[connection signal="toggled" from="VBoxContainer/TabContainer/Graphics/HBoxContainer4/EnablePointShadows" to="." method="_on_enable_point_shadows_toggled"]
+[connection signal="value_changed" from="VBoxContainer/TabContainer/Graphics/RendererDriver/Slider" to="." method="_on_rendering_driver_value_changed"]
 [connection signal="text_submitted" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Numerical" to="." method="_on_mouse_sensitivity_numerical_changed"]
 [connection signal="value_changed" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Slider" to="." method="_on_mouse_sensitivity_slider_changed"]
 [connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer/EnableMonitoring" to="." method="_on_enable_monitoring_toggled"]

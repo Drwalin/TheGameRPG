@@ -3,7 +3,7 @@ extends Label;
 func _ready():
 	pass;
 
-func _process(delta):
+func _process(_delta: float)->void:
 	if gameFrontend.IsDisconnected():
 		if !visible:
 			show();

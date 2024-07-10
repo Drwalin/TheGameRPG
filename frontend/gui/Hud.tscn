@@ -32,8 +32,9 @@ vertical_alignment = 1
 [node name="PerformanceStatistics" type="VBoxContainer" parent="."]
 visible = false
 layout_mode = 1
+offset_top = 40.0
 offset_right = 40.0
-offset_bottom = 40.0
+offset_bottom = 80.0
 script = ExtResource("1_hp731")
 
 [node name="Ping" type="Label" parent="."]
