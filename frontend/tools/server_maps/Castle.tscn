@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=65 format=3 uid="uid://clkxybhmklyt3"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
@@ -63,6 +63,7 @@
 [ext_resource type="PackedScene" uid="uid://wwakq03t1ydn" path="res://assets/meshes/Environmental/Logs/Log01.glb" id="55_esqk6"]
 [ext_resource type="ArrayMesh" uid="uid://dd7s6lc43tp4r" path="res://assets/collisions/Environmental/Logs/_Log01.col.obj" id="56_br0xi"]
 [ext_resource type="PackedScene" uid="uid://cac1lxvu27xka" path="res://assets/meshes/Environmental/Flowers/Dandelion.glb" id="57_7573t"]
+[ext_resource type="PackedScene" uid="uid://cgocqgfqi5ffs" path="res://assets/prefabs/Furniture/Outdoor/LampPostHanging_Lit.tscn" id="64_7y4qw"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
@@ -1545,3 +1546,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.3453, -2.78105, 52.5522)
 
 [node name="DirtPatch16" parent="Paths" instance=ExtResource("32_f7l6s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -83.3541, -2.41197, 51.8046)
+
+[node name="Lamps" type="Node3D" parent="."]
+
+[node name="LampPostHanging" parent="Lamps" instance=ExtResource("64_7y4qw")]
+transform = Transform3D(-0.240262, 0, 0.970708, 0, 1, 0, -0.970708, 0, -0.240262, -85.2357, -1.62383, 55.7901)
+
+[node name="LampPostHanging2" parent="Lamps" instance=ExtResource("64_7y4qw")]
+transform = Transform3D(-0.639452, 0, 0.768831, 0, 1, 0, -0.768831, 0, -0.639452, -75.3652, -3.7249, 51.4423)
+
+[node name="LampPostHanging3" parent="Lamps" instance=ExtResource("64_7y4qw")]
+transform = Transform3D(-0.825931, 0, 0.563771, 0, 1, 0, -0.563771, 0, -0.825931, -68.7306, -5.72356, 44.252)
+
+[node name="LampPostHanging4" parent="Lamps" instance=ExtResource("64_7y4qw")]
+transform = Transform3D(-0.895409, 0, 0.445245, 0, 1, 0, -0.445245, 0, -0.895409, -63.2924, -7.65382, 36.5004)
+
+[node name="LampPostHanging5" parent="Lamps" instance=ExtResource("64_7y4qw")]
+transform = Transform3D(0.866339, 0, -0.499456, 0, 1, 0, 0.499456, 0, 0.866339, -69.535, -7.13326, 33.2658)

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://kqfpj67g0syd"]
+
+[ext_resource type="PackedScene" uid="uid://bmawnd4mki4ln" path="res://assets/meshes/Furniture/Outdoor/LampPostStanding.glb" id="1_kopgf"]
+[ext_resource type="PackedScene" uid="uid://b2wjeltim7mc1" path="res://assets/meshes/Furniture/Outdoor/Lamp01LitWithEffects.tscn" id="2_kjogc"]
+
+[node name="LampPostStanding_Lit" instance=ExtResource("1_kopgf")]
+
+[node name="Lamp01Lit" parent="." index="1" instance=ExtResource("2_kjogc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.99003, 0)

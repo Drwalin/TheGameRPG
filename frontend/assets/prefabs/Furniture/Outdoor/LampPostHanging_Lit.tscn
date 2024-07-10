@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgocqgfqi5ffs"]
+
+[ext_resource type="PackedScene" uid="uid://1x88yq2ep4o2" path="res://assets/meshes/Furniture/Outdoor/LampPostHanging_Lit.tscn" id="1_kmd6n"]
+[ext_resource type="ArrayMesh" uid="uid://bompad44timi2" path="res://assets/collisions/Furniture/Outdoor/_LampPostHanging.col.obj" id="2_b"]
+
+[node name="LampPostHanging" type="PrefabServerStaticMesh"]
+graphic_Mesh_or_PackedScene = ExtResource("1_kmd6n")
+collision_mesh = ExtResource("2_b")
+
+[node name="NameFFFDF18B596E83F76736DDA746ADB990" type="Node3D" parent="." instance=ExtResource("1_kmd6n")]
