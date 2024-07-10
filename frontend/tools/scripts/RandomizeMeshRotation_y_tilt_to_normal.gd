@@ -52,6 +52,7 @@ func RandomizeSingleNode(node:PrefabServerStaticMesh):
 	if DoRayCast(node):
 		var rot:Quaternion = Quaternion(Vector3(0,1,0), rayCast.get_collision_normal());
 		node.basis = Basis(rot) * node.basis;
+		node.global_position = rayCast.get_collision_point();
 	
 	var s:float = (scaleMax-scaleMin)*randf() + scaleMin;
 	node.scale = Vector3(s, s, s);
