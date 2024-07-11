@@ -2,6 +2,7 @@
 extends GPUParticles3D
 
 func _ready():
+	process_mode = get_parent().process_mode;
 	if ProjectSettings.get_setting("rendering/renderer/rendering_method") == "gl_compatibility":
 		visible = false;
 		process_mode = PROCESS_MODE_DISABLED;
