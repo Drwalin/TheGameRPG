@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://c3lm3p0kbilr6"]
+[gd_scene load_steps=10 format=3 uid="uid://c3lm3p0kbilr6"]
 
 [ext_resource type="PackedScene" uid="uid://yftmvlko0dk2" path="res://assets/meshes/Furniture/Lights/Torch.glb" id="1_7khtd"]
 [ext_resource type="Script" path="res://scripts/vfx/FlickeringOmniLight3D.gd" id="2_mi8ne"]
 [ext_resource type="PackedScene" uid="uid://bxuagivddkgv1" path="res://addons/drwalin_godot_particles/fire_02/fire_02.tscn" id="3_uau8d"]
+[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibility.gd" id="4_dh080"]
 
 [sub_resource type="Curve" id="Curve_42y8j"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.721519, 0.747253), -1.42216, -1.42216, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -52,9 +53,9 @@ cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01361, 0)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="LightSourceOrigin" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0149938, 0.00761716, 0.00427386)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0108435, -0.00447043, -0.0143367)
 light_color = Color(1, 0.941176, 0.788235, 1)
-light_energy = 1.3924
+light_energy = 1.29072
 shadow_enabled = true
 omni_range = 8.0
 omni_attenuation = 1.21551
@@ -64,3 +65,4 @@ energyMax = 1.5
 [node name="Fire_01" parent="." index="2" instance=ExtResource("3_uau8d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03847, 0)
 process_material = SubResource("ParticleProcessMaterial_h8x4i")
+script = ExtResource("4_dh080")
