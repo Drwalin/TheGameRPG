@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgjdqg4h8dsdq"]
+
+[ext_resource type="PackedScene" uid="uid://c3lm3p0kbilr6" path="res://assets/meshes/Furniture/Lights/BigTorchWithEffects.tscn" id="1_nirii"]
+
+[node name="Torch" type="PrefabServerStaticMesh"]
+graphic_Mesh_or_PackedScene = ExtResource("1_nirii")
+
+[node name="Name21908EFCC896D2F8B1C5C9B4F004E90" type="Node3D" parent="." instance=ExtResource("1_nirii")]

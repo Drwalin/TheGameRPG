@@ -1,0 +1,66 @@
+[gd_scene load_steps=9 format=3 uid="uid://c3lm3p0kbilr6"]
+
+[ext_resource type="PackedScene" uid="uid://yftmvlko0dk2" path="res://assets/meshes/Furniture/Lights/Torch.glb" id="1_7khtd"]
+[ext_resource type="Script" path="res://scripts/vfx/FlickeringOmniLight3D.gd" id="2_mi8ne"]
+[ext_resource type="PackedScene" uid="uid://bxuagivddkgv1" path="res://addons/drwalin_godot_particles/fire_02/fire_02.tscn" id="3_uau8d"]
+
+[sub_resource type="Curve" id="Curve_42y8j"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.721519, 0.747253), -1.42216, -1.42216, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_3ym41"]
+curve = SubResource("Curve_42y8j")
+
+[sub_resource type="Gradient" id="Gradient_hi70d"]
+offsets = PackedFloat32Array(0, 0.669856, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.180005, 0.180005, 0.180005, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nhxgv"]
+gradient = SubResource("Gradient_hi70d")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_h8x4i"]
+lifetime_randomness = 0.22
+emission_shape = 1
+emission_sphere_radius = 0.1
+inherit_velocity_ratio = 0.05
+direction = Vector3(0, 1, 0)
+spread = 19.091
+initial_velocity_max = 1.0
+gravity = Vector3(0, 2, 0)
+linear_accel_max = 0.8
+tangential_accel_max = 1.05
+damping_max = 0.71
+scale_min = 0.1
+scale_max = 0.5
+color_ramp = SubResource("GradientTexture1D_nhxgv")
+alpha_curve = SubResource("CurveTexture_3ym41")
+hue_variation_min = -0.1
+hue_variation_max = 0.1
+turbulence_enabled = true
+turbulence_noise_strength = 0.2
+turbulence_noise_speed_random = 4.0
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.05
+
+[node name="Torch" instance=ExtResource("1_7khtd")]
+
+[node name="Torch" parent="." index="0"]
+transform = Transform3D(2, 0, 0, 0, 5, 0, 0, 0, 2, 0, -0.359393, 0)
+cast_shadow = 0
+
+[node name="LightSourceOrigin" type="Node3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01361, 0)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="LightSourceOrigin" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0149938, 0.00761716, 0.00427386)
+light_color = Color(1, 0.941176, 0.788235, 1)
+light_energy = 1.3924
+shadow_enabled = true
+omni_range = 8.0
+omni_attenuation = 1.21551
+script = ExtResource("2_mi8ne")
+energyMax = 1.5
+
+[node name="Fire_01" parent="." index="2" instance=ExtResource("3_uau8d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03847, 0)
+process_material = SubResource("ParticleProcessMaterial_h8x4i")
