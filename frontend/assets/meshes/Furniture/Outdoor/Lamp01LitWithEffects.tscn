@@ -12,6 +12,7 @@ cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00556942, 0.161948, 0)
 light_color = Color(1, 0.941176, 0.788235, 1)
 light_energy = 1.38662
+shadow_enabled = true
 omni_range = 8.0
 omni_attenuation = 1.21551
 script = ExtResource("2_a2upi")
