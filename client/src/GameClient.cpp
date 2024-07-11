@@ -154,8 +154,10 @@ void GameClient::RunOneEpoch()
 	realm->OneEpoch();
 	PerformSendPlayerMovementInput();
 
-	if ((rand()) % 80 == 0) {
+	pingTimer.Update();
+	if (abs(lastPingTime - pingTimer.currentTick) > 8000) {
 		ServerRpcProxy::Ping(this, true);
+		lastPingTime = pingTimer.currentTick;
 	}
 }
 

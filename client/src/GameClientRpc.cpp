@@ -42,7 +42,6 @@ void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
 	}
 	realm->timer.Start(currentTick);
 	realm->Reinit(realmName);
-	ServerRpcProxy::Ping(this, true);
 	SetPlayerEntityId(playerEntityId);
 }
 
@@ -66,6 +65,7 @@ void GameClient::SpawnEntities(icon7::ByteReader *reader)
 			SpawnEntity(serverId, state, name, model, shape, movementParams);
 		}
 	}
+	ServerRpcProxy::Ping(this, true);
 }
 
 void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
@@ -165,12 +165,15 @@ void GameClient::Pong(int64_t localTick, int64_t remoteTick)
 			// TODO: time error??
 			if (newCurrentTick + 5 < currentTick) {
 				newCurrentTick = currentTick - 5;
+				if (newCurrentTick + 15 < currentTick) {
+					ServerRpcProxy::Ping(this, true);
+				}
 			}
 			realm->timer.Start(newCurrentTick);
 		} else {
 			if (newCurrentTick > currentTick + 25) {
-				newCurrentTick =
-					currentTick + ((newCurrentTick - currentTick) >> 2);
+				newCurrentTick = currentTick + 25;
+				ServerRpcProxy::Ping(this, true);
 			}
 			realm->timer.Start(newCurrentTick);
 		}
