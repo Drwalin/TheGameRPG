@@ -12,9 +12,9 @@ cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.532646, 0)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="LightSourceOrigin" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0152389, 0.00947741, -0.00200456)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00250432, -0.00673139, -0.00596524)
 light_color = Color(1, 0.941176, 0.788235, 1)
-light_energy = 1.05622
+light_energy = 1.16536
 omni_range = 8.0
 omni_attenuation = 1.21551
 script = ExtResource("2_6htdw")

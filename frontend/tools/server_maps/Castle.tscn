@@ -943,19 +943,19 @@ transform = Transform3D(3.26063, 0, -3.79056, 0, 5, 0, 3.79056, 0, 3.26063, 12.1
 [node name="PortalToForest" type="Node3D" parent="."]
 transform = Transform3D(0.806434, 0, -0.591324, 0, 1, 0, 0.591324, 0, 0.806434, -64.4647, -7.39004, 29.3159)
 
+[node name="GateMyoujin" parent="PortalToForest" instance=ExtResource("29_5xx6y")]
+transform = Transform3D(-0.0558917, 0, 0.998437, 0, 1, 0, -0.998437, 0, -0.0558917, -0.0809021, -1.24381, 0.525696)
+
 [node name="PrefabServerTrigger" type="PrefabServerTrigger" parent="PortalToForest"]
 onTriggerEnter = "TriggerTeleportPlayer"
 teleportRealm = "Forest"
-teleportPosition = Vector3(-17.5126, 4.68235, -107.226)
+teleportPosition = Vector3(61.0854, 0.0724688, -81.5419)
 transform = Transform3D(-0.071857, 0, 1.99871, 0, 2, 0, -1.99871, 0, -0.071857, 0, 0, 0)
 
 [node name="PortalEffect" type="PrefabServerStaticMesh" parent="PortalToForest"]
 graphic_Mesh_or_PackedScene = ExtResource("10_0ymu3")
 
 [node name="ForestFence" type="Node3D" parent="."]
-
-[node name="GateMyoujin" parent="ForestFence" instance=ExtResource("29_5xx6y")]
-transform = Transform3D(0.545327, 0, 0.838224, 0, 1, 0, -0.838224, 0, 0.545327, -64.8408, -8.63385, 29.692)
 
 [node name="Fence" parent="ForestFence" instance=ExtResource("30_fuutx")]
 transform = Transform3D(-0.7392, 0.027858, -0.67291, 0.0612751, 0.997782, -0.0260039, 0.670693, -0.0604547, -0.739268, -63.3307, -8.65667, 30.9331)
