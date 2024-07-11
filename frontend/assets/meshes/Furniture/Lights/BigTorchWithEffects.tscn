@@ -53,9 +53,9 @@ cast_shadow = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.01361, 0)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="LightSourceOrigin" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0108435, -0.00447043, -0.0143367)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0143173, -0.000438045, 0.0126282)
 light_color = Color(1, 0.941176, 0.788235, 1)
-light_energy = 1.29072
+light_energy = 1.38081
 shadow_enabled = true
 omni_range = 8.0
 omni_attenuation = 1.21551
