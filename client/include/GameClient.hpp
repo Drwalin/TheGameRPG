@@ -101,6 +101,7 @@ public:
 	bool needSendPlayerMovementInput;
 	int64_t lastTickAuthoritativeSent = 0;
 	::Timer pingTimer;
+	int64_t lastPingTime = 0;
 	int64_t pingMs = 70;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;
