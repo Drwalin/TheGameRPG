@@ -63,7 +63,39 @@ void RealmServer::Init(const std::string &realmName)
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
+	
+	
+	
+	{
+		flecs::entity entity = ecs.entity();
+		entity.add<ComponentShape>();
+		entity.add<ComponentMovementParameters>();
+		entity.add<ComponentLastAuthoritativeMovementState>();
+		ComponentModelName modelName;
+		modelName.modelName =
+			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn";
+		entity.set<ComponentModelName>(modelName);
+		entity.add<ComponentEventsQueue>();
 
+		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
+		s.oldState.vel = {0,0,0};
+		s.oldState.timestamp = timer.currentTick;
+		s.oldState.pos = {0, 100, 0};
+		s.oldState.onGround = false;
+		entity.set<ComponentLastAuthoritativeMovementState>(s);
+		entity.set<ComponentMovementState>(s.oldState);
+
+		ComponentName name;
+		name.name = "AI";
+		entity.set<ComponentName>(name);
+		
+		ComponentAITick aiTick;
+		aiTick.aiTick = named_callbacks::registry_entries::AiBehaviorTick::Get("AIRandomMove");
+		entity.set<ComponentAITick>(aiTick);
+	}
+	
+	
+	
 	sendEntitiesToClientsTimer = 0;
 }
 
@@ -333,5 +365,46 @@ void RealmServer::RegisterObservers()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
 			trigger.tickUntilIgnore = timer.currentTick + 1000;
+		});
+	
+	
+	
+	
+	
+	ecs.observer<ComponentEventsQueue, const ComponentAITick>()
+		.event(flecs::OnAdd)
+		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
+					 const ComponentAITick &) {
+			static EntityEventTemplate defaultAiMovementEvent{
+				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
+				   uint64_t entityId) {
+					flecs::entity entity = realm->Entity(entityId);
+					if (entity.has<ComponentAITick>()) {
+						auto tick = entity.get<ComponentAITick>();
+						if (tick) {
+							if (tick->aiTick) {
+								tick->aiTick->Call((RealmServer*)realm, entityId);
+							}
+						}
+					}
+
+					int64_t dt = realm->maxMovementDeltaTicks;
+
+					EntityEvent event;
+					event.dueTick = realm->timer.currentTick + dt;
+					event.event = &defaultAiMovementEvent;
+
+					ComponentEventsQueue *eventsQueue =
+						realm->AccessComponent<ComponentEventsQueue>(entityId);
+					if (eventsQueue == nullptr) {
+						return;
+					}
+
+					eventsQueue->ScheduleEvent(realm, entityId, event);
+				}};
+			EntityEvent event;
+			event.dueTick = timer.currentTick + 100;
+			event.event = &defaultAiMovementEvent;
+			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 }

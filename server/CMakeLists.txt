@@ -24,6 +24,8 @@ include_directories(include)
 file(GLOB_RECURSE src_files "src/*.cpp")
 file(GLOB_RECURSE script_files "scripts/*.cpp")
 
+message(script_files)
+
 add_library(scripts SHARED
 	${script_files}
 )
