@@ -1,7 +1,8 @@
 extends Control
+class_name SettingsConfigurationClass;
 
-var save:bool = false;
-var toSave:float = 0;
+static var save:bool = false;
+static var toSave:float = 0;
 
 func _ready():
 	SetMouseSensitivity(ProjectSettings.get_setting("game_settings/mouse/sensitivity", 25));
@@ -24,7 +25,7 @@ func _process(dt:float):
 	if save && (toSave <= 0.0 || visible==false):
 		Save();
 
-func Save():
+static func Save():
 	if save:
 		ProjectSettings.save_custom("override.cfg");
 		save = false;

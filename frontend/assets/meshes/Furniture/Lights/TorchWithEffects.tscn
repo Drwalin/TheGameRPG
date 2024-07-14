@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://yftmvlko0dk2" path="res://assets/meshes/Furniture/Lights/Torch.glb" id="1_aamja"]
 [ext_resource type="Script" path="res://scripts/vfx/FlickeringOmniLight3D.gd" id="2_6htdw"]
 [ext_resource type="PackedScene" uid="uid://bxuagivddkgv1" path="res://addons/drwalin_godot_particles/fire_02/fire_02.tscn" id="3_j57bf"]
-[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibility.gd" id="4_akrqi"]
+[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibilityAndCorrectRotationForBilboard.gd" id="4_akrqi"]
 
 [node name="Torch" instance=ExtResource("1_aamja")]
 
