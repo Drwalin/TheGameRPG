@@ -77,19 +77,20 @@ void Realm::RegisterObservers()
 {
 	collisionWorld.RegisterObservers(this);
 
-	ecs.observer<ComponentLastAuthoritativeMovementState>()
+	ecs.observer<ComponentLastAuthoritativeMovementState,
+				 ComponentMovementParameters>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const ComponentLastAuthoritativeMovementState &lastState) {
-			const ComponentShape *shape = ecs.get<ComponentShape>();
+					 const ComponentLastAuthoritativeMovementState &lastState,
+					 const ComponentMovementParameters &movementParams) {
+			const ComponentShape *shape = entity.get<ComponentShape>();
 			if (shape == nullptr) {
 				return;
 			}
 
 			ComponentMovementState currentState = lastState.oldState;
-			auto movementParams = entity.get<ComponentMovementParameters>();
 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
-										  lastState, *movementParams);
+										  lastState, movementParams);
 			entity.set<ComponentMovementState>(currentState);
 		});
 

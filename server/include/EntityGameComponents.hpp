@@ -81,3 +81,21 @@ struct ComponentTeleport {
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTeleport,
 								  {MV(realmName) MV(position)});
 };
+
+struct ComponentAITick {
+	named_callbacks::registry_entries::AiBehaviorTick *aiTick = nullptr;
+
+	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s)
+	{
+		aiTick->Deserialize(&aiTick, s);
+		return s;
+	}
+	template <typename BT>
+	inline bitscpp::ByteWriter<BT> &__ByteStream_op(bitscpp::ByteWriter<BT> &s)
+	{
+		aiTick->Serialize(&aiTick, s);
+		return s;
+	}
+
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentAITick, MV(aiTick));
+};

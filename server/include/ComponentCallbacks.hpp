@@ -84,5 +84,11 @@ using OnTriggerEnterExitFunctionType = void (*)(RealmServer *realm,
 struct OnTriggerEnterExit final
 	: public EntryBase<OnTriggerEnterExit, OnTriggerEnterExitFunctionType> {
 };
+
+using AiBehaviorTickFunctionType = void (*)(RealmServer *realm,
+											uint64_t entityId);
+struct AiBehaviorTick final
+	: public EntryBase<AiBehaviorTick, AiBehaviorTickFunctionType> {
+};
 } // namespace registry_entries
 } // namespace named_callbacks
