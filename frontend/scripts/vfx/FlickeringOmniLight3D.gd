@@ -1,4 +1,3 @@
-@tool
 extends OmniLight3D
 
 @export var movementAmplitude:float = 0.02;
