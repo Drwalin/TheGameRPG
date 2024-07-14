@@ -75,7 +75,6 @@ void RealmServer::Init(const std::string &realmName)
 		modelName.modelName =
 			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn";
 		entity.set<ComponentModelName>(modelName);
-		entity.add<ComponentEventsQueue>();
 
 		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
 		s.oldState.vel = {0,0,0};
@@ -154,7 +153,6 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		  data->storedEntityData.size() > 3) &&
 		(reader.has_any_more() == false || reader.is_valid() == false)) {
 		entity.add<ComponentShape>();
-		entity.add<ComponentLastAuthoritativeMovementState>();
 		entity.add<ComponentMovementParameters>();
 		ComponentModelName modelName;
 		modelName.modelName =
@@ -162,7 +160,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entity.set<ComponentModelName>(modelName);
 		entity.add<ComponentEventsQueue>();
 
-		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
+		ComponentLastAuthoritativeMovementState s;
 		s.oldState.timestamp = timer.currentTick;
 		s.oldState.pos = {-87, 0, 54};
 		s.oldState.vel = {0, 0, 0};
@@ -369,10 +367,6 @@ void RealmServer::RegisterObservers()
 			trigger.tickUntilIgnore = timer.currentTick + 1000;
 		});
 	
-	
-	
-	
-	
 	ecs.observer<ComponentEventsQueue, const ComponentAITick>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
@@ -408,5 +402,35 @@ void RealmServer::RegisterObservers()
 			event.dueTick = timer.currentTick + 100;
 			event.event = &defaultAiMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
+		});
+	
+	ecs.observer<ComponentLastAuthoritativeMovementState>()
+		.event(flecs::OnAdd)
+		.each([](flecs::entity entity, const ComponentLastAuthoritativeMovementState &) {
+			if (entity.has<ComponentEventsQueue>() == false) {
+				entity.add<ComponentEventsQueue>();
+			}
+		});
+	ecs.observer<ComponentMovementParameters>()
+		.event(flecs::OnAdd)
+		.each([](flecs::entity entity, const ComponentMovementParameters &) {
+			if (entity.has<ComponentEventsQueue>() == false) {
+				entity.add<ComponentEventsQueue>();
+			}
+		});
+	ecs.observer<ComponentMovementState>()
+		.event(flecs::OnAdd)
+		.each([](flecs::entity entity, const ComponentMovementState &) {
+			if (entity.has<ComponentEventsQueue>() == false) {
+				entity.add<ComponentEventsQueue>();
+			}
+		});
+	
+	ecs.observer<ComponentAITick>()
+		.event(flecs::OnAdd)
+		.each([](flecs::entity entity, const ComponentAITick &) {
+			if (entity.has<ComponentEventsQueue>() == false) {
+				entity.add<ComponentEventsQueue>();
+			}
 		});
 }
