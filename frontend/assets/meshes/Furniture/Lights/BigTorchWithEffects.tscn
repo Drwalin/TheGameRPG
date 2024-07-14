@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://yftmvlko0dk2" path="res://assets/meshes/Furniture/Lights/Torch.glb" id="1_7khtd"]
 [ext_resource type="Script" path="res://scripts/vfx/FlickeringOmniLight3D.gd" id="2_mi8ne"]
 [ext_resource type="PackedScene" uid="uid://bxuagivddkgv1" path="res://addons/drwalin_godot_particles/fire_02/fire_02.tscn" id="3_uau8d"]
-[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibility.gd" id="4_dh080"]
+[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibilityAndCorrectRotationForBilboard.gd" id="4_6j558"]
 
 [sub_resource type="Curve" id="Curve_42y8j"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.721519, 0.747253), -1.42216, -1.42216, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -65,4 +65,4 @@ energyMax = 1.5
 [node name="Fire_01" parent="." index="2" instance=ExtResource("3_uau8d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.03847, 0)
 process_material = SubResource("ParticleProcessMaterial_h8x4i")
-script = ExtResource("4_dh080")
+script = ExtResource("4_6j558")

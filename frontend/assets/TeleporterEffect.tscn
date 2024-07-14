@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkhmfaf5ex6x5"]
+[gd_scene load_steps=8 format=3 uid="uid://dkhmfaf5ex6x5"]
 
 [ext_resource type="Shader" path="res://assets/TeleporterEffect.gdshader" id="1_fybux"]
+[ext_resource type="Script" path="res://scripts/vfx/DisableParticlesForGlCompatibilityAndCorrectRotationForBilboard.gd" id="2_458h1"]
 
 [sub_resource type="Curve" id="Curve_0fluy"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.476293, 1), 1.14644, 1.14644, 0, 0, Vector2(0.69181, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -35,3 +36,4 @@ transform_align = 1
 trail_lifetime = 0.6
 process_material = SubResource("ParticleProcessMaterial_hsxuq")
 draw_pass_1 = SubResource("PlaneMesh_y7qof")
+script = ExtResource("2_458h1")

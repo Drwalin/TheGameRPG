@@ -127,6 +127,10 @@ offset_right = 239.0
 offset_bottom = 194.0
 text = "Pomoc"
 
+[connection signal="focus_exited" from="Address" to="." method="SaveAddressAndPort"]
+[connection signal="text_submitted" from="Address" to="." method="SaveAddressAndPort"]
+[connection signal="focus_exited" from="PortNumber" to="." method="SaveAddressAndPort"]
+[connection signal="text_changed" from="PortNumber" to="." method="SaveAddressAndPort"]
 [connection signal="pressed" from="ButtonConnect" to="." method="_on_connect_to_server_pressed"]
 [connection signal="pressed" from="ButtonLogin" to="." method="_OnLoginPressed"]
 [connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]

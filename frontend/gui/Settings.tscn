@@ -66,7 +66,7 @@ value = 1.0
 
 [node name="Label" type="Label" parent="VBoxContainer/TabContainer/Graphics/RendererDriver"]
 layout_mode = 2
-text = "Silnik renderowania
+text = "Silnik renderowania (zmiana ustawienia wymaga restartu)
 0 - 'opengl3', najniższej jakości, dobry dla starszego sprzętu
 1 - 'mobile', średniej jakości
 2 - 'forward_plus', wysoka jakość, wymaga lepszego i nowszego sprzętu)"

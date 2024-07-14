@@ -1,6 +1,5 @@
 #include "../../../server/include/EntityGameComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
-#include "../../../server/include/ComponentCallbackRegistry.hpp"
 
 #include "../GodotGlm.hpp"
 
@@ -53,6 +52,7 @@ void PrefabServerTrigger::_bind_methods()
 
 void PrefabServerTrigger::_ready()
 {
+	PrefabServerBase::_ready();
 	renderBox = new CSGBox3D();
 	renderBox->set_use_collision(true);
 	add_child(renderBox);
@@ -61,6 +61,7 @@ void PrefabServerTrigger::_ready()
 
 void PrefabServerTrigger::_process(double dt)
 {
+	PrefabServerBase::_process(dt);
 	renderBox->set_visible(GameEditorConfig::render_triggers);
 }
 
