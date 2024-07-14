@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://mkc10byrbtkd"]
+[gd_scene load_steps=57 format=3 uid="uid://mkc10byrbtkd"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_hc6ya"]
 [ext_resource type="Script" path="res://tools/scripts/RandomizeMeshRotation180Degree.gd" id="2_bpoiu"]
@@ -55,6 +55,7 @@
 [ext_resource type="PackedScene" uid="uid://cmi84hkaptoxe" path="res://assets/meshes/Environmental/Paths/GreenPatch.glb" id="40_wg18f"]
 [ext_resource type="PackedScene" uid="uid://wwakq03t1ydn" path="res://assets/meshes/Environmental/Logs/Log01.glb" id="40_yfd63"]
 [ext_resource type="ArrayMesh" uid="uid://dd7s6lc43tp4r" path="res://assets/collisions/Environmental/Logs/_Log01.col.obj" id="41_hmrwy"]
+[ext_resource type="PackedScene" uid="uid://dwu4sscm1xfc4" path="res://assets/characters/low_poly_medieval_people/king_model.tscn" id="56_pamxd"]
 
 [node name="Forest" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Forest.map"
@@ -3146,3 +3147,11 @@ transform = Transform3D(1.05107, 0.038399, 0.580032, 0.03538, 1.19204, -0.143026
 [node name="DirtPatch13" parent="Paths" instance=ExtResource("29_kyl0o")]
 graphic_Mesh_or_PackedScene = ExtResource("39_80ei8")
 transform = Transform3D(0.0949867, 0.0549901, -1.25336, -0.061329, 1.25565, 0.0504427, 1.25306, 0.0572869, 0.0974778, 61.1253, 0.593878, -91.2251)
+
+[node name="NPCs" type="Node3D" parent="."]
+
+[node name="PrefabServerNPC" type="PrefabServerNPC" parent="NPCs"]
+graphic_Mesh_or_PackedScene = ExtResource("56_pamxd")
+nameNPC = "Dumb King"
+aiTickName = "AIRandomMove"
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -21.9008, 4.83587, -108.553)

@@ -7,6 +7,7 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentOnUse, "TCBONU");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentSingleDoorTransformStates, "SDST");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTeleport, "TELEPORT");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTrigger, "TRIGGER");
+GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentAITick, "AITICK");
 
 int RegisterEntityComponents(flecs::world &ecs);
 int RegisterEntityComponentsServer(flecs::world &ecs);
@@ -19,6 +20,7 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 	ecs.component<ComponentSingleDoorTransformStates>();
 	ecs.component<ComponentTeleport>();
 	ecs.component<ComponentTrigger>();
+	ecs.component<ComponentAITick>();
 	return 0;
 }
 
