@@ -11,8 +11,19 @@
 #include "bullet/BulletPhysicsCallbacks.hpp"
 #include "../include/CollisionWorld.hpp"
 
+uint64_t CollisionWorld::GetObjectEntityID(const btCollisionObject *object)
+{
+	return ((uint64_t)(object->getUserIndex2())) |
+		   (((uint64_t)(object->getUserIndex3())) << 32);
+}
+
 CollisionWorld::CollisionWorld(Realm *realm)
 {
+	// TODO: Replace this code with some proper *.so compilation configuration
+	//       that even more forces to export all symbols than ENABLE_EXPORTS
+	{auto _a = &CollisionWorld::TestForEntitiesBox;};
+	{auto _a = &CollisionWorld::TestForEntitiesSphere;};
+	{auto _a = &CollisionWorld::TestForEntitiesCylinder;};
 	this->realm = realm;
 	broadphase = new btSimpleBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
