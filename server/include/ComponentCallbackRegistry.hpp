@@ -27,16 +27,21 @@ template <typename T> struct Registry {
 		auto it1 = registry.find(fullName);
 		auto it2 = registry.find(shortName);
 
-		if (it1 != it2) {
-			LOG_FATAL(
-				"Trying to re-register existing named collback with differing "
-				"full and short names. Named callback registry entries of `%s` "
-				"and `%s` differ:   `%s`:{'%s' , '%s'} != `%s`:{'%s' , '%s'}",
-				fullName.c_str(), shortName.c_str(), fullName.c_str(),
-				it1->second->fullName.c_str(), it1->second->shortName.c_str(),
-				shortName.c_str(), it1->second->shortName.c_str(),
-				it1->second->shortName.c_str());
-			return;
+		if (it1 != registry.end() && it2 != registry.end()) {
+			if (it1->second != it2->second) {
+				LOG_FATAL("Trying to re-register existing named collback with "
+						  "differing "
+						  "full and short names. Named callback registry "
+						  "entries of `%s` "
+						  "and `%s` differ:   (%p):{'%s' , '%s'} != (%p):{'%s' "
+						  ", '%s'}",
+						  fullName.c_str(), shortName.c_str(), it1->second,
+						  it1->second->fullName.c_str(),
+						  it1->second->shortName.c_str(), it2->second,
+						  it2->second->fullName.c_str(),
+						  it2->second->shortName.c_str());
+				return;
+			}
 		}
 
 		if (it1 != registry.end()) {

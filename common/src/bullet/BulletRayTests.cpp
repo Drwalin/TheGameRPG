@@ -93,8 +93,7 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 
 	const btCollisionObject *hitObject = cb.m_collisionObject;
 	if (entityId)
-		*entityId = ((uint64_t)(hitObject->getUserIndex2())) |
-					(((uint64_t)(hitObject->getUserIndex3())) << 32);
+		*entityId = GetObjectEntityID(hitObject);
 
 	if (travelFactor)
 		*travelFactor = cb.m_closestHitFraction;

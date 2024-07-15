@@ -82,7 +82,7 @@ void CommandParser::InitializeCommands()
 					}
 				}
 			} else {
-				LOG_ERROR("Failed to load shared object `%s`", args[1].c_str());
+				LOG_ERROR("Failed to load shared object `%s` with error: `%s`", args[1].c_str(), so->GetErrorMessage().c_str());
 			}
 		});
 

@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -36,6 +35,8 @@ public:
 
 	void Debug() const;
 
+	static uint64_t GetObjectEntityID(const btCollisionObject *object);
+
 	void OnStaticCollisionShape(
 		flecs::entity entity,
 		const ComponentStaticCollisionShapeName &collisionName,
@@ -68,6 +69,11 @@ public:
 							   int approximationSpheresAmount, float stepHeight,
 							   float minNormalYcomponent,
 							   float maxDistancePerIteration) const;
+
+	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
+						glm::vec3 *normal, float stepHeight,
+						float minNormalYcomponent) const;
+
 	bool RayTestFirstHit(glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
 						 glm::vec3 *hitNormal, uint64_t *entityId,
 						 float *travelFactor, bool *hasNormal,
@@ -80,14 +86,24 @@ public:
 									  glm::vec3 *hitNormal,
 									  float *travelFactor) const;
 
-	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
-						glm::vec3 *normal, float stepHeight,
-						float minNormalYcomponent) const;
-
-	/*
-	bool TestForEntities(class CustomShape &shape,
-						 std::vector<uint64_t> *testedEntityIds) const;
-	*/
+	size_t TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
+							   std::vector<uint64_t> *testedEntityIds,
+							   int32_t filter) const;
+	size_t TestForEntitiesBox(glm::vec3 center, glm::vec3 halfExtents,
+							  glm::quat rotation,
+							  std::vector<uint64_t> *testedEntityIds,
+							  int32_t filter) const;
+	size_t TestForEntitiesSphere(glm::vec3 center, float radius,
+								 std::vector<uint64_t> *testedEntityIds,
+								 int32_t filter) const;
+	size_t TestForEntitiesCylinder(glm::vec3 centerBottom, float radius,
+								   float height,
+								   std::vector<uint64_t> *testedEntityIds,
+								   int32_t filter) const;
+	size_t TestForEntitiesCone(glm::vec3 peak, glm::vec3 axis, float radius,
+							   float height,
+							   std::vector<uint64_t> *testedEntityIds,
+							   int32_t filter) const;
 
 	void TriggerTestBoxForCharacters(flecs::entity entity,
 									 std::vector<uint64_t> &entities);
@@ -133,6 +149,10 @@ private:
 		glm::vec3 *hitNormal, float *travelFactor,
 		const std::vector<btCollisionObject *> &objects) const;
 
+	size_t InternalTestConvexShapeForEntities(
+		class btConvexShape *shape, class btTransform &trans,
+		std::vector<uint64_t> *testedEntityIds, int32_t filter) const;
+
 private:
 	CollisionWorld(CollisionWorld &) = delete;
 	CollisionWorld(CollisionWorld &&) = delete;
@@ -144,6 +164,7 @@ private:
 	friend class BroadphaseAabbAgregate;
 
 private:
+public:
 	inline const static int32_t FILTER_ALL =
 		1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256;
 	inline const static int32_t FILTER_TERRAIN = 1;
@@ -151,6 +172,7 @@ private:
 	inline const static int32_t FILTER_STATIC_OBJECT = 4;
 	inline const static int32_t FILTER_TRIGGER = 8;
 
+private:
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
 	class btCollisionObject *AllocateNewCollisionObject();
 
