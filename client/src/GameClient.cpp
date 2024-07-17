@@ -341,37 +341,90 @@ void GameClient::TryPerformJump()
 
 void GameClient::PerformInteractionUse()
 {
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return;
+	}
+	flecs::entity player = realm->Entity(localPlayerEntityId);
+	auto state = player.get<ComponentMovementState>();
+	if (state == nullptr) {
+		// TODO: maybe error?
+		return;
+	}
+
+	glm::vec3 hitPoint, normal;
+	bool hasNormal;
+	uint64_t serverEntityId = 0;
+	uint64_t localTargetId = PerformRaytestFromEyes(
+		*state, 5.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
+	if (localTargetId) {
+		ServerRpcProxy::InteractInLineOfSight(this, *state, serverEntityId,
+											  hitPoint, normal);
+	}
+}
+
+void GameClient::PerformAttack(const std::string &attackName, int64_t attackId,
+							   const std::string &argStr, int64_t argInt)
+{
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return;
+	}
+	flecs::entity player = realm->Entity(localPlayerEntityId);
+	auto state = player.get<ComponentMovementState>();
+	if (state == nullptr) {
+		// TODO: maybe error?
+		return;
+	}
+
+	glm::vec3 hitPoint, normal;
+	bool hasNormal;
+	uint64_t serverEntityId = 0;
+	uint64_t localTargetId = PerformRaytestFromEyes(
+		*state, 5.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
+	if (localTargetId) {
+		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
+							   attackName, attackId, argStr, argInt);
+	}
+}
+
+uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
+											float range, glm::vec3 *hitPos,
+											glm::vec3 *normal, bool *hasNormal,
+											uint64_t *serverEntityId)
+{
+	*serverEntityId = 0;
+	*hasNormal = false;
+	if (localPlayerEntityId == 0) {
+		// TODO: maybe error?
+		return 0;
+	}
+
 	glm::vec3 pos = GetPosition();
 	glm::vec3 rot = GetRotation();
-	// TODO: replace 4 with value from some entity component
-	glm::vec3 forward = glm::vec3(0, 0, 4);
 
 	glm::mat4 mat(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 	mat = glm::rotate(mat, rot.y, glm::vec3(0, 1, 0));
 	mat = glm::rotate(mat, rot.x, glm::vec3(-1, 0, 0));
-	glm::vec4 v4 = {forward.x, forward.y, forward.z, 0};
-	forward = mat * v4;
+	glm::vec3 forward = mat * glm::vec4(0, 0, range, 0);
 
 	pos.y += GetShape().height;
 
 	glm::vec3 dst = pos + forward;
 
-	glm::vec3 hitPoint, normal;
 	float td;
-	bool hasNormal;
 	uint64_t entityId = 0;
-	if (realm->collisionWorld.RayTestFirstHit(pos, dst, &hitPoint, &normal,
-											  &entityId, &td, &hasNormal,
+	if (realm->collisionWorld.RayTestFirstHit(pos, dst, hitPos, normal,
+											  &entityId, &td, hasNormal,
 											  localPlayerEntityId)) {
 		if (entityId != 0) {
 			auto it = mapLocalEntityIdToServerEntityId.find(entityId);
 			if (it != mapLocalEntityIdToServerEntityId.end()) {
-				uint64_t serverEntityId = it->second;
-				ServerRpcProxy::InteractInLineOfSight(this, serverEntityId, pos,
-													  hitPoint, normal);
+				*serverEntityId = it->second;
 			}
 		}
 	}
+	return entityId;
 }
 
 int64_t GameClient::GetPing() { return pingMs; }

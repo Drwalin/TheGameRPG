@@ -16,7 +16,12 @@ inline const std::string GetEntitiesData = "GetEntitiesData";
 // void Ping(int64_t internal)
 inline const std::string Ping = "Ping";
 
-// void InteractInLineOfSight(uint64_t targetId, uint64_t timestamp,
-//                            vec3 srcPos, vec3 dstPos, vec3 normal)
+// void InteractInLineOfSight(ComponentMovementState, uint64_t targetId,
+// 							  vec3 dstPos, vec3 normal)
 inline const std::string InteractInLineOfSight = "InteractInLineOfSight";
+
+// void Attack(ComponentMovementState, uint64_t targetId, uint64_t targetPos,
+// 			   string attackName, int64_t attackId, string argStr,
+// 			   int64_t argInt)
+inline const std::string Attack = "Attack";
 } // namespace ServerRpcFunctionNames

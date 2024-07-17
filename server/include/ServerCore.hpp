@@ -41,9 +41,13 @@ public:
 				 const ComponentLastAuthoritativeMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
-	void InteractInLineOfSight(icon7::Peer *peer, uint64_t targetId,
-							   uint64_t timestamp, glm::vec3 srcPos,
-							   glm::vec3 dstPos, glm::vec3 normal);
+	void InteractInLineOfSight(icon7::Peer *peer, ComponentMovementState state,
+							   uint64_t targetId, glm::vec3 dstPos,
+							   glm::vec3 normal);
+	void Attack(icon7::Peer *peer, ComponentMovementState state,
+				uint64_t targetId, glm::vec3 targetPos,
+				const std::string attackName, int64_t attackId,
+				const std::string &argStr, int64_t argInt);
 
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
