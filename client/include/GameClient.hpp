@@ -79,10 +79,17 @@ public: // client input api
 	bool GetOnGround();
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
+	void PerformAttack(const std::string &attackName, int64_t attackId,
+					   const std::string &argStr, int64_t argInt);
 	int64_t GetPing();
 	int64_t GetCurrentTick();
 
 	void PerformSendPlayerMovementInput();
+
+	// Returns localId of hit entity
+	uint64_t PerformRaytestFromEyes(ComponentMovementState state, float range,
+									glm::vec3 *hitPos, glm::vec3 *normal,
+									bool *hasNormal, uint64_t *serverEntityId);
 
 public:
 	RealmClient *realm;

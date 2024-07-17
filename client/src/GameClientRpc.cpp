@@ -100,6 +100,9 @@ void GameClient::UpdateEntities(icon7::ByteReader *reader)
 		reader->op(state);
 
 		if (reader->is_valid()) {
+			auto s = state.oldState;
+			LOG_INFO("%lu -> %lu/%lu    %f %f %f", serverId, s.timestamp,
+					 realm->timer.currentTick, s.pos.x, s.pos.y, s.pos.z);
 			UpdateEntity(serverId, state);
 		}
 	}

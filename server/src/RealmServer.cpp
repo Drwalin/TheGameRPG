@@ -36,7 +36,7 @@ void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
-	
+
 	std::string filePrefix, fileSuffix;
 	if (serverCore->configStorage.GetString(
 			"config.realm_map_file.file_path.prefix", &filePrefix)) {
@@ -47,7 +47,8 @@ void RealmServer::Init(const std::string &realmName)
 	const std::string fileName = filePrefix + realmName + fileSuffix;
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
-		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(), fileName.c_str());
+		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(),
+				 fileName.c_str());
 		icon7::ByteReader reader(buffer, 0);
 		while (reader.get_remaining_bytes() > 10) {
 			uint64_t entityId = NewEntity();
@@ -63,9 +64,7 @@ void RealmServer::Init(const std::string &realmName)
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
-	
-	
-	
+
 	{
 		flecs::entity entity = ecs.entity();
 		entity.add<ComponentShape>();
@@ -77,7 +76,7 @@ void RealmServer::Init(const std::string &realmName)
 		entity.set<ComponentModelName>(modelName);
 
 		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
-		s.oldState.vel = {0,0,0};
+		s.oldState.vel = {0, 0, 0};
 		s.oldState.timestamp = timer.currentTick;
 		s.oldState.pos = {0, 100, 0};
 		s.oldState.onGround = false;
@@ -87,14 +86,13 @@ void RealmServer::Init(const std::string &realmName)
 		ComponentName name;
 		name.name = "AI";
 		entity.set<ComponentName>(name);
-		
+
 		ComponentAITick aiTick;
-		aiTick.aiTick = named_callbacks::registry_entries::AiBehaviorTick::Get("AIRandomMove");
+		aiTick.aiTick = named_callbacks::registry_entries::AiBehaviorTick::Get(
+			"AIRandomMove");
 		entity.set<ComponentAITick>(aiTick);
 	}
-	
-	
-	
+
 	sendEntitiesToClientsTimer = 0;
 }
 
@@ -366,7 +364,7 @@ void RealmServer::RegisterObservers()
 		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
 			trigger.tickUntilIgnore = timer.currentTick + 1000;
 		});
-	
+
 	ecs.observer<ComponentEventsQueue, const ComponentAITick>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
@@ -379,7 +377,8 @@ void RealmServer::RegisterObservers()
 						auto tick = entity.get<ComponentAITick>();
 						if (tick) {
 							if (tick->aiTick) {
-								tick->aiTick->Call((RealmServer*)realm, entityId);
+								tick->aiTick->Call((RealmServer *)realm,
+												   entityId);
 							}
 						}
 					}
@@ -393,6 +392,7 @@ void RealmServer::RegisterObservers()
 					ComponentEventsQueue *eventsQueue =
 						realm->AccessComponent<ComponentEventsQueue>(entityId);
 					if (eventsQueue == nullptr) {
+						LOG_FATAL("Events queue removed but event AIUpdate was executed.");
 						return;
 					}
 
@@ -403,10 +403,11 @@ void RealmServer::RegisterObservers()
 			event.event = &defaultAiMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
-	
+
 	ecs.observer<ComponentLastAuthoritativeMovementState>()
 		.event(flecs::OnAdd)
-		.each([](flecs::entity entity, const ComponentLastAuthoritativeMovementState &) {
+		.each([](flecs::entity entity,
+				 const ComponentLastAuthoritativeMovementState &) {
 			if (entity.has<ComponentEventsQueue>() == false) {
 				entity.add<ComponentEventsQueue>();
 			}
@@ -425,7 +426,7 @@ void RealmServer::RegisterObservers()
 				entity.add<ComponentEventsQueue>();
 			}
 		});
-	
+
 	ecs.observer<ComponentAITick>()
 		.event(flecs::OnAdd)
 		.each([](flecs::entity entity, const ComponentAITick &) {

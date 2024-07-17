@@ -15,7 +15,12 @@ void GetEntitiesData(GameClient *gameClient,
 
 void Ping(GameClient *gameClient, bool reliable);
 
-void InteractInLineOfSight(GameClient *gameClient, uint64_t targetId,
-						   glm::vec3 srcPos, glm::vec3 dstPos,
+void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,
+						   uint64_t targetId, glm::vec3 dstPos,
 						   glm::vec3 normal);
+
+void Attack(GameClient *gameClient, ComponentMovementState state,
+			uint64_t targetId, glm::vec3 targetPos,
+			const std::string &attackName, int64_t attackId,
+			const std::string &argStr, int64_t argInt);
 } // namespace ServerRpcProxy

@@ -9,7 +9,6 @@
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
-#include "../include/EntityGameComponents.hpp"
 
 #include "../include/ServerCore.hpp"
 
@@ -223,27 +222,31 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 	}
 }
 
-void ServerCore::InteractInLineOfSight(icon7::Peer *peer, uint64_t targetId,
-									   uint64_t timestamp, glm::vec3 srcPos,
-									   glm::vec3 dstPos, glm::vec3 normal)
+void ServerCore::InteractInLineOfSight(icon7::Peer *peer,
+									   ComponentMovementState state,
+									   uint64_t targetId, glm::vec3 dstPos,
+									   glm::vec3 normal)
 {
 	// TODO: add server side verification
 
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
-		flecs::entity srcEntity = realm->Entity(data->entityId);
-		flecs::entity targetEntity = realm->Entity(targetId);
-		if (srcEntity.is_valid() && targetEntity.is_valid() &&
-			srcEntity.is_alive() && targetEntity.is_alive()) {
-			if (targetEntity.has<ComponentOnUse>()) {
-				const ComponentOnUse *onUse =
-					targetEntity.get<ComponentOnUse>();
-				if (onUse && onUse->entry) {
-					onUse->entry->Call(realm.get(), data->entityId, targetId,
-									   "");
-				}
-			}
-		}
+		realm->InteractInLineOfSight(peer, state, targetId, dstPos, normal);
+	}
+}
+
+void ServerCore::Attack(icon7::Peer *peer, ComponentMovementState state,
+						uint64_t targetId, glm::vec3 targetPos,
+						const std::string attackName, int64_t attackId,
+						const std::string &argStr, int64_t argInt)
+{
+	// TODO: add server side verification
+
+	PeerData *data = ((PeerData *)(peer->userPointer));
+	std::shared_ptr<RealmServer> realm = data->realm.lock();
+	if (realm) {
+		realm->Attack(peer, state, targetId, targetPos, attackName, attackId,
+					  argStr, argInt);
 	}
 }
