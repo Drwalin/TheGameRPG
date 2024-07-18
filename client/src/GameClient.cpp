@@ -351,12 +351,18 @@ void GameClient::PerformInteractionUse()
 		// TODO: maybe error?
 		return;
 	}
+	auto characterSheet = player.get<ComponentCharacterSheet>();
+	if (characterSheet == nullptr) {
+		// TODO: maybe error?
+		return;
+	}
 
 	glm::vec3 hitPoint, normal;
 	bool hasNormal;
 	uint64_t serverEntityId = 0;
-	uint64_t localTargetId = PerformRaytestFromEyes(
-		*state, 5.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
+	uint64_t localTargetId =
+		PerformRaytestFromEyes(*state, characterSheet->useRange, &hitPoint,
+							   &normal, &hasNormal, &serverEntityId);
 	if (localTargetId) {
 		ServerRpcProxy::InteractInLineOfSight(this, *state, serverEntityId,
 											  hitPoint, normal);
