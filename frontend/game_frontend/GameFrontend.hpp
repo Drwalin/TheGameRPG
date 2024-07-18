@@ -62,7 +62,7 @@ public: // Call functions from godot to game
 	bool GetIsPlayerOnGround();
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
-	void PerformAttack(String attackName, int64_t attackId, String argStr,
+	void PerformAttack(int64_t attackType, int64_t attackId, String argStr,
 					   int64_t argInt);
 	int64_t GetPing();
 	int64_t GetCurrentTick();

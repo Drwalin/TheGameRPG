@@ -65,7 +65,7 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, IsInPlayerControl);
 
 	METHOD_NO_ARGS(GameFrontend, PerformInteractionUse);
-	METHOD_ARGS(GameFrontend, PerformAttack, "attackName", "attackId", "argStr",
+	METHOD_ARGS(GameFrontend, PerformAttack, "attackType", "attackId", "argStr",
 				"argInt");
 	METHOD_NO_ARGS(GameFrontend, GetPing);
 	METHOD_NO_ARGS(GameFrontend, GetCurrentTick);
@@ -155,10 +155,10 @@ bool GameFrontend::IsInPlayerControl() { return client->IsInPlayerControl(); }
 
 void GameFrontend::PerformInteractionUse() { client->PerformInteractionUse(); }
 
-void GameFrontend::PerformAttack(String attackName, int64_t attackId,
+void GameFrontend::PerformAttack(int64_t attackType, int64_t attackId,
 								 String argStr, int64_t argInt)
 {
-	client->PerformAttack(attackName.utf8().ptr(), attackId,
+	client->PerformAttack(attackType, attackId,
 						  argStr.utf8().ptr(), argInt);
 }
 

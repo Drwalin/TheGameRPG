@@ -8,6 +8,7 @@ var camera:Camera3D;
 var SENSITIVITY:float = 0.01;
 
 var animationTree:AnimationTree;
+var isInHud:bool = false;
 
 func _ready():
 	InternalReady();
@@ -55,19 +56,19 @@ func _process(_delta: float)->void:
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + Vector3(0, height, 0);
 	
-	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	if isInHud:
 		if Input.is_action_just_pressed("input_use"):
 			gameFrontend.PerformInteractionUse();
 			
 		if Input.is_action_just_pressed("attack_primary"):
-			gameFrontend.PerformAttack("attack", 0, "", 0);
+			gameFrontend.PerformAttack(0, 0, "", 0);
 		if Input.is_action_just_pressed("attack_primary_powerfull"):
-			gameFrontend.PerformAttack("attack", 0, "", 1);
+			gameFrontend.PerformAttack(0, 1, "", 0);
 		if Input.is_action_just_pressed("attack_secondary"):
-			gameFrontend.PerformAttack("attack", 1, "", 0);
+			gameFrontend.PerformAttack(0, 2, "", 0);
 		if Input.is_action_just_pressed("attack_secondary_powerfull"):
-			gameFrontend.PerformAttack("attack", 1, "", 1);
+			gameFrontend.PerformAttack(0, 3, "", 0);
 		
-		for i in range(0,12):
+		for i in range(0,128):
 			if Input.is_action_just_pressed("skill_%d" % i):
-				gameFrontend.PerformAttack("skill", 2, "", i);
+				gameFrontend.PerformAttack(1, i, "", 0);

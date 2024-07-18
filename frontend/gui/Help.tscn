@@ -44,7 +44,7 @@ size_flags_vertical = 3
 [node name="Sterowanie" type="RichTextLabel" parent="VBoxContainer/TabContainer"]
 layout_mode = 2
 text = "
-Aby poruszyć kamera należy nacisnąć i przytrzymać prawy przycisk myszy.
+Aby obrócić głową swojej postaci należy poruszać myszką.
 
 Poruszanie się postaci wykonuje się naciskają klawisze WASD.
 Do skakania należy użyć spację.
@@ -53,7 +53,7 @@ Do wykonania interakcji (na przykład otwarcia drzwi) należy nacisnąć przcisk
 
 Aby otworzyć kartę postaci, należy nacisnąć przycisk C. (Nie zaimplementowane)
 
-Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy. (Nie zaimplementowane)
+Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy.
 
 Wejście we fioletową poświatę skutkuje teleportacją."
 

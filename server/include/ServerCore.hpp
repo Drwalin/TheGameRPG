@@ -46,7 +46,7 @@ public:
 							   glm::vec3 normal);
 	void Attack(icon7::Peer *peer, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos,
-				const std::string attackName, int64_t attackId,
+				int64_t attackType, int64_t attackId,
 				const std::string &argStr, int64_t argInt);
 
 private:

@@ -136,6 +136,470 @@ skill_11={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":61,"key_label":0,"unicode":61,"echo":false,"script":null)
 ]
 }
+skill_12={
+"deadzone": 0.5,
+"events": []
+}
+skill_13={
+"deadzone": 0.5,
+"events": []
+}
+skill_14={
+"deadzone": 0.5,
+"events": []
+}
+skill_15={
+"deadzone": 0.5,
+"events": []
+}
+skill_16={
+"deadzone": 0.5,
+"events": []
+}
+skill_17={
+"deadzone": 0.5,
+"events": []
+}
+skill_18={
+"deadzone": 0.5,
+"events": []
+}
+skill_19={
+"deadzone": 0.5,
+"events": []
+}
+skill_20={
+"deadzone": 0.5,
+"events": []
+}
+skill_21={
+"deadzone": 0.5,
+"events": []
+}
+skill_22={
+"deadzone": 0.5,
+"events": []
+}
+skill_23={
+"deadzone": 0.5,
+"events": []
+}
+skill_24={
+"deadzone": 0.5,
+"events": []
+}
+skill_25={
+"deadzone": 0.5,
+"events": []
+}
+skill_26={
+"deadzone": 0.5,
+"events": []
+}
+skill_27={
+"deadzone": 0.5,
+"events": []
+}
+skill_28={
+"deadzone": 0.5,
+"events": []
+}
+skill_29={
+"deadzone": 0.5,
+"events": []
+}
+skill_30={
+"deadzone": 0.5,
+"events": []
+}
+skill_31={
+"deadzone": 0.5,
+"events": []
+}
+skill_32={
+"deadzone": 0.5,
+"events": []
+}
+skill_33={
+"deadzone": 0.5,
+"events": []
+}
+skill_34={
+"deadzone": 0.5,
+"events": []
+}
+skill_35={
+"deadzone": 0.5,
+"events": []
+}
+skill_36={
+"deadzone": 0.5,
+"events": []
+}
+skill_37={
+"deadzone": 0.5,
+"events": []
+}
+skill_38={
+"deadzone": 0.5,
+"events": []
+}
+skill_39={
+"deadzone": 0.5,
+"events": []
+}
+skill_40={
+"deadzone": 0.5,
+"events": []
+}
+skill_41={
+"deadzone": 0.5,
+"events": []
+}
+skill_42={
+"deadzone": 0.5,
+"events": []
+}
+skill_43={
+"deadzone": 0.5,
+"events": []
+}
+skill_44={
+"deadzone": 0.5,
+"events": []
+}
+skill_45={
+"deadzone": 0.5,
+"events": []
+}
+skill_46={
+"deadzone": 0.5,
+"events": []
+}
+skill_47={
+"deadzone": 0.5,
+"events": []
+}
+skill_48={
+"deadzone": 0.5,
+"events": []
+}
+skill_49={
+"deadzone": 0.5,
+"events": []
+}
+skill_50={
+"deadzone": 0.5,
+"events": []
+}
+skill_51={
+"deadzone": 0.5,
+"events": []
+}
+skill_52={
+"deadzone": 0.5,
+"events": []
+}
+skill_53={
+"deadzone": 0.5,
+"events": []
+}
+skill_54={
+"deadzone": 0.5,
+"events": []
+}
+skill_55={
+"deadzone": 0.5,
+"events": []
+}
+skill_56={
+"deadzone": 0.5,
+"events": []
+}
+skill_57={
+"deadzone": 0.5,
+"events": []
+}
+skill_58={
+"deadzone": 0.5,
+"events": []
+}
+skill_59={
+"deadzone": 0.5,
+"events": []
+}
+skill_60={
+"deadzone": 0.5,
+"events": []
+}
+skill_61={
+"deadzone": 0.5,
+"events": []
+}
+skill_62={
+"deadzone": 0.5,
+"events": []
+}
+skill_63={
+"deadzone": 0.5,
+"events": []
+}
+skill_64={
+"deadzone": 0.5,
+"events": []
+}
+skill_65={
+"deadzone": 0.5,
+"events": []
+}
+skill_66={
+"deadzone": 0.5,
+"events": []
+}
+skill_67={
+"deadzone": 0.5,
+"events": []
+}
+skill_68={
+"deadzone": 0.5,
+"events": []
+}
+skill_69={
+"deadzone": 0.5,
+"events": []
+}
+skill_70={
+"deadzone": 0.5,
+"events": []
+}
+skill_71={
+"deadzone": 0.5,
+"events": []
+}
+skill_72={
+"deadzone": 0.5,
+"events": []
+}
+skill_73={
+"deadzone": 0.5,
+"events": []
+}
+skill_74={
+"deadzone": 0.5,
+"events": []
+}
+skill_75={
+"deadzone": 0.5,
+"events": []
+}
+skill_76={
+"deadzone": 0.5,
+"events": []
+}
+skill_77={
+"deadzone": 0.5,
+"events": []
+}
+skill_78={
+"deadzone": 0.5,
+"events": []
+}
+skill_79={
+"deadzone": 0.5,
+"events": []
+}
+skill_80={
+"deadzone": 0.5,
+"events": []
+}
+skill_81={
+"deadzone": 0.5,
+"events": []
+}
+skill_82={
+"deadzone": 0.5,
+"events": []
+}
+skill_83={
+"deadzone": 0.5,
+"events": []
+}
+skill_84={
+"deadzone": 0.5,
+"events": []
+}
+skill_85={
+"deadzone": 0.5,
+"events": []
+}
+skill_86={
+"deadzone": 0.5,
+"events": []
+}
+skill_87={
+"deadzone": 0.5,
+"events": []
+}
+skill_88={
+"deadzone": 0.5,
+"events": []
+}
+skill_89={
+"deadzone": 0.5,
+"events": []
+}
+skill_90={
+"deadzone": 0.5,
+"events": []
+}
+skill_91={
+"deadzone": 0.5,
+"events": []
+}
+skill_92={
+"deadzone": 0.5,
+"events": []
+}
+skill_93={
+"deadzone": 0.5,
+"events": []
+}
+skill_94={
+"deadzone": 0.5,
+"events": []
+}
+skill_95={
+"deadzone": 0.5,
+"events": []
+}
+skill_96={
+"deadzone": 0.5,
+"events": []
+}
+skill_97={
+"deadzone": 0.5,
+"events": []
+}
+skill_98={
+"deadzone": 0.5,
+"events": []
+}
+skill_99={
+"deadzone": 0.5,
+"events": []
+}
+skill_100={
+"deadzone": 0.5,
+"events": []
+}
+skill_101={
+"deadzone": 0.5,
+"events": []
+}
+skill_102={
+"deadzone": 0.5,
+"events": []
+}
+skill_103={
+"deadzone": 0.5,
+"events": []
+}
+skill_104={
+"deadzone": 0.5,
+"events": []
+}
+skill_105={
+"deadzone": 0.5,
+"events": []
+}
+skill_106={
+"deadzone": 0.5,
+"events": []
+}
+skill_107={
+"deadzone": 0.5,
+"events": []
+}
+skill_108={
+"deadzone": 0.5,
+"events": []
+}
+skill_109={
+"deadzone": 0.5,
+"events": []
+}
+skill_110={
+"deadzone": 0.5,
+"events": []
+}
+skill_111={
+"deadzone": 0.5,
+"events": []
+}
+skill_112={
+"deadzone": 0.5,
+"events": []
+}
+skill_113={
+"deadzone": 0.5,
+"events": []
+}
+skill_114={
+"deadzone": 0.5,
+"events": []
+}
+skill_115={
+"deadzone": 0.5,
+"events": []
+}
+skill_116={
+"deadzone": 0.5,
+"events": []
+}
+skill_117={
+"deadzone": 0.5,
+"events": []
+}
+skill_118={
+"deadzone": 0.5,
+"events": []
+}
+skill_119={
+"deadzone": 0.5,
+"events": []
+}
+skill_120={
+"deadzone": 0.5,
+"events": []
+}
+skill_121={
+"deadzone": 0.5,
+"events": []
+}
+skill_122={
+"deadzone": 0.5,
+"events": []
+}
+skill_123={
+"deadzone": 0.5,
+"events": []
+}
+skill_124={
+"deadzone": 0.5,
+"events": []
+}
+skill_125={
+"deadzone": 0.5,
+"events": []
+}
+skill_126={
+"deadzone": 0.5,
+"events": []
+}
+skill_127={
+"deadzone": 0.5,
+"events": []
+}
 
 [physics]
 

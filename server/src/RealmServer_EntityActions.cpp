@@ -66,9 +66,16 @@ void RealmServer::InteractInLineOfSight(uint64_t instigatorId,
 
 void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
-						 const std::string attackName, int64_t attackId,
+						 int64_t attackType, int64_t attackId,
 						 const std::string &argStr, int64_t argInt)
 {
+	
+	
+	
+	
+	
+	
+	
 }
 
 void RealmServer::InteractInLineOfSight(icon7::Peer *peer,
@@ -81,10 +88,10 @@ void RealmServer::InteractInLineOfSight(icon7::Peer *peer,
 }
 void RealmServer::Attack(icon7::Peer *peer, ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
-						 const std::string attackName, int64_t attackId,
+						 int64_t attackType, int64_t attackId,
 						 const std::string &argStr, int64_t argInt)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
-	Attack(data->entityId, state, targetId, targetPos, attackName, attackId,
+	Attack(data->entityId, state, targetId, targetPos, attackType, attackId,
 		   argStr, argInt);
 }
