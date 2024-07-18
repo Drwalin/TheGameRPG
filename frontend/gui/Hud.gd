@@ -7,6 +7,8 @@ func _ready():
 	pass;
 
 func _process(_dt: float)->void:
+	gameFrontend.isInHud = visible;
+	
 	var targetMode = Input.MOUSE_MODE_CAPTURED;
 	if !visible || !isMouseCapturedInHUD:
 		targetMode = Input.MOUSE_MODE_VISIBLE;

@@ -363,7 +363,7 @@ void GameClient::PerformInteractionUse()
 	}
 }
 
-void GameClient::PerformAttack(const std::string &attackName, int64_t attackId,
+void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 							   const std::string &argStr, int64_t argInt)
 {
 	if (localPlayerEntityId == 0) {
@@ -384,10 +384,10 @@ void GameClient::PerformAttack(const std::string &attackName, int64_t attackId,
 		*state, 1000.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
-							   attackName, attackId, argStr, argInt);
+							   attackType, attackId, argStr, argInt);
 	} else {
-		ServerRpcProxy::Attack(this, *state, 0, hitPoint,
-							   attackName, attackId, argStr, argInt);
+		ServerRpcProxy::Attack(this, *state, 0, hitPoint, attackType, attackId,
+							   argStr, argInt);
 	}
 }
 

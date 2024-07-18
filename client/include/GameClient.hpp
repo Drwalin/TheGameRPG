@@ -79,7 +79,7 @@ public: // client input api
 	bool GetOnGround();
 	bool IsInPlayerControl();
 	void PerformInteractionUse();
-	void PerformAttack(const std::string &attackName, int64_t attackId,
+	void PerformAttack(int64_t attackType, int64_t attackId,
 					   const std::string &argStr, int64_t argInt);
 	int64_t GetPing();
 	int64_t GetCurrentTick();
