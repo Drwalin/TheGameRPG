@@ -75,7 +75,8 @@ void GameEditorConfig::SaveNode(Node3D *node, icon7::ByteWriter &writer)
 		auto c = children[i];
 		Node3D *n = Object::cast_to<Node3D>(c.operator Object *());
 		if (PrefabServerBase *pref = Object::cast_to<PrefabServerBase>(n)) {
-			pref->Serialize(0, writer);
+			pref->Serialize(writer);
+			writer.op("");
 		} else {
 			SaveNode(n, writer);
 		}

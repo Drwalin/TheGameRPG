@@ -80,8 +80,7 @@ public: // Godot bound functions
 	void _ready() override;
 	void _process(double dt) override;
 
-	virtual void Serialize(uint16_t higherLevelComponentsCount,
-						   icon7::ByteWriter &writer);
+	virtual void Serialize(icon7::ByteWriter &writer);
 
 	static String GetRandomString();
 

@@ -1,4 +1,4 @@
-#include "../../common/include/RegistryComponent.hpp"
+#include "../../common/include/RegistryComponent.inl.hpp"
 #include "../include/RealmServer.hpp"
 
 #include "../include/EntityGameComponents.hpp"

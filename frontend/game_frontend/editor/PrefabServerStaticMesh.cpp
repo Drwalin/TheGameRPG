@@ -8,11 +8,8 @@ namespace editor
 PrefabServerStaticMesh::PrefabServerStaticMesh() {}
 PrefabServerStaticMesh::~PrefabServerStaticMesh() {}
 
-void PrefabServerStaticMesh::Serialize(uint16_t higherLevelComponentsCount,
-									   icon7::ByteWriter &writer)
+void PrefabServerStaticMesh::Serialize(icon7::ByteWriter &writer)
 {
-	PrefabServerBase::Serialize(higherLevelComponentsCount + 3, writer);
-
 	std::string graphicPath;
 	if (graphic_Mesh_or_PackedScene.is_null() == false &&
 		graphic_Mesh_or_PackedScene.is_valid()) {

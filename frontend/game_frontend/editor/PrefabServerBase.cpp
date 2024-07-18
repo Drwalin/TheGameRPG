@@ -32,11 +32,7 @@ void PrefabServerBase::_ready() { ClearChildren(); }
 
 void PrefabServerBase::_process(double dt) {}
 
-void PrefabServerBase::Serialize(uint16_t higherLevelComponentsCount,
-								 icon7::ByteWriter &writer)
-{
-	writer.op(higherLevelComponentsCount);
-}
+void PrefabServerBase::Serialize(icon7::ByteWriter &writer) {}
 
 String PrefabServerBase::GetRandomString()
 {

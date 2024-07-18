@@ -18,8 +18,7 @@ public: // Godot bound functions
 	void RecreateCollision();
 	void RecreateGraphic();
 
-	virtual void Serialize(uint16_t higherLevelComponentsCount,
-						   icon7::ByteWriter &writer) override;
+	virtual void Serialize(icon7::ByteWriter &writer) override;
 
 public: // variables
 	Ref<Resource> graphic_Mesh_or_PackedScene;

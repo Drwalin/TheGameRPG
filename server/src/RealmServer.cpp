@@ -137,6 +137,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		s.oldState.onGround = false;
 		entity.set<ComponentLastAuthoritativeMovementState>(s);
 		entity.set<ComponentMovementState>(s.oldState);
+		entity.add<ComponentCharacterSheet>();
 
 		ComponentName name;
 		name.name = data->userName;
@@ -149,6 +150,11 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	}
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
+	
+	icon7::ByteWriter writer(1500);
+	ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Finish(this, peer, &writer);
 }
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
