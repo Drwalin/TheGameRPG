@@ -112,8 +112,8 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 }
 
 void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
-								icon7::Peer *peer,
-								const std::vector<uint64_t> &ids)
+									  icon7::Peer *peer,
+									  const std::vector<uint64_t> &ids)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
