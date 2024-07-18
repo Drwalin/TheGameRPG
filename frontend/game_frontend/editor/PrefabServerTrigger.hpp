@@ -17,8 +17,7 @@ public: // Godot bound functions
 	void _ready() override;
 	void _process(double dt) override;
 
-	virtual void Serialize(uint16_t higherLevelComponentsCount,
-						   icon7::ByteWriter &writer) override;
+	virtual void Serialize(icon7::ByteWriter &writer) override;
 
 public: // variables
 	String onTriggerEnter = "";

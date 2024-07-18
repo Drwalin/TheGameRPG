@@ -57,14 +57,12 @@ func _on_mouse_sensitivity_slider_changed(value: float):
 	SetMouseSensitivity(value);
 
 func _on_enable_monitoring_toggled(toggled_on: bool):
-	print(toggled_on);
 	$"../Hud/PerformanceStatistics".visible = toggled_on;
 	save = true;
 	ProjectSettings.set_setting("game_settings/monitoring/monitor", toggled_on);
 	$VBoxContainer/TabContainer/Monitoring/HBoxContainer/EnableMonitoring.button_pressed = toggled_on;
 
 func _on_show_player_position_toggled(toggled_on: bool):
-	print(toggled_on);
 	$"../Hud/Position".visible = toggled_on;
 	save = true;
 	ProjectSettings.set_setting("game_settings/monitoring/player_position", toggled_on);
@@ -87,12 +85,9 @@ func _on_rendering_driver_value_changed(value):
 	value = int(value);
 	match value:
 		2:
-			print("Value == forward_plus");
 			ProjectSettings.set_setting("rendering/renderer/rendering_method", "forward_plus");
 		1:
-			print("Value == mobile");
 			ProjectSettings.set_setting("rendering/renderer/rendering_method", "mobile");
 		_:
-			print("Value == gl_compatibility");
 			ProjectSettings.set_setting("rendering/renderer/rendering_method", "gl_compatibility");
 	save = true;

@@ -3,6 +3,7 @@
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/Peer.hpp>
 
+#include "../../common/include/RegistryComponent.hpp"
 #include "../../common/include/EntityComponents.hpp"
 
 class RealmServer;
@@ -45,4 +46,14 @@ void Broadcast_SpawnStaticEntities(
 	const ComponentStaticTransform &transform, const ComponentModelName &model,
 	const ComponentStaticCollisionShapeName &shape);
 void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
+
+void GenericComponentUpdate_Start(RealmServer *realm, icon7::ByteWriter *writer);
+template<typename ...TArgs>
+void GenericComponentUpdate_Update(RealmServer *realm, icon7::ByteWriter *writer, uint64_t entityId)
+{
+	writer->op(entityId);
+	(reg::Registry::Serialize<TArgs>(realm, entityId, *writer), ...);
+	writer->op("");
+}
+void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer, icon7::ByteWriter *writer);
 } // namespace ClientRpcProxy

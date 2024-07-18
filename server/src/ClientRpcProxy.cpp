@@ -246,4 +246,19 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 		realm->Broadcast(writer.Buffer(), 0);
 	}
 }
+
+void GenericComponentUpdate_Start(RealmServer *realm,
+								  icon7::ByteWriter *writer)
+{
+	realm->rpc->InitializeSerializeSend(
+		*writer, ClientRpcFunctionNames::GenericComponentUpdate);
+}
+
+void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
+								   icon7::ByteWriter *writer)
+{
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	realm->rpc->FinalizeSerializeSend(*writer, flags);
+	peer->Send(std::move(writer->Buffer()));
+}
 } // namespace ClientRpcProxy

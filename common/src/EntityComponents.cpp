@@ -1,5 +1,5 @@
 
-#include "../include/RegistryComponent.hpp"
+#include "../include/RegistryComponent.inl.hpp"
 #include "../include/Realm.hpp"
 
 #include "../include/EntityComponents.hpp"
@@ -10,6 +10,7 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementParameters, "MV");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentModelName, "MN");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticTransform, "ST");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticCollisionShapeName, "SCS");
+GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet, "CS");
 
 GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
 	ComponentMovementState, "CP",

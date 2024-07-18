@@ -12,10 +12,9 @@ namespace editor
 PrefabServerTrigger::PrefabServerTrigger() {}
 PrefabServerTrigger::~PrefabServerTrigger() {}
 
-void PrefabServerTrigger::Serialize(uint16_t higherLevelComponentsCount,
-									icon7::ByteWriter &writer)
+void PrefabServerTrigger::Serialize(icon7::ByteWriter &writer)
 {
-	PrefabServerBase::Serialize(higherLevelComponentsCount + 3, writer);
+	PrefabServerBase::Serialize(writer);
 
 	std::string onEnter = onTriggerEnter.utf8().ptr();
 	named_callbacks::registry_entries::OnTriggerEnterExit onTriggerEnter{

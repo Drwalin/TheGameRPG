@@ -13,8 +13,7 @@ namespace editor
 PrefabServerNPC::PrefabServerNPC() {}
 PrefabServerNPC::~PrefabServerNPC() {}
 
-void PrefabServerNPC::Serialize(uint16_t higherLevelComponentsCount,
-								icon7::ByteWriter &writer)
+void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 {
 	if (height < 0.1) {
 		godot::UtilityFunctions::print(this, " height cannot be below 0.1");
@@ -33,8 +32,6 @@ void PrefabServerNPC::Serialize(uint16_t higherLevelComponentsCount,
 		godot::UtilityFunctions::print(this, " stepHeight cannot be below 0");
 		return;
 	}
-
-	PrefabServerBase::Serialize(higherLevelComponentsCount + 7, writer);
 
 	ComponentShape shape;
 	shape.height = height;

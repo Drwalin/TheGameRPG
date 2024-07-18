@@ -8,10 +8,9 @@ namespace editor
 PrefabServerOpenableSingleDoor::PrefabServerOpenableSingleDoor() {}
 PrefabServerOpenableSingleDoor::~PrefabServerOpenableSingleDoor() {}
 
-void PrefabServerOpenableSingleDoor::Serialize(
-	uint16_t higherLevelComponentsCount, icon7::ByteWriter &writer)
+void PrefabServerOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 {
-	PrefabServerStaticMesh::Serialize(higherLevelComponentsCount + 2, writer);
+	PrefabServerStaticMesh::Serialize(writer);
 
 	std::string onUseCallbackName = OnUse.utf8().ptr();
 	named_callbacks::registry_entries::OnUse onUseEntry{
