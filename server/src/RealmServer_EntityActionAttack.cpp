@@ -16,13 +16,6 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 						 int64_t attackType, int64_t attackId,
 						 const std::string &argStr, int64_t argInt)
 {
-	
-	
-	
-	
-	
-	
-	
 }
 
 void RealmServer::Attack(icon7::Peer *peer, ComponentMovementState state,

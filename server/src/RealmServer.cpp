@@ -150,10 +150,11 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	}
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
-	
+
 	icon7::ByteWriter writer(1500);
 	ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet>(
+		this, &writer, entity);
 	ClientRpcProxy::GenericComponentUpdate_Finish(this, peer, &writer);
 }
 
@@ -370,7 +371,8 @@ void RealmServer::RegisterObservers()
 					ComponentEventsQueue *eventsQueue =
 						realm->AccessComponent<ComponentEventsQueue>(entityId);
 					if (eventsQueue == nullptr) {
-						LOG_FATAL("Events queue removed but event AIUpdate was executed.");
+						LOG_FATAL("Events queue removed but event AIUpdate was "
+								  "executed.");
 						return;
 					}
 

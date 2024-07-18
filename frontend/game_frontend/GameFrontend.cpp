@@ -158,8 +158,7 @@ void GameFrontend::PerformInteractionUse() { client->PerformInteractionUse(); }
 void GameFrontend::PerformAttack(int64_t attackType, int64_t attackId,
 								 String argStr, int64_t argInt)
 {
-	client->PerformAttack(attackType, attackId,
-						  argStr.utf8().ptr(), argInt);
+	client->PerformAttack(attackType, attackId, argStr.utf8().ptr(), argInt);
 }
 
 int64_t GameFrontend::GetPing() { return client->GetPing(); }

@@ -47,13 +47,16 @@ void Broadcast_SpawnStaticEntities(
 	const ComponentStaticCollisionShapeName &shape);
 void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 
-void GenericComponentUpdate_Start(RealmServer *realm, icon7::ByteWriter *writer);
-template<typename ...TArgs>
-void GenericComponentUpdate_Update(RealmServer *realm, icon7::ByteWriter *writer, uint64_t entityId)
+void GenericComponentUpdate_Start(RealmServer *realm,
+								  icon7::ByteWriter *writer);
+template <typename... TArgs>
+void GenericComponentUpdate_Update(RealmServer *realm,
+								   icon7::ByteWriter *writer, uint64_t entityId)
 {
 	writer->op(entityId);
 	(reg::Registry::Serialize<TArgs>(realm, entityId, *writer), ...);
 	writer->op("");
 }
-void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer, icon7::ByteWriter *writer);
+void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
+								   icon7::ByteWriter *writer);
 } // namespace ClientRpcProxy
