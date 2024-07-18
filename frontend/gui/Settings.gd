@@ -23,7 +23,7 @@ func _ready():
 func _process(dt:float):
 	toSave -= dt;
 	if save && (toSave <= 0.0 || visible==false):
-		Save();
+		SettingsConfigurationClass.Save();
 
 static func Save():
 	if save:
@@ -32,11 +32,11 @@ static func Save():
 		toSave = ProjectSettings.get_setting("game_settings/settings/file_saving/delay", 10.0);
 
 func _exit_tree():
-	Save();
+	SettingsConfigurationClass.Save();
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		Save();
+		SettingsConfigurationClass.Save();
 		get_tree().quit();
 
 func _on_main_menu_pressed():

@@ -381,7 +381,7 @@ void GameClient::PerformAttack(const std::string &attackName, int64_t attackId,
 	bool hasNormal;
 	uint64_t serverEntityId = 0;
 	uint64_t localTargetId = PerformRaytestFromEyes(
-		*state, 5.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
+		*state, 1000.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
 							   attackName, attackId, argStr, argInt);

@@ -139,6 +139,7 @@ void CollisionWorld::OnStaticCollisionShape(
 void CollisionWorld::OnAddEntity(flecs::entity entity,
 								 const ComponentShape &shape, glm::vec3 pos)
 {
+	pos.y += shape.height * 0.5f;
 	btCapsuleShape *_shape =
 		new btCapsuleShape(shape.width * 0.5, shape.height);
 	btCollisionObject *object = AllocateNewCollisionObject();
@@ -171,6 +172,7 @@ void CollisionWorld::OnAddTrigger(flecs::entity entity,
 void CollisionWorld::UpdateEntityBvh(const ComponentBulletCollisionObject obj,
 									 ComponentShape shape, glm::vec3 pos)
 {
+	pos.y += shape.height * 0.5f;
 	obj.object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
 	collisionWorld->updateSingleAabb(obj.object);
 }

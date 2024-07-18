@@ -23,21 +23,9 @@ func Rotate(x: float, y: float)->void:
 		rot.x = 3.141592*0.5
 	SetPlayerRotation(rot);
 
-var mouseCapturedPosition:Vector2;
-var isDraggingCameraRotationButton: bool = false;
 func _input(event)->void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_RIGHT:
-			if (event.pressed) && (isDraggingCameraRotationButton == false):
-				mouseCapturedPosition = get_viewport().get_mouse_position();
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED);
-				isDraggingCameraRotationButton = true;
-			elif (!event.pressed) && (isDraggingCameraRotationButton == true):
-				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE);
-				get_viewport().warp_mouse(mouseCapturedPosition);
-				isDraggingCameraRotationButton = false;
 	if event is InputEventMouseMotion:
-		if isDraggingCameraRotationButton:
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Rotate(-event.relative.y * SENSITIVITY, -event.relative.x * SENSITIVITY);
 
 func _process(_delta: float)->void:
@@ -67,5 +55,19 @@ func _process(_delta: float)->void:
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + Vector3(0, height, 0);
 	
-	if Input.is_action_just_pressed("input_use"):
-		gameFrontend.PerformInteractionUse();
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if Input.is_action_just_pressed("input_use"):
+			gameFrontend.PerformInteractionUse();
+			
+		if Input.is_action_just_pressed("attack_primary"):
+			gameFrontend.PerformAttack("attack", 0, "", 0);
+		if Input.is_action_just_pressed("attack_primary_powerfull"):
+			gameFrontend.PerformAttack("attack", 0, "", 1);
+		if Input.is_action_just_pressed("attack_secondary"):
+			gameFrontend.PerformAttack("attack", 1, "", 0);
+		if Input.is_action_just_pressed("attack_secondary_powerfull"):
+			gameFrontend.PerformAttack("attack", 1, "", 1);
+		
+		for i in range(0,12):
+			if Input.is_action_just_pressed("skill_%d" % i):
+				gameFrontend.PerformAttack("skill", 2, "", i);

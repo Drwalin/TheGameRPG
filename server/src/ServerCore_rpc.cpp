@@ -35,6 +35,9 @@ void ServerCore::BindRpc()
 	rpc.RegisterObjectMessage(ServerRpcFunctionNames::InteractInLineOfSight,
 							  this, &ServerCore::InteractInLineOfSight, nullptr,
 							  SelectExecutionQueueByRealm);
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Attack,
+							  this, &ServerCore::Attack, nullptr,
+							  SelectExecutionQueueByRealm);
 }
 
 icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueByRealm(
@@ -228,7 +231,6 @@ void ServerCore::InteractInLineOfSight(icon7::Peer *peer,
 									   glm::vec3 normal)
 {
 	// TODO: add server side verification
-
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
@@ -241,8 +243,6 @@ void ServerCore::Attack(icon7::Peer *peer, ComponentMovementState state,
 						const std::string attackName, int64_t attackId,
 						const std::string &argStr, int64_t argInt)
 {
-	// TODO: add server side verification
-
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {

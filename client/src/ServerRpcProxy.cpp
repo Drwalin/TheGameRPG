@@ -64,7 +64,7 @@ void Attack(GameClient *gameClient, ComponentMovementState state,
 {
 	gameClient->rpc.Send(gameClient->peer.get(),
 						 icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
-						 ServerRpcFunctionNames::InteractInLineOfSight, state,
+						 ServerRpcFunctionNames::Attack, state,
 						 targetId, targetPos, attackName, attackId, argStr,
 						 argInt);
 }
