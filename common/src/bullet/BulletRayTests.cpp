@@ -79,6 +79,12 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 			*hasNormal = false;
 		if (entityId)
 			*entityId = 0;
+		if (hitPosition)
+			*hitPosition = end;
+		if (hitNormal) {
+			*hitNormal = start - end;
+			*hitNormal = glm::normalize(*hitNormal);
+		}
 		return false;
 	}
 

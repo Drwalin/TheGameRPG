@@ -385,6 +385,9 @@ void GameClient::PerformAttack(const std::string &attackName, int64_t attackId,
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
 							   attackName, attackId, argStr, argInt);
+	} else {
+		ServerRpcProxy::Attack(this, *state, 0, hitPoint,
+							   attackName, attackId, argStr, argInt);
 	}
 }
 
