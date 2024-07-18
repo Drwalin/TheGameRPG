@@ -55,6 +55,7 @@ private: // rpc receiving methods
 	void RemoveEntity(uint64_t serverId);
 
 	void RequestSpawnOf(uint64_t serverId);
+	void GenericComponentUpdate(icon7::ByteReader *reader);
 
 public: // game output api
 	// may be called multiple times per single entity

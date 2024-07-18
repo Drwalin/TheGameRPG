@@ -4,6 +4,7 @@
 #include "../include/ServerRpcProxy.hpp"
 
 #include "../include/GameClient.hpp"
+#include "RegistryComponent.hpp"
 
 void GameClient::BindRpc()
 {
@@ -30,6 +31,9 @@ void GameClient::BindRpc()
 							  &GameClient::LoginSuccessfull, &executionQueue);
 	rpc.RegisterObjectMessage(ClientRpcFunctionNames::Pong, this,
 							  &GameClient::Pong, &executionQueue);
+	rpc.RegisterObjectMessage(ClientRpcFunctionNames::GenericComponentUpdate,
+							  this, &GameClient::GenericComponentUpdate,
+							  &executionQueue);
 }
 
 void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
@@ -281,4 +285,25 @@ void GameClient::RequestSpawnOf(uint64_t serverId)
 {
 	// TODO: better (caching) implementation
 	ServerRpcProxy::GetEntitiesData(this, {serverId});
+}
+
+void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
+{
+	uint64_t serverId, localId;
+	while (reader->get_remaining_bytes() >= 8) {
+		reader->op(serverId);
+
+		auto it = mapServerEntityIdToLocalEntityId.find(serverId);
+		if (it == mapServerEntityIdToLocalEntityId.end()) {
+			localId = realm->NewEntity();
+			mapServerEntityIdToLocalEntityId[serverId] = localId;
+			mapLocalEntityIdToServerEntityId[localId] = serverId;
+			RequestSpawnOf(serverId);
+		} else {
+			localId = it->second;
+		}
+
+		flecs::entity entity = realm->Entity(localId);
+		reg::Registry::Singleton().DeserializeEntityComponent(entity, *reader);
+	}
 }

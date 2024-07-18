@@ -38,4 +38,8 @@ inline const std::string LoginSuccessfull = "LoginSuccessfull";
 
 // void Pong(int64_t internal, int64_t serverMostCurrentTick)
 inline const std::string Pong = "Pong";
+
+// void GenericEntityComponentUpdate({entityId, string componentName,
+// 									  componentData}, ...)
+inline const std::string GenericComponentUpdate = "GenericComponentUpdate";
 } // namespace ClientRpcFunctionNames
