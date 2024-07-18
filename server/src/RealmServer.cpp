@@ -414,4 +414,12 @@ void RealmServer::RegisterObservers()
 				entity.add<ComponentEventsQueue>();
 			}
 		});
+
+	ecs.observer<ComponentLastAuthoritativeMovementState, ComponentPlayerConnectionPeer>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity, const ComponentLastAuthoritativeMovementState &state, ComponentPlayerConnectionPeer &peer) {
+			if (peer.peer.get() != nullptr) {
+				ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(this->shared_from_this(), peer.peer.get(), {entity.id()});
+			}
+		});
 }
