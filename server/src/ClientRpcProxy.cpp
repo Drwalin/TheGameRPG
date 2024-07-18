@@ -247,8 +247,7 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 	}
 }
 
-void GenericComponentUpdate_Start(RealmServer *realm,
-								  icon7::ByteWriter *writer)
+void GenericComponentUpdate_Start(RealmServer *realm, icon7::ByteWriter *writer)
 {
 	realm->rpc->InitializeSerializeSend(
 		*writer, ClientRpcFunctionNames::GenericComponentUpdate);

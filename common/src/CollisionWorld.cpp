@@ -21,9 +21,15 @@ CollisionWorld::CollisionWorld(Realm *realm)
 {
 	// TODO: Replace this code with some proper *.so compilation configuration
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
-	{auto _a = &CollisionWorld::TestForEntitiesBox;};
-	{auto _a = &CollisionWorld::TestForEntitiesSphere;};
-	{auto _a = &CollisionWorld::TestForEntitiesCylinder;};
+	{
+		auto _a = &CollisionWorld::TestForEntitiesBox;
+	};
+	{
+		auto _a = &CollisionWorld::TestForEntitiesSphere;
+	};
+	{
+		auto _a = &CollisionWorld::TestForEntitiesCylinder;
+	};
 	this->realm = realm;
 	broadphase = new btSimpleBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();

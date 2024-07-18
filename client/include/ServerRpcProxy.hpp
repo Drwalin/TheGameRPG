@@ -20,7 +20,6 @@ void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,
 						   glm::vec3 normal);
 
 void Attack(GameClient *gameClient, ComponentMovementState state,
-			uint64_t targetId, glm::vec3 targetPos,
-			int64_t attackType, int64_t attackId,
-			const std::string &argStr, int64_t argInt);
+			uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
+			int64_t attackId, const std::string &argStr, int64_t argInt);
 } // namespace ServerRpcProxy

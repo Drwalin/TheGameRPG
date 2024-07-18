@@ -292,7 +292,7 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 	uint64_t serverId, localId;
 	while (reader->get_remaining_bytes() > 9) {
 		localId = serverId = 0;
-		
+
 		reader->op(serverId);
 
 		auto it = mapServerEntityIdToLocalEntityId.find(serverId);
@@ -306,6 +306,7 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 		}
 
 		flecs::entity entity = realm->Entity(localId);
-		reg::Registry::Singleton().DeserializeAllEntityComponents(entity, *reader);
+		reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
+																  *reader);
 	}
 }

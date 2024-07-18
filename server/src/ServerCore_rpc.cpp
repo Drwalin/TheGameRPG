@@ -35,8 +35,8 @@ void ServerCore::BindRpc()
 	rpc.RegisterObjectMessage(ServerRpcFunctionNames::InteractInLineOfSight,
 							  this, &ServerCore::InteractInLineOfSight, nullptr,
 							  SelectExecutionQueueByRealm);
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Attack,
-							  this, &ServerCore::Attack, nullptr,
+	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Attack, this,
+							  &ServerCore::Attack, nullptr,
 							  SelectExecutionQueueByRealm);
 }
 

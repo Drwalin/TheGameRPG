@@ -121,7 +121,8 @@ void Realm::RegisterObservers()
 					ComponentEventsQueue *eventsQueue =
 						realm->AccessComponent<ComponentEventsQueue>(entityId);
 					if (eventsQueue == nullptr) {
-						LOG_FATAL("Events queue removed but event ExecuteMovementUpdate  was executed.");
+						LOG_FATAL("Events queue removed but event "
+								  "ExecuteMovementUpdate  was executed.");
 						return;
 					}
 
