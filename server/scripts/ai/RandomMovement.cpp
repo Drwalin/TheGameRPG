@@ -149,11 +149,6 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 
 		lastState.oldState = state;
 		entity.set(lastState);
-
-		auto s = state;
-		LOG_INFO("%10s    %lu -> %lu/%lu    %f %f %f", realm->realmName.c_str(),
-				 entityId, s.timestamp, realm->timer.currentTick, s.pos.x,
-				 s.pos.y, s.pos.z);
 	}
 }
 

@@ -65,34 +65,6 @@ void RealmServer::Init(const std::string &realmName)
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
 
-	{
-		flecs::entity entity = ecs.entity();
-		entity.add<ComponentShape>();
-		entity.add<ComponentMovementParameters>();
-		entity.add<ComponentLastAuthoritativeMovementState>();
-		ComponentModelName modelName;
-		modelName.modelName =
-			"characters/low_poly_medieval_people/city_dwellers_1_model.tscn";
-		entity.set<ComponentModelName>(modelName);
-
-		auto s = *entity.get<ComponentLastAuthoritativeMovementState>();
-		s.oldState.vel = {0, 0, 0};
-		s.oldState.timestamp = timer.currentTick;
-		s.oldState.pos = {0, 100, 0};
-		s.oldState.onGround = false;
-		entity.set<ComponentLastAuthoritativeMovementState>(s);
-		entity.set<ComponentMovementState>(s.oldState);
-
-		ComponentName name;
-		name.name = "AI";
-		entity.set<ComponentName>(name);
-
-		ComponentAITick aiTick;
-		aiTick.aiTick = named_callbacks::registry_entries::AiBehaviorTick::Get(
-			"AIRandomMove");
-		entity.set<ComponentAITick>(aiTick);
-	}
-
 	sendEntitiesToClientsTimer = 0;
 }
 
