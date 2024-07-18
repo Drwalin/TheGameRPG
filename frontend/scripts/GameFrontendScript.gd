@@ -28,6 +28,13 @@ func _input(event)->void:
 	if event is InputEventMouseMotion:
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Rotate(-event.relative.y * SENSITIVITY, -event.relative.x * SENSITIVITY);
+	elif event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed:
+				if event.shift_pressed == false:
+					Input.action_press("attack_secondary");
+			elif Input.is_action_pressed("attack_secondary"):
+				Input.action_release("attack_secondary");
 
 func _process(_delta: float)->void:
 	InternalProcess();
@@ -60,13 +67,13 @@ func _process(_delta: float)->void:
 		if Input.is_action_just_pressed("input_use"):
 			gameFrontend.PerformInteractionUse();
 			
-		if Input.is_action_just_pressed("attack_primary"):
+		if Input.is_action_just_pressed("attack_primary", true):
 			gameFrontend.PerformAttack(0, 0, "", 0);
-		if Input.is_action_just_pressed("attack_primary_powerfull"):
+		if Input.is_action_just_pressed("attack_primary_powerfull", true):
 			gameFrontend.PerformAttack(0, 1, "", 0);
-		if Input.is_action_just_pressed("attack_secondary"):
+		if Input.is_action_just_pressed("attack_secondary", true):
 			gameFrontend.PerformAttack(0, 2, "", 0);
-		if Input.is_action_just_pressed("attack_secondary_powerfull"):
+		if Input.is_action_just_pressed("attack_secondary_powerfull", true):
 			gameFrontend.PerformAttack(0, 3, "", 0);
 		
 		for i in range(0,128):
