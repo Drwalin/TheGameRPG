@@ -102,6 +102,42 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 				writer.op(*entity.get<ComponentShape>());
 				writer.op(*entity.get<ComponentMovementParameters>());
 			}
+		} else {
+			ClientRpcProxy::DeleteEntity_ForPeer(realm, peer, entityId);
+		}
+	}
+	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
+	realm->rpc->FinalizeSerializeSend(writer, flags);
+	peer->Send(std::move(writer.Buffer()));
+}
+
+void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
+								icon7::Peer *peer,
+								const std::vector<uint64_t> &ids)
+{
+	icon7::ByteWriter writer(1000);
+	realm->rpc->InitializeSerializeSend(writer,
+										ClientRpcFunctionNames::SpawnEntities);
+	for (uint64_t entityId : ids) {
+		flecs::entity entity = realm->Entity(entityId);
+		if (entity.is_alive()) {
+			if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+				entity.has<ComponentName>() &&
+				entity.has<ComponentModelName>() &&
+				entity.has<ComponentShape>() &&
+				entity.has<ComponentMovementParameters>()) {
+
+				writer.op(entityId);
+
+				writer.op(
+					*entity.get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.get<ComponentName>());
+				writer.op(*entity.get<ComponentModelName>());
+				writer.op(*entity.get<ComponentShape>());
+				writer.op(*entity.get<ComponentMovementParameters>());
+			}
+		} else {
+			ClientRpcProxy::DeleteEntity_ForPeer(realm, peer, entityId);
 		}
 	}
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;

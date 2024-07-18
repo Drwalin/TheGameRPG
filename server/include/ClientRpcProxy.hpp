@@ -24,6 +24,9 @@ void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
 
 void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 								icon7::Peer *peer, icon7::ByteReader &reader);
+void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
+								icon7::Peer *peer,
+								const std::vector<uint64_t> &ids);
 void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
 								 icon7::Peer *peer);
 
