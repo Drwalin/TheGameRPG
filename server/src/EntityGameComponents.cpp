@@ -1,6 +1,10 @@
 #include "../../common/include/RegistryComponent.inl.hpp"
 #include "../include/RealmServer.hpp"
 
+#include "../include/callbacks/CallbackAiBehaviorTick.hpp"
+#include "../include/callbacks/CallbackOnTriggerEnterExit.hpp"
+#include "../include/callbacks/CallbackOnUse.hpp"
+
 #include "../include/EntityGameComponents.hpp"
 
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentOnUse, "TCBONU");
@@ -55,4 +59,45 @@ void ComponentTrigger::Tick(int64_t entityId, RealmServer *realm)
 			}
 		}
 	}
+}
+
+bitscpp::ByteReader<true> &
+ComponentOnUse::__ByteStream_op(bitscpp::ByteReader<true> &s)
+{
+	entry->Deserialize(&entry, s);
+	return s;
+}
+inline bitscpp::ByteWriter<icon7::ByteBuffer> &
+ComponentOnUse::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+{
+	entry->Serialize(&entry, s);
+	return s;
+}
+
+bitscpp::ByteReader<true> &
+ComponentTrigger::__ByteStream_op(bitscpp::ByteReader<true> &s)
+{
+	onEnter->Deserialize(&onEnter, s);
+	onExit->Deserialize(&onExit, s);
+	return s;
+}
+inline bitscpp::ByteWriter<icon7::ByteBuffer> &
+ComponentTrigger::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+{
+	onEnter->Serialize(&onEnter, s);
+	onExit->Serialize(&onExit, s);
+	return s;
+}
+
+bitscpp::ByteReader<true> &
+ComponentAITick::__ByteStream_op(bitscpp::ByteReader<true> &s)
+{
+	aiTick->Deserialize(&aiTick, s);
+	return s;
+}
+inline bitscpp::ByteWriter<icon7::ByteBuffer> &
+ComponentAITick::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+{
+	aiTick->Serialize(&aiTick, s);
+	return s;
 }

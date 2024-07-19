@@ -17,6 +17,7 @@
 #include "../../include/SharedObject.hpp"
 #include "../../include/RealmServer.hpp"
 #include "../../include/ServerCore.hpp"
+#include "../../include/callbacks/CallbackAiBehaviorTick.hpp"
 
 static void MoveInDirectionForward(ComponentMovementState *state,
 								   const ComponentMovementParameters *params,

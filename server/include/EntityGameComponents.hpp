@@ -2,24 +2,28 @@
 
 #include <unordered_set>
 
+#include <icon7/ByteBuffer.hpp>
+
 #include "ComponentCallbacks.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
+namespace named_callbacks
+{
+namespace registry_entries
+{
+struct AiBehaviorTick;
+struct OnTriggerEnterExit;
+struct OnUse;
+} // namespace registry_entries
+} // namespace named_callbacks
+
 struct ComponentOnUse {
 	named_callbacks::registry_entries::OnUse *entry = nullptr;
 
-	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s)
-	{
-		entry->Deserialize(&entry, s);
-		return s;
-	}
-	template <typename BT>
-	inline bitscpp::ByteWriter<BT> &__ByteStream_op(bitscpp::ByteWriter<BT> &s)
-	{
-		entry->Serialize(&entry, s);
-		return s;
-	}
+	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s);
+	bitscpp::ByteWriter<icon7::ByteBuffer> &
+	__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentOnUse, MV(entry));
 };
@@ -52,19 +56,9 @@ struct ComponentTrigger {
 
 	void Tick(int64_t entityId, class RealmServer *realm);
 
-	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s)
-	{
-		onEnter->Deserialize(&onEnter, s);
-		onExit->Deserialize(&onExit, s);
-		return s;
-	}
-	template <typename BT>
-	inline bitscpp::ByteWriter<BT> &__ByteStream_op(bitscpp::ByteWriter<BT> &s)
-	{
-		onEnter->Serialize(&onEnter, s);
-		onExit->Serialize(&onExit, s);
-		return s;
-	}
+	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s);
+	bitscpp::ByteWriter<icon7::ByteBuffer> &
+	__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
 };
 
 struct ComponentTeleport {
@@ -85,17 +79,9 @@ struct ComponentTeleport {
 struct ComponentAITick {
 	named_callbacks::registry_entries::AiBehaviorTick *aiTick = nullptr;
 
-	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s)
-	{
-		aiTick->Deserialize(&aiTick, s);
-		return s;
-	}
-	template <typename BT>
-	inline bitscpp::ByteWriter<BT> &__ByteStream_op(bitscpp::ByteWriter<BT> &s)
-	{
-		aiTick->Serialize(&aiTick, s);
-		return s;
-	}
+	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s);
+	bitscpp::ByteWriter<icon7::ByteBuffer> &
+	__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentAITick, MV(aiTick));
 };

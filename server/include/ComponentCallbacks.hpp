@@ -69,26 +69,4 @@ template <typename TFinal, typename TCb> struct EntryBase {
 		}
 	}
 };
-
-namespace registry_entries
-{
-using OnUseFunctionType = void (*)(RealmServer *realm, uint64_t instigatorId,
-								   uint64_t receiverId,
-								   const std::string &context);
-struct OnUse final : public EntryBase<OnUse, OnUseFunctionType> {
-};
-
-using OnTriggerEnterExitFunctionType = void (*)(RealmServer *realm,
-												uint64_t entityId,
-												uint64_t triggerId);
-struct OnTriggerEnterExit final
-	: public EntryBase<OnTriggerEnterExit, OnTriggerEnterExitFunctionType> {
-};
-
-using AiBehaviorTickFunctionType = void (*)(RealmServer *realm,
-											uint64_t entityId);
-struct AiBehaviorTick final
-	: public EntryBase<AiBehaviorTick, AiBehaviorTickFunctionType> {
-};
-} // namespace registry_entries
 } // namespace named_callbacks

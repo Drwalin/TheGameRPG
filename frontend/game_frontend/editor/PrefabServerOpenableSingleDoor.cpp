@@ -1,4 +1,5 @@
 #include "../../../common/include/RegistryComponent.hpp"
+#include "../../../server/include/callbacks/CallbackOnUse.hpp"
 #include "../../../server/include/EntityGameComponents.hpp"
 
 #include "PrefabServerOpenableSingleDoor.hpp"

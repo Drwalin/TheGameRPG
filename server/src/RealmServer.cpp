@@ -12,6 +12,7 @@
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../include/FileOperations.hpp"
 #include "../include/EntityGameComponents.hpp"
+#include "../include/callbacks/CallbackAiBehaviorTick.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -421,9 +422,12 @@ void RealmServer::RegisterObservers()
 		.each([this](flecs::entity entity,
 					 const ComponentLastAuthoritativeMovementState &state,
 					 ComponentPlayerConnectionPeer &peer) {
-			if (peer.peer.get() != nullptr) {
-				ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
-					this->shared_from_this(), peer.peer.get(), {entity.id()});
+			if (currentlyUpdatingPlayerPeerEntityMovement == false) {
+				if (peer.peer.get() != nullptr) {
+					ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
+						this->shared_from_this(), peer.peer.get(),
+						{entity.id()});
+				}
 			}
 		});
 }

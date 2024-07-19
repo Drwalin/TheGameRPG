@@ -1,4 +1,5 @@
 #include "../../../server/include/EntityGameComponents.hpp"
+#include "../../../server/include/callbacks/CallbackAiBehaviorTick.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 
 #include "../GodotGlm.hpp"

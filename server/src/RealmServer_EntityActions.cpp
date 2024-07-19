@@ -8,6 +8,7 @@
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../include/EntityGameComponents.hpp"
+#include "../include/callbacks/CallbackOnUse.hpp"
 
 #include "../include/RealmServer.hpp"
 

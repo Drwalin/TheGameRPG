@@ -6,6 +6,7 @@
 #include "../../include/SharedObject.hpp"
 #include "../../include/RealmServer.hpp"
 #include "../../include/ServerCore.hpp"
+#include "../../include/callbacks/CallbackOnTriggerEnterExit.hpp"
 
 void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 							  uint64_t triggerId)
