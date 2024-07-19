@@ -1,4 +1,6 @@
-#include "../include/ComponentCallbacks.hpp"
+#include "../include/callbacks/CallbackAiBehaviorTick.hpp"
+#include "../include/callbacks/CallbackOnTriggerEnterExit.hpp"
+#include "../include/callbacks/CallbackOnUse.hpp"
 
 namespace named_callbacks
 {

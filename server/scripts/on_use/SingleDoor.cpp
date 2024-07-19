@@ -4,6 +4,7 @@
 #include "../../include/EntityGameComponents.hpp"
 #include "../../include/SharedObject.hpp"
 #include "../../include/RealmServer.hpp"
+#include "../../include/callbacks/CallbackOnUse.hpp"
 
 inline float TransformDistance(const ComponentStaticTransform &l,
 							   const ComponentStaticTransform &r)

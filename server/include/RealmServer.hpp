@@ -105,6 +105,9 @@ public:
 
 private:
 	bool queueDestroy = false;
+	
+public:
+	bool currentlyUpdatingPlayerPeerEntityMovement = false;
 };
 
 template <typename... Args>

@@ -1,3 +1,4 @@
+#include "../../../server/include/callbacks/CallbackOnTriggerEnterExit.hpp"
 #include "../../../server/include/EntityGameComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 

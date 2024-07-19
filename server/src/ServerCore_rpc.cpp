@@ -74,8 +74,10 @@ void ServerCore::UpdatePlayer(
 
 			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
 			if (s && glm::length(s->oldState.pos - state.oldState.pos) < 5) {
+				realm->currentlyUpdatingPlayerPeerEntityMovement = true;
 				entity.set<ComponentLastAuthoritativeMovementState>(state);
 				entity.set<ComponentMovementState>(state.oldState);
+				realm->currentlyUpdatingPlayerPeerEntityMovement = false;
 			} else {
 				ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm, peer);
 			}
