@@ -74,6 +74,17 @@ ComponentOnUse::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 	return s;
 }
 
+BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentSingleDoorTransformStates,
+											{
+												s.op(transformClosed);
+												s.op(transformOpen);
+											});
+
+BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentTeleport, {
+	s.op(realmName);
+	s.op(position);
+});
+
 bitscpp::ByteReader<true> &
 ComponentTrigger::__ByteStream_op(bitscpp::ByteReader<true> &s)
 {

@@ -9,6 +9,8 @@
 #include "../../ICon7/include/icon7/HostUStcp.hpp"
 #include "../../ICon7/include/icon7/Command.hpp"
 
+#include "../../common/include/ComponentCharacterSheet.hpp"
+
 #include "../include/ServerRpcProxy.hpp"
 
 #include "../include/GameClient.hpp"

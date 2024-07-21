@@ -7,23 +7,19 @@
 #include <glm/ext/quaternion_common.hpp>
 
 #include <icon7/Debug.hpp>
+#include <icon7/ByteBuffer.hpp>
+#include <icon7/ByteReader.hpp>
+#include <icon7/ByteWriter.hpp>
 
-#include "GlmSerialization.hpp"
 #include "ComponentsUtility.hpp"
 
 struct ComponentShape {
 	float height = 1.65f;
 	float width = 0.5f;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(height);
-		s.op(width);
-		return s;
-	}
-
 	ComponentShape(float h, float w) : height(h), width(w) {}
 
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentShape, {MV(height) MV(width)});
 };
 
@@ -46,16 +42,7 @@ struct ComponentMovementState {
 			   rot != o.rot || onGround != o.onGround;
 	}
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(timestamp);
-		s.op(pos);
-		s.op(vel);
-		s.op(rot);
-		s.op(onGround);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementState,
 								  {MV(timestamp) MV(pos) MV(vel) MV(rot)
 									   MV(onGround)});
@@ -64,11 +51,7 @@ struct ComponentMovementState {
 struct ComponentLastAuthoritativeMovementState {
 	ComponentMovementState oldState;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		return oldState.__ByteStream_op(s);
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentLastAuthoritativeMovementState,
 								  MV(oldState));
 };
@@ -76,12 +59,7 @@ struct ComponentLastAuthoritativeMovementState {
 struct ComponentName {
 	std::string name;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(name);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentName, MV(name));
 };
 
@@ -89,13 +67,7 @@ struct ComponentMovementParameters {
 	float maxMovementSpeedHorizontal = 5.0f;
 	float stepHeight = 0.25f;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(maxMovementSpeedHorizontal);
-		s.op(stepHeight);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementParameters,
 								  {MV(maxMovementSpeedHorizontal)
 									   MV(stepHeight)});
@@ -104,12 +76,7 @@ struct ComponentMovementParameters {
 struct ComponentModelName {
 	std::string modelName;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(modelName);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentModelName, MV(modelName));
 };
 
@@ -118,14 +85,7 @@ struct ComponentStaticTransform {
 	glm::quat rot = {0, 0, 0, 1};
 	glm::vec3 scale = {1, 1, 1};
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(pos);
-		s.op(rot);
-		s.op(scale);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticTransform,
 								  {MV(pos) MV(rot) MV(scale)});
 };
@@ -133,24 +93,7 @@ struct ComponentStaticTransform {
 struct ComponentStaticCollisionShapeName {
 	std::string shapeName;
 
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(shapeName);
-		return s;
-	}
-
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticCollisionShapeName,
 								  MV(shapeName));
-};
-
-struct ComponentCharacterSheet {
-	float useRange = 4.0f;
-
-	template <typename S> S &__ByteStream_op(S &s)
-	{
-		s.op(useRange);
-		return s;
-	}
-
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet, MV(useRange));
 };

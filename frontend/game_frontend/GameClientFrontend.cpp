@@ -21,16 +21,12 @@ GameClientFrontend::GameClientFrontend(GameFrontend *frontend)
 
 GameClientFrontend::~GameClientFrontend() {}
 
-int RegisterFrontendEntityComponents(flecs::world &ecs);
-
 void GameClientFrontend::Init()
 {
-	flecs::world ecs;
-	RegisterFrontendEntityComponents(ecs);
 	BindRpc();
 	RunNetworkLoopAsync();
 	GameClientFrontend::RegisterObservers();
-	RegisterFrontendEntityComponents(this->realm->ecs);
+	// 	RegisterFrontendEntityComponents(this->realm->ecs);
 }
 
 bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,

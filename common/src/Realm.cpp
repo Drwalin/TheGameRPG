@@ -134,10 +134,10 @@ void Realm::RegisterObservers()
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 
-	queryEntityForMovementUpdate =
-		ecs.query<const ComponentShape, ComponentMovementState,
-				  const ComponentLastAuthoritativeMovementState,
-				  const ComponentMovementParameters>();
+// 	queryEntityForMovementUpdate =
+// 		ecs.query<const ComponentShape, ComponentMovementState,
+// 				  const ComponentLastAuthoritativeMovementState,
+// 				  const ComponentMovementParameters>();
 }
 
 bool Realm::OneEpoch()
