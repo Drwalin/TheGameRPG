@@ -1,3 +1,5 @@
+#include <icon7/Debug.hpp>
+
 #include "../include/GameClient.hpp"
 #include "../include/EntityComponentsClient.hpp"
 
@@ -53,17 +55,16 @@ void RealmClient::AddNewAuthoritativeMovementState(
 	ComponentMovementHistory *movement =
 		AccessComponent<ComponentMovementHistory>(localId);
 	auto &states = movement->states;
-	for (int i = states.size() - 1; i >= 0; --i) {
+	int i = states.size() - 1;
+	for (; i >= 0; --i) {
 		if (states[i].timestamp < state.timestamp) {
-			states.insert(states.begin() + i + 1, state);
-			return;
+			break;
 		} else if (states[i].timestamp == state.timestamp) {
 			states[i] = state;
 			return;
 		}
 	}
-	states.insert(states.begin(), state);
-	return;
+	states.insert(states.begin() + i + 1, state);
 }
 
 bool RealmClient::GetCollisionShape(std::string collisionShapeName,
@@ -76,6 +77,11 @@ void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 {
 	ComponentMovementState state;
 	ExecuteMovementUpdate(localId, &state);
+	flecs::entity entity = Entity(localId);
+	ComponentLastAuthoritativeMovementState s;
+	s.oldState = state;
+	entity.set<ComponentMovementState>(state);
+	entity.set<ComponentLastAuthoritativeMovementState>(s);
 }
 
 void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
@@ -85,38 +91,39 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 
 	const ComponentShape *shape = entity.get<ComponentShape>();
 	if (shape == nullptr) {
-		*state = {};
+		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	ComponentMovementState *currentState =
-		(ComponentMovementState *)entity.get<ComponentMovementState>();
+		entity.get_mut<ComponentMovementState>();
 	if (currentState == nullptr) {
-		*state = {};
+		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
-		(ComponentLastAuthoritativeMovementState *)
-			entity.get<ComponentLastAuthoritativeMovementState>();
+		entity.get_mut<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
-		*state = {};
+		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		*state = {};
+		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 
 	ComponentMovementHistory *_states =
-		(ComponentMovementHistory *)entity.get<ComponentMovementHistory>();
+		entity.get_mut<ComponentMovementHistory>();
 	if (entityId != gameClient->localPlayerEntityId && _states != nullptr &&
 		_states->states.size() > 0) {
 		auto &states = _states->states;
 
+		int64_t currentTick = timer.currentTick - 20;
+
 		int id = states.size() - 1;
 		for (; id >= 0; --id) {
-			if (states[id].timestamp <= timer.currentTick) {
+			if (states[id].timestamp <= currentTick) {
 				break;
 			}
 		}
@@ -126,35 +133,53 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				lastAuthoritativeState->oldState = states[id];
 				*currentState = states[id];
 			}
-		}
 
-		EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
-									  *lastAuthoritativeState, *movementParams);
+			if (id + 1 < states.size()) {
+				ComponentMovementState prev;
+				if (id >= 0) {
+					prev = states[id];
+				} else {
+					prev = lastAuthoritativeState->oldState;
+				}
+				ComponentMovementState next = states[id + 1];
 
-		if (id + 1 < states.size()) {
-			ComponentMovementState prev;
-			if (id >= 0) {
-				prev = states[id];
+				{
+					ComponentLastAuthoritativeMovementState p;
+					p.oldState = prev;
+					EntitySystems::UpdateMovement(this, entity, *shape,
+												  *currentState, p,
+												  *movementParams);
+				}
+
+				glm::vec3 A = prev.pos;
+				glm::vec3 B = next.pos;
+				glm::vec3 V = prev.vel;
+				int64_t iDt = next.timestamp - prev.timestamp;
+				float fullDt = iDt * 0.001f;
+
+				glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
+				int64_t iT = currentTick - prev.timestamp;
+				float dt = iT * 0.001f;
+				float t = (float)iT / (float)iDt;
+
+				currentState->vel = V + a * dt;
+				glm::vec3 P = A + V * dt + a * dt * dt * 0.5f;
+				currentState->pos = currentState->pos * (1 - t) + P * t;
+				currentState->rot = prev.rot * (1 - t) + next.rot * t;
+				currentState->onGround = next.onGround;
+				currentState->timestamp = currentTick;
 			} else {
-				prev = lastAuthoritativeState->oldState;
+				*currentState = states.back();
 			}
-			ComponentMovementState next = states[id + 1];
 
-			glm::vec3 A = prev.pos;
-			glm::vec3 B = next.pos;
-			glm::vec3 V = prev.vel;
-			int64_t iDt = next.timestamp - prev.timestamp;
-			float fullDt = iDt * 0.001f;
+			auto las = *lastAuthoritativeState;
+			las.oldState = *currentState;
 
-			glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
-			int64_t iT = timer.currentTick - prev.timestamp;
-			float dt = iT * 0.001f;
-			float t = (float)iT / (float)iDt;
-
-			currentState->vel = V + a * dt;
-			glm::vec3 P = A + V * dt + a * dt * dt * 0.5f;
-			currentState->pos = currentState->pos * (1 - t) + P * t;
-			currentState->rot = prev.rot * (1 - t) + next.rot * t;
+			EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
+										  las, *movementParams);
+		} else {
+			*state = states[0];
+			LOG_INFO("Entity has only too new states received");
 		}
 		if (id > 10) {
 			states.erase(states.begin(), states.begin() + id - 3);

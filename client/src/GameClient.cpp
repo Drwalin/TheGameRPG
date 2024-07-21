@@ -13,6 +13,7 @@
 #include "../../common/include/ComponentCharacterSheet.hpp"
 
 #include "../include/ServerRpcProxy.hpp"
+#include "../include/EntityComponentsClient.hpp"
 
 #include "../include/GameClient.hpp"
 
@@ -167,6 +168,24 @@ void GameClient::RunOneEpoch()
 		ServerRpcProxy::Ping(this, true);
 		lastPingTime = pingTimer.currentTick;
 	}
+
+	realm->ecs.each<ComponentLastAuthoritativeStateUpdateTime>(
+		[this](flecs::entity entity,
+			   ComponentLastAuthoritativeStateUpdateTime &tp) {
+			auto now = std::chrono::steady_clock::now();
+			auto early = now - std::chrono::seconds(2);
+			if (early > tp.timepoint) {
+				tp.timepoint = now;
+				auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
+				if (it != mapLocalEntityIdToServerEntityId.end()) {
+					RequestSpawnOf(it->second);
+				} else {
+					LOG_FATAL("There is an entity with localId=%lu but without "
+							  "serer id",
+							  entity.id());
+				}
+			}
+		});
 }
 
 void GameClient::PerformSendPlayerMovementInput()

@@ -2,9 +2,10 @@
 #include <icon7/Debug.hpp>
 
 #include "../include/ServerRpcProxy.hpp"
+#include "../include/RegistryComponent.hpp"
+#include "../include/EntityComponentsClient.hpp"
 
 #include "../include/GameClient.hpp"
-#include "RegistryComponent.hpp"
 
 void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
 						   uint64_t playerEntityId)
@@ -184,10 +185,7 @@ void GameClient::SpawnEntity(
 		OnSetPlayerId(localPlayerEntityId);
 		LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
 	} else {
-		LOG_DEBUG("Spawn   entity: [%lu>%lu]    (server id == pleyer server "
-				  "id):%s = %lu == %lu",
-				  serverId, localId,
-				  (serverId == serverPlayerEntityId) ? "true" : "false",
+		LOG_DEBUG("Spawn   entity: [%lu>%lu]     %lu != %lu", serverId, localId,
 				  serverId, serverPlayerEntityId);
 	}
 }
@@ -215,8 +213,13 @@ void GameClient::UpdateEntity(
 	}
 
 	if (localId != localPlayerEntityId) {
+		realm->SetComponent<ComponentLastAuthoritativeStateUpdateTime>(
+			localId, ComponentLastAuthoritativeStateUpdateTime{
+						 std::chrono::steady_clock::now(),
+						 realm->timer.currentTick, state.oldState.timestamp});
 		realm->AddNewAuthoritativeMovementState(localId, serverId, state);
 		realm->UpdateEntityCurrentState(localId, serverId);
+	} else {
 		// TODO: implement server authority correction of client-side player
 		//       entity
 	}

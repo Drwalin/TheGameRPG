@@ -105,7 +105,6 @@ bool RealmServer::OneEpoch()
 	}
 }
 
-
 void RealmServer::ExecuteOnRealmThread(
 	icon7::CommandHandle<icon7::Command> &&command)
 {

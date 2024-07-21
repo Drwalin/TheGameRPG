@@ -20,7 +20,7 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 			auto ms = entity.get<ComponentLastAuthoritativeMovementState>();
 			if (ms) {
 				auto s = ms->oldState;
-				
+
 				ExecuteMovementUpdate(targetId, &s);
 
 				glm::vec3 dir =
