@@ -1,44 +1,14 @@
 #include <flecs.h>
 
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/Command.hpp>
+#include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
-
-#include "../../common/include/ServerRpcFunctionNames.hpp"
+#include <icon7/Debug.hpp>
+#include <icon7/Command.hpp>
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
 
 #include "../include/ServerCore.hpp"
-
-void ServerCore::BindRpc()
-{
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Login, this,
-							  &ServerCore::Login);
-
-	rpc.RegisterMessage(ServerRpcFunctionNames::UpdatePlayer,
-						&ServerCore::UpdatePlayer, nullptr,
-						SelectExecutionQueueByRealm);
-
-	rpc.RegisterMessage(ServerRpcFunctionNames::GetEntitiesData,
-						&ServerCore::RequestSpawnEntities, nullptr,
-						SelectExecutionQueueByRealm);
-
-	rpc.RegisterMessage(
-		ServerRpcFunctionNames::Ping,
-		[](icon7::Peer *peer, icon7::Flags flags, int64_t payload) {
-			ClientRpcProxy::Pong(peer, flags, payload);
-		},
-		nullptr, nullptr);
-
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::InteractInLineOfSight,
-							  this, &ServerCore::InteractInLineOfSight, nullptr,
-							  SelectExecutionQueueByRealm);
-	rpc.RegisterObjectMessage(ServerRpcFunctionNames::Attack, this,
-							  &ServerCore::Attack, nullptr,
-							  SelectExecutionQueueByRealm);
-}
 
 icon7::CommandExecutionQueue *ServerCore::SelectExecutionQueueByRealm(
 	icon7::MessageConverter *messageConverter, icon7::Peer *peer,

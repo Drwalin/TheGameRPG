@@ -1,6 +1,8 @@
 #include <chrono>
 #include <mutex>
 
+#include <icon7/Debug.hpp>
+
 #include "../include/RealmServer.hpp"
 
 #include "../include/RealmWorkThreadedManager.hpp"

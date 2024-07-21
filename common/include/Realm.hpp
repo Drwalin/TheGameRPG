@@ -72,12 +72,6 @@ public:
 	EntityEventPriorityQueue eventsPriorityQueue;
 
 public:
-// 	flecs::query<const ComponentShape, ComponentMovementState,
-// 				 const ComponentLastAuthoritativeMovementState,
-// 				 const ComponentMovementParameters>
-// 		queryEntityForMovementUpdate;
-
-public:
 	template <typename... TArgs>
 	auto GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
 	{

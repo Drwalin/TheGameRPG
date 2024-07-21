@@ -2,10 +2,8 @@
 
 #include <unordered_map>
 
-#include "../../ICon7/include/icon7/PeerUStcp.hpp"
-#include "../../ICon7/include/icon7/Command.hpp"
-#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
-#include "../../ICon7/include/icon7/Flags.hpp"
+#include <icon7/Flags.hpp>
+#include <icon7/Forward.hpp>
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
@@ -66,7 +64,7 @@ public:
 
 	RealmWorkThreadedManager realmManager;
 
-	icon7::RPCEnvironment rpc;
+	icon7::RPCEnvironment *rpc;
 	icon7::Host *host;
 
 	std::string spawnRealm;

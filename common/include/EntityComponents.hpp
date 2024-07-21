@@ -6,11 +6,6 @@
 #include <glm/ext/quaternion_float.hpp>
 #include <glm/ext/quaternion_common.hpp>
 
-#include <icon7/Debug.hpp>
-#include <icon7/ByteBuffer.hpp>
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
-
 #include "ComponentsUtility.hpp"
 
 struct ComponentShape {

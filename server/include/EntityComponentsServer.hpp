@@ -1,8 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "../../common/include/ComponentsUtility.hpp"
 
-#include "../../ICon7/include/icon7/Peer.hpp"
+#include <icon7/Forward.hpp>
 
 struct ComponentPlayerConnectionPeer {
 	std::shared_ptr<icon7::Peer> peer;

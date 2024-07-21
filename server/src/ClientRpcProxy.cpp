@@ -3,6 +3,7 @@
 
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 
+#define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 #include "../include/RealmServer.hpp"
 
 #include "../include/ClientRpcProxy.hpp"

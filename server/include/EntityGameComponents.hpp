@@ -2,8 +2,6 @@
 
 #include <unordered_set>
 
-#include <icon7/ByteBuffer.hpp>
-
 #include "ComponentCallbacks.hpp"
 
 #include "../../common/include/EntityComponents.hpp"

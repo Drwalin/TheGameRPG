@@ -11,5 +11,5 @@ using OnUseFunctionType = void (*)(RealmServer *realm, uint64_t instigatorId,
 								   const std::string &context);
 struct OnUse final : public EntryBase<OnUse, OnUseFunctionType> {
 };
-}
-}
+} // namespace registry_entries
+} // namespace named_callbacks

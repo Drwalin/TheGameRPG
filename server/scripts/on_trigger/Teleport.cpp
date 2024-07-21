@@ -1,5 +1,8 @@
 #include <flecs.h>
 
+#include <icon7/Debug.hpp>
+#include <icon7/Peer.hpp>
+
 #include "../../include/ComponentCallbackRegistry.hpp"
 #include "../../include/EntityGameComponents.hpp"
 #include "../../include/EntityComponentsServer.hpp"

@@ -11,5 +11,5 @@ using AiBehaviorTickFunctionType = void (*)(RealmServer *realm,
 struct AiBehaviorTick final
 	: public EntryBase<AiBehaviorTick, AiBehaviorTickFunctionType> {
 };
-}
-}
+} // namespace registry_entries
+} // namespace named_callbacks

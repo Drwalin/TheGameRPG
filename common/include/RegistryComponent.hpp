@@ -6,9 +6,7 @@
 
 #include <flecs.h>
 
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
-#include <icon7/Debug.hpp>
+#include <icon7/Forward.hpp>
 
 #include "Realm.hpp"
 

@@ -26,7 +26,7 @@
 
 #include <glm/glm.hpp>
 
-#include <icon7/ByteWriter.hpp>
+#include <icon7/Forward.hpp>
 
 #include "../../../common/include/EntityComponents.hpp"
 

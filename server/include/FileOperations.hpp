@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <icon7/ByteBuffer.hpp>
+#include <icon7/Forward.hpp>
 
 class FileOperations
 {

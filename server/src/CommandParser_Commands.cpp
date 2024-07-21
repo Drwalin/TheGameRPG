@@ -1,5 +1,8 @@
 #include <fstream>
 
+#include <icon7/Debug.hpp>
+#include <icon7/Host.hpp>
+
 #include "../include/ServerCore.hpp"
 #include "../include/ConfigStorage.hpp"
 #include "../include/SharedObject.hpp"

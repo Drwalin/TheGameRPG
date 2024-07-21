@@ -1,12 +1,14 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <glm/glm.hpp>
 
 #include <flecs.h>
 
-#include <icon7/Peer.hpp>
+#include <icon7/Forward.hpp>
+#include <icon7/ByteBuffer.hpp>
 
 class RealmServer;
 

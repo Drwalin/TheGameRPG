@@ -5,6 +5,7 @@
 #include "godot_cpp/classes/engine.hpp"
 
 #include <icon7/Debug.hpp>
+#include <icon7/ByteWriter.hpp>
 
 #include "PrefabServerBase.hpp"
 

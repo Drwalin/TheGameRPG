@@ -5,9 +5,10 @@
 #include <glm/mat3x3.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-#include "../../ICon7/include/icon7/PeerUStcp.hpp"
-#include "../../ICon7/include/icon7/HostUStcp.hpp"
-#include "../../ICon7/include/icon7/Command.hpp"
+#include <icon7/RPCEnvironment.hpp>
+#include <icon7/PeerUStcp.hpp>
+#include <icon7/HostUStcp.hpp>
+#include <icon7/Command.hpp>
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
 
@@ -17,10 +18,11 @@
 
 GameClient::GameClient() : realm(new RealmClient(this))
 {
+	rpc = new icon7::RPCEnvironment();
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();
 	host = _host;
-	host->SetRpcEnvironment(&rpc);
+	host->SetRpcEnvironment(rpc);
 	host->userPointer = this;
 
 	// host->SetOnDisconnect();
@@ -48,7 +50,11 @@ void GameClient::RegisterObservers()
 		});
 }
 
-GameClient::~GameClient() {}
+GameClient::~GameClient()
+{
+	delete rpc;
+	rpc = nullptr;
+}
 
 bool GameClient::IsConnected()
 {
