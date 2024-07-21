@@ -17,19 +17,30 @@ uint64_t CollisionWorld::GetObjectEntityID(const btCollisionObject *object)
 		   (((uint64_t)(object->getUserIndex3())) << 32);
 }
 
+namespace fdkjsfldksfjldkf
+{
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj0();
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj1();
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj2();
+
+auto ____dsafjkdlsfjklsdafjkldsjafkldj0()
+{
+	return &CollisionWorld::TestForEntitiesBox;
+}
+auto ____dsafjkdlsfjklsdafjkldsjafkldj1()
+{
+	return &CollisionWorld::TestForEntitiesSphere;
+}
+auto ____dsafjkdlsfjklsdafjkldsjafkldj2()
+{
+	return &CollisionWorld::TestForEntitiesCylinder;
+}
+} // namespace fdkjsfldksfjldkf
+
 CollisionWorld::CollisionWorld(Realm *realm)
 {
 	// TODO: Replace this code with some proper *.so compilation configuration
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
-	{
-		auto _a = &CollisionWorld::TestForEntitiesBox;
-	};
-	{
-		auto _a = &CollisionWorld::TestForEntitiesSphere;
-	};
-	{
-		auto _a = &CollisionWorld::TestForEntitiesCylinder;
-	};
 	this->realm = realm;
 	broadphase = new btSimpleBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -85,6 +96,7 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	object->setUserIndex(0);
 	object->setUserIndex2(0);
 	object->setUserIndex3(0);
+
 	return object;
 }
 
@@ -169,7 +181,8 @@ void CollisionWorld::OnAddTrigger(flecs::entity entity,
 	object->setUserIndex(FILTER_TRIGGER);
 	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
-	collisionWorld->addCollisionObject(object, 0);
+	collisionWorld->addCollisionObject(
+		object, btBroadphaseProxy::CollisionFilterGroups::SensorTrigger);
 	ComponentBulletCollisionObject obj{object};
 	EntitySetTransform(obj, transform);
 	entity.set<ComponentBulletCollisionObject>(obj);

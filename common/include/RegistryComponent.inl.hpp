@@ -114,35 +114,53 @@ extern void Registry::Serialize(const T &component, icon7::ByteWriter &writer)
 } // namespace reg
 
 #define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, NAME)                    \
+	namespace reg                                                              \
+	{                                                                          \
 	template <>                                                                \
-	reg::ComponentConstructor<COMPONENT>                                       \
-		*reg::ComponentConstructor<COMPONENT>::singleton =                     \
-			new reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT);        \
+	ComponentConstructor<COMPONENT>                                            \
+		*ComponentConstructor<COMPONENT>::singleton =                          \
+			new ComponentConstructor<COMPONENT>(NAME, #COMPONENT);             \
 	template <>                                                                \
-	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
-		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);    \
-	extern void __##COMPONENT##_holder_of_serialize_deserialize(               \
-		const COMPONENT &c, icon7::ByteWriter &w)                              \
+	uint32_t ComponentConstructor<COMPONENT>::__dummy =                        \
+		(Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);         \
+	extern auto                                                                \
+		__##COMPONENT##_holder_of_serialize_deserialize(const COMPONENT &c,    \
+														icon7::ByteWriter &w)  \
 	{                                                                          \
 		LOG_FATAL("This function cannot ever be called");                      \
-		reg::Registry::Singleton().RegisterComponent<COMPONENT>("");           \
-		reg::Registry::Serialize<COMPONENT>(c, w);                             \
+		return &Registry::RegisterComponent<COMPONENT>;                        \
+	}                                                                          \
+	template <>                                                                \
+	void Registry::Serialize<COMPONENT>(const COMPONENT &component,            \
+										icon7::ByteWriter &writer)             \
+	{                                                                          \
+		ComponentConstructor<COMPONENT>::Serialize(component, writer);         \
+	}                                                                          \
 	}
 
 #define GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(          \
 	COMPONENT, NAME, CALLBACK)                                                 \
+	namespace reg                                                              \
+	{                                                                          \
 	template <>                                                                \
-	reg::ComponentConstructor<COMPONENT>                                       \
-		*reg::ComponentConstructor<COMPONENT>::singleton =                     \
-			new reg::ComponentConstructorWithCallbackDeserialize<COMPONENT>(   \
+	ComponentConstructor<COMPONENT>                                            \
+		*ComponentConstructor<COMPONENT>::singleton =                          \
+			new ComponentConstructorWithCallbackDeserialize<COMPONENT>(        \
 				NAME, #COMPONENT, CALLBACK);                                   \
 	template <>                                                                \
-	uint32_t reg::ComponentConstructor<COMPONENT>::__dummy =                   \
-		(reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);    \
-	extern void __##COMPONENT##_holder_of_serialize_deserialize(               \
-		const COMPONENT &c, icon7::ByteWriter &w)                              \
+	uint32_t ComponentConstructor<COMPONENT>::__dummy =                        \
+		(Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);         \
+	extern auto                                                                \
+		__##COMPONENT##_holder_of_serialize_deserialize(const COMPONENT &c,    \
+														icon7::ByteWriter &w)  \
 	{                                                                          \
 		LOG_FATAL("This function cannot ever be called");                      \
-		reg::Registry::Singleton().RegisterComponent<COMPONENT>("");           \
-		reg::Registry::Serialize<COMPONENT>(c, w);                             \
+		return &Registry::RegisterComponent<COMPONENT>;                        \
+	}                                                                          \
+	template <>                                                                \
+	void Registry::Serialize<COMPONENT>(const COMPONENT &component,            \
+										icon7::ByteWriter &writer)             \
+	{                                                                          \
+		ComponentConstructor<COMPONENT>::Serialize(component, writer);         \
+	}                                                                          \
 	}

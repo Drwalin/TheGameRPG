@@ -42,12 +42,12 @@ public:
 	}
 
 public:
-	uint64_t triggerEntityId;
-	btCollisionObject *triggerObject;
+	uint64_t triggerEntityId = 0;
+	btCollisionObject *triggerObject = nullptr;
 
-	std::vector<uint64_t> *entities;
+	std::vector<uint64_t> *entities = nullptr;
 
-	int filter;
+	int filter = 0;
 };
 
 void CollisionWorld::TriggerTestBoxForCharacters(
