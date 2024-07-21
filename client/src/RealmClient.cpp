@@ -179,7 +179,6 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 										  las, *movementParams);
 		} else {
 			*state = states[0];
-			LOG_INFO("Entity has only too new states received");
 		}
 		if (id > 10) {
 			states.erase(states.begin(), states.begin() + id - 3);
