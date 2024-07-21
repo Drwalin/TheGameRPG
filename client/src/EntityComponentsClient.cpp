@@ -8,5 +8,6 @@ int RegisterEntityComponentsClient(flecs::world &ecs)
 {
 	RegisterEntityComponents(ecs);
 	ecs.component<ComponentMovementHistory>();
+	ecs.component<ComponentLastAuthoritativeStateUpdateTime>();
 	return 0;
 }

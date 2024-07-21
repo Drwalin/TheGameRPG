@@ -36,12 +36,6 @@ static void MoveInDirectionForward(ComponentMovementState *state,
 
 	state->vel = glm::normalize(flatDir) *
 				 (params->maxMovementSpeedHorizontal * 1.6f / 5.0f);
-
-	/*
-	if (direction.y > 0) {
-		state->vel.y = 5.0f;
-	}
-	*/
 }
 
 static void MoveTo(ComponentMovementState *state,
@@ -129,14 +123,12 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 	auto movementParams = entity.get<ComponentMovementParameters>();
 	EntitySystems::UpdateMovement(realm, entity, *shape, currentState,
 								  lastState, *movementParams);
-	entity.set<ComponentMovementState>(currentState);
 
 	if (state.onGround) {
-
 		// TODO: Replace 5.0f and 60.0f with apropriate values from some
 		// component with parameters
 		if (false == TryFollowingPlayer(realm, entityId, &state, shape,
-										movementParams, 5.0f, 20.0f)) {
+										movementParams, 5.0f, 5.0f)) {
 			state.rot.y += 0.15;
 			float angle = state.rot.y;
 			glm::quat rot = glm::angleAxis(angle, glm::vec3(0, 1, 0));
@@ -149,7 +141,10 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 		}
 
 		lastState.oldState = state;
-		entity.set(lastState);
+		entity.set<ComponentLastAuthoritativeMovementState>(lastState);
+	} else {
+		lastState.oldState = state;
+		entity.set<ComponentLastAuthoritativeMovementState>(lastState);
 	}
 }
 

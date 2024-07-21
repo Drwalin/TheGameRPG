@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://cj25dpwxe5hnj"]
+
+[ext_resource type="PackedScene" uid="uid://dwu4sscm1xfc4" path="res://assets/characters/low_poly_medieval_people/king_model.tscn" id="1_x28eu"]
+
+[node name="PrefabServerNPC" type="PrefabServerNPC"]
+graphic_Mesh_or_PackedScene = ExtResource("1_x28eu")
+nameNPC = "Dumb King"
+aiTickName = "AIRandomMove"
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -21.9008, 4.83587, -108.553)
+
+[node name="NameD741DD6F36FA8251CF91D1EE95CBD763" parent="." instance=ExtResource("1_x28eu")]
+
+[node name="Name6D6F9D9CB9FE37A2CFC1C8E014270BF8" type="Node3D" parent="." instance=ExtResource("1_x28eu")]

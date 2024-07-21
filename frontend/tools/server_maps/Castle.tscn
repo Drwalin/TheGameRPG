@@ -1,4 +1,4 @@
-[gd_scene load_steps=73 format=3 uid="uid://clkxybhmklyt3"]
+[gd_scene load_steps=74 format=3 uid="uid://clkxybhmklyt3"]
 
 [ext_resource type="PackedScene" path="res://assets/prefabs/Terrain/Landscape.tscn" id="1_bcne0"]
 [ext_resource type="PackedScene" path="res://assets/prefabs/Building/MeadHall.tscn" id="2_se3qd"]
@@ -72,6 +72,7 @@
 [ext_resource type="PackedScene" uid="uid://b3rved58b8ndq" path="res://assets/meshes/Environmental/Paths/DirtPatch.glb" id="67_x743h"]
 [ext_resource type="PackedScene" uid="uid://b1fuv4kivs482" path="res://assets/meshes/Environmental/Paths/Pebbles.glb" id="68_nt227"]
 [ext_resource type="PackedScene" uid="uid://cmi84hkaptoxe" path="res://assets/meshes/Environmental/Paths/GreenPatch.glb" id="69_423dg"]
+[ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="73_0tyve"]
 
 [node name="Castle" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
@@ -1892,3 +1893,20 @@ transform = Transform3D(-0.895409, 0, 0.445245, 0, 1, 0, -0.445245, 0, -0.895409
 
 [node name="LampPostHanging5" parent="Lamps" instance=ExtResource("64_7y4qw")]
 transform = Transform3D(0.866339, 0, -0.499456, 0, 1, 0, 0.499456, 0, 0.866339, -69.535, -7.13326, 33.2658)
+
+[node name="Characters" type="Node3D" parent="."]
+
+[node name="PrefabServerNPC" parent="Characters" instance=ExtResource("73_0tyve")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -110.779, -1.59685, 42.7905)
+
+[node name="PrefabServerNPC2" parent="Characters" instance=ExtResource("73_0tyve")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -102.96, -1.59934, 68.0033)
+
+[node name="PrefabServerNPC3" parent="Characters" instance=ExtResource("73_0tyve")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -106.206, -0.878146, 59.7168)
+
+[node name="PrefabServerNPC4" parent="Characters" instance=ExtResource("73_0tyve")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -72.1286, -5.40728, 43.3323)
+
+[node name="PrefabServerNPC5" parent="Characters" instance=ExtResource("73_0tyve")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -58.5489, -10.3058, 24.4951)

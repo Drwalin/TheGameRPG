@@ -55,7 +55,7 @@
 [ext_resource type="PackedScene" uid="uid://cmi84hkaptoxe" path="res://assets/meshes/Environmental/Paths/GreenPatch.glb" id="40_wg18f"]
 [ext_resource type="PackedScene" uid="uid://wwakq03t1ydn" path="res://assets/meshes/Environmental/Logs/Log01.glb" id="40_yfd63"]
 [ext_resource type="ArrayMesh" uid="uid://dd7s6lc43tp4r" path="res://assets/collisions/Environmental/Logs/_Log01.col.obj" id="41_hmrwy"]
-[ext_resource type="PackedScene" uid="uid://dwu4sscm1xfc4" path="res://assets/characters/low_poly_medieval_people/king_model.tscn" id="56_pamxd"]
+[ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="56_bakn2"]
 
 [node name="Forest" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Forest.map"
@@ -3150,8 +3150,10 @@ transform = Transform3D(0.0949867, 0.0549901, -1.25336, -0.061329, 1.25565, 0.05
 
 [node name="NPCs" type="Node3D" parent="."]
 
-[node name="PrefabServerNPC" type="PrefabServerNPC" parent="NPCs"]
-graphic_Mesh_or_PackedScene = ExtResource("56_pamxd")
-nameNPC = "Dumb King"
-aiTickName = "AIRandomMove"
-transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, -21.9008, 4.83587, -108.553)
+[node name="PrefabServerNPC" parent="NPCs" instance=ExtResource("56_bakn2")]
+
+[node name="PrefabServerNPC2" parent="NPCs" instance=ExtResource("56_bakn2")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, 60.9521, 0.14999, -82.4398)
+
+[node name="PrefabServerNPC3" parent="NPCs" instance=ExtResource("56_bakn2")]
+transform = Transform3D(0.974075, 0, -0.226226, 0, 1, 0, 0.226226, 0, 0.974075, 58.5967, 0.485315, -84.7369)
