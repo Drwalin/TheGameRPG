@@ -1,7 +1,7 @@
 
 #include <fstream>
 
-#include "../../ICon7/include/icon7/Debug.hpp"
+#include <icon7/Debug.hpp>
 
 #include "../include/CollisionLoader.hpp"
 

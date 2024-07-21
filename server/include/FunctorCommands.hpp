@@ -2,7 +2,7 @@
 
 #include <tuple>
 
-#include "../../ICon7/include/icon7/Command.hpp"
+#include <icon7/Command.hpp>
 
 template <typename TFunc> struct CommandFunctor : public icon7::Command {
 	virtual ~CommandFunctor() override {}

@@ -1,7 +1,5 @@
 #include <flecs.h>
 
-#include <icon7/Debug.hpp>
-
 #include "EntityComponentsFrontend.hpp"
 
 int RegisterEntityComponentsClient(flecs::world &ecs);

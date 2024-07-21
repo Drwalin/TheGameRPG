@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../ICon7/include/icon7/Flags.hpp"
-#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
-#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
+#include <memory>
+
+#include <icon7/Flags.hpp>
+#include <icon7/Forward.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
 
 #include "PeerData.hpp"
 
@@ -105,63 +106,11 @@ public:
 
 private:
 	bool queueDestroy = false;
-	
+
 public:
 	bool currentlyUpdatingPlayerPeerEntityMovement = false;
 };
 
-template <typename... Args>
-void RealmServer::BroadcastReliable(const std::string &functionName,
-									Args &&...args)
-{
-	Broadcast(icon7::FLAG_RELIABLE, functionName, std::forward<Args>(args)...);
-}
-
-template <typename... Args>
-void RealmServer::BroadcastUnreliable(const std::string &functionName,
-									  Args &&...args)
-{
-	Broadcast(icon7::FLAG_UNRELIABLE, functionName,
-			  std::forward<Args>(args)...);
-}
-
-template <typename... Args>
-void RealmServer::Broadcast(icon7::Flags flags, const std::string &functionName,
-							Args &&...args)
-{
-	icon7::ByteBuffer buffer(1500);
-	flags |= icon7::FLAGS_CALL_NO_FEEDBACK;
-	rpc->SerializeSend(buffer, flags, functionName,
-					   std::forward<Args>(args)...);
-	Broadcast(buffer, 0);
-}
-
-template <typename... Args>
-void RealmServer::BroadcastReliableExcept(uint64_t exceptEntityId,
-										  const std::string &functionName,
-										  Args &&...args)
-{
-	BroadcastExcept(exceptEntityId, icon7::FLAG_RELIABLE, functionName,
-					std::forward<Args>(args)...);
-}
-
-template <typename... Args>
-void RealmServer::BroadcastUnreliableExcept(uint64_t exceptEntityId,
-											const std::string &functionName,
-											Args &&...args)
-{
-	BroadcastExcept(exceptEntityId, icon7::FLAG_UNRELIABLE, functionName,
-					std::forward<Args>(args)...);
-}
-
-template <typename... Args>
-void RealmServer::BroadcastExcept(uint64_t exceptEntityId, icon7::Flags flags,
-								  const std::string &functionName,
-								  Args &&...args)
-{
-	icon7::ByteBuffer buffer(1500);
-	flags |= icon7::FLAGS_CALL_NO_FEEDBACK;
-	rpc->SerializeSend(buffer, flags, functionName,
-					   std::forward<Args>(args)...);
-	Broadcast(buffer, exceptEntityId);
-}
+#ifdef ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
+#include "../include/RealmServer.inl.hpp"
+#endif

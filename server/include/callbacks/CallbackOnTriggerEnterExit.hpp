@@ -12,5 +12,5 @@ using OnTriggerEnterExitFunctionType = void (*)(RealmServer *realm,
 struct OnTriggerEnterExit final
 	: public EntryBase<OnTriggerEnterExit, OnTriggerEnterExitFunctionType> {
 };
-}
-}
+} // namespace registry_entries
+} // namespace named_callbacks

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
+#include <icon7/Forward.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
 
 #include "RealmClient.hpp"
 
@@ -95,7 +95,7 @@ public: // client input api
 public:
 	RealmClient *realm;
 
-	icon7::RPCEnvironment rpc;
+	icon7::RPCEnvironment *rpc;
 	icon7::Host *host;
 	std::shared_ptr<icon7::Peer> peer;
 

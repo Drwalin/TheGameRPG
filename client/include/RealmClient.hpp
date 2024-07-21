@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/Forward.hpp"
 
 #include "../../common/include/Realm.hpp"
 

@@ -1,6 +1,7 @@
 #include <cstdio>
 
 #include <icon7/Debug.hpp>
+#include <icon7/ByteBuffer.hpp>
 
 #include "../include/FileOperations.hpp"
 

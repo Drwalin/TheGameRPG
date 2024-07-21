@@ -1,42 +1,18 @@
-
-#include "../../ICon7/include/icon7/PeerUStcp.hpp"
-#include "../../ICon7/include/icon7/HostUStcp.hpp"
-#include "../../ICon7/include/icon7/Command.hpp"
-#include "../../ICon7/include/icon7/Flags.hpp"
+#include <icon7/Command.hpp>
+#include <icon7/Debug.hpp>
+#include <icon7/Peer.hpp>
+#include <icon7/Host.hpp>
+#include <icon7/Flags.hpp>
 
 #include "../include/FunctorCommands.hpp"
 
 #include "../include/ServerCore.hpp"
 
-ServerCore::ServerCore() : commandParser(this), configStorage(this)
-{
-	host = nullptr;
-}
-
-ServerCore::~ServerCore() { Destroy(); }
-
-void ServerCore::Destroy()
-{
-	if (host) {
-		host->DisconnectAllAsync();
-		host->StopListening();
-		host->DisconnectAllAsync();
-	}
-
-	realmManager.DestroyAllRealmsAndStop();
-
-	if (host) {
-		host->WaitStopRunning();
-		delete host;
-		host = nullptr;
-	}
-}
-
 void ServerCore::CreateRealm(std::string realmName)
 {
 	std::shared_ptr<RealmServer> realm = std::make_shared<RealmServer>();
 	realm->serverCore = this;
-	realm->rpc = &rpc;
+	realm->rpc = rpc;
 	realm->Init(realmName);
 	realmManager.AddNewRealm(realm);
 	spawnRealm = realmName;
@@ -49,19 +25,6 @@ void ServerCore::Disconnect(icon7::Peer *peer)
 	if (realm) {
 		realm->DisconnectPeer(peer);
 	}
-}
-
-void ServerCore::StartService()
-{
-	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
-	_host->Init();
-	host = _host;
-	host->userPointer = this;
-
-	host->SetOnConnect(_OnPeerConnect);
-	host->SetOnDisconnect(_OnPeerDisconnect);
-
-	host->SetRpcEnvironment(&rpc);
 }
 
 void ServerCore::Listen(const std::string &addressInterface, uint16_t port,

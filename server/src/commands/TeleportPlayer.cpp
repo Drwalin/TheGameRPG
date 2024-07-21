@@ -1,4 +1,5 @@
 #include <icon7/Debug.hpp>
+#include <icon7/Peer.hpp>
 
 #include "../../include/ServerCore.hpp"
 #include "../../include/PeerData.hpp"

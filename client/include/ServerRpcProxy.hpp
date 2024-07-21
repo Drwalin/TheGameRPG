@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "../../common/include/EntityComponents.hpp"
 
 class GameClient;

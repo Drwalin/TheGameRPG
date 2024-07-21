@@ -6,8 +6,6 @@
 #include <string>
 #include <unordered_map>
 
-#include <bitscpp/ByteWriter.hpp>
-#include <bitscpp/ByteReader.hpp>
 #include <icon7/Debug.hpp>
 
 #include "SharedObject.hpp"

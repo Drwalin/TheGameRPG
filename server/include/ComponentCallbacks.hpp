@@ -7,6 +7,7 @@
 
 #include <bitscpp/ByteWriter.hpp>
 #include <bitscpp/ByteReader.hpp>
+#include <icon7/ByteBuffer.hpp>
 #include <icon7/Debug.hpp>
 
 #include "SharedObject.hpp"
@@ -59,8 +60,8 @@ template <typename TFinal, typename TCb> struct EntryBase {
 		}
 	}
 
-	template <typename BT>
-	static inline void Serialize(TFinal **cb, bitscpp::ByteWriter<BT> &s)
+	static inline void Serialize(TFinal **cb,
+								 bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 	{
 		if (*cb) {
 			s.op((*cb)->shortName);

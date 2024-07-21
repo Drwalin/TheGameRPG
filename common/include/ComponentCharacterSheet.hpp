@@ -1,9 +1,5 @@
 #pragma once
 
-#include <icon7/ByteBuffer.hpp>
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
-
 #include "ComponentsUtility.hpp"
 
 struct ComponentCharacterSheet {

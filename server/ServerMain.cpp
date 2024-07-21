@@ -1,4 +1,8 @@
 #include <thread>
+#include <algorithm>
+
+#include <icon7/Debug.hpp>
+#include <icon7/Host.hpp>
 
 #include "include/FileOperations.hpp"
 #include "include/ServerCore.hpp"

@@ -1,3 +1,5 @@
+#include <icon7/Debug.hpp>
+
 #include "godot_cpp/classes/engine.hpp"
 #include "godot_cpp/classes/engine_debugger.hpp"
 #include "godot_cpp/classes/resource_loader.hpp"

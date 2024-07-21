@@ -1,10 +1,7 @@
 #pragma once
 
 #include <string>
-
-#include <icon7/ByteBuffer.hpp>
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
+#include <vector>
 
 #include "ComponentsUtility.hpp"
 
@@ -48,10 +45,6 @@ struct ItemStack {
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ItemStack, {MV(item) MV(amount) MV(tag)});
 };
-
-
-
-
 
 struct ComponentInventory {
 	std::vector<ItemStack> items;

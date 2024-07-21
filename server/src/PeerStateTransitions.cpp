@@ -1,3 +1,7 @@
+#include <icon7/Debug.hpp>
+#include <icon7/Host.hpp>
+#include <icon7/Peer.hpp>
+
 #include "../include/PeerData.hpp"
 #include "../include/RealmServer.hpp"
 #include "../include/ServerCore.hpp"

@@ -1,7 +1,8 @@
 #pragma once
 
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Peer.hpp>
+#include <icon7/Forward.hpp>
+#include <icon7/Flags.hpp>
+#include <icon7/ByteWriter.hpp>
 
 #include "../../common/include/RegistryComponent.hpp"
 #include "../../common/include/EntityComponents.hpp"

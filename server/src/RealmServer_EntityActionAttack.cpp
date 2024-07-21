@@ -1,4 +1,3 @@
-#include <icon7/RPCEnvironment.hpp>
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
 #include <icon7/Debug.hpp>

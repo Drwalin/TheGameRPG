@@ -1,3 +1,5 @@
+#include <icon7/Peer.hpp>
+
 #include "../include/RealmServer.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
