@@ -3,6 +3,7 @@
 #include <icon7/Flags.hpp>
 
 #include "../../common/include/EntitySystems.hpp"
+#include "../../common/include/ComponentCharacterSheet.hpp"
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 #include "../../common/include/RegistryComponent.hpp"
 

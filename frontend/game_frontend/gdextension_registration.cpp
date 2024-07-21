@@ -15,11 +15,19 @@
 #include "EntityPrefabScript.hpp"
 #include "EntityStaticPrefabScript.hpp"
 
+int RegisterFrontendEntityComponents(flecs::world &ecs);
+
+
 static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
 	if (p_level !=
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
+	}
+	
+	{
+		flecs::world ecs;
+		RegisterFrontendEntityComponents(ecs);
 	}
 
 	godot::ClassDB::register_class<GameFrontend>();

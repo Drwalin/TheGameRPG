@@ -72,10 +72,10 @@ public:
 	EntityEventPriorityQueue eventsPriorityQueue;
 
 public:
-	flecs::query<const ComponentShape, ComponentMovementState,
-				 const ComponentLastAuthoritativeMovementState,
-				 const ComponentMovementParameters>
-		queryEntityForMovementUpdate;
+// 	flecs::query<const ComponentShape, ComponentMovementState,
+// 				 const ComponentLastAuthoritativeMovementState,
+// 				 const ComponentMovementParameters>
+// 		queryEntityForMovementUpdate;
 
 public:
 	template <typename... TArgs>
