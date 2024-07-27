@@ -49,7 +49,7 @@ void ServerCore::UpdatePlayer(
 				entity.set<ComponentMovementState>(state.oldState);
 				realm->currentlyUpdatingPlayerPeerEntityMovement = false;
 			} else {
-				ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm, peer);
+				ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(), peer);
 			}
 		}
 	}
@@ -107,7 +107,7 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 								}
 
 								ClientRpcProxy::SpawnPlayerEntity_ForPlayer(
-									realm, peer.get());
+									realm.get(), peer.get());
 							}
 						}
 					}
@@ -193,7 +193,7 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm && reader) {
-		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm, peer, *reader);
+		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm.get(), peer, *reader);
 	}
 }
 

@@ -5,6 +5,32 @@
 
 #include "ComponentsUtility.hpp"
 
+enum EquippedItemSlotId : int16_t {
+	LEFT_HAND = 0,
+	RIGHT_HAND = 1,
+
+	HEAD = 2,
+	TORSO = 3,
+	LEGGS = 4,
+	BOOTS = 5,
+	SHOULDERS = 6,
+	GLOVES = 7,
+
+	BELT = 8,
+	BACK = 9,
+	HIP_LEFT = 10,
+	HIP_RIGHT = 11,
+	
+	FINGER_LEFT = 12,
+	FINGER_RIGHT = 13,
+	NECK = 14,
+	WRIST_LEFT = 15,
+	WRIST_RIGHT = 16,
+
+	NUMBER_OF_SLOTS = 17,
+	NONE = NUMBER_OF_SLOTS,
+};
+
 class ItemBase
 {
 public:
@@ -19,22 +45,11 @@ public:
 	std::string description;
 	std::string modelName;
 
+	std::vector<int16_t> usableItemSlots;
+	
+	void SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
+
 	static ItemBase *GetByName(const std::string &name) { return nullptr; }
-};
-
-enum EquippedItemSlotId {
-	LEFT_HAND = 0,
-	RIGHT_HAND = 1,
-
-	HEAD = 2,
-	TORSO = 3,
-	LEGGS = 4,
-	BOOTS = 5,
-	SHOULDERS = 6,
-	HANDS = 7,
-
-	BACK = 8,
-	HIP = 9,
 };
 
 struct ItemStack {
@@ -54,8 +69,12 @@ struct ComponentInventory {
 };
 
 struct ComponentEquippedInventory {
-	std::vector<ItemStack> items;
+	ItemStack equippedItems[NUMBER_OF_SLOTS];
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEquippedInventory, MV(items));
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEquippedInventory, {
+		for (int i = 0; i < NUMBER_OF_SLOTS; ++i) {
+			MV(equippedItems[i]);
+		}
+	});
 };

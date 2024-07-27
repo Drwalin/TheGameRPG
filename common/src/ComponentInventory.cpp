@@ -45,5 +45,17 @@ ItemStack::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentInventory,
 											{ s.op(items); });
 
-BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentEquippedInventory,
-											{ s.op(items); });
+BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentEquippedInventory, {
+	s.op(equippedItems, NUMBER_OF_SLOTS);
+});
+
+
+void ItemBase::SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+{
+	s.op(uniqueNameShort);
+	s.op(maxStackSize);
+	s.op(fullName);
+	s.op(description);
+	s.op(modelName);
+	s.op(usableItemSlots);
+}

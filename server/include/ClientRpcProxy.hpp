@@ -18,20 +18,20 @@ void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data);
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
 
-void DeleteEntity_ForPeer(std::shared_ptr<RealmServer> realm, icon7::Peer *peer,
+void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 						  uint64_t entityId);
-void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeer(RealmServer *realm,
 						   icon7::Peer *peer);
 
-void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeerByIds(RealmServer *realm,
 								icon7::Peer *peer, icon7::ByteReader &reader);
-void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm,
 									  icon7::Peer *peer,
 									  const std::vector<uint64_t> &ids);
-void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm,
 								 icon7::Peer *peer);
 
-void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
+void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 						   const ComponentMovementState &state,
@@ -39,7 +39,7 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 						   const ComponentModelName &entityModelName,
 						   const ComponentName &entityName,
 						   const ComponentMovementParameters &movementParams);
-void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm);
+void Broadcast_UpdateEntities(RealmServer *realm);
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 
 void LoginSuccessfull(icon7::Peer *peer);
