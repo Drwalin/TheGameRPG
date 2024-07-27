@@ -1,5 +1,6 @@
 build
 release
 windows-release
+windows-debug
 exports
 frontend/export_presets.cfg
