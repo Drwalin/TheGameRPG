@@ -2,6 +2,8 @@
 #include <bullet/btBulletCollisionCommon.h>
 #include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
 
+#include <icon7/Debug.hpp>
+
 #include "../../include/CollisionWorld.hpp"
 #include "../../include/GlmBullet.hpp"
 
@@ -45,7 +47,7 @@ CollisionWorld::TestForEntitiesSphere(glm::vec3 center, float radius,
 									  int32_t filter) const
 {
 	btSphereShape shape(radius);
-	btTransform trans(btMatrix3x3(), ToBullet(center));
+	btTransform trans(btMatrix3x3::getIdentity(), ToBullet(center));
 	return InternalTestConvexShapeForEntities(&shape, trans, testedEntityIds,
 											  filter);
 }
@@ -75,47 +77,71 @@ size_t CollisionWorld::InternalTestConvexShapeForEntities(
 	btConvexShape *shape, btTransform &trans,
 	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
 {
-	btVector3 min, max;
-	shape->getAabb(trans, min, max);
+	btCollisionObject obj;
+	obj.setCollisionShape(shape);
+	obj.setWorldTransform(trans);
+	collisionWorld->addCollisionObject(&obj, filter, filter);
+	collisionWorld->updateSingleAabb(&obj);
+	
+	int32_t _filter = 0;
+	if (filter & FILTER_CHARACTER) {
+		_filter |= btBroadphaseProxy::CharacterFilter;
+	} else if(filter & FILTER_TERRAIN) {
+		_filter |= btBroadphaseProxy::StaticFilter;
+	} else if(filter & FILTER_TRIGGER) {
+		_filter |= btBroadphaseProxy::CollisionFilterGroups::SensorTrigger;
+	}
 
-	std::vector<btCollisionObject *> objects;
-	GetObjectsInAABB(ToGlm(min), ToGlm(max), filter, &objects);
-	testedEntityIds->reserve(testedEntityIds->size() + objects.size());
-
-	class Callback : public btCollisionWorld::ConvexResultCallback
-	{
-	public:
+	struct _ContactResultCallback
+		: public btCollisionWorld::ContactResultCallback {
+		std::vector<uint64_t> *objs;
 		bool hasHit = false;
+		btCollisionObject *self;
+		CollisionWorld *cw;
+		int32_t filter;
+		int count = 0;
 
-		Callback() {}
-		virtual ~Callback() {}
-		virtual bool needsCollision(btBroadphaseProxy *proxy0) const override
+		virtual bool needsCollision(btBroadphaseProxy *proxy) const override
 		{
-			return true;
+			return proxy->m_collisionFilterGroup & filter;
 		}
 
 		virtual btScalar
-		addSingleResult(btCollisionWorld::LocalConvexResult &convexResult,
-						bool normalInWorldSpace) override
+		addSingleResult(btManifoldPoint &cp,
+						const btCollisionObjectWrapper *colObj0Wrap,
+						int partId0, int index0,
+						const btCollisionObjectWrapper *colObj1Wrap,
+						int partId1, int index1) override
 		{
-			hasHit = true;
-			return 0;
+			uint64_t id = 0;
+			if (colObj0Wrap->getCollisionObject() == self) {
+				id = CollisionWorld::GetObjectEntityID(
+					colObj1Wrap->getCollisionObject());
+			} else {
+				id = CollisionWorld::GetObjectEntityID(
+					colObj0Wrap->getCollisionObject());
+			}
+			if (id) {
+				if (hasHit) {
+					if (objs->back() == id) {
+						return 0;
+					}
+				}
+				hasHit = true;
+				objs->push_back(id);
+				count++;
+			}
+			return 0.0;
 		}
 	};
+	_ContactResultCallback _cb;
+	_cb.objs = testedEntityIds;
+	_cb.self = &obj;
+	_cb.cw = (CollisionWorld *)this;
+	_cb.filter = _filter;
 
-	size_t count = 0;
-	for (btCollisionObject *o : objects) {
-		uint64_t entityId = GetObjectEntityID(o);
-		if (entityId) {
-			Callback cb;
-			btCollisionWorld::objectQuerySingle(
-				shape, trans, trans, o, o->getCollisionShape(),
-				o->getWorldTransform(), cb, 0.01);
-			if (cb.hasHit) {
-				++count;
-				testedEntityIds->push_back(entityId);
-			}
-		}
-	}
-	return count;
+	collisionWorld->contactTest(&obj, _cb);
+
+	collisionWorld->removeCollisionObject(&obj);
+	return _cb.count;
 }

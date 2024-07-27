@@ -3,7 +3,6 @@ def Settings( **kwargs ):
     'flags': ['-x', 'c++', '-Wall', '-pedantic',
     '-std=c++20',
     '-I/usr/include',
-    '-I/usr/include/bullet',
     '-Ithirdparty/godot-cpp/include',
     '-Ithirdparty/godot-cpp/gdextension',
     '-Ithirdparty/godot-cpp/gen/include',
@@ -14,6 +13,8 @@ def Settings( **kwargs ):
     '-Iserver/include',
     '-Iclient/src/include',
     '-Ithirdparty/flecs',
-    '-Ithirdparty/flecs/include'
+    '-Ithirdparty/flecs/include',
+    '-Ithirdparty/bullet/src',
+    '-Ithirdparty/bullet/src/LinearMath'
     ],
   }

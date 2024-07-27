@@ -69,6 +69,10 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 	eyes.y += shape->height;
 
 	for (uint64_t id : entities) {
+		std::string s;
+		flecs::entity target = realm->Entity(id);
+		s = target.get<ComponentStaticTransform>()?"static":"non static";
+		
 		if (id != entityId) {
 			flecs::entity target = realm->Entity(id);
 			if (target.has<ComponentPlayerConnectionPeer>() &&

@@ -28,8 +28,10 @@ add_library(common STATIC
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PUBLIC flecs)
-target_link_libraries(common PRIVATE ${BULLET_COLLISION_LIBRARY})
-target_link_libraries(common PRIVATE ${BULLET_MATH_LIBRARY})
+target_link_libraries(common PRIVATE LinearMath)
+target_link_libraries(common PRIVATE BulletCollision)
+target_link_libraries(common PRIVATE Bullet3Collision)
+target_link_libraries(common PRIVATE Bullet3Common)
 set_target_properties(common PROPERTIES ENABLE_EXPORTS ON)
 
 if(THEGAMERPG_PRECOMPILE_HEADERS )

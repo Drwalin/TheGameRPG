@@ -20,10 +20,10 @@ option(THEGAMERPG_MAP_EDITOR "Enable map editor" OFF)
 option(THEGAMERPG_UNITY_BUILD "Enable unity build" OFF)
 
 include_directories(thirdparty/flecs/include)
+include_directories(thirdparty/bullet/src)
+include_directories(thirdparty/bullet/src/LinearMath)
 
-find_package(Bullet REQUIRED)
-include_directories(${BULLET_INCLUDE_DIR})
-include_directories(${BULLET_INCLUDE_DIR}/LinearMath)
+add_subdirectory(thirdparty/bullet EXCLUDE_FROM_ALL)
 
 set(CMAKE_UNITY_BUILD ON)
 add_subdirectory(thirdparty/godot-cpp)
