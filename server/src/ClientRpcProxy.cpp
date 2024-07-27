@@ -46,14 +46,14 @@ void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
 					 ClientRpcFunctionNames::SetGravity, gravity);
 }
 
-void DeleteEntity_ForPeer(std::shared_ptr<RealmServer> realm, icon7::Peer *peer,
+void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 						  uint64_t entityId)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::DeleteEntities, entityId);
 }
 
-void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeer(RealmServer *realm,
 						   icon7::Peer *peer)
 {
 	icon7::ByteWriter writer(1000);
@@ -77,7 +77,7 @@ void SpawnEntities_ForPeer(std::shared_ptr<RealmServer> realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeerByIds(RealmServer *realm,
 								icon7::Peer *peer, icon7::ByteReader &reader)
 {
 	icon7::ByteWriter writer(1000);
@@ -112,7 +112,7 @@ void SpawnEntities_ForPeerByIds(std::shared_ptr<RealmServer> realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm,
 									  icon7::Peer *peer,
 									  const std::vector<uint64_t> &ids)
 {
@@ -146,7 +146,7 @@ void SpawnEntities_ForPeerByIdsVector(std::shared_ptr<RealmServer> realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm,
 								 icon7::Peer *peer)
 {
 	icon7::ByteWriter writer(1000);
@@ -175,7 +175,7 @@ void SpawnPlayerEntity_ForPlayer(std::shared_ptr<RealmServer> realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void Broadcast_SetModel(std::shared_ptr<RealmServer> realm, uint64_t entityId,
+void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SetModel, entityId,
@@ -194,7 +194,7 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 							 movementParams);
 }
 
-void Broadcast_UpdateEntities(std::shared_ptr<RealmServer> realm)
+void Broadcast_UpdateEntities(RealmServer *realm)
 {
 	const static uint32_t singleEntitySize = 8 + 8 + 12 + 12 + 12 + 1;
 

@@ -137,6 +137,8 @@ void Realm::RegisterObservers()
 
 bool Realm::OneEpoch()
 {
+	collisionWorld.StartEpoch();
+	
 	timer.Update();
 
 	// TODO: update due queued entity events
@@ -160,18 +162,22 @@ bool Realm::OneEpoch()
 	}
 
 	if (executedEvents == 0) {
+		collisionWorld.EndEpoch();
 		return false;
 	} else {
 		timer.Update();
 		if (!eventsPriorityQueue.Empty()) {
 			const EntityEventEntry &event = eventsPriorityQueue.Top();
 			if (event.dueTick > timer.currentTick + 10) {
+				collisionWorld.EndEpoch();
 				return false;
 			}
 		} else {
+			collisionWorld.EndEpoch();
 			return false;
 		}
 	}
+	collisionWorld.EndEpoch();
 	return true;
 }
 

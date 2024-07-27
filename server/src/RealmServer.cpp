@@ -98,7 +98,7 @@ bool RealmServer::OneEpoch()
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;
-		ClientRpcProxy::Broadcast_UpdateEntities(shared_from_this());
+		ClientRpcProxy::Broadcast_UpdateEntities(this);
 		return true;
 	} else {
 		return busy;
@@ -174,7 +174,7 @@ void RealmServer::RegisterObservers()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const ComponentModelName &model,
 					 const ComponentShape &shape) {
-			ClientRpcProxy::Broadcast_SetModel(shared_from_this(), entity.id(),
+			ClientRpcProxy::Broadcast_SetModel(this, entity.id(),
 											   model.modelName, shape);
 		});
 
@@ -284,7 +284,7 @@ void RealmServer::RegisterObservers()
 			if (currentlyUpdatingPlayerPeerEntityMovement == false) {
 				if (peer.peer.get() != nullptr) {
 					ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
-						this->shared_from_this(), peer.peer.get(),
+						this, peer.peer.get(),
 						{entity.id()});
 				}
 			}

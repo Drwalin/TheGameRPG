@@ -34,6 +34,9 @@ public:
 	void Clear();
 
 	void Debug() const;
+	
+	void StartEpoch();
+	void EndEpoch();
 
 	static uint64_t GetObjectEntityID(const btCollisionObject *object);
 
@@ -176,7 +179,7 @@ private:
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
 	class btCollisionObject *AllocateNewCollisionObject();
 
-	class btSimpleBroadphase *broadphase;
+	class btBroadphaseInterface *broadphase;
 	class btDefaultCollisionConfiguration *collisionConfiguration;
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;

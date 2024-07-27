@@ -61,6 +61,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	}
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
+	ClientRpcProxy::SpawnEntities_ForPeer(this, peer);
 
 	icon7::ByteWriter writer(1500);
 	ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);

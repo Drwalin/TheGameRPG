@@ -226,6 +226,9 @@ void CollisionWorld::GetObjectsInAABB(
 	if (filter & FILTER_CHARACTER) {
 		f |= btBroadphaseProxy::CharacterFilter;
 	}
+	if (filter & FILTER_TRIGGER) {
+		f |= btBroadphaseProxy::SensorTrigger;
+	}
 	BroadphaseAabbAgregate broadphaseCallback(f);
 	std::swap(*objects, broadphaseCallback.objects);
 
@@ -233,6 +236,18 @@ void CollisionWorld::GetObjectsInAABB(
 						 broadphaseCallback);
 	std::swap(*objects, broadphaseCallback.objects);
 }
+
+void CollisionWorld::StartEpoch()
+{
+	/*
+	collisionWorld->setForceUpdateAllAabbs(true);
+	collisionWorld->updateAabbs();
+	collisionWorld->computeOverlappingPairs();
+	collisionWorld->performDiscreteCollisionDetection();
+	*/
+}
+
+void CollisionWorld::EndEpoch() {}
 
 void CollisionWorld::Debug() const
 {
