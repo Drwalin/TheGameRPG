@@ -19,7 +19,7 @@ include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(include)
 
 add_compile_definitions(FLECS_CUSTOM_BUILD FLECS_SYSTEM FLECS_CPP
-	FLECS_LOG FLECS_APP FLECS_META FELCS_META_C FLECS_EXPR)
+	FLECS_LOG FLECS_APP FLECS_META FLECS_META_C FLECS_EXPR FLECS_DOC)
 add_library(flecs STATIC ../thirdparty/flecs/flecs.c)
 
 file(GLOB_RECURSE src_files "src/*.cpp")
@@ -28,10 +28,11 @@ add_library(common STATIC
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PUBLIC flecs)
-target_link_libraries(common PRIVATE LinearMath)
-target_link_libraries(common PRIVATE BulletCollision)
-target_link_libraries(common PRIVATE Bullet3Collision)
-target_link_libraries(common PRIVATE Bullet3Common)
+target_link_libraries(common PUBLIC BulletCollision)
+target_link_libraries(common PUBLIC Bullet3Collision)
+target_link_libraries(common PUBLIC Bullet3Geometry)
+target_link_libraries(common PUBLIC Bullet3Common)
+target_link_libraries(common PUBLIC LinearMath)
 set_target_properties(common PROPERTIES ENABLE_EXPORTS ON)
 
 if(THEGAMERPG_PRECOMPILE_HEADERS )
