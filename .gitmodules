@@ -10,3 +10,6 @@
 [submodule "frontend/addons/drwalin_godot_particles"]
 	path = frontend/addons/drwalin_godot_particles
 	url = https://github.com/Drwalin/drwalin-godot-particles.git
+[submodule "thirdparty/bullet"]
+	path = thirdparty/bullet
+	url = https://github.com/bulletphysics/bullet3.git
