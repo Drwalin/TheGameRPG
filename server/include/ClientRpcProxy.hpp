@@ -58,6 +58,16 @@ void GenericComponentUpdate_Update(RealmServer *realm,
 	(reg::Registry::Serialize<TArgs>(realm, entityId, *writer), ...);
 	writer->op("");
 }
+
+template <typename... TArgs>
+void GenericComponentUpdate_Update(RealmServer *realm,
+								   icon7::ByteWriter *writer, uint64_t entityId,
+								   const TArgs &...components)
+{
+	writer->op(entityId);
+	(reg::Registry::Serialize<TArgs>(components, *writer), ...);
+	writer->op("");
+}
 void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 								   icon7::ByteWriter *writer);
 } // namespace ClientRpcProxy

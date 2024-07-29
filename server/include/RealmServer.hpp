@@ -35,6 +35,7 @@ public:
 									   ComponentMovementState *state) override;
 
 	void RegisterObservers();
+	void RegisterObservers_CharacterSheet();
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
