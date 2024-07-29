@@ -71,7 +71,6 @@ void SpawnEntities_ForPeer(RealmServer *realm,
 			writer.op(model);
 			writer.op(shape);
 			writer.op(movementParams);
-			LOG_INFO("Serializing character entity with id: %lu", entity.id());
 		});
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	realm->rpc->FinalizeSerializeSend(writer, flags);

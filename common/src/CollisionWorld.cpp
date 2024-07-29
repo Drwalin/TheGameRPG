@@ -19,21 +19,33 @@ uint64_t CollisionWorld::GetObjectEntityID(const btCollisionObject *object)
 
 namespace fdkjsfldksfjldkf
 {
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj0();
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj1();
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj2();
-
-auto ____dsafjkdlsfjklsdafjkldsjafkldj0()
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj0()
 {
 	return &CollisionWorld::TestForEntitiesBox;
 }
-auto ____dsafjkdlsfjklsdafjkldsjafkldj1()
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj1()
 {
 	return &CollisionWorld::TestForEntitiesSphere;
 }
-auto ____dsafjkdlsfjklsdafjkldsjafkldj2()
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj2()
 {
 	return &CollisionWorld::TestForEntitiesCylinder;
+}
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj3()
+{
+	return &CollisionWorld::RayTestFirstHit;
+}
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj4()
+{
+	return &CollisionWorld::RayTestFirstHitTerrain;
+}
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj5()
+{
+	return &CollisionWorld::RayTestFirstHitTerrainVector;
+}
+extern auto ____dsafjkdlsfjklsdafjkldsjafkldj6()
+{
+	return &CollisionWorld::TestCollisionMovementRays;
 }
 } // namespace fdkjsfldksfjldkf
 
@@ -162,7 +174,7 @@ void CollisionWorld::OnAddEntity(flecs::entity entity,
 		new btCapsuleShape(shape.width * 0.5, shape.height);
 	btCollisionObject *object = AllocateNewCollisionObject();
 	object->setCollisionShape(_shape);
-	object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
+	object->setWorldTransform(btTransform(btQuaternion(0, 0, 0), ToBullet(pos)));
 	object->setUserIndex(FILTER_CHARACTER);
 	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
 	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
@@ -188,11 +200,11 @@ void CollisionWorld::OnAddTrigger(flecs::entity entity,
 	entity.set<ComponentBulletCollisionObject>(obj);
 }
 
-void CollisionWorld::UpdateEntityBvh(const ComponentBulletCollisionObject obj,
-									 ComponentShape shape, glm::vec3 pos)
+void CollisionWorld::UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
+									  ComponentShape shape, glm::vec3 pos)
 {
 	pos.y += shape.height * 0.5f;
-	obj.object->setWorldTransform(btTransform(btQuaternion(), ToBullet(pos)));
+	obj.object->setWorldTransform(btTransform(btQuaternion(0, 0, 0), ToBullet(pos)));
 	collisionWorld->updateSingleAabb(obj.object);
 }
 
@@ -201,7 +213,7 @@ void CollisionWorld::UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 {
 	auto obj = entity.get<ComponentBulletCollisionObject>();
 	if (obj) {
-		UpdateEntityBvh(*obj, shape, pos);
+		UpdateEntityBvh_(*obj, shape, pos);
 	}
 }
 
@@ -322,7 +334,7 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentMovementState &state,
 					 const ComponentBulletCollisionObject &obj) {
 			if (entity.has<ComponentMovementState>()) {
-				UpdateEntityBvh(obj, shape, state.pos);
+				UpdateEntityBvh_(obj, shape, state.pos);
 			}
 		});
 	ecs.observer<ComponentStaticTransform, ComponentBulletCollisionObject>()

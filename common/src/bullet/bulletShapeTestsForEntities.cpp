@@ -31,7 +31,7 @@ CollisionWorld::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 	return count;
 }
 
-size_t CollisionWorld::TestForEntitiesBox(
+extern size_t CollisionWorld::TestForEntitiesBox(
 	glm::vec3 center, glm::vec3 halfExtents, glm::quat rotation,
 	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
 {
@@ -41,7 +41,7 @@ size_t CollisionWorld::TestForEntitiesBox(
 											  filter);
 }
 
-size_t
+extern size_t
 CollisionWorld::TestForEntitiesSphere(glm::vec3 center, float radius,
 									  std::vector<uint64_t> *testedEntityIds,
 									  int32_t filter) const
@@ -52,7 +52,7 @@ CollisionWorld::TestForEntitiesSphere(glm::vec3 center, float radius,
 											  filter);
 }
 
-size_t CollisionWorld::TestForEntitiesCylinder(
+extern size_t CollisionWorld::TestForEntitiesCylinder(
 	glm::vec3 centerBottom, float radius, float height,
 	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
 {

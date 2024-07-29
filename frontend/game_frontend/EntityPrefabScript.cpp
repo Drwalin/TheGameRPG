@@ -1,12 +1,12 @@
-#include <icon7/Debug.hpp>
-
-#include "godot_cpp/classes/engine.hpp"
-#include "godot_cpp/classes/engine_debugger.hpp"
-#include "godot_cpp/classes/resource_loader.hpp"
+#include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/engine_debugger.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/node2d.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label3d.hpp>
+
+#include <icon7/Debug.hpp>
 
 #include "GameFrontend.hpp"
 

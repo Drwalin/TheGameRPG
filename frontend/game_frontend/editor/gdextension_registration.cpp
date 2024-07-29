@@ -11,6 +11,8 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/engine.hpp>
 
+#include <icon7/Debug.hpp>
+
 #include "PrefabServerBase.hpp"
 #include "PrefabServerStaticMesh.hpp"
 #include "PrefabServerOpenableSingleDoor.hpp"
@@ -22,6 +24,10 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
 	if (p_level !=
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
+		return;
+	}
+	
+	if (Engine::get_singleton()->is_editor_hint() == false) {
 		return;
 	}
 

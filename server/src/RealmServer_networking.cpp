@@ -68,7 +68,6 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
-	LOG_INFO("Sending entities for player: %lu", data->entityId);
 	ClientRpcProxy::SpawnEntities_ForPeer(this, peer);
 
 	icon7::ByteWriter writer(1500);
