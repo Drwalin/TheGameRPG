@@ -69,10 +69,6 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 	eyes.y += shape->height;
 
 	for (uint64_t id : entities) {
-		std::string s;
-		flecs::entity target = realm->Entity(id);
-		s = target.get<ComponentStaticTransform>()?"static":"non static";
-		
 		if (id != entityId) {
 			flecs::entity target = realm->Entity(id);
 			if (target.has<ComponentPlayerConnectionPeer>() &&
@@ -132,7 +128,7 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 		// TODO: Replace 5.0f and 60.0f with apropriate values from some
 		// component with parameters
 		if (false == TryFollowingPlayer(realm, entityId, &state, shape,
-										movementParams, 5.0f, 5.0f)) {
+										movementParams, 5.0f, 15.0f)) {
 			state.rot.y += 0.15;
 			float angle = state.rot.y;
 			glm::quat rot = glm::angleAxis(angle, glm::vec3(0, 1, 0));
