@@ -19,6 +19,11 @@
 #include "../../include/ServerCore.hpp"
 #include "../../include/callbacks/CallbackAiBehaviorTick.hpp"
 
+#if not __unix__
+#define M_PI 3.141592653589793
+#else
+#endif
+
 static void MoveInDirectionForward(ComponentMovementState *state,
 								   const ComponentMovementParameters *params,
 								   glm::vec3 direction)

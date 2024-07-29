@@ -35,10 +35,6 @@ if (WIN32)
 		${src_files}
 	)
 	target_link_libraries(server_lib PUBLIC common)
-	add_library(server_lib_shared SHARED
-		${src_files}
-	)
-	target_link_libraries(server_lib_shared PUBLIC common)
 
 	add_executable(server
 		ServerMain.cpp
