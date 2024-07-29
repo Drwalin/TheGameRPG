@@ -4,3 +4,4 @@ windows-release
 windows-debug
 exports
 frontend/export_presets.cfg
+.cache

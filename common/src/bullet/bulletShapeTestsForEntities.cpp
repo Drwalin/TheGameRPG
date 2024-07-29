@@ -82,13 +82,13 @@ size_t CollisionWorld::InternalTestConvexShapeForEntities(
 	obj.setWorldTransform(trans);
 	collisionWorld->addCollisionObject(&obj, filter, filter);
 	collisionWorld->updateSingleAabb(&obj);
-	
+
 	int32_t _filter = 0;
 	if (filter & FILTER_CHARACTER) {
 		_filter |= btBroadphaseProxy::CharacterFilter;
-	} else if(filter & FILTER_TERRAIN) {
+	} else if (filter & FILTER_TERRAIN) {
 		_filter |= btBroadphaseProxy::StaticFilter;
-	} else if(filter & FILTER_TRIGGER) {
+	} else if (filter & FILTER_TRIGGER) {
 		_filter |= btBroadphaseProxy::CollisionFilterGroups::SensorTrigger;
 	}
 
