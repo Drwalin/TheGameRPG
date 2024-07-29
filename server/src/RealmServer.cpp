@@ -201,7 +201,7 @@ void RealmServer::RegisterObservers()
 	ecs.observer<ComponentTrigger>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
-			trigger.tickUntilIgnore = timer.currentTick + 1000;
+			trigger.tickUntilIgnore = timer.currentTick + 1;
 		});
 
 	ecs.observer<ComponentEventsQueue, const ComponentAITick>()

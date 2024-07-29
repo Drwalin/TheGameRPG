@@ -49,7 +49,7 @@ public:
 	void OnAddTrigger(flecs::entity entity,
 					  const ComponentStaticTransform &transform);
 
-	void UpdateEntityBvh(const ComponentBulletCollisionObject obj,
+	void UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
 						 ComponentShape shape, glm::vec3 pos);
 	void UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 						 glm::vec3 pos);

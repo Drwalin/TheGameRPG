@@ -17,7 +17,7 @@ bool CollisionWorld::RayTestFirstHitWithObjects(
 {
 	glm::vec3 end = start + direction;
 	btVector3 _start = ToBullet(start), _end = ToBullet(end);
-	btTransform _startT{btQuaternion(), _start}, _endT{btQuaternion(), _end};
+	btTransform _startT{btQuaternion(0, 0, 0), _start}, _endT{btQuaternion(0, 0, 0), _end};
 
 	btCollisionWorld::ClosestRayResultCallback callback(_start, _end);
 
