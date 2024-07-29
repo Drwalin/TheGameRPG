@@ -49,7 +49,6 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentEquippedInventory, {
 	s.op(equippedItems, NUMBER_OF_SLOTS);
 });
 
-
 void ItemBase::SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 {
 	s.op(uniqueNameShort);

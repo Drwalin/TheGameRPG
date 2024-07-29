@@ -284,8 +284,7 @@ void RealmServer::RegisterObservers()
 			if (currentlyUpdatingPlayerPeerEntityMovement == false) {
 				if (peer.peer.get() != nullptr) {
 					ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
-						this, peer.peer.get(),
-						{entity.id()});
+						this, peer.peer.get(), {entity.id()});
 				}
 			}
 		});

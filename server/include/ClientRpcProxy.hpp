@@ -20,16 +20,13 @@ void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
 
 void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 						  uint64_t entityId);
-void SpawnEntities_ForPeer(RealmServer *realm,
-						   icon7::Peer *peer);
 
-void SpawnEntities_ForPeerByIds(RealmServer *realm,
-								icon7::Peer *peer, icon7::ByteReader &reader);
-void SpawnEntities_ForPeerByIdsVector(RealmServer *realm,
-									  icon7::Peer *peer,
+void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
+void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+								icon7::ByteReader &reader);
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 									  const std::vector<uint64_t> &ids);
-void SpawnPlayerEntity_ForPlayer(RealmServer *realm,
-								 icon7::Peer *peer);
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer);
 
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);

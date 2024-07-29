@@ -20,7 +20,7 @@ enum EquippedItemSlotId : int16_t {
 	BACK = 9,
 	HIP_LEFT = 10,
 	HIP_RIGHT = 11,
-	
+
 	FINGER_LEFT = 12,
 	FINGER_RIGHT = 13,
 	NECK = 14,
@@ -46,7 +46,7 @@ public:
 	std::string modelName;
 
 	std::vector<int16_t> usableItemSlots;
-	
+
 	void SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
 
 	static ItemBase *GetByName(const std::string &name) { return nullptr; }

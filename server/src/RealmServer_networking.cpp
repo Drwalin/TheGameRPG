@@ -65,22 +65,28 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
 																  reader);
 	}
-	
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
 	ClientRpcProxy::SpawnEntities_ForPeer(this, peer);
 
 	icon7::ByteWriter writer(1500);
 	ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);
-	
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Ranges>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Health>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_HealthRegen>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_LevelXP>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Strength>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_AttackCooldown>(this, &writer, entity);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Protection>(this, &writer, entity);
-	
+
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_Ranges>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_Health>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_HealthRegen>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_LevelXP>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_Strength>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_AttackCooldown>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<
+		ComponentCharacterSheet_Protection>(this, &writer, entity);
+
 	ClientRpcProxy::GenericComponentUpdate_Finish(this, peer, &writer);
 }
 

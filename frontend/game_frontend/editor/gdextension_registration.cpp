@@ -26,7 +26,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	
+
 	if (Engine::get_singleton()->is_editor_hint() == false) {
 		return;
 	}
