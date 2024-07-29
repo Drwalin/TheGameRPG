@@ -59,11 +59,11 @@ void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,
 
 void Attack(GameClient *gameClient, ComponentMovementState state,
 			uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
-			int64_t attackId, const std::string &argStr, int64_t argInt)
+			int64_t attackId, int64_t argInt)
 {
 	gameClient->rpc->Send(gameClient->peer.get(),
 						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						  ServerRpcFunctionNames::Attack, state, targetId,
-						  targetPos, attackType, attackId, argStr, argInt);
+						  targetPos, attackType, attackId, argInt);
 }
 } // namespace ServerRpcProxy

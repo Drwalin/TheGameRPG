@@ -350,9 +350,6 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 				OnStaticCollisionShape(entity, collisionName, *transform);
 			}
 		});
-
-	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects =
-		ecs.query<ComponentBulletCollisionObject>();
 }
 
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)

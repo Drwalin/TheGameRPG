@@ -378,7 +378,7 @@ void GameClient::PerformInteractionUse()
 		// TODO: maybe error?
 		return;
 	}
-	auto characterSheet = player.get<ComponentCharacterSheet>();
+	auto characterSheet = player.get<ComponentCharacterSheet_Ranges>();
 	if (characterSheet == nullptr) {
 		// TODO: maybe error?
 		return;
@@ -388,7 +388,7 @@ void GameClient::PerformInteractionUse()
 	bool hasNormal;
 	uint64_t serverEntityId = 0;
 	uint64_t localTargetId =
-		PerformRaytestFromEyes(*state, characterSheet->useRange, &hitPoint,
+		PerformRaytestFromEyes(*state, characterSheet->attackRange, &hitPoint,
 							   &normal, &hasNormal, &serverEntityId);
 	if (localTargetId) {
 		ServerRpcProxy::InteractInLineOfSight(this, *state, serverEntityId,
@@ -397,7 +397,7 @@ void GameClient::PerformInteractionUse()
 }
 
 void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
-							   const std::string &argStr, int64_t argInt)
+							   int64_t argInt)
 {
 	if (localPlayerEntityId == 0) {
 		// TODO: maybe error?
@@ -417,10 +417,10 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 		*state, 1000.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
-							   attackType, attackId, argStr, argInt);
+							   attackType, attackId, argInt);
 	} else {
 		ServerRpcProxy::Attack(this, *state, 0, hitPoint, attackType, attackId,
-							   argStr, argInt);
+							   argInt);
 	}
 }
 

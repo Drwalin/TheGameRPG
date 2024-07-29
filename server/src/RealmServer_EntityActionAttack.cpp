@@ -11,8 +11,7 @@
 
 void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
-						 int64_t attackType, int64_t attackId,
-						 const std::string &argStr, int64_t argInt)
+						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
 	if (targetId) {
 		flecs::entity entity = Entity(targetId);
@@ -44,10 +43,9 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 
 void RealmServer::Attack(icon7::Peer *peer, ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
-						 int64_t attackType, int64_t attackId,
-						 const std::string &argStr, int64_t argInt)
+						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	Attack(data->entityId, state, targetId, targetPos, attackType, attackId,
-		   argStr, argInt);
+		   argInt);
 }

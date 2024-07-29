@@ -48,14 +48,14 @@ public: // Entity Actions
 							   glm::vec3 dstPos, glm::vec3 normal);
 	void Attack(uint64_t instigatorId, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
-				int64_t attackId, const std::string &argStr, int64_t argInt);
+				int64_t attackId, int64_t argInt);
 
 	void InteractInLineOfSight(icon7::Peer *peer, ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
 	void Attack(icon7::Peer *peer, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
-				int64_t attackId, const std::string &argStr, int64_t argInt);
+				int64_t attackId, int64_t argInt);
 
 private:
 	void StorePlayerDataInPeerAndFile(icon7::Peer *peer);

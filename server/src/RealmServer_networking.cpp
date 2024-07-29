@@ -48,7 +48,13 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		s.oldState.onGround = false;
 		entity.set<ComponentLastAuthoritativeMovementState>(s);
 		entity.set<ComponentMovementState>(s.oldState);
-		entity.add<ComponentCharacterSheet>();
+		entity.add<ComponentCharacterSheet_Ranges>();
+		entity.add<ComponentCharacterSheet_Health>();
+		entity.add<ComponentCharacterSheet_HealthRegen>();
+		entity.add<ComponentCharacterSheet_LevelXP>();
+		entity.add<ComponentCharacterSheet_Strength>();
+		entity.add<ComponentCharacterSheet_AttackCooldown>();
+		entity.add<ComponentCharacterSheet_Protection>();
 
 		ComponentName name;
 		name.name = data->userName;
@@ -59,14 +65,23 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
 																  reader);
 	}
+	
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
+	LOG_INFO("Sending entities for player: %lu", data->entityId);
 	ClientRpcProxy::SpawnEntities_ForPeer(this, peer);
 
 	icon7::ByteWriter writer(1500);
 	ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);
-	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet>(
-		this, &writer, entity);
+	
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Ranges>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Health>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_HealthRegen>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_LevelXP>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Strength>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_AttackCooldown>(this, &writer, entity);
+	ClientRpcProxy::GenericComponentUpdate_Update<ComponentCharacterSheet_Protection>(this, &writer, entity);
+	
 	ClientRpcProxy::GenericComponentUpdate_Finish(this, peer, &writer);
 }
 
