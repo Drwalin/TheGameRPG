@@ -21,7 +21,6 @@ inline const std::string Ping = "Ping";
 inline const std::string InteractInLineOfSight = "InteractInLineOfSight";
 
 // void Attack(ComponentMovementState, uint64_t targetId, uint64_t targetPos,
-// 			   string attackName, int64_t attackId, string argStr,
-// 			   int64_t argInt)
+// 			   string attackName, int64_t attackId, int64_t argInt)
 inline const std::string Attack = "Attack";
 } // namespace ServerRpcFunctionNames

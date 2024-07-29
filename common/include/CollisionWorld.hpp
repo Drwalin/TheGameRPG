@@ -184,6 +184,6 @@ private:
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;
 
-	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects;
+// 	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects;
 	class Realm *realm;
 };

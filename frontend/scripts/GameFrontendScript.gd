@@ -68,14 +68,23 @@ func _process(_delta: float)->void:
 			gameFrontend.PerformInteractionUse();
 			
 		if Input.is_action_just_pressed("attack_primary", true):
-			gameFrontend.PerformAttack(0, 0, "", 0);
+			gameFrontend.PerformAttack(0, 0, 0);
 		if Input.is_action_just_pressed("attack_primary_powerfull", true):
-			gameFrontend.PerformAttack(0, 1, "", 0);
+			gameFrontend.PerformAttack(0, 1, 0);
 		if Input.is_action_just_pressed("attack_secondary", true):
-			gameFrontend.PerformAttack(0, 2, "", 0);
+			gameFrontend.PerformAttack(0, 2, 0);
 		if Input.is_action_just_pressed("attack_secondary_powerfull", true):
-			gameFrontend.PerformAttack(0, 3, "", 0);
+			gameFrontend.PerformAttack(0, 3, 0);
+		
+		if Input.is_action_just_released("attack_primary", true):
+			gameFrontend.PerformAttack(0, 0, 1);
+		if Input.is_action_just_released("attack_primary_powerfull", true):
+			gameFrontend.PerformAttack(0, 1, 1);
+		if Input.is_action_just_released("attack_secondary", true):
+			gameFrontend.PerformAttack(0, 2, 1);
+		if Input.is_action_just_released("attack_secondary_powerfull", true):
+			gameFrontend.PerformAttack(0, 3, 1);
 		
 		for i in range(0,128):
 			if Input.is_action_just_pressed("skill_%d" % i):
-				gameFrontend.PerformAttack(1, i, "", 0);
+				gameFrontend.PerformAttack(1, i, 0);

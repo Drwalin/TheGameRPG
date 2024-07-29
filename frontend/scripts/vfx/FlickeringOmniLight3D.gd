@@ -22,7 +22,7 @@ func _ready():
 	ProjectSettings.settings_changed.connect(_On_SettingsChanged);
 
 func _On_SettingsChanged():
-	shadow_enabled = ProjectSettings.get_setting("game_settings/graphics/point_shadows", shadow_enabled);
+	shadow_enabled = ProjectSettings.get_setting("game_settings/graphics/point_shadows", true);
 	pass;
 
 func _process(delta):
