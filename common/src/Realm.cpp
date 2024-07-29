@@ -138,7 +138,7 @@ void Realm::RegisterObservers()
 bool Realm::OneEpoch()
 {
 	collisionWorld.StartEpoch();
-	
+
 	timer.Update();
 
 	// TODO: update due queued entity events

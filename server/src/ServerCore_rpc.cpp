@@ -212,8 +212,7 @@ void ServerCore::InteractInLineOfSight(icon7::Peer *peer,
 
 void ServerCore::Attack(icon7::Peer *peer, ComponentMovementState state,
 						uint64_t targetId, glm::vec3 targetPos,
-						int64_t attackType, int64_t attackId,
-						int64_t argInt)
+						int64_t attackType, int64_t attackId, int64_t argInt)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();

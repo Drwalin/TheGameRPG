@@ -34,7 +34,7 @@ public:
 	void Clear();
 
 	void Debug() const;
-	
+
 	void StartEpoch();
 	void EndEpoch();
 
@@ -50,7 +50,7 @@ public:
 					  const ComponentStaticTransform &transform);
 
 	void UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
-						 ComponentShape shape, glm::vec3 pos);
+						  ComponentShape shape, glm::vec3 pos);
 	void UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
 						 glm::vec3 pos);
 
@@ -184,6 +184,5 @@ private:
 	class btCollisionDispatcher *dispatcher;
 	class btCollisionWorld *collisionWorld;
 
-// 	flecs::query<ComponentBulletCollisionObject> queryCollisionObjects;
 	class Realm *realm;
 };

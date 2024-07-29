@@ -53,8 +53,7 @@ void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
 					 ClientRpcFunctionNames::DeleteEntities, entityId);
 }
 
-void SpawnEntities_ForPeer(RealmServer *realm,
-						   icon7::Peer *peer)
+void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
@@ -77,8 +76,8 @@ void SpawnEntities_ForPeer(RealmServer *realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIds(RealmServer *realm,
-								icon7::Peer *peer, icon7::ByteReader &reader)
+void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+								icon7::ByteReader &reader)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
@@ -112,8 +111,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIdsVector(RealmServer *realm,
-									  icon7::Peer *peer,
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 									  const std::vector<uint64_t> &ids)
 {
 	icon7::ByteWriter writer(1000);
@@ -146,8 +144,7 @@ void SpawnEntities_ForPeerByIdsVector(RealmServer *realm,
 	peer->Send(std::move(writer.Buffer()));
 }
 
-void SpawnPlayerEntity_ForPlayer(RealmServer *realm,
-								 icon7::Peer *peer)
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
