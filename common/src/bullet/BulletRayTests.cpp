@@ -69,7 +69,7 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 		object = obj->object;
 	}
 	ClosestRayResultNotMe cb(object, start, end);
-	cb.m_collisionFilterMask = btBroadphaseProxy::AllFilter;
+	cb.m_collisionFilterMask = btBroadphaseProxy::StaticFilter | btBroadphaseProxy::CharacterFilter;
 	collisionWorld->rayTest({start.x, start.y, start.z}, {end.x, end.y, end.z},
 							cb);
 	if (cb.hasHit() == false) {
