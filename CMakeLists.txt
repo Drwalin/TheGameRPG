@@ -25,12 +25,13 @@ include_directories(thirdparty/bullet/src/LinearMath)
 
 add_subdirectory(thirdparty/bullet EXCLUDE_FROM_ALL)
 
-set(CMAKE_UNITY_BUILD ON)
-add_subdirectory(thirdparty/godot-cpp)
-
 set(ICON7_IGNORE_COMMON_LOG_PATH 1)
 add_subdirectory(ICon7)
 target_compile_definitions(icon7 PUBLIC ICON7_LOG_IGNORE_COMMON_PATH="${PROJECT_SOURCE_DIR}")
+
+set(CMAKE_UNITY_BUILD ON)
+add_subdirectory(thirdparty/godot-cpp)
+unset(CMAKE_UNITY_BUILD)
 
 if (THEGAMERPG_UNITY_BUILD)
 	set(CMAKE_UNITY_BUILD ON)
