@@ -13,16 +13,15 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticCollisionShapeName, "SCS");
 
 GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
 	ComponentMovementState, "CP",
-	[](flecs::entity entity, ComponentMovementState *state) {
-		auto realm = *entity.world().get<RealmPtr>();
-		state->timestamp = realm.realm->timer.currentTick;
+	[](class Realm *realm, flecs::entity entity,
+	   ComponentMovementState *state) {
+		state->timestamp = realm ? realm->timer.currentTick : 0;
 	});
 
 GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
 	ComponentLastAuthoritativeMovementState, "AP",
-	[](flecs::entity entity, auto *state) {
-		auto realm = *entity.world().get<RealmPtr>();
-		state->oldState.timestamp = realm.realm->timer.currentTick;
+	[](class Realm *realm, flecs::entity entity, auto *state) {
+		state->oldState.timestamp = realm ? realm->timer.currentTick : 0;
 	});
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs);

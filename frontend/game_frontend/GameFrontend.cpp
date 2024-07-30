@@ -17,8 +17,11 @@
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
 
+GameFrontend *GameFrontend::singleton = nullptr;
+
 GameFrontend::GameFrontend()
 {
+	singleton = this;
 	client = nullptr;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -69,7 +72,7 @@ void GameFrontend::_bind_methods()
 				"argInt");
 	METHOD_NO_ARGS(GameFrontend, GetPing);
 	METHOD_NO_ARGS(GameFrontend, GetCurrentTick);
-	
+
 	METHOD_NO_ARGS(GameFrontend, GetCharacterSheet);
 }
 
@@ -77,11 +80,12 @@ void GameFrontend::_ready() { InternalReady(); }
 void GameFrontend::_process(double dt) { InternalProcess(); }
 void GameFrontend::InternalReady()
 {
+	client = new GameClientFrontend(this);
+
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
-	client = new GameClientFrontend(this);
 	client->Init();
 	playerCamera =
 		(Camera3D *)(get_node_or_null("/root/SceneRoot/PlayerCamera3D"));

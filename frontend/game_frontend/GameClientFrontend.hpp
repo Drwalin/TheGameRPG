@@ -40,4 +40,7 @@ public: // callbacks
 
 public:
 	class GameFrontend *frontend;
+
+public:
+	static GameClientFrontend *singleton;
 };

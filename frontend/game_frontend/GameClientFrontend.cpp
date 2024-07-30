@@ -14,8 +14,11 @@
 
 #include "GameClientFrontend.hpp"
 
+GameClientFrontend *GameClientFrontend::singleton = nullptr;
+
 GameClientFrontend::GameClientFrontend(GameFrontend *frontend)
 {
+	GameClientFrontend::singleton = this;
 	this->frontend = frontend;
 }
 

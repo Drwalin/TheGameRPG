@@ -17,7 +17,7 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 	if (argInt != 0) {
 		return;
 	}
-	
+
 	if (targetId) {
 		flecs::entity entityTarget = Entity(targetId);
 		if (entityTarget.is_alive()) {

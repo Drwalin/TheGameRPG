@@ -1,6 +1,8 @@
 #include "../../../common/include/EntityComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 
+#include "../GameClientFrontend.hpp"
+
 #include "PrefabServerStaticMesh.hpp"
 
 namespace editor
@@ -33,9 +35,12 @@ void PrefabServerStaticMesh::Serialize(icon7::ByteWriter &writer)
 	ComponentStaticCollisionShapeName collision;
 	collision.shapeName = collisionPath;
 
-	reg::Registry::Serialize(transform, writer);
-	reg::Registry::Serialize(model, writer);
-	reg::Registry::Serialize(collision, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   transform, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   model, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   collision, writer);
 }
 
 void PrefabServerStaticMesh::_bind_methods()

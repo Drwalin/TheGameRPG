@@ -470,45 +470,45 @@ int64_t GameClient::GetCurrentTick() { return realm->timer.currentTick; }
 std::unordered_map<std::string, std::string> GameClient::GetCharacteSheet()
 {
 	std::unordered_map<std::string, std::string> map;
-	
+
 	if (localPlayerEntityId == 0) {
 		return {};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_Ranges>()) {
 		map["attackRange"] = std::to_string(comp->attackRange);
 		map["visionRange"] = std::to_string(comp->visionRange);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_Health>()) {
 		map["hp"] = std::to_string(comp->hp);
 		map["maxHp"] = std::to_string(comp->maxHP);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_HealthRegen>()) {
 		map["hpRegenCooldown_ms"] = std::to_string(comp->cooldown);
 		map["hpRegenAmount"] = std::to_string(comp->amount);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_LevelXP>()) {
 		map["level"] = std::to_string(comp->level);
 		map["xp"] = std::to_string(comp->xp);
 		map["xpToNextLevel"] = std::to_string(comp->xpToNextLevel);
 		map["xpDrop"] = std::to_string(comp->xpDrop);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_Strength>()) {
 		map["strength"] = std::to_string(comp->strength);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_AttackCooldown>()) {
 		map["baseAttackCooldown"] = std::to_string(comp->baseCooldown);
 	}
-	
+
 	if (auto comp = player.get<ComponentCharacterSheet_Protection>()) {
 		map["armorPoints"] = std::to_string(comp->armorPoints);
 	}
-	
+
 	return map;
 }
