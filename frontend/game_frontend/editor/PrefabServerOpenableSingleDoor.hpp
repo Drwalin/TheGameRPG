@@ -2,13 +2,13 @@
 
 #include <godot_cpp/variant/transform3d.hpp>
 
-#include "PrefabServerStaticMesh.hpp"
+#include "PrefabServerStaticMesh_Base.hpp"
 
 namespace editor
 {
-class PrefabServerOpenableSingleDoor : public PrefabServerStaticMesh
+class PrefabServerOpenableSingleDoor : public PrefabServerStaticMesh_Base
 {
-	GDCLASS(PrefabServerOpenableSingleDoor, PrefabServerStaticMesh)
+	GDCLASS(PrefabServerOpenableSingleDoor, PrefabServerStaticMesh_Base)
 public: // Godot bound functions
 	PrefabServerOpenableSingleDoor();
 	virtual ~PrefabServerOpenableSingleDoor();

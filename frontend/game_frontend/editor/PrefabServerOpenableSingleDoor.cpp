@@ -13,7 +13,7 @@ PrefabServerOpenableSingleDoor::~PrefabServerOpenableSingleDoor() {}
 
 void PrefabServerOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 {
-	PrefabServerStaticMesh::Serialize(writer);
+	PrefabServerStaticMesh_Base::Serialize(writer);
 
 	std::string onUseCallbackName = OnUse.utf8().ptr();
 	named_callbacks::registry_entries::OnUse onUseEntry{
@@ -42,7 +42,7 @@ void PrefabServerOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 
 void PrefabServerOpenableSingleDoor::_process(double dt)
 {
-	PrefabServerStaticMesh::_process(dt);
+	PrefabServerStaticMesh_Base::_process(dt);
 
 	if (openedState == false) {
 		transformClosed = get_transform();
@@ -77,7 +77,7 @@ void PrefabServerOpenableSingleDoor::_bind_methods()
 
 void PrefabServerOpenableSingleDoor::_ready()
 {
-	PrefabServerStaticMesh::_ready();
+	PrefabServerStaticMesh_Base::_ready();
 }
 
 bool PrefabServerOpenableSingleDoor::get_openedState() { return openedState; }

@@ -15,6 +15,7 @@
 
 #include "PrefabServerBase.hpp"
 #include "PrefabServerStaticMesh.hpp"
+#include "PrefabServerStaticMesh_Base.hpp"
 #include "PrefabServerOpenableSingleDoor.hpp"
 #include "PrefabServerTrigger.hpp"
 #include "PrefabServerNPC.hpp"
@@ -32,6 +33,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	}
 
 	godot::ClassDB::register_class<editor::PrefabServerBase>();
+	godot::ClassDB::register_class<editor::PrefabServerStaticMesh_Base>();
 	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
 	godot::ClassDB::register_class<editor::PrefabServerOpenableSingleDoor>();
 	godot::ClassDB::register_class<editor::PrefabServerTrigger>();
