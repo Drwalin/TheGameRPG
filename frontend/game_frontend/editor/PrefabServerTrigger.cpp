@@ -3,6 +3,7 @@
 #include "../../../common/include/RegistryComponent.hpp"
 
 #include "../GodotGlm.hpp"
+#include "../GameClientFrontend.hpp"
 
 #include "EditorConfig.hpp"
 
@@ -26,16 +27,19 @@ void PrefabServerTrigger::Serialize(icon7::ByteWriter &writer)
 	ComponentTrigger onTrigger;
 	onTrigger.onEnter = &onTriggerEnter;
 	onTrigger.onExit = &onTriggerExit;
-	reg::Registry::Serialize(onTrigger, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   onTrigger, writer);
 
 	std::string realmName = teleportRealm.utf8().ptr();
 	ComponentTeleport teleport;
 	teleport.realmName = realmName;
 	teleport.position = ToGlm(teleportPosition);
-	reg::Registry::Serialize(teleport, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   teleport, writer);
 
 	ComponentStaticTransform transform = ToGame(get_global_transform());
-	reg::Registry::Serialize(transform, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   transform, writer);
 }
 
 void PrefabServerTrigger::_bind_methods()

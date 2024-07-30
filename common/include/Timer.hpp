@@ -41,5 +41,5 @@ public:
 
 public:
 	time_point startTickCountingTime;
-	int64_t currentTick;
+	int64_t currentTick = 0;
 };

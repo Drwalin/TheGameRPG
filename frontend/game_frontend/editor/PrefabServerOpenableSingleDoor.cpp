@@ -2,6 +2,8 @@
 #include "../../../server/include/callbacks/CallbackOnUse.hpp"
 #include "../../../server/include/EntityGameComponents.hpp"
 
+#include "../GameClientFrontend.hpp"
+
 #include "PrefabServerOpenableSingleDoor.hpp"
 
 namespace editor
@@ -18,7 +20,8 @@ void PrefabServerOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 		onUseCallbackName, onUseCallbackName, {}, nullptr, nullptr};
 	ComponentOnUse onUse;
 	onUse.entry = &onUseEntry;
-	reg::Registry::Serialize(onUse, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   onUse, writer);
 
 	Transform3D a = transformClosed;
 	Transform3D b = transformClosed * relativeTransformOpened;
@@ -33,7 +36,8 @@ void PrefabServerOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 	ComponentSingleDoorTransformStates transforms;
 	transforms.transformClosed = ToGame(a);
 	transforms.transformOpen = ToGame(b);
-	reg::Registry::Serialize(transforms, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   transforms, writer);
 }
 
 void PrefabServerOpenableSingleDoor::_process(double dt)

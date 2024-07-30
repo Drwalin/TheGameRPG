@@ -53,8 +53,8 @@ void RealmServer::Init(const std::string &realmName)
 		while (reader.get_remaining_bytes() > 10) {
 			uint64_t entityId = NewEntity();
 			flecs::entity entity = Entity(entityId);
-			reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
-																	  reader);
+			reg::Registry::Singleton().DeserializePersistentAllEntityComponents(
+				this, entity, reader);
 			if (reader.is_valid() == false) {
 				RemoveEntity(entity);
 				break;

@@ -78,4 +78,7 @@ public: // variables
 	Node *entitiesContainer = nullptr;
 	Node *staticMapContainer = nullptr;
 	Node *nodeUI = nullptr;
+
+public: // singleton
+	static GameFrontend *singleton;
 };

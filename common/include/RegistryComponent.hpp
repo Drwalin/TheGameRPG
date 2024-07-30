@@ -23,10 +23,12 @@ public:
 	virtual ~ComponentConstructorBase() {}
 
 	virtual void
-	DeserializeEntityComponent(flecs::entity entity,
-							   icon7::ByteReader &reader) const = 0;
-	virtual bool SerializeEntityComponent(flecs::entity entity,
-										  icon7::ByteWriter &writer) const = 0;
+	DeserializePersistentEntityComponent(class Realm *realm,
+										 flecs::entity entity,
+										 icon7::ByteReader &reader) const = 0;
+	virtual bool
+	SerializePersistentEntityComponent(class Realm *realm, flecs::entity entity,
+									   icon7::ByteWriter &writer) const = 0;
 	virtual bool HasComponent(flecs::entity entity) const = 0;
 
 	const std::string name = "";
@@ -44,25 +46,29 @@ public:
 	template <typename T> void RegisterComponent(std::string name);
 
 	template <typename T>
-	static void Serialize(const T &component, icon7::ByteWriter &writer);
+	static void SerializePersistent(class Realm *realm, const T &component,
+									icon7::ByteWriter &writer);
 
 	template <typename T>
-	static void Serialize(class Realm *realm, uint64_t entityId,
-						  icon7::ByteWriter &writer)
+	static void SerializePersistent(class Realm *realm, uint64_t entityId,
+									icon7::ByteWriter &writer)
 	{
 		flecs::entity entity = realm->Entity(entityId);
 		const T *component = entity.get<T>();
 		if (component) {
-			Serialize<T>(*component, writer);
+			SerializePersistent<T>(realm, *component, writer);
 		}
 	}
 
-	bool DeserializeEntityComponent(flecs::entity entity,
-									icon7::ByteReader &reader);
-	void DeserializeAllEntityComponents(flecs::entity entity,
-										icon7::ByteReader &reader);
+	bool DeserializePersistentEntityComponent(class Realm *realm,
+											  flecs::entity entity,
+											  icon7::ByteReader &reader);
+	void DeserializePersistentAllEntityComponents(class Realm *realm,
+												  flecs::entity entity,
+												  icon7::ByteReader &reader);
 
-	void SerializeEntity(flecs::entity entity, icon7::ByteWriter &writer) const;
+	void SerializePersistentEntity(class Realm *realm, flecs::entity entity,
+								   icon7::ByteWriter &writer) const;
 
 private:
 	std::vector<ComponentConstructorBase *> components;

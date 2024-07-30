@@ -14,8 +14,9 @@ Registry &Registry::Singleton()
 	return reg;
 }
 
-bool Registry::DeserializeEntityComponent(flecs::entity entity,
-										  icon7::ByteReader &reader)
+bool Registry::DeserializePersistentEntityComponent(class Realm *realm,
+													flecs::entity entity,
+													icon7::ByteReader &reader)
 {
 	std::string n;
 	reader.op(n);
@@ -28,25 +29,27 @@ bool Registry::DeserializeEntityComponent(flecs::entity entity,
 				  n.c_str());
 		return false;
 	}
-	it->second->DeserializeEntityComponent(entity, reader);
+	it->second->DeserializePersistentEntityComponent(realm, entity, reader);
 	return true;
 }
 
-void Registry::DeserializeAllEntityComponents(flecs::entity entity,
-											  icon7::ByteReader &reader)
+void Registry::DeserializePersistentAllEntityComponents(
+	class Realm *realm, flecs::entity entity, icon7::ByteReader &reader)
 {
 	while (reader.get_remaining_bytes() > 1) {
-		if (DeserializeEntityComponent(entity, reader) == false) {
+		if (DeserializePersistentEntityComponent(realm, entity, reader) ==
+			false) {
 			break;
 		}
 	}
 }
 
-void Registry::SerializeEntity(flecs::entity entity,
-							   icon7::ByteWriter &writer) const
+void Registry::SerializePersistentEntity(class Realm *realm,
+										 flecs::entity entity,
+										 icon7::ByteWriter &writer) const
 {
 	for (auto c : components) {
-		c->SerializeEntityComponent(entity, writer);
+		c->SerializePersistentEntityComponent(realm, entity, writer);
 	}
 	writer.op("");
 }

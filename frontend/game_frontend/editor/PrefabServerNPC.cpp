@@ -1,12 +1,14 @@
+#include "godot_cpp/variant/utility_functions.hpp"
+
 #include "../../../server/include/EntityGameComponents.hpp"
 #include "../../../server/include/callbacks/CallbackAiBehaviorTick.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 #include "../../../common/include/ComponentCharacterSheet.hpp"
 
 #include "../GodotGlm.hpp"
+#include "../GameClientFrontend.hpp"
 
 #include "EditorConfig.hpp"
-#include "godot_cpp/variant/utility_functions.hpp"
 
 #include "PrefabServerNPC.hpp"
 
@@ -38,12 +40,14 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	ComponentShape shape;
 	shape.height = height;
 	shape.width = width;
-	reg::Registry::Serialize(shape, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   shape, writer);
 
 	ComponentMovementParameters movementParameters;
 	movementParameters.maxMovementSpeedHorizontal = movementSpeed;
 	movementParameters.stepHeight = stepHeight;
-	reg::Registry::Serialize(movementParameters, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   movementParameters, writer);
 
 	ComponentLastAuthoritativeMovementState s;
 	s.oldState.vel = {0, 0, 0};
@@ -51,10 +55,12 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	s.oldState.rot = {0, get_global_rotation().y * M_PI / 180.0, 0};
 	s.oldState.pos = ToGlm(this->get_global_position());
 	s.oldState.onGround = false;
-	reg::Registry::Serialize(s, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm, s,
+									   writer);
 
 	ComponentMovementState state = s.oldState;
-	reg::Registry::Serialize(state, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   state, writer);
 
 	std::string graphicPath;
 	if (graphic_Mesh_or_PackedScene.is_null() == false &&
@@ -66,27 +72,37 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	}
 	ComponentModelName modelName;
 	modelName.modelName = graphicPath;
-	reg::Registry::Serialize(modelName, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   modelName, writer);
 
 	ComponentName name;
 	name.name = nameNPC.utf8().ptr();
 	;
-	reg::Registry::Serialize(name, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   name, writer);
 
 	std::string onAiTick = aiTickName.utf8().ptr();
 	named_callbacks::registry_entries::AiBehaviorTick aiTickEntry{
 		onAiTick, onAiTick, {}, nullptr, nullptr};
 	ComponentAITick aiTick;
 	aiTick.aiTick = &aiTickEntry;
-	reg::Registry::Serialize(aiTick, writer);
-	
-	reg::Registry::Serialize(ComponentCharacterSheet_Ranges{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_Health{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_HealthRegen{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_LevelXP{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_Strength{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_AttackCooldown{}, writer);
-	reg::Registry::Serialize(ComponentCharacterSheet_Protection{}, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   aiTick, writer);
+
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_Ranges{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_Health{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_HealthRegen{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_LevelXP{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_Strength{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_AttackCooldown{}, writer);
+	reg::Registry::SerializePersistent(
+		nullptr, ComponentCharacterSheet_Protection{}, writer);
 }
 
 void PrefabServerNPC::_bind_methods()

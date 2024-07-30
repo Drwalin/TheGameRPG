@@ -62,8 +62,8 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	} else {
 		std::string_view sv;
 		reader.op(sv);
-		reg::Registry::Singleton().DeserializeAllEntityComponents(entity,
-																  reader);
+		reg::Registry::Singleton().DeserializePersistentAllEntityComponents(
+			this, entity, reader);
 	}
 
 	ClientRpcProxy::SpawnStaticEntities_ForPeer(this, peer);
@@ -150,7 +150,8 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		writer.Buffer().resize(0);
 		// TODO: write new realm for player
 		writer.op(data->nextRealm);
-		reg::Registry::Singleton().SerializeEntity(entity, writer);
+		reg::Registry::Singleton().SerializePersistentEntity(this, entity,
+															 writer);
 		data->storedEntityData = std::move(writer.Buffer());
 
 		std::string filePrefix;

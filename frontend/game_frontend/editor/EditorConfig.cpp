@@ -7,6 +7,8 @@
 #include <icon7/Debug.hpp>
 #include <icon7/ByteWriter.hpp>
 
+#include "../GameFrontend.hpp"
+
 #include "PrefabServerBase.hpp"
 
 #include "EditorConfig.hpp"
@@ -50,6 +52,10 @@ void GameEditorConfig::_process(double dt)
 
 void GameEditorConfig::SaveScene()
 {
+	if (GameClientFrontend::singleton == nullptr) {
+		GameFrontend::singleton->InternalReady();
+	}
+
 	std::string projectPath =
 		ProjectSettings::get_singleton()->globalize_path("res://").utf8().ptr();
 	std::string filePath = projectPath + "/" + save_map_file_path.utf8().ptr();
