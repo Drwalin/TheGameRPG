@@ -38,13 +38,23 @@ int RegisterEntityComponents(flecs::world &ecs)
 		->callbackDeserializePersistent = [](class Realm *realm,
 											 flecs::entity entity,
 											 ComponentMovementState *state) {
-		state->timestamp = realm ? realm->timer.currentTick : 0;
+		state->timestamp += realm->timer.currentTick;
+	};
+	reg::ComponentConstructor<ComponentMovementState>::singleton
+		->callbackSerializePersistent = [](class Realm *realm,
+											 ComponentMovementState *state) {
+		state->timestamp -= realm->timer.currentTick;
 	};
 
 	reg::ComponentConstructor<ComponentLastAuthoritativeMovementState>::
 		singleton->callbackDeserializePersistent =
 		[](class Realm *realm, flecs::entity entity, auto *state) {
-			state->oldState.timestamp = realm ? realm->timer.currentTick : 0;
+			state->oldState.timestamp += realm->timer.currentTick;
+		};
+	reg::ComponentConstructor<ComponentLastAuthoritativeMovementState>::
+		singleton->callbackSerializePersistent =
+		[](class Realm *realm, auto *state) {
+			state->oldState.timestamp -= realm->timer.currentTick;
 		};
 
 	return 0;
