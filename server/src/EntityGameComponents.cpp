@@ -27,21 +27,21 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 	ecs.component<ComponentTrigger>();
 	ecs.component<ComponentAITick>();
 
-	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::
-		OverrideComponentConstructor(
-			[](class Realm *realm, flecs::entity entity,
-			   ComponentCharacterSheet_HealthRegen *hp) {
-				hp->lastTimestamp = realm ? realm->timer.currentTick
-										  : -1000 * 3600 * 24ll * 365;
-			});
+	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
+		->callbackDeserializePersistent =
+		[](class Realm *realm, flecs::entity entity,
+		   ComponentCharacterSheet_HealthRegen *hp) {
+			hp->lastTimestamp =
+				realm ? realm->timer.currentTick : -1000 * 3600 * 24ll * 365;
+		};
 
-	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::
-		OverrideComponentConstructor(
-			[](class Realm *realm, flecs::entity entity,
-			   ComponentCharacterSheet_AttackCooldown *hp) {
-				hp->lastTimestamp = realm ? realm->timer.currentTick
-										  : -1000 * 3600 * 24ll * 365;
-			});
+	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
+		->callbackDeserializePersistent =
+		[](class Realm *realm, flecs::entity entity,
+		   ComponentCharacterSheet_AttackCooldown *hp) {
+			hp->lastTimestamp =
+				realm ? realm->timer.currentTick : -1000 * 3600 * 24ll * 365;
+		};
 
 	return 0;
 }

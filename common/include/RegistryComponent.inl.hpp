@@ -35,6 +35,9 @@ public:
 		T component;
 		reader.op(component);
 		if (reader.is_valid()) {
+			if (callbackDeserializePersistent) {
+				callbackDeserializePersistent(realm, entity, &component);
+			}
 			entity.set<T>(component);
 		}
 	}
@@ -57,7 +60,13 @@ public:
 									icon7::ByteWriter &writer)
 	{
 		writer.op(singleton->name);
-		writer.op(component);
+		if (singleton->callbackSerializePersistent) {
+			T comp = component;
+			singleton->callbackSerializePersistent(realm, &comp);
+			writer.op(comp);
+		} else {
+			writer.op(component);
+		}
 	}
 
 	virtual bool HasComponent(flecs::entity entity) const override
@@ -65,54 +74,14 @@ public:
 		return entity.has<T>();
 	}
 
-	static void OverrideComponentConstructor(
-		std::function<void(class Realm *, flecs::entity, T *)> callback);
+public:
+	std::function<void(class Realm *, flecs::entity, T *)>
+		callbackDeserializePersistent;
+	std::function<void(class Realm *, T *)> callbackSerializePersistent;
 
+public:
 	static ComponentConstructor<T> *singleton;
 };
-
-template <typename T>
-class ComponentConstructorWithCallbackDeserialize
-	: public ComponentConstructor<T>
-{
-public:
-	ComponentConstructorWithCallbackDeserialize(
-		std::string name, std::string fullName,
-		std::function<void(class Realm *, flecs::entity, T *)> callback)
-		: ComponentConstructor<T>(name, fullName), callback(callback)
-	{
-	}
-	virtual ~ComponentConstructorWithCallbackDeserialize() {}
-
-	virtual void DeserializePersistentEntityComponent(
-		class Realm *realm, flecs::entity entity,
-		icon7::ByteReader &reader) const override
-	{
-		T component;
-		reader.op(component);
-		if (reader.is_valid()) {
-			callback(realm, entity, &component);
-			entity.set<T>(std::move(component));
-		}
-	}
-
-	std::function<void(class Realm *, flecs::entity, T *)> callback;
-};
-
-template <typename T>
-void ComponentConstructor<T>::OverrideComponentConstructor(
-	std::function<void(class Realm *, flecs::entity, T *)> callback)
-{
-	if (singleton && callback) {
-		ComponentConstructorWithCallbackDeserialize<T> *constructor =
-			new ComponentConstructorWithCallbackDeserialize<T>(
-				singleton->name, singleton->fullName, callback);
-		// 		delete singleton;
-		singleton = constructor;
-	} else {
-		LOG_ERROR("singleton or constructor is nullptr");
-	}
-}
 
 template <typename T> extern void Registry::RegisterComponent(std::string name)
 {
@@ -167,9 +136,11 @@ extern void Registry::SerializePersistent(class Realm *realm,
 	{                                                                          \
 	template <>                                                                \
 	ComponentConstructor<COMPONENT>                                            \
-		*ComponentConstructor<COMPONENT>::singleton =                          \
-			new ComponentConstructorWithCallbackDeserialize<COMPONENT>(        \
-				NAME, #COMPONENT, CALLBACK);                                   \
+		*ComponentConstructor<COMPONENT>::singleton = []() {                   \
+			auto cc = new ComponentConstructor<COMPONENT>(NAME, #COMPONENT);   \
+			cc->callbackDeserializePersistent = CALLBACK;                      \
+			return cc;                                                         \
+		}();                                                                   \
 	template <>                                                                \
 	uint32_t ComponentConstructor<COMPONENT>::__dummy =                        \
 		(Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);         \
@@ -189,6 +160,3 @@ extern void Registry::SerializePersistent(class Realm *realm,
 															 writer);          \
 	}                                                                          \
 	}
-
-#define GAME_REWGISTER_ECS_OVERRIDE_COMPONENT_CONSTRUCTOR(COMPONENT, CALLBACK) \
-	reg::ComponentConstructor<COMPONENT>::OverrideComponentConstructor(CALLBACK)
