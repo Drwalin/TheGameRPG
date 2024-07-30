@@ -41,7 +41,6 @@ public:
 			entity.set<T>(component);
 		}
 	}
-
 	virtual bool
 	SerializePersistentEntityComponent(class Realm *realm, flecs::entity entity,
 									   icon7::ByteWriter &writer) const override
@@ -55,7 +54,6 @@ public:
 		}
 		return false;
 	}
-
 	static void SerializePersistent(class Realm *realm, const T &component,
 									icon7::ByteWriter &writer)
 	{
@@ -63,6 +61,45 @@ public:
 		if (singleton->callbackSerializePersistent) {
 			T comp = component;
 			singleton->callbackSerializePersistent(realm, &comp);
+			writer.op(comp);
+		} else {
+			writer.op(component);
+		}
+	}
+
+	virtual void
+	DeserializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
+									   icon7::ByteReader &reader) const override
+	{
+		T component;
+		reader.op(component);
+		if (reader.is_valid()) {
+			if (callbackDeserializeTemporal) {
+				callbackDeserializeTemporal(realm, entity, &component);
+			}
+			entity.set<T>(component);
+		}
+	}
+	virtual bool
+	SerializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
+									 icon7::ByteWriter &writer) const override
+	{
+		if (entity.has<T>()) {
+			const T *component = entity.get<T>();
+			if (component) {
+				SerializeTemporal(realm, *component, writer);
+				return true;
+			}
+		}
+		return false;
+	}
+	static void SerializeTemporal(class Realm *realm, const T &component,
+								  icon7::ByteWriter &writer)
+	{
+		writer.op(singleton->name);
+		if (singleton->callbackSerializeTemporal) {
+			T comp = component;
+			singleton->callbackSerializeTemporal(realm, &comp);
 			writer.op(comp);
 		} else {
 			writer.op(component);
@@ -78,6 +115,9 @@ public:
 	std::function<void(class Realm *, flecs::entity, T *)>
 		callbackDeserializePersistent;
 	std::function<void(class Realm *, T *)> callbackSerializePersistent;
+	std::function<void(class Realm *, flecs::entity, T *)>
+		callbackDeserializeTemporal;
+	std::function<void(class Realm *, T *)> callbackSerializeTemporal;
 
 public:
 	static ComponentConstructor<T> *singleton;
@@ -101,6 +141,16 @@ extern void Registry::SerializePersistent(class Realm *realm,
 {
 	ComponentConstructor<T>::SerializePersistent(realm, component, writer);
 }
+
+template <typename T>
+extern void Registry::SerializeTemporal(class Realm *realm, const T &component,
+										icon7::ByteWriter &writer)
+{
+	ComponentConstructor<T>::SerializeTemporal(realm, component, writer);
+}
+
+template <typename T>
+ComponentConstructor<T> *ComponentConstructor<T>::singleton;
 } // namespace reg
 
 #define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, NAME)                    \
@@ -128,35 +178,12 @@ extern void Registry::SerializePersistent(class Realm *realm,
 		ComponentConstructor<COMPONENT>::SerializePersistent(realm, component, \
 															 writer);          \
 	}                                                                          \
-	}
-
-#define GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(          \
-	COMPONENT, NAME, CALLBACK)                                                 \
-	namespace reg                                                              \
-	{                                                                          \
 	template <>                                                                \
-	ComponentConstructor<COMPONENT>                                            \
-		*ComponentConstructor<COMPONENT>::singleton = []() {                   \
-			auto cc = new ComponentConstructor<COMPONENT>(NAME, #COMPONENT);   \
-			cc->callbackDeserializePersistent = CALLBACK;                      \
-			return cc;                                                         \
-		}();                                                                   \
-	template <>                                                                \
-	uint32_t ComponentConstructor<COMPONENT>::__dummy =                        \
-		(Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);         \
-	extern auto                                                                \
-		__##COMPONENT##_holder_of_serialize_deserialize(const COMPONENT &c,    \
-														icon7::ByteWriter &w)  \
+	void Registry::SerializeTemporal<COMPONENT>(class Realm * realm,           \
+												const COMPONENT &component,    \
+												icon7::ByteWriter &writer)     \
 	{                                                                          \
-		LOG_FATAL("This function cannot ever be called");                      \
-		return &Registry::RegisterComponent<COMPONENT>;                        \
-	}                                                                          \
-	template <>                                                                \
-	void Registry::SerializePersistent<COMPONENT>(class Realm * realm,         \
-												  const COMPONENT &component,  \
-												  icon7::ByteWriter &writer)   \
-	{                                                                          \
-		ComponentConstructor<COMPONENT>::SerializePersistent(realm, component, \
-															 writer);          \
+		ComponentConstructor<COMPONENT>::SerializeTemporal(realm, component,   \
+														   writer);            \
 	}                                                                          \
 	}

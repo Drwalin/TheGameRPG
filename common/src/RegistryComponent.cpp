@@ -53,4 +53,44 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 	}
 	writer.op("");
 }
+
+bool Registry::DeserializeTemporalEntityComponent(class Realm *realm,
+												  flecs::entity entity,
+												  icon7::ByteReader &reader)
+{
+	std::string n;
+	reader.op(n);
+	if (n == "") {
+		return false;
+	}
+	auto it = nameToComponent.find(n);
+	if (it == nameToComponent.end()) {
+		LOG_FATAL("Trying to deserialize non existing component with name: %s",
+				  n.c_str());
+		return false;
+	}
+	it->second->DeserializeTemporalEntityComponent(realm, entity, reader);
+	return true;
+}
+
+void Registry::DeserializeTemporalAllEntityComponents(class Realm *realm,
+													  flecs::entity entity,
+													  icon7::ByteReader &reader)
+{
+	while (reader.get_remaining_bytes() > 1) {
+		if (DeserializeTemporalEntityComponent(realm, entity, reader) ==
+			false) {
+			break;
+		}
+	}
+}
+
+void Registry::SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
+									   icon7::ByteWriter &writer) const
+{
+	for (auto c : components) {
+		c->SerializeTemporalEntityComponent(realm, entity, writer);
+	}
+	writer.op("");
+}
 } // namespace reg

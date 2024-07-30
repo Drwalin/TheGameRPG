@@ -279,7 +279,7 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 		}
 
 		flecs::entity entity = realm->Entity(localId);
-		reg::Registry::Singleton().DeserializePersistentAllEntityComponents(
+		reg::Registry::Singleton().DeserializeTemporalAllEntityComponents(
 			realm, entity, *reader);
 	}
 }
