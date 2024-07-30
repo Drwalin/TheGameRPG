@@ -31,14 +31,26 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 		->callbackDeserializePersistent =
 		[](class Realm *realm, flecs::entity entity,
 		   ComponentCharacterSheet_HealthRegen *hp) {
-			hp->lastTimestamp = realm->timer.currentTick;
+			hp->lastTimestamp += realm->timer.currentTick;
+		};
+	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
+		->callbackSerializePersistent =
+		[](class Realm *realm,
+		   ComponentCharacterSheet_HealthRegen *hp) {
+			hp->lastTimestamp -= realm->timer.currentTick;
 		};
 
 	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
 		->callbackDeserializePersistent =
 		[](class Realm *realm, flecs::entity entity,
 		   ComponentCharacterSheet_AttackCooldown *hp) {
-			hp->lastTimestamp = realm->timer.currentTick;
+			hp->lastTimestamp += realm->timer.currentTick;
+		};
+	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
+		->callbackSerializePersistent =
+		[](class Realm *realm,
+		   ComponentCharacterSheet_AttackCooldown *hp) {
+			hp->lastTimestamp -= realm->timer.currentTick;
 		};
 
 	return 0;
