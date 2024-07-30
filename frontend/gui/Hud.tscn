@@ -58,3 +58,11 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 23.0
 script = ExtResource("3_75hr6")
+
+[node name="CharacterSheet" type="Label" parent="."]
+layout_mode = 0
+offset_left = 758.0
+offset_top = 31.0
+offset_right = 1110.0
+offset_bottom = 447.0
+autowrap_mode = 3

@@ -83,6 +83,7 @@ public: // client input api
 	void PerformAttack(int64_t attackType, int64_t attackId, int64_t argInt);
 	int64_t GetPing();
 	int64_t GetCurrentTick();
+	std::unordered_map<std::string, std::string> GetCharacteSheet();
 
 	void PerformSendPlayerMovementInput();
 

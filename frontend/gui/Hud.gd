@@ -20,3 +20,9 @@ func _process(_dt: float)->void:
 		elif targetMode == Input.MOUSE_MODE_VISIBLE:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE);
 			get_viewport().warp_mouse(mouseCapturedPosition);
+	
+	var csText:String = "";
+	var cs:Dictionary = gameFrontend.GetCharacterSheet();
+	for s in cs:
+		csText = "%s%s: %s\n" % [csText, s, cs[s]];
+	$CharacterSheet.text = csText;
