@@ -10,19 +10,9 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementParameters, "MV");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentModelName, "MN");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticTransform, "ST");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticCollisionShapeName, "SCS");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
-	ComponentMovementState, "CP",
-	[](class Realm *realm, flecs::entity entity,
-	   ComponentMovementState *state) {
-		state->timestamp = realm ? realm->timer.currentTick : 0;
-	});
-
-GAME_REGISTER_ECS_COMPONENT_STATIC_WITH_DESERIALIZE_CALLBACK(
-	ComponentLastAuthoritativeMovementState, "AP",
-	[](class Realm *realm, flecs::entity entity, auto *state) {
-		state->oldState.timestamp = realm ? realm->timer.currentTick : 0;
-	});
+GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementState, "CP");
+GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentLastAuthoritativeMovementState,
+								   "AP");
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);
@@ -43,6 +33,20 @@ int RegisterEntityComponents(flecs::world &ecs)
 	ecs.component<ComponentStaticCollisionShapeName>();
 	ecs.component<ComponentMovementState>();
 	ecs.component<ComponentLastAuthoritativeMovementState>();
+
+	reg::ComponentConstructor<ComponentMovementState>::singleton
+		->callbackDeserializePersistent = [](class Realm *realm,
+											 flecs::entity entity,
+											 ComponentMovementState *state) {
+		state->timestamp = realm ? realm->timer.currentTick : 0;
+	};
+
+	reg::ComponentConstructor<ComponentLastAuthoritativeMovementState>::
+		singleton->callbackDeserializePersistent =
+		[](class Realm *realm, flecs::entity entity, auto *state) {
+			state->oldState.timestamp = realm ? realm->timer.currentTick : 0;
+		};
+
 	return 0;
 }
 

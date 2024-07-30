@@ -29,6 +29,14 @@ public:
 	virtual bool
 	SerializePersistentEntityComponent(class Realm *realm, flecs::entity entity,
 									   icon7::ByteWriter &writer) const = 0;
+
+	virtual void
+	DeserializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
+									   icon7::ByteReader &reader) const = 0;
+	virtual bool
+	SerializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
+									 icon7::ByteWriter &writer) const = 0;
+
 	virtual bool HasComponent(flecs::entity entity) const = 0;
 
 	const std::string name = "";
@@ -48,7 +56,6 @@ public:
 	template <typename T>
 	static void SerializePersistent(class Realm *realm, const T &component,
 									icon7::ByteWriter &writer);
-
 	template <typename T>
 	static void SerializePersistent(class Realm *realm, uint64_t entityId,
 									icon7::ByteWriter &writer)
@@ -59,16 +66,39 @@ public:
 			SerializePersistent<T>(realm, *component, writer);
 		}
 	}
-
 	bool DeserializePersistentEntityComponent(class Realm *realm,
 											  flecs::entity entity,
 											  icon7::ByteReader &reader);
 	void DeserializePersistentAllEntityComponents(class Realm *realm,
 												  flecs::entity entity,
 												  icon7::ByteReader &reader);
-
 	void SerializePersistentEntity(class Realm *realm, flecs::entity entity,
 								   icon7::ByteWriter &writer) const;
+
+	template <typename T>
+	static void SerializeTemporal(class Realm *realm, const T &component,
+								  icon7::ByteWriter &writer);
+
+	template <typename T>
+	static void SerializeTemporal(class Realm *realm, uint64_t entityId,
+								  icon7::ByteWriter &writer)
+	{
+		flecs::entity entity = realm->Entity(entityId);
+		const T *component = entity.get<T>();
+		if (component) {
+			SerializeTemporal<T>(realm, *component, writer);
+		}
+	}
+
+	bool DeserializeTemporalEntityComponent(class Realm *realm,
+											flecs::entity entity,
+											icon7::ByteReader &reader);
+	void DeserializeTemporalAllEntityComponents(class Realm *realm,
+												flecs::entity entity,
+												icon7::ByteReader &reader);
+
+	void SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
+								 icon7::ByteWriter &writer) const;
 
 private:
 	std::vector<ComponentConstructorBase *> components;

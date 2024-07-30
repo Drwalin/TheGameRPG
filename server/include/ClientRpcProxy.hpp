@@ -55,7 +55,7 @@ void GenericComponentUpdate_Update(RealmServer *realm,
 								   icon7::ByteWriter *writer, uint64_t entityId)
 {
 	writer->op(entityId);
-	(reg::Registry::SerializePersistent<TArgs>(realm, entityId, *writer), ...);
+	(reg::Registry::SerializeTemporal<TArgs>(realm, entityId, *writer), ...);
 	writer->op("");
 }
 
@@ -65,8 +65,7 @@ void GenericComponentUpdate_Update(RealmServer *realm,
 								   const TArgs &...components)
 {
 	writer->op(entityId);
-	(reg::Registry::SerializePersistent<TArgs>(realm, components, *writer),
-	 ...);
+	(reg::Registry::SerializeTemporal<TArgs>(realm, components, *writer), ...);
 	writer->op("");
 }
 void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
