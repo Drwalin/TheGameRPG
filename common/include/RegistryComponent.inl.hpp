@@ -64,6 +64,9 @@ public:
 		return entity.has<T>();
 	}
 
+	static void OverrideComponentConstructor(
+		std::function<void(flecs::entity, T *)> callback);
+
 	static ComponentConstructor<T> *singleton;
 };
 
@@ -94,6 +97,21 @@ public:
 
 	std::function<void(flecs::entity, T *)> callback;
 };
+
+template <typename T>
+void ComponentConstructor<T>::OverrideComponentConstructor(
+	std::function<void(flecs::entity, T *)> callback)
+{
+	if (singleton && callback) {
+		ComponentConstructorWithCallbackDeserialize<T> *constructor =
+			new ComponentConstructorWithCallbackDeserialize<T>(
+				singleton->name, singleton->fullName, callback);
+// 		delete singleton;
+		singleton = constructor;
+	} else {
+		LOG_ERROR("singleton or constructor is nullptr");
+	}
+}
 
 template <typename T> extern void Registry::RegisterComponent(std::string name)
 {
@@ -164,3 +182,6 @@ extern void Registry::Serialize(const T &component, icon7::ByteWriter &writer)
 		ComponentConstructor<COMPONENT>::Serialize(component, writer);         \
 	}                                                                          \
 	}
+
+#define GAME_REWGISTER_ECS_OVERRIDE_COMPONENT_CONSTRUCTOR(COMPONENT, CALLBACK) \
+	reg::ComponentConstructor<COMPONENT>::OverrideComponentConstructor(CALLBACK)

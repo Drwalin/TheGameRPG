@@ -35,4 +35,29 @@ void RealmServer::RegisterObservers_CharacterSheet()
 		ComponentCharacterSheet_AttackCooldown);
 	REGISTER_OBSERVER_TO_SEND_COMPONENT_TO_OWNING_PEER(
 		ComponentCharacterSheet_Protection);
+
+	ecs.observer<ComponentCharacterSheet_Health>()
+		.event(flecs::OnSet)
+		.and_()
+		.with<ComponentPlayerConnectionPeer>()
+		.not_()
+		.each([this](flecs::entity entity,
+					 const ComponentCharacterSheet_Health &hp) {
+			LOG_INFO("Set hp(%i) for mob: %lu", hp.hp, entity.id());
+			if (hp.hp <= 0) {
+				LOG_INFO("Request death and play animation for a mob");
+			}
+		});
+
+	ecs.observer<ComponentCharacterSheet_Health,
+				 ComponentPlayerConnectionPeer>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity,
+					 const ComponentCharacterSheet_Health &hp,
+					 const ComponentPlayerConnectionPeer &peer) {
+			LOG_INFO("Set hp(%i) for player: %lu", hp.hp, entity.id());
+			if (hp.hp <= 0) {
+				LOG_INFO("Request death and play animation for player");
+			}
+		});
 }

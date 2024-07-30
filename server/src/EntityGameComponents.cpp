@@ -1,4 +1,5 @@
 #include "../../common/include/RegistryComponent.inl.hpp"
+#include "../../common/include/ComponentCharacterSheet.hpp"
 #include "../include/RealmServer.hpp"
 
 #include "../include/callbacks/CallbackAiBehaviorTick.hpp"
@@ -25,6 +26,22 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 	ecs.component<ComponentTeleport>();
 	ecs.component<ComponentTrigger>();
 	ecs.component<ComponentAITick>();
+
+	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::
+		OverrideComponentConstructor(
+			[](flecs::entity entity, ComponentCharacterSheet_HealthRegen *hp) {
+				auto realm = *entity.world().get<RealmPtr>();
+				hp->lastTimestamp = realm.realm->timer.currentTick;
+			});
+
+	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::
+		OverrideComponentConstructor(
+			[](flecs::entity entity,
+			   ComponentCharacterSheet_AttackCooldown *hp) {
+				auto realm = *entity.world().get<RealmPtr>();
+				hp->lastTimestamp = realm.realm->timer.currentTick;
+			});
+
 	return 0;
 }
 

@@ -69,6 +69,8 @@ void GameFrontend::_bind_methods()
 				"argInt");
 	METHOD_NO_ARGS(GameFrontend, GetPing);
 	METHOD_NO_ARGS(GameFrontend, GetCurrentTick);
+	
+	METHOD_NO_ARGS(GameFrontend, GetCharacterSheet);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
@@ -178,4 +180,14 @@ void GameFrontend::OnLoginSuccessfull()
 	Label *label = (Label *)(nodeUI->get_node_or_null("LoginFailed"));
 	label->set_visible(false);
 	label->set_text("");
+}
+
+Dictionary GameFrontend::GetCharacterSheet()
+{
+	Dictionary dict;
+	auto map = client->GetCharacteSheet();
+	for (auto it : map) {
+		dict[String::utf8(it.first.c_str())] = String::utf8(it.second.c_str());
+	}
+	return dict;
 }

@@ -15,6 +15,7 @@
 #include <glm/glm.hpp>
 
 #include "GameClientFrontend.hpp"
+#include "godot_cpp/variant/dictionary.hpp"
 
 using namespace godot;
 
@@ -65,6 +66,7 @@ public: // Call functions from godot to game
 	void PerformAttack(int64_t attackType, int64_t attackId, int64_t argInt);
 	int64_t GetPing();
 	int64_t GetCurrentTick();
+	Dictionary GetCharacterSheet();
 
 	bool IsConnected();
 	bool IsDisconnected();

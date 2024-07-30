@@ -1,6 +1,7 @@
 #include "../../../server/include/EntityGameComponents.hpp"
 #include "../../../server/include/callbacks/CallbackAiBehaviorTick.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
+#include "../../../common/include/ComponentCharacterSheet.hpp"
 
 #include "../GodotGlm.hpp"
 
@@ -78,6 +79,14 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	ComponentAITick aiTick;
 	aiTick.aiTick = &aiTickEntry;
 	reg::Registry::Serialize(aiTick, writer);
+	
+	reg::Registry::Serialize(ComponentCharacterSheet_Ranges{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_Health{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_HealthRegen{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_LevelXP{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_Strength{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_AttackCooldown{}, writer);
+	reg::Registry::Serialize(ComponentCharacterSheet_Protection{}, writer);
 }
 
 void PrefabServerNPC::_bind_methods()

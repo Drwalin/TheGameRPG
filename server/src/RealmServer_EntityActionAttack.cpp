@@ -3,6 +3,7 @@
 #include <icon7/Debug.hpp>
 
 #include "../../common/include/EntitySystems.hpp"
+#include "../../common/include/ComponentCharacterSheet.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
@@ -13,10 +14,15 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
+	if (argInt != 0) {
+		return;
+	}
+	
 	if (targetId) {
-		flecs::entity entity = Entity(targetId);
-		if (entity.is_alive()) {
-			auto ms = entity.get<ComponentLastAuthoritativeMovementState>();
+		flecs::entity entityTarget = Entity(targetId);
+		if (entityTarget.is_alive()) {
+			auto ms =
+				entityTarget.get<ComponentLastAuthoritativeMovementState>();
 			if (ms) {
 				auto s = ms->oldState;
 
@@ -35,7 +41,33 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 				s.vel.y = 3.0f;
 				ComponentLastAuthoritativeMovementState ls;
 				ls.oldState = s;
-				entity.set<ComponentLastAuthoritativeMovementState>(ls);
+				entityTarget.set<ComponentLastAuthoritativeMovementState>(ls);
+			}
+
+			if (attackId % 2 == 1) {
+				if (instigatorId) {
+					flecs::entity entityInstigator = Entity(instigatorId);
+					if (entityInstigator.is_alive()) {
+						auto hp_ = entityInstigator
+									   .get<ComponentCharacterSheet_Health>();
+						if (hp_) {
+							ComponentCharacterSheet_Health hp = *hp_;
+							if (hp.hp > 0) {
+								hp.hp -= 1;
+								entityInstigator.set(hp);
+							}
+						}
+					}
+				}
+			} else {
+				auto hp_ = entityTarget.get<ComponentCharacterSheet_Health>();
+				if (hp_) {
+					ComponentCharacterSheet_Health hp = *hp_;
+					if (hp.hp > 0) {
+						hp.hp -= 1;
+						entityTarget.set(hp);
+					}
+				}
 			}
 		}
 	}
