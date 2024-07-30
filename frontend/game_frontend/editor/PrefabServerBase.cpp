@@ -12,7 +12,11 @@ namespace editor
 PrefabServerBase::PrefabServerBase() {}
 PrefabServerBase::~PrefabServerBase() {}
 
-void PrefabServerBase::_bind_methods() {}
+void PrefabServerBase::_bind_methods()
+{
+	REGISTER_PROPERTY(PrefabServerBase, isTrullyStaticForMerge,
+					  Variant::Type::BOOL, "isTrullyStaticForMerge");
+}
 
 void PrefabServerBase::ClearChildren()
 {

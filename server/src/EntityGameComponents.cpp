@@ -35,8 +35,7 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 		};
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
 		->callbackSerializePersistent =
-		[](class Realm *realm,
-		   ComponentCharacterSheet_HealthRegen *hp) {
+		[](class Realm *realm, ComponentCharacterSheet_HealthRegen *hp) {
 			hp->lastTimestamp -= realm->timer.currentTick;
 		};
 
@@ -48,8 +47,7 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 		};
 	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
 		->callbackSerializePersistent =
-		[](class Realm *realm,
-		   ComponentCharacterSheet_AttackCooldown *hp) {
+		[](class Realm *realm, ComponentCharacterSheet_AttackCooldown *hp) {
 			hp->lastTimestamp -= realm->timer.currentTick;
 		};
 

@@ -89,20 +89,27 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   aiTick, writer);
 
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_Ranges{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_Health{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_HealthRegen{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_LevelXP{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_Strength{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_AttackCooldown{}, writer);
-	reg::Registry::SerializePersistent(
-		nullptr, ComponentCharacterSheet_Protection{}, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_Ranges{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_Health{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_HealthRegen{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_LevelXP{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_Strength{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_AttackCooldown{},
+									   writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCharacterSheet_Protection{},
+									   writer);
 }
 
 void PrefabServerNPC::_bind_methods()

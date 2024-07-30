@@ -91,6 +91,14 @@ public: // Godot bound functions
 
 	void GenerateTriCollisionForAll(Node3D *node);
 
+public:
+	bool isTrullyStaticForMerge = false;
+	inline bool get_isTrullyStaticForMerge() { return isTrullyStaticForMerge; }
+	inline void set_isTrullyStaticForMerge(bool v)
+	{
+		isTrullyStaticForMerge = v;
+	}
+
 private:
 	template <typename TNode, typename TRes>
 	void _RecreateResourceRenderer(TNode **nodeStorage,
