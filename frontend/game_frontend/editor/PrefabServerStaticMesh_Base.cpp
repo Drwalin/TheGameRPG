@@ -43,6 +43,14 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 									   collision, writer);
 }
 
+Transform3D PrefabServerStaticMesh_Base::GetMergingData(
+	Ref<Resource> *graphicMeshOrPackedScene, Ref<Mesh> *collisionMesh)
+{
+	*graphicMeshOrPackedScene = graphic_Mesh_or_PackedScene;
+	*collisionMesh = collision_mesh;
+	return get_global_transform();
+}
+
 void PrefabServerStaticMesh_Base::_bind_methods()
 {
 	REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh_Base,

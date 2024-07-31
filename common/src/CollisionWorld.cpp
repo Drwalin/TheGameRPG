@@ -117,7 +117,6 @@ void CollisionWorld::OnStaticCollisionShape(
 	const ComponentStaticCollisionShapeName &collisionName,
 	const ComponentStaticTransform &transform)
 {
-
 	TerrainCollisionData data;
 	if (realm->GetCollisionShape(collisionName.shapeName, &data)) {
 		btTriangleMesh *triangles =
@@ -136,9 +135,9 @@ void CollisionWorld::OnStaticCollisionShape(
 		}
 		btBvhTriangleMeshShape *shape =
 			new btBvhTriangleMeshShape(triangles, false, true);
+		shape->setLocalScaling(ToBullet(transform.scale));
 		shape->buildOptimizedBvh();
 		btCollisionObject *object = AllocateNewCollisionObject();
-		shape->setLocalScaling(ToBullet(transform.scale));
 		object->setCollisionShape(shape);
 		object->setWorldTransform(
 			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));

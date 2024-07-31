@@ -3,10 +3,10 @@
 
 #include "../../common/include/EntitySystems.hpp"
 #include "../../common/include/RegistryComponent.hpp"
+#include "../../common/include/CollisionLoader.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 
-#include "../include/CollisionLoader.hpp"
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
@@ -71,14 +71,14 @@ void RealmServer::Init(const std::string &realmName)
 bool RealmServer::GetCollisionShape(std::string collisionShapeName,
 									TerrainCollisionData *data)
 {
-	CollisionLoader loader;
 	std::string filePrefix;
 	if (serverCore->configStorage.GetString(
 			"config.collision_shape.file_path.prefix", &filePrefix)) {
 		collisionShapeName = filePrefix + collisionShapeName;
 	}
-	bool res = loader.LoadOBJ(collisionShapeName);
-	std::swap(loader.collisionData, *data);
+	CollisionLoader loader;
+	bool res = loader.LoadOBJ((const std::string &)collisionShapeName);
+	*data = std::move(loader.collisionData);
 	return res && data->vertices.size() >= 3 && data->indices.size() >= 3;
 }
 

@@ -20,6 +20,9 @@ public: // Godot bound functions
 
 	virtual void Serialize(icon7::ByteWriter &writer) override;
 
+	Transform3D GetMergingData(Ref<Resource> *graphicMeshOrPackedScene,
+							   Ref<Mesh> *collisionMesh);
+
 public: // variables
 	Ref<Resource> graphic_Mesh_or_PackedScene;
 	Ref<Resource> get_graphic_Mesh_or_PackedScene();

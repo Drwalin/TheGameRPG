@@ -17,8 +17,9 @@
 
 #include "../include/GameClient.hpp"
 
-GameClient::GameClient() : realm(new RealmClient(this))
+GameClient::GameClient()
 {
+	realm = new RealmClient(this);
 	rpc = new icon7::RPCEnvironment();
 	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
 	_host->Init();

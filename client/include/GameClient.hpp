@@ -108,7 +108,7 @@ public:
 	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput;
 	int64_t lastTickAuthoritativeSent = 0;
-	::Timer pingTimer;
+	TTimer pingTimer;
 	int64_t lastPingTime = 0;
 	int64_t pingMs = 70;
 
