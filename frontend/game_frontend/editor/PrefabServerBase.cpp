@@ -12,9 +12,7 @@ namespace editor
 PrefabServerBase::PrefabServerBase() {}
 PrefabServerBase::~PrefabServerBase() {}
 
-void PrefabServerBase::_bind_methods()
-{
-}
+void PrefabServerBase::_bind_methods() {}
 
 void PrefabServerBase::ClearChildren()
 {

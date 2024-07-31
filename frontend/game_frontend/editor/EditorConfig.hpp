@@ -53,7 +53,7 @@ namespace editor
 {
 class PrefabServerStaticMesh_Base;
 class PrefabServerBase;
-	
+
 class GameEditorConfig : public Node3D
 {
 	GDCLASS(GameEditorConfig, Node3D)
@@ -71,7 +71,7 @@ public: // Godot bound functions
 	void WriteSecondStatic(icon7::ByteWriter &writer);
 	void WriteOtherObjects(icon7::ByteWriter &writer);
 	static Node3D *InstantiateGraphicMesh(Ref<Resource> res);
-	
+
 	static String GenerateUniqueFileName(String prefix, String suffix);
 
 public: // variables
@@ -94,13 +94,13 @@ public: // variables
 	String save_map_file_path;
 	String get_save_map_file_path() { return save_map_file_path; }
 	void set_save_map_file_path(String v) { save_map_file_path = v; }
-	
+
 public:
 	std::vector<PrefabServerStaticMesh_Base *> objectsToMerge;
 	std::vector<Node *> otherNodesToMerge;
 	std::vector<PrefabServerStaticMesh_Base *> staticToGoSecond;
 	std::vector<PrefabServerBase *> otherObjects;
-	
+
 private:
 	int frameCounter = 0;
 };

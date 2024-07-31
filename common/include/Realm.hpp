@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <flecs.h>
 
-#include "Timer.hpp"
+#include "TickTimer.hpp"
 #include "CollisionWorld.hpp"
 #include "EntityEvent.hpp"
 
@@ -55,7 +55,7 @@ public:
 								   TerrainCollisionData *data) = 0;
 
 public:
-	Timer timer;
+	TickTimer timer;
 	int64_t minMovementDeltaTicks = 50;
 	int64_t maxMovementDeltaTicks = 200;
 	int64_t ticksBeforeIgnoringInputMovement = 500;

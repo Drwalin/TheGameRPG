@@ -56,7 +56,7 @@ void GameEditorConfig::_process(double dt)
 		SaveScene();
 		save_scene = false;
 	}
-	
+
 	if (Engine::get_singleton()->is_editor_hint() == false) {
 		++frameCounter;
 		if (frameCounter == 5) {
@@ -101,7 +101,8 @@ void GameEditorConfig::SaveScene()
 	fclose(file);
 }
 
-bool CheckIfPrefab(Node *node) {
+bool CheckIfPrefab(Node *node)
+{
 	auto children = node->get_children();
 	for (int i = 0; i < children.size(); ++i) {
 		auto c = children[i];
@@ -132,7 +133,7 @@ bool GameEditorConfig::SelectNodes(Node *node)
 				dynamic_cast<PrefabServerStaticMesh_Base *>(pref);
 			if (stPref && stPref->isTrullyStaticForMerge) {
 				objectsToMerge.push_back(stPref);
-			} else if(stBasePref) {
+			} else if (stBasePref) {
 				staticToGoSecond.push_back(stBasePref);
 			} else {
 				otherObjects.push_back(pref);
@@ -205,14 +206,17 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 
 		if (hasCollision && collisionMesh.is_valid() &&
 			!collisionMesh.is_null()) {
-			
-			std::string srcCollisionPath = collisionMesh->get_path().utf8().ptr();
+
+			std::string srcCollisionPath =
+				collisionMesh->get_path().utf8().ptr();
 			if (srcCollisionPath.find(RES_PREFIX) == 0) {
-				srcCollisionPath = srcCollisionPath.replace(0, RES_PREFIX.size(), "");
+				srcCollisionPath =
+					srcCollisionPath.replace(0, RES_PREFIX.size(), "");
 			}
 			TerrainCollisionData colData;
-			if (GameClientFrontend::singleton->GetCollisionShape(srcCollisionPath, &colData)) {
-			
+			if (GameClientFrontend::singleton->GetCollisionShape(
+					srcCollisionPath, &colData)) {
+
 				char line[128];
 				for (auto v : colData.vertices) {
 					v = ToGlm(trans.xform(::ToGodot(v)));
@@ -221,31 +225,30 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 						file->store_8(*c);
 					}
 				}
-				
-				for (int i=0; i+2<colData.indices.size(); i+=3) {
+
+				for (int i = 0; i + 2 < colData.indices.size(); i += 3) {
 					int32_t id[3];
-					for (int j=0; j<3; ++j) {
-						id[j] = indexOffset + colData.indices[i+j];
+					for (int j = 0; j < 3; ++j) {
+						id[j] = indexOffset + colData.indices[i + j];
 					}
 
-					sprintf(line, "f %i// %i// %i//\n", id[0],
-							id[1], id[2]);
+					sprintf(line, "f %i// %i// %i//\n", id[0], id[1], id[2]);
 					for (char *c = line; *c; ++c) {
 						file->store_8(*c);
 					}
 				}
-				
+
 				indexOffset += colData.vertices.size();
 			}
 		}
 	}
-	
+
 	for (auto it : otherNodesToMerge) {
 		Node *nd = it->duplicate();
-		
+
 		rootNode->add_child(nd);
 		nd->set_owner(rootNode);
-		
+
 		Node3D *n3d = Object::cast_to<Node3D>(nd);
 		Node3D *sn3d = Object::cast_to<Node3D>(it);
 		if (n3d && sn3d) {
@@ -286,8 +289,8 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 
 		ComponentStaticTransform transform;
 		transform.rot = glm::quat(1, 0, 0, 0);
-		transform.pos = glm::vec3(0,0,0);
-		transform.scale = glm::vec3(1,1,1);
+		transform.pos = glm::vec3(0, 0, 0);
+		transform.scale = glm::vec3(1, 1, 1);
 		ComponentModelName model;
 		model.modelName = graphicPath;
 		ComponentStaticCollisionShapeName collision;
