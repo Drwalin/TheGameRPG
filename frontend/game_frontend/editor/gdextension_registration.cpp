@@ -1,7 +1,7 @@
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
-
 #include <gdextension_interface.h>
+#include <godot_cpp/classes/display_server.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/engine_ptrcall.hpp>
@@ -10,6 +10,7 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/engine.hpp>
+#include <godot_cpp/classes/os.hpp>
 
 #include <icon7/Debug.hpp>
 
@@ -25,10 +26,6 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
 	if (p_level !=
 		godot::ModuleInitializationLevel::MODULE_INITIALIZATION_LEVEL_SCENE) {
-		return;
-	}
-
-	if (Engine::get_singleton()->is_editor_hint() == false) {
 		return;
 	}
 

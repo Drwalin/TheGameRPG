@@ -4,7 +4,7 @@
 
 #include <chrono>
 
-class Timer
+class TTimer
 {
 public:
 	using steady_clock = std::chrono::steady_clock;
@@ -43,3 +43,5 @@ public:
 	time_point startTickCountingTime;
 	int64_t currentTick = 0;
 };
+
+using Timer = TTimer;

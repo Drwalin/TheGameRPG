@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label.hpp>
 
+#include <icon7/Debug.hpp>
+
 #include "../../common/include/EntityComponents.hpp"
 
 #include "GodotGlm.hpp"

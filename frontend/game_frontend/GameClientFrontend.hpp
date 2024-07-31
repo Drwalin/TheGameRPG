@@ -1,19 +1,6 @@
 #pragma once
 
-#include <godot_cpp/variant/utility_functions.hpp>
-#include <godot_cpp/godot.hpp>
-#include <godot_cpp/core/class_db.hpp>
-#include <gdextension_interface.h>
-#include <godot_cpp/core/defs.hpp>
-#include <godot_cpp/core/engine_ptrcall.hpp>
-#include <godot_cpp/classes/scene_tree.hpp>
-#include <godot_cpp/classes/node2d.hpp>
-#include <godot_cpp/variant/packed_byte_array.hpp>
-#include <godot_cpp/classes/ref_counted.hpp>
-
 #include "../../client/include/GameClient.hpp"
-
-using namespace godot;
 
 class GameClientFrontend : public GameClient
 {

@@ -14,8 +14,6 @@ PrefabServerBase::~PrefabServerBase() {}
 
 void PrefabServerBase::_bind_methods()
 {
-	REGISTER_PROPERTY(PrefabServerBase, isTrullyStaticForMerge,
-					  Variant::Type::BOOL, "isTrullyStaticForMerge");
 }
 
 void PrefabServerBase::ClearChildren()
@@ -45,7 +43,7 @@ String PrefabServerBase::GetRandomString()
 
 	std::string str;
 	str.resize(64);
-	sprintf(str.data(), "Name%lX%lX", (uint64_t)mt64(), (uint64_t)mt64());
+	sprintf(str.data(), "%lX%lX", (uint64_t)mt64(), (uint64_t)mt64());
 	return String::utf8(str.c_str());
 }
 
@@ -103,14 +101,14 @@ void PrefabServerBase::RecreateResourceRenderer(
 	_RecreateResourceRenderer(nodeStorage, resourceStorage, enable);
 }
 
-void PrefabServerBase::GenerateTriCollisionForAll(Node3D *node)
+void PrefabServerBase::GenerateTriCollisionForAll(Node *node)
 {
 	if (MeshInstance3D *mesh = Object::cast_to<MeshInstance3D>(node)) {
 		mesh->create_trimesh_collision();
 	}
-	TypedArray<Node3D> children = node->get_children(true);
+	TypedArray<Node> children = node->get_children(true);
 	for (int i = 0; i < children.size(); ++i) {
-		GenerateTriCollisionForAll((Node3D *)(Object *)(children[i]));
+		GenerateTriCollisionForAll((Node *)(Object *)(children[i]));
 	}
 }
 

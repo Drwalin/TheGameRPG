@@ -32,6 +32,7 @@ void ServerCore::Destroy()
 
 	if (host) {
 		host->WaitStopRunning();
+		host->_InternalDestroy();
 		delete host;
 		host = nullptr;
 	}

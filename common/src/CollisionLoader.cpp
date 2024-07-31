@@ -1,19 +1,16 @@
-
 #include <fstream>
+#include <sstream>
 
 #include <icon7/Debug.hpp>
 
 #include "../include/CollisionLoader.hpp"
 
-bool CollisionLoader::LoadOBJ(std::string fileName)
+void CollisionLoader::LoadOBJ(std::istream &stream)
 {
-	std::ifstream stream(fileName);
-	if (stream.good() == false) {
-		LOG_FATAL("Failed to open file: `%s`", fileName.c_str());
-		return false;
-	}
-	collisionData.indices.reserve(1000000);
-	collisionData.vertices.reserve(1000000);
+	collisionData.indices.reserve(1000);
+	collisionData.vertices.reserve(1000);
+	collisionData.indices.clear();
+	collisionData.vertices.clear();
 	std::vector<uint32_t> ind;
 	char line[4096];
 	char word[1024];
@@ -55,5 +52,22 @@ bool CollisionLoader::LoadOBJ(std::string fileName)
 	}
 	collisionData.indices.shrink_to_fit();
 	collisionData.vertices.shrink_to_fit();
+}
+
+bool CollisionLoader::LoadOBJ(std::string fileName)
+{
+	std::ifstream stream(fileName);
+	if (stream.good() == false) {
+		LOG_FATAL("Failed to open file: `%s`", fileName.c_str());
+		return false;
+	}
+	LoadOBJ(stream);
 	return true;
+}
+
+void CollisionLoader::LoadOBJ(const void *fileBuffer, size_t bytes)
+{
+	std::stringstream stream;
+	stream.write((const char *)fileBuffer, bytes);
+	LoadOBJ(stream);
 }

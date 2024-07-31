@@ -1,14 +1,17 @@
 #include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
+#include <godot_cpp/classes/file_access.hpp>
+
+#include <icon7/Debug.hpp>
 
 #include "../../client/include/RealmClient.hpp"
+#include "../../common/include/CollisionLoader.hpp"
 
 #include "EntityPrefabScript.hpp"
 #include "GameFrontend.hpp"
 #include "EntityComponentsFrontend.hpp"
 #include "GameFrontend.hpp"
-#include "GodotGlm.hpp"
 #include "EntityPrefabScript.hpp"
 #include "EntityStaticPrefabScript.hpp"
 
@@ -37,18 +40,14 @@ void GameClientFrontend::Init()
 bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 										   TerrainCollisionData *data)
 {
-	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Mesh> mesh = rl->load(
-		(std::string("res://assets/") + collisionShapeName).c_str(), "Mesh");
-	if (mesh.is_null()) {
+	String path = (std::string("res://assets/") + collisionShapeName).c_str();
+	PackedByteArray bytes = FileAccess::get_file_as_bytes(path);
+	if (bytes.size() == 0) {
 		return false;
 	}
-	const auto arr = mesh->get_faces();
-	const uint32_t size = arr.size() - (arr.size() % 3);
-	for (uint32_t i = 0; i < size; ++i) {
-		data->vertices.push_back(ToGlm(arr[i]));
-		data->indices.push_back(i);
-	}
+	CollisionLoader loader;
+	loader.LoadOBJ(bytes.ptr(), bytes.size());
+	std::swap(loader.collisionData, *data);
 	if (data->indices.size() >= 3 && data->vertices.size() >= 3) {
 		return true;
 	}
