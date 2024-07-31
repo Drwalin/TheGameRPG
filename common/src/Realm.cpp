@@ -6,9 +6,7 @@
 
 #include "../include/Realm.hpp"
 
-Realm::Realm() :
-   	collisionWorld(this) {
-		Realm::RegisterObservers(); }
+Realm::Realm() : collisionWorld(this) { Realm::RegisterObservers(); }
 
 Realm::~Realm()
 {

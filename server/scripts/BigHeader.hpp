@@ -34,7 +34,7 @@
 #include "../../common/include/Realm.hpp"
 #include "../../common/include/RegistryComponent.hpp"
 #include "../../common/include/ServerRpcFunctionNames.hpp"
-#include "../../common/include/Timer.hpp"
+#include "../../common/include/TickTimer.hpp"
 
 /*
  * Library includes
