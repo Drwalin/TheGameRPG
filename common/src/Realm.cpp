@@ -6,7 +6,10 @@
 
 #include "../include/Realm.hpp"
 
-Realm::Realm() : collisionWorld(this) { Realm::RegisterObservers(); }
+Realm::Realm() : ecs(ecs_mini()), collisionWorld(this)
+{
+	Realm::RegisterObservers();
+}
 
 Realm::~Realm()
 {

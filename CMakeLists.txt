@@ -24,6 +24,7 @@ include_directories(thirdparty/bullet/src)
 include_directories(thirdparty/bullet/src/LinearMath)
 
 add_subdirectory(thirdparty/bullet EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/glm)
 
 set(ICON7_IGNORE_COMMON_LOG_PATH 1)
 add_subdirectory(ICon7)

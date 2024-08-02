@@ -15,6 +15,7 @@ def Settings( **kwargs ):
     '-Ithirdparty/flecs',
     '-Ithirdparty/flecs/include',
     '-Ithirdparty/bullet/src',
-    '-Ithirdparty/bullet/src/LinearMath'
+    '-Ithirdparty/bullet/src/LinearMath',
+    '-Ithirdparty/glm'
     ],
   }
