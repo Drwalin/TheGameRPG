@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/classes/label3d.hpp>
+#include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/animation_player.hpp>
 
 #include <icon7/Debug.hpp>
@@ -57,7 +58,21 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 	return false;
 }
 
-void GameClientFrontend::OnEnterRealm(const std::string &realmName) {}
+void GameClientFrontend::OnEnterRealm(const std::string &realmName)
+{
+	for (int i = 0; i < 1000000 &&
+					frontend->entitiesContainer->get_children(true).size() > 0;
+		 ++i) {
+		auto c = frontend->entitiesContainer->get_children(true);
+		c[c.size() - 1].call("queue_free");
+	}
+	for (int i = 0; i < 1000000 &&
+					frontend->staticMapContainer->get_children(true).size() > 0;
+		 ++i) {
+		auto c = frontend->staticMapContainer->get_children(true);
+		c[c.size() - 1].call("queue_free");
+	}
+}
 
 void GameClientFrontend::OnSetPlayerId(uint64_t localId)
 {
@@ -221,9 +236,6 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 
 			frontend->entitiesContainer->add_child(node3d);
 
-			LOG_INFO("Set transform: %.2f %.2f %.2f     r: %.2f", state.pos.x,
-					 state.pos.y, state.pos.z, state.rot.y);
-
 			node3d->set_rotation(ToGodot({0, state.rot.y, 0}));
 			node3d->set_position(ToGodot(state.pos));
 			Label3D *label = new Label3D();
@@ -231,7 +243,8 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 			node3d->add_child(label);
 			label->set_position({0, 2, 0});
 
-			NodeRemoverAfterTimer *rem = new NodeRemoverAfterTimer();
+			NodeRemoverAfterTimer *rem = Object::cast_to<NodeRemoverAfterTimer>(
+				ClassDB::instantiate("NodeRemoverAfterTimer"));
 			rem->remainingSeconds = 30.f;
 			node->add_child(rem);
 			rem->set_owner(node);
@@ -239,22 +252,19 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 			PackedStringArray allAnimations =
 				animationPlayer->get_animation_list();
 			PackedStringArray deathAnimations;
-			LOG_INFO("Animations:");
 			for (int i = 0; i < allAnimations.size(); ++i) {
 				String s = allAnimations[i];
 				if (s.to_lower().contains("death") ||
 					s.to_lower().contains("dying")) {
 					deathAnimations.append(s);
 				}
-				LOG_INFO("            Anim: %s", s.utf8().ptr());
 			}
 			if (deathAnimations.size() > 0) {
 				int id = rand() % deathAnimations.size();
 				animationPlayer->play(deathAnimations[id]);
-				LOG_INFO("Play animation: %s",
-						 deathAnimations[id].utf8().ptr());
 			} else {
-				LOG_INFO("No death animations");
+				LOG_INFO("No death animations for '%s'",
+						 modelName.modelName.c_str());
 				node->queue_free();
 			}
 		} else {

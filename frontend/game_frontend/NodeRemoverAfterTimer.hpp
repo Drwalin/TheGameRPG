@@ -20,6 +20,7 @@ public: // Godot bound functions
 	~NodeRemoverAfterTimer();
 	static void _bind_methods();
 
+	void _ready() override;
 	void _process(double dt) override;
 
 public: // variables
