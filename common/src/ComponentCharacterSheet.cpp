@@ -27,6 +27,31 @@ int RegisterEntityComponentsCharacterSheet(flecs::world &ecs)
 	ecs.component<ComponentCharacterSheet_Strength>();
 	ecs.component<ComponentCharacterSheet_AttackCooldown>();
 	ecs.component<ComponentCharacterSheet_Protection>();
+	
+	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
+		->callbackDeserializePersistent = [](class Realm *realm,
+											 flecs::entity entity,
+											 ComponentCharacterSheet_HealthRegen *state) {
+		state->lastTimestamp += realm->timer.currentTick;
+	};
+	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
+		->callbackSerializePersistent = [](class Realm *realm,
+										   ComponentCharacterSheet_HealthRegen *state) {
+		state->lastTimestamp -= realm->timer.currentTick;
+	};
+	
+	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
+		->callbackDeserializePersistent = [](class Realm *realm,
+											 flecs::entity entity,
+											 ComponentCharacterSheet_AttackCooldown *state) {
+		state->lastTimestamp += realm->timer.currentTick;
+	};
+	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
+		->callbackSerializePersistent = [](class Realm *realm,
+										   ComponentCharacterSheet_AttackCooldown *state) {
+		state->lastTimestamp -= realm->timer.currentTick;
+	};
+	
 	return 0;
 }
 
@@ -48,10 +73,8 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCharacterSheet_HealthRegen,
 											});
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCharacterSheet_LevelXP, {
-	s.op(xpToNextLevel);
 	s.op(xp);
 	s.op(level);
-	s.op(xpDrop);
 });
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCharacterSheet_Strength,
 											{ s.op(strength); });

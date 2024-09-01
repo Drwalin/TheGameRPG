@@ -31,15 +31,12 @@ struct ComponentCharacterSheet_HealthRegen {
 };
 
 struct ComponentCharacterSheet_LevelXP {
-	int64_t xpToNextLevel = 10;
 	int64_t xp = 0;
 	int32_t level = 0;
-	int32_t xpDrop = 1;
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_LevelXP,
-								  {MV(xpToNextLevel) MV(xp) MV(level)
-									   MV(xpDrop)});
+								  {MV(xp) MV(level)});
 };
 
 struct ComponentCharacterSheet_Strength {

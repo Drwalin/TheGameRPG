@@ -6,8 +6,10 @@
 
 #include "../include/Realm.hpp"
 
-Realm::Realm() : ecs(ecs_mini()), collisionWorld(this)
+Realm::Realm() : ecs(/*ecs_mini()*/), collisionWorld(this)
 {
+	ECS_IMPORT(ecs.get_world(), FlecsSystem);
+	ECS_IMPORT(ecs.get_world(), FlecsPipeline);
 	Realm::RegisterObservers();
 }
 
@@ -163,6 +165,8 @@ bool Realm::OneEpoch()
 			break;
 		}
 	}
+	
+	ecs.progress();
 
 	if (executedEvents == 0) {
 		collisionWorld.EndEpoch();
