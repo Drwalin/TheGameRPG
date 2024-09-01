@@ -70,4 +70,14 @@ void GenericComponentUpdate_Update(RealmServer *realm,
 }
 void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 								   icon7::ByteWriter *writer);
+
+void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId);
+void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
+							 std::string modelName,
+							 ComponentMovementState state,
+							 std::string currentAnimation,
+							 int64_t animationStartTick);
+void Broadcast_PlayFX(RealmServer *realm, std::string modelName,
+					  ComponentStaticTransform transform,
+					  int64_t timeStartPlaying, uint64_t attachToEntityId);
 } // namespace ClientRpcProxy

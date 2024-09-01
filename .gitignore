@@ -5,3 +5,4 @@ windows-debug
 exports
 frontend/export_presets.cfg
 .cache
+tmp_build_currently_works

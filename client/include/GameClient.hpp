@@ -57,6 +57,29 @@ private: // rpc receiving methods
 	void RequestSpawnOf(uint64_t serverId);
 	void GenericComponentUpdate(icon7::ByteReader *reader);
 
+	void PlayDeathAndDestroyEntity(uint64_t serverId,
+								   ComponentModelName modelName,
+								   ComponentMovementState state,
+								   ComponentName name);
+	void PlayAnimation(uint64_t serverId, ComponentModelName modelName,
+					   ComponentMovementState state,
+					   std::string currentAnimation,
+					   int64_t animationStartTick);
+
+public: // rpc callbacks
+	virtual void PlayDeathAndDestroyEntity_virtual(ComponentModelName modelName,
+												   ComponentMovementState state,
+												   ComponentName name) = 0;
+	virtual void PlayAnimation_virtual(uint64_t serverId,
+									   ComponentModelName modelName,
+									   ComponentMovementState state,
+									   std::string currentAnimation,
+									   int64_t animationStartTick) = 0;
+	virtual void PlayFX(ComponentModelName modelName,
+						ComponentStaticTransform transform,
+						int64_t timeStartPlaying,
+						uint64_t attachToEntityId) = 0;
+
 public: // game output api
 	// may be called multiple times per single entity
 	virtual void OnEnterRealm(const std::string &realmName) = 0;

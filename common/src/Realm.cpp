@@ -165,7 +165,7 @@ bool Realm::OneEpoch()
 			break;
 		}
 	}
-	
+
 	ecs.progress();
 
 	if (executedEvents == 0) {

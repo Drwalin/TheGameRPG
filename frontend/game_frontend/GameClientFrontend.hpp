@@ -25,6 +25,20 @@ public: // callbacks
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
 
+public: // rpc callbacks
+	virtual void PlayDeathAndDestroyEntity_virtual(ComponentModelName modelName,
+												   ComponentMovementState state,
+												   ComponentName name) override;
+	virtual void PlayAnimation_virtual(uint64_t serverId,
+									   ComponentModelName modelName,
+									   ComponentMovementState state,
+									   std::string currentAnimation,
+									   int64_t animationStartTick) override;
+	virtual void PlayFX(ComponentModelName modelName,
+						ComponentStaticTransform transform,
+						int64_t timeStartPlaying,
+						uint64_t attachToEntityId) override;
+
 public:
 	class GameFrontend *frontend;
 

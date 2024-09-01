@@ -43,9 +43,10 @@ void RealmServer::RegisterObservers_CharacterSheet()
 		.not_()
 		.each([this](flecs::entity entity,
 					 const ComponentCharacterSheet_Health &hp) {
-			LOG_INFO("Set hp(%i) for mob: %lu", hp.hp, entity.id());
 			if (hp.hp <= 0) {
-				LOG_INFO("Request death and play animation for a mob");
+				ClientRpcProxy::Broadcast_PlayDeathAndDestroyEntity(
+					this, entity.id());
+				LOG_INFO("Send death and play animation for a mob");
 				entity.destruct();
 			}
 		});
@@ -56,9 +57,10 @@ void RealmServer::RegisterObservers_CharacterSheet()
 		.each([this](flecs::entity entity,
 					 const ComponentCharacterSheet_Health &hp,
 					 const ComponentPlayerConnectionPeer &peer) {
-			LOG_INFO("Set hp(%i) for player: %lu", hp.hp, entity.id());
 			if (hp.hp <= 0) {
-				LOG_INFO("Request death and play animation for player");
+				ClientRpcProxy::Broadcast_PlayDeathAndDestroyEntity(
+					this, entity.id());
+				LOG_INFO("Send death and play animation for player");
 				entity.destruct();
 			}
 		});

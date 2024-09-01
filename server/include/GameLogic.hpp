@@ -15,6 +15,6 @@ void LevelUp(flecs::entity entity, ComponentCharacterSheet_LevelXP lvl,
 			 ComponentCharacterSheet_Strength str,
 			 ComponentCharacterSheet_Protection ap);
 void HealthRegenerate(RealmServer *realm, flecs::entity entity,
-			 ComponentCharacterSheet_Health hp,
-			 ComponentCharacterSheet_HealthRegen hpReg);
-}
+					  ComponentCharacterSheet_Health hp,
+					  ComponentCharacterSheet_HealthRegen hpReg);
+} // namespace GameLogic

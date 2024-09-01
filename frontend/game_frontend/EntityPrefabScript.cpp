@@ -98,6 +98,11 @@ void EntityPrefabScript::SetName(const ComponentName &name)
 
 void EntityPrefabScript::SetModel(const ComponentModelName &model)
 {
+	if (currentModel == model) {
+		return;
+	}
+	currentModel = model;
+
 	while (nodeContainingModel->get_child_count() > 0) {
 		Node *n = nodeContainingModel->get_child(0);
 		nodeContainingModel->remove_child(n);

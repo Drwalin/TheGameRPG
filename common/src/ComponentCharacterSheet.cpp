@@ -27,31 +27,31 @@ int RegisterEntityComponentsCharacterSheet(flecs::world &ecs)
 	ecs.component<ComponentCharacterSheet_Strength>();
 	ecs.component<ComponentCharacterSheet_AttackCooldown>();
 	ecs.component<ComponentCharacterSheet_Protection>();
-	
+
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
-		->callbackDeserializePersistent = [](class Realm *realm,
-											 flecs::entity entity,
-											 ComponentCharacterSheet_HealthRegen *state) {
-		state->lastTimestamp += realm->timer.currentTick;
-	};
+		->callbackDeserializePersistent =
+		[](class Realm *realm, flecs::entity entity,
+		   ComponentCharacterSheet_HealthRegen *state) {
+			state->lastTimestamp += realm->timer.currentTick;
+		};
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
-		->callbackSerializePersistent = [](class Realm *realm,
-										   ComponentCharacterSheet_HealthRegen *state) {
-		state->lastTimestamp -= realm->timer.currentTick;
-	};
-	
+		->callbackSerializePersistent =
+		[](class Realm *realm, ComponentCharacterSheet_HealthRegen *state) {
+			state->lastTimestamp -= realm->timer.currentTick;
+		};
+
 	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
-		->callbackDeserializePersistent = [](class Realm *realm,
-											 flecs::entity entity,
-											 ComponentCharacterSheet_AttackCooldown *state) {
-		state->lastTimestamp += realm->timer.currentTick;
-	};
+		->callbackDeserializePersistent =
+		[](class Realm *realm, flecs::entity entity,
+		   ComponentCharacterSheet_AttackCooldown *state) {
+			state->lastTimestamp += realm->timer.currentTick;
+		};
 	reg::ComponentConstructor<ComponentCharacterSheet_AttackCooldown>::singleton
-		->callbackSerializePersistent = [](class Realm *realm,
-										   ComponentCharacterSheet_AttackCooldown *state) {
-		state->lastTimestamp -= realm->timer.currentTick;
-	};
-	
+		->callbackSerializePersistent =
+		[](class Realm *realm, ComponentCharacterSheet_AttackCooldown *state) {
+			state->lastTimestamp -= realm->timer.currentTick;
+		};
+
 	return 0;
 }
 

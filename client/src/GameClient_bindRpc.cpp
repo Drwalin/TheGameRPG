@@ -34,4 +34,11 @@ void GameClient::BindRpc()
 	rpc->RegisterObjectMessage(ClientRpcFunctionNames::GenericComponentUpdate,
 							   this, &GameClient::GenericComponentUpdate,
 							   &executionQueue);
+	rpc->RegisterObjectMessage(
+		ClientRpcFunctionNames::PlayDeathAndDestroyEntity, this,
+		&GameClient::PlayDeathAndDestroyEntity, &executionQueue);
+	rpc->RegisterObjectMessage(ClientRpcFunctionNames::PlayAnimation, this,
+							   &GameClient::PlayAnimation, &executionQueue);
+	rpc->RegisterObjectMessage(ClientRpcFunctionNames::PlayFX, this,
+							   &GameClient::PlayFX, &executionQueue);
 }
