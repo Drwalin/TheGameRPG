@@ -67,6 +67,8 @@ public: // variables
 	Node *nodeContainingModel = nullptr;
 	AnimationTree *animationTree = nullptr;
 
+	ComponentModelName currentModel = {};
+
 public:
 	static EntityPrefabScript *CreateNew();
 };

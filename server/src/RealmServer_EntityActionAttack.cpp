@@ -18,39 +18,39 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 		return;
 	}
 
+	LOG_INFO("Send play attack animation");
+
+	int32_t dmg = attackId;
+
+	if (instigatorId) {
+		flecs::entity entityInstigator = Entity(instigatorId);
+		if (entityInstigator.is_alive()) {
+			auto atck_ =
+				entityInstigator.get<ComponentCharacterSheet_AttackCooldown>();
+			if (atck_) {
+				auto atck = *atck_;
+				if (atck.lastTimestamp + atck.baseCooldown >=
+					timer.currentTick) {
+					return;
+				} else {
+					atck.lastTimestamp = timer.currentTick;
+					entityInstigator
+						.set<ComponentCharacterSheet_AttackCooldown>(atck);
+				}
+			}
+
+			auto str_ =
+				entityInstigator.get<ComponentCharacterSheet_Strength>();
+			if (str_) {
+				auto str = *str_;
+				dmg += str.strength;
+			}
+		}
+	}
+
 	if (targetId) {
 		flecs::entity entityTarget = Entity(targetId);
 		if (entityTarget.is_alive()) {
-
-			int32_t dmg = attackId;
-
-			if (instigatorId) {
-				flecs::entity entityInstigator = Entity(instigatorId);
-				if (entityInstigator.is_alive()) {
-					auto atck_ =
-						entityInstigator
-							.get<ComponentCharacterSheet_AttackCooldown>();
-					if (atck_) {
-						auto atck = *atck_;
-						if (atck.lastTimestamp + atck.baseCooldown >=
-							timer.currentTick) {
-							return;
-						} else {
-							atck.lastTimestamp = timer.currentTick;
-							entityInstigator
-								.set<ComponentCharacterSheet_AttackCooldown>(
-									atck);
-						}
-					}
-
-					auto str_ = entityInstigator
-									.get<ComponentCharacterSheet_Strength>();
-					if (str_) {
-						auto str = *str_;
-						dmg += str.strength;
-					}
-				}
-			}
 
 			auto ap_ = entityTarget.get<ComponentCharacterSheet_Protection>();
 			if (ap_) {
@@ -67,7 +67,7 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 				ComponentCharacterSheet_Health hp = *hp_;
 				if (hp.hp > 0) {
 					hp.hp -= dmg;
-					// TODO: Play damage animation
+					LOG_INFO("Play damage received animation or effect");
 					if (hp.hp <= 0) {
 						hp.hp = 0;
 

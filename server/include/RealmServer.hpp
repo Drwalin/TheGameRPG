@@ -43,12 +43,10 @@ public:
 
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
-	
+
 public: // ecs
-	
 	template <typename Fun, typename... Args>
-	auto _System(Fun &&func,
-				 std::function<void(flecs::entity, Args...)> f)
+	auto _System(Fun &&func, std::function<void(flecs::entity, Args...)> f)
 	{
 		return ecs.system<Args...>().each(std::move(func));
 	}
@@ -58,29 +56,23 @@ public: // ecs
 	{
 		return ecs.system<Args...>().each(std::move(func));
 	}
-	
-	
+
 	template <typename Fun, typename... Args>
 	auto _System(Fun &&func,
 				 std::function<void(RealmServer *, flecs::entity, Args...)> f)
 	{
 		return ecs.system<Args...>().each(
-				[this, func](flecs::entity entity, Args... args){
+			[this, func](flecs::entity entity, Args... args) {
 				func(this, entity, args...);
-				}
-				);
+			});
 	}
 
 	template <typename Fun, typename... Args>
 	auto _System(Fun &&func, std::function<void(RealmServer *, Args...)> f)
 	{
 		return ecs.system<Args...>().each(
-				[this, func](Args... args){
-				func(this, args...);
-				}
-				);
+			[this, func](Args... args) { func(this, args...); });
 	}
-	
 
 	template <typename Fun> auto System(Fun &&func)
 	{

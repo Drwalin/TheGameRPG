@@ -7,13 +7,14 @@
 namespace GameLogic
 {
 void HealthRegenerate(RealmServer *realm, flecs::entity entity,
-			 ComponentCharacterSheet_Health hp,
-			 ComponentCharacterSheet_HealthRegen hpReg)
+					  ComponentCharacterSheet_Health hp,
+					  ComponentCharacterSheet_HealthRegen hpReg)
 {
 	if (hp.hp <= 0) {
 		return;
 	}
-	int64_t count = (realm->timer.currentTick - hpReg.lastTimestamp) / hpReg.cooldown;
+	int64_t count =
+		(realm->timer.currentTick - hpReg.lastTimestamp) / hpReg.cooldown;
 	hpReg.lastTimestamp += count * hpReg.cooldown;
 	if (hp.hp >= hp.maxHP) {
 		return;
@@ -31,4 +32,4 @@ void HealthRegenerate(RealmServer *realm, flecs::entity entity,
 		entity.set(hp);
 	}
 }
-}
+} // namespace GameLogic

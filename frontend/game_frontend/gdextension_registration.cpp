@@ -14,6 +14,7 @@
 #include "GameFrontend.hpp"
 #include "EntityPrefabScript.hpp"
 #include "EntityStaticPrefabScript.hpp"
+#include "NodeRemoverAfterTimer.hpp"
 
 int RegisterFrontendEntityComponents(flecs::world &ecs);
 
@@ -32,6 +33,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	godot::ClassDB::register_class<GameFrontend>();
 	godot::ClassDB::register_class<EntityPrefabScript>();
 	godot::ClassDB::register_class<EntityStaticPrefabScript>();
+	godot::ClassDB::register_class<NodeRemoverAfterTimer>();
 	// REGISTER CLASSES HERE LATER
 }
 

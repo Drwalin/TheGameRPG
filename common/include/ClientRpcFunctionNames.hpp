@@ -4,21 +4,21 @@
 
 namespace ClientRpcFunctionNames
 {
-// void JoinRealm(std::string, int64_t currentTick, uint64_t playerId)
+// void JoinRealm(string, int64_t currentTick, uint64_t playerId)
 inline const std::string JoinRealm = "JoinRealm";
 
-// void SpawnStaticEntities({entityId, EntityStaticTransform, EntityModelName,
-//                           EntityStaticCollisionShapeName}, ...)
+// void SpawnStaticEntities({entityId, StaticTransform, ModelName,
+//                           StaticCollisionShapeName}, ...)
 inline const std::string SpawnStaticEntities = "SpawnStaticEntities";
 
-// void SpawnEntities({entityId, EntityMovementState, EntityName, EntityModel,
-//                     EntityShape, EntityMovementParams}, ...)
+// void SpawnEntities({entityId, MovementState, EntityName, ModelName,
+//                     EntityShape, MovementParams}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
-// void UpdateEntities({entityId, EntityMovementState}, ...)
+// void UpdateEntities({entityId, MovementState}, ...)
 inline const std::string UpdateEntities = "UpdateEntities";
 
-// void SetModel(entityId, EntityModel, EntityShape)
+// void SetModel(entityId, ModelName, EntityShape)
 inline const std::string SetModel = "SetModel";
 
 // void DeleteEntities({entityId}, ...)
@@ -42,4 +42,17 @@ inline const std::string Pong = "Pong";
 // void GenericEntityComponentUpdate({entityId, string componentName,
 // 									  componentData}, ...)
 inline const std::string GenericComponentUpdate = "GenericComponentUpdate";
+
+// void PlayDeathAndDestroyEntity(entityId, string ModelName,
+// 								  MovementState, EntityName)
+inline const std::string PlayDeathAndDestroyEntity =
+	"PlayDeathAndDestroyEntity";
+
+// void PlayAnimation(entityId, ModelName, MovementState,
+// 					  string currentAnimation, int64_t animationStartTick)
+inline const std::string PlayAnimation = "PlayAnimation";
+
+// void PlayFX(ModelName, StaticTransform, int64_t timeStartPlaying,
+// 			   attachToEntityId)
+inline const std::string PlayFX = "PlayFX";
 } // namespace ClientRpcFunctionNames

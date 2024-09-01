@@ -2,17 +2,20 @@
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/label3d.hpp>
+#include <godot_cpp/classes/animation_player.hpp>
 
 #include <icon7/Debug.hpp>
 
 #include "../../client/include/RealmClient.hpp"
 #include "../../common/include/CollisionLoader.hpp"
 
+#include "GodotGlm.hpp"
 #include "EntityPrefabScript.hpp"
 #include "GameFrontend.hpp"
 #include "EntityComponentsFrontend.hpp"
 #include "GameFrontend.hpp"
-#include "EntityPrefabScript.hpp"
+#include "NodeRemoverAfterTimer.hpp"
 #include "EntityStaticPrefabScript.hpp"
 
 #include "GameClientFrontend.hpp"
@@ -174,4 +177,103 @@ void GameClientFrontend::RegisterObservers()
 		});
 
 	// TODO: add ecs::observer(OnSet, ComponentShape)
+}
+
+void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
+	ComponentModelName modelName, ComponentMovementState state,
+	ComponentName name)
+{
+	if (modelName.modelName != "") {
+		std::string path = std::string("res://assets/") + modelName.modelName;
+
+		ResourceLoader *rl = ResourceLoader::get_singleton();
+		Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
+		if (scene.is_null() == false && scene.is_valid()) {
+			Node *node = scene->instantiate();
+			if (node == nullptr) {
+				LOG_ERROR("Cannot instantiate '%s'", path.c_str());
+				return;
+			}
+			Node3D *node3d = Object::cast_to<Node3D>(node);
+			if (node3d == nullptr) {
+				LOG_ERROR("Cannot convert scene to godot::Node3D to play death "
+						  "animation. '%s'",
+						  path.c_str());
+				delete node;
+				return;
+			}
+
+			AnimationPlayer *animationPlayer =
+				(AnimationPlayer *)(node->find_child("AnimationPlayer"));
+			if (animationPlayer == nullptr) {
+				LOG_ERROR("Scene '%s' does not have AnimationPlayer",
+						  path.c_str());
+				delete node;
+				return;
+			}
+
+			AnimationTree *animationTree =
+				(AnimationTree *)(node->find_child("AnimationTree"));
+			if (animationTree != nullptr) {
+				node->remove_child(animationTree);
+				animationTree->queue_free();
+			}
+
+			frontend->entitiesContainer->add_child(node3d);
+
+			LOG_INFO("Set transform: %.2f %.2f %.2f     r: %.2f", state.pos.x,
+					 state.pos.y, state.pos.z, state.rot.y);
+
+			node3d->set_rotation(ToGodot({0, state.rot.y, 0}));
+			node3d->set_position(ToGodot(state.pos));
+			Label3D *label = new Label3D();
+			label->set_text(String::utf8(name.name.c_str()));
+			node3d->add_child(label);
+			label->set_position({0, 2, 0});
+
+			NodeRemoverAfterTimer *rem = new NodeRemoverAfterTimer();
+			rem->remainingSeconds = 30.f;
+			node->add_child(rem);
+			rem->set_owner(node);
+
+			PackedStringArray allAnimations =
+				animationPlayer->get_animation_list();
+			PackedStringArray deathAnimations;
+			LOG_INFO("Animations:");
+			for (int i = 0; i < allAnimations.size(); ++i) {
+				String s = allAnimations[i];
+				if (s.to_lower().contains("death") ||
+					s.to_lower().contains("dying")) {
+					deathAnimations.append(s);
+				}
+				LOG_INFO("            Anim: %s", s.utf8().ptr());
+			}
+			if (deathAnimations.size() > 0) {
+				int id = rand() % deathAnimations.size();
+				animationPlayer->play(deathAnimations[id]);
+				LOG_INFO("Play animation: %s",
+						 deathAnimations[id].utf8().ptr());
+			} else {
+				LOG_INFO("No death animations");
+				node->queue_free();
+			}
+		} else {
+			LOG_INFO("Failed to load scene: `%s`", modelName.modelName.c_str());
+		}
+	}
+}
+
+void GameClientFrontend::PlayAnimation_virtual(uint64_t serverId,
+											   ComponentModelName modelName,
+											   ComponentMovementState state,
+											   std::string currentAnimation,
+											   int64_t animationStartTick)
+{
+}
+
+void GameClientFrontend::PlayFX(ComponentModelName modelName,
+								ComponentStaticTransform transform,
+								int64_t timeStartPlaying,
+								uint64_t attachToEntityId)
+{
 }

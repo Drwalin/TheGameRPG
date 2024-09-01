@@ -294,4 +294,41 @@ void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 	realm->rpc->FinalizeSerializeSend(*writer, flags);
 	peer->Send(std::move(writer->Buffer()));
 }
+
+void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)
+{
+	LOG_INFO("TODO: verify");
+	auto entity = realm->Entity(entityId);
+	auto modelName = entity.get<ComponentModelName>();
+	auto state = entity.get<ComponentMovementState>();
+	auto name = entity.get<ComponentName>();
+
+	if (modelName == nullptr || state == nullptr || name == nullptr) {
+		LOG_INFO("Entity does not have one of: ModeLname, MovementState, Name");
+		return;
+	}
+
+	realm->BroadcastReliable(ClientRpcFunctionNames::PlayDeathAndDestroyEntity,
+							 entityId, *modelName, *state, *name);
+}
+
+void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
+							 std::string modelName,
+							 ComponentMovementState state,
+							 std::string currentAnimation,
+							 int64_t animationStartTick)
+{
+	LOG_INFO("TODO: verify");
+	realm->BroadcastReliable(ClientRpcFunctionNames::PlayAnimation, entityId,
+							 modelName, state, currentAnimation);
+}
+
+void Broadcast_PlayFX(RealmServer *realm, std::string modelName,
+					  ComponentStaticTransform transform,
+					  int64_t timeStartPlaying, uint64_t attachToEntityId)
+{
+	LOG_INFO("TODO: verify");
+	realm->BroadcastReliable(ClientRpcFunctionNames::PlayFX, modelName,
+							 transform, timeStartPlaying, attachToEntityId);
+}
 } // namespace ClientRpcProxy

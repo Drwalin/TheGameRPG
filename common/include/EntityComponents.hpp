@@ -71,6 +71,11 @@ struct ComponentMovementParameters {
 struct ComponentModelName {
 	std::string modelName;
 
+	bool operator==(const ComponentModelName &o) const
+	{
+		return modelName == o.modelName;
+	}
+
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentModelName, MV(modelName));
 };

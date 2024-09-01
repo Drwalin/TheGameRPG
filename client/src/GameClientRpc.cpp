@@ -283,3 +283,21 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 			realm, entity, *reader);
 	}
 }
+
+void GameClient::PlayDeathAndDestroyEntity(uint64_t serverId,
+										   ComponentModelName modelName,
+										   ComponentMovementState state,
+										   ComponentName name)
+{
+	RemoveEntity(serverId);
+	PlayDeathAndDestroyEntity_virtual(modelName, state, name);
+}
+
+void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
+							   ComponentMovementState state,
+							   std::string currentAnimation,
+							   int64_t animationStartTick)
+{
+	PlayAnimation_virtual(serverId, modelName, state, currentAnimation,
+						  animationStartTick);
+}
