@@ -46,6 +46,7 @@ void RealmServer::RegisterObservers_CharacterSheet()
 			LOG_INFO("Set hp(%i) for mob: %lu", hp.hp, entity.id());
 			if (hp.hp <= 0) {
 				LOG_INFO("Request death and play animation for a mob");
+				entity.destruct();
 			}
 		});
 
@@ -58,6 +59,7 @@ void RealmServer::RegisterObservers_CharacterSheet()
 			LOG_INFO("Set hp(%i) for player: %lu", hp.hp, entity.id());
 			if (hp.hp <= 0) {
 				LOG_INFO("Request death and play animation for player");
+				entity.destruct();
 			}
 		});
 }

@@ -36,14 +36,63 @@ public:
 
 	void RegisterObservers();
 	void RegisterObservers_CharacterSheet();
+	void RegisterGameLogic();
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
 
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
+	
+public: // ecs
+	
+	template <typename Fun, typename... Args>
+	auto _System(Fun &&func,
+				 std::function<void(flecs::entity, Args...)> f)
+	{
+		return ecs.system<Args...>().each(std::move(func));
+	}
+
+	template <typename Fun, typename... Args>
+	auto _System(Fun &&func, std::function<void(Args...)> f)
+	{
+		return ecs.system<Args...>().each(std::move(func));
+	}
+	
+	
+	template <typename Fun, typename... Args>
+	auto _System(Fun &&func,
+				 std::function<void(RealmServer *, flecs::entity, Args...)> f)
+	{
+		return ecs.system<Args...>().each(
+				[this, func](flecs::entity entity, Args... args){
+				func(this, entity, args...);
+				}
+				);
+	}
+
+	template <typename Fun, typename... Args>
+	auto _System(Fun &&func, std::function<void(RealmServer *, Args...)> f)
+	{
+		return ecs.system<Args...>().each(
+				[this, func](Args... args){
+				func(this, args...);
+				}
+				);
+	}
+	
+
+	template <typename Fun> auto System(Fun &&func)
+	{
+		return _System(std::move(func), std::function(func));
+	}
 
 public: // Entity Actions
+	/*
+	 * argInt:
+	 *    0 - for pressed attack button
+	 *    1 - for released attack button
+	 */
 	void InteractInLineOfSight(uint64_t instigatorId,
 							   ComponentMovementState state, uint64_t targetId,
 							   glm::vec3 dstPos, glm::vec3 normal);

@@ -64,6 +64,12 @@ void RealmServer::Init(const std::string &realmName)
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
+	
+	RegisterGameLogic();
+
+	System([this](flecs::entity entity, ComponentTrigger &trigger) {
+		trigger.Tick(entity.id(), this);
+	});
 
 	sendEntitiesToClientsTimer = 0;
 }
@@ -88,10 +94,6 @@ bool RealmServer::OneEpoch()
 	busy |= Realm::OneEpoch();
 	// TODO: here do other server updates, AI, other mechanics and logic,
 	// defer some work to other worker threads (ai, db)  maybe?
-
-	ecs.each([this](flecs::entity entity, ComponentTrigger &trigger) {
-		trigger.Tick(entity.id(), this);
-	});
 
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {

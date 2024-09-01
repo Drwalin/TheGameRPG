@@ -495,8 +495,6 @@ std::unordered_map<std::string, std::string> GameClient::GetCharacteSheet()
 	if (auto comp = player.get<ComponentCharacterSheet_LevelXP>()) {
 		map["level"] = std::to_string(comp->level);
 		map["xp"] = std::to_string(comp->xp);
-		map["xpToNextLevel"] = std::to_string(comp->xpToNextLevel);
-		map["xpDrop"] = std::to_string(comp->xpDrop);
 	}
 
 	if (auto comp = player.get<ComponentCharacterSheet_Strength>()) {

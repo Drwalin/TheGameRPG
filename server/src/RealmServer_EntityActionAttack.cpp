@@ -21,52 +21,85 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 	if (targetId) {
 		flecs::entity entityTarget = Entity(targetId);
 		if (entityTarget.is_alive()) {
-			auto ms =
-				entityTarget.get<ComponentLastAuthoritativeMovementState>();
-			if (ms) {
-				auto s = ms->oldState;
 
-				ExecuteMovementUpdate(targetId, &s);
+			int32_t dmg = attackId;
 
-				glm::vec3 dir =
-					glm::normalize(targetPos -
-								   (state.pos + glm::vec3(0, 1.5, 0))) *
-					3.0f * ((attackId >> 1) + 1.0f);
+			if (instigatorId) {
+				flecs::entity entityInstigator = Entity(instigatorId);
+				if (entityInstigator.is_alive()) {
+					auto atck_ =
+						entityInstigator
+							.get<ComponentCharacterSheet_AttackCooldown>();
+					if (atck_) {
+						auto atck = *atck_;
+						if (atck.lastTimestamp + atck.baseCooldown >=
+							timer.currentTick) {
+							return;
+						} else {
+							atck.lastTimestamp = timer.currentTick;
+							entityInstigator
+								.set<ComponentCharacterSheet_AttackCooldown>(
+									atck);
+						}
+					}
 
-				if (attackId % 2 == 1) {
-					dir = -dir;
+					auto str_ = entityInstigator
+									.get<ComponentCharacterSheet_Strength>();
+					if (str_) {
+						auto str = *str_;
+						dmg += str.strength;
+					}
 				}
-
-				s.vel = dir;
-				s.vel.y = 3.0f;
-				ComponentLastAuthoritativeMovementState ls;
-				ls.oldState = s;
-				entityTarget.set<ComponentLastAuthoritativeMovementState>(ls);
 			}
 
-			if (attackId % 2 == 1) {
-				if (instigatorId) {
-					flecs::entity entityInstigator = Entity(instigatorId);
-					if (entityInstigator.is_alive()) {
-						auto hp_ = entityInstigator
-									   .get<ComponentCharacterSheet_Health>();
-						if (hp_) {
-							ComponentCharacterSheet_Health hp = *hp_;
-							if (hp.hp > 0) {
-								hp.hp -= 1;
-								entityInstigator.set(hp);
+			auto ap_ = entityTarget.get<ComponentCharacterSheet_Protection>();
+			if (ap_) {
+				auto ap = *ap_;
+				dmg -= ap.armorPoints;
+			}
+
+			if (dmg < 1) {
+				dmg = 1;
+			}
+
+			auto hp_ = entityTarget.get<ComponentCharacterSheet_Health>();
+			if (hp_) {
+				ComponentCharacterSheet_Health hp = *hp_;
+				if (hp.hp > 0) {
+					hp.hp -= dmg;
+					// TODO: Play damage animation
+					if (hp.hp <= 0) {
+						hp.hp = 0;
+
+						int64_t xp = 1;
+
+						auto tlvl_ =
+							entityTarget.get<ComponentCharacterSheet_LevelXP>();
+						if (tlvl_) {
+							auto tlvl = *tlvl_;
+							xp = (tlvl.level) * (tlvl.level - 1);
+							if (xp < 1) {
+								xp = 1;
+							}
+						}
+
+						if (instigatorId) {
+							flecs::entity entityInstigator =
+								Entity(instigatorId);
+							if (entityInstigator.is_alive()) {
+								auto ilvl_ =
+									entityInstigator
+										.get<ComponentCharacterSheet_LevelXP>();
+								if (ilvl_) {
+									auto ilvl = *ilvl_;
+
+									ilvl.xp += xp;
+									entityInstigator.set(ilvl);
+								}
 							}
 						}
 					}
-				}
-			} else {
-				auto hp_ = entityTarget.get<ComponentCharacterSheet_Health>();
-				if (hp_) {
-					ComponentCharacterSheet_Health hp = *hp_;
-					if (hp.hp > 0) {
-						hp.hp -= 1;
-						entityTarget.set(hp);
-					}
+					entityTarget.set(hp);
 				}
 			}
 		}
