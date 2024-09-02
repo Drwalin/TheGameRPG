@@ -59,6 +59,7 @@ private: // Godot callbacks
 	Vector3 GetVelocity() const;
 	bool GetOnGround() const;
 	AnimationTree *GetAnimationTree();
+	String PopOneOffAnimation();
 
 public: // variables
 	uint64_t localEntityId = 0;
@@ -69,6 +70,8 @@ public: // variables
 	AnimationTree *animationTree = nullptr;
 
 	ComponentModelName currentModel = {};
+	
+	std::vector<std::string> oneShotAnimations;
 
 public:
 	static EntityPrefabScript *CreateNew();

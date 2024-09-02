@@ -273,12 +273,24 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 	}
 }
 
-void GameClientFrontend::PlayAnimation_virtual(uint64_t serverId,
+void GameClientFrontend::PlayAnimation_virtual(uint64_t localId,
 											   ComponentModelName modelName,
 											   ComponentMovementState state,
 											   std::string currentAnimation,
 											   int64_t animationStartTick)
 {
+	flecs::entity entity = realm->Entity(localId);
+	if (!(entity.is_alive() && entity.is_valid())) {
+		return;
+	}
+	ComponentGodotNode *node =
+		(ComponentGodotNode *)entity.get<ComponentGodotNode>();
+	if (node) {
+		if (node->node) {
+			node->node->oneShotAnimations.push_back(currentAnimation);
+			LOG_INFO("Add animationStartTick as well");
+		}
+	}
 }
 
 void GameClientFrontend::PlayFX(ComponentModelName modelName,

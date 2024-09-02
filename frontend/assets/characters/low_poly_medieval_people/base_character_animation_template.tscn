@@ -1,0 +1,145 @@
+[gd_scene load_steps=26 format=3 uid="uid://dsd0d27t5dye3"]
+
+[ext_resource type="Script" path="res://assets/characters/low_poly_medieval_people/AnimationTreeStateMachine.gd" id="2_jlfwf"]
+[ext_resource type="AnimationLibrary" uid="uid://b36lyrptyn5fq" path="res://assets/characters/low_poly_medieval_people/city_dwellers_1_animations.tres" id="2_p4td2"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_duiji"]
+animation = &"running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5j1qj"]
+animation = &"right_running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hoarg"]
+animation = &"left_running"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xv6xn"]
+animation = &"running"
+play_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_660y8"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_36tyt"]
+animation = &"walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6dm5q"]
+animation = &"right_walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1gsqx"]
+animation = &"left_walking"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_o8o8d"]
+animation = &"walking"
+play_mode = 1
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_qrnp6"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_duiji")
+blend_point_0/pos = Vector2(0, 4)
+blend_point_1/node = SubResource("AnimationNodeAnimation_5j1qj")
+blend_point_1/pos = Vector2(4, 0)
+blend_point_2/node = SubResource("AnimationNodeAnimation_hoarg")
+blend_point_2/pos = Vector2(-4, 0)
+blend_point_3/node = SubResource("AnimationNodeAnimation_xv6xn")
+blend_point_3/pos = Vector2(0, -4)
+blend_point_4/node = SubResource("AnimationNodeAnimation_660y8")
+blend_point_4/pos = Vector2(0, 0)
+blend_point_5/node = SubResource("AnimationNodeAnimation_36tyt")
+blend_point_5/pos = Vector2(0, 1.5)
+blend_point_6/node = SubResource("AnimationNodeAnimation_6dm5q")
+blend_point_6/pos = Vector2(1.5, 0)
+blend_point_7/node = SubResource("AnimationNodeAnimation_1gsqx")
+blend_point_7/pos = Vector2(-1.5, 0)
+blend_point_8/node = SubResource("AnimationNodeAnimation_o8o8d")
+blend_point_8/pos = Vector2(0, -1.5)
+min_space = Vector2(-4, -4)
+max_space = Vector2(4, 4)
+snap = Vector2(0.5, 0.5)
+sync = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_13ynb"]
+animation = &"attack_straight_right_01"
+
+[sub_resource type="GDScript" id="GDScript_q1fqb"]
+script/source = "
+
+var animation_name:String = \"\";
+var attack_start_time = 0.1;
+
+"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j0f23"]
+advance_mode = 2
+advance_expression = "animation_name == \"attack_1\""
+script = SubResource("GDScript_q1fqb")
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tmgrl"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_k1g0y"]
+states/Start/position = Vector2(184, 100)
+states/attack_straight_right_01/node = SubResource("AnimationNodeAnimation_13ynb")
+states/attack_straight_right_01/position = Vector2(522, -103)
+transitions = ["Start", "attack_straight_right_01", SubResource("AnimationNodeStateMachineTransition_j0f23"), "attack_straight_right_01", "End", SubResource("AnimationNodeStateMachineTransition_tmgrl")]
+graph_offset = Vector2(10, -157)
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gs8uk"]
+animation = &"falling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7k0la"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4sl7p"]
+xfade_time = 0.1
+advance_mode = 2
+advance_condition = &"falling"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0eb84"]
+xfade_time = 0.15
+advance_mode = 2
+advance_condition = &"onGround"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e144l"]
+advance_mode = 2
+advance_expression = "animation_name != \"\" && attack_start_time < 0.01"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bi355"]
+advance_mode = 2
+advance_expression = "animation_name != \"\" && attack_start_time < 0.01"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7xer8"]
+xfade_time = 0.25
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_exm41"]
+states/End/position = Vector2(939, 286)
+states/FlatLocomotion/node = SubResource("AnimationNodeBlendSpace2D_qrnp6")
+states/FlatLocomotion/position = Vector2(553, 238)
+states/OneOffAnimation/node = SubResource("AnimationNodeStateMachine_k1g0y")
+states/OneOffAnimation/position = Vector2(482, 499)
+states/Start/position = Vector2(261, 304)
+states/jump/node = SubResource("AnimationNodeAnimation_gs8uk")
+states/jump/position = Vector2(789, 329)
+transitions = ["Start", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_7k0la"), "FlatLocomotion", "jump", SubResource("AnimationNodeStateMachineTransition_4sl7p"), "jump", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_0eb84"), "jump", "OneOffAnimation", SubResource("AnimationNodeStateMachineTransition_e144l"), "FlatLocomotion", "OneOffAnimation", SubResource("AnimationNodeStateMachineTransition_bi355"), "OneOffAnimation", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_7xer8")]
+graph_offset = Vector2(12, 169)
+
+[node name="Root Scene" type="Node3D"]
+
+[node name="RootNode" type="Node3D" parent="."]
+
+[node name="Armature" type="Node3D" parent="RootNode"]
+transform = Transform3D(100, 0, 0, 0, 100, -4.37114e-06, 0, 4.37114e-06, 100, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("2_p4td2")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_exm41")
+anim_player = NodePath("../AnimationPlayer")
+parameters/conditions/falling = false
+parameters/conditions/onGround = false
+parameters/FlatLocomotion/blend_position = Vector2(0.00500631, 0.00992584)
+script = ExtResource("2_jlfwf")

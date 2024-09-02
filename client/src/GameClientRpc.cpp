@@ -298,6 +298,15 @@ void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 							   std::string currentAnimation,
 							   int64_t animationStartTick)
 {
+	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
+	if (it == mapServerEntityIdToLocalEntityId.end()) {
+		LOG_INFO("TODO: request spawn of entity here");
+		return;
+	}
+	uint64_t localId = it->second;
+	ComponentLastAuthoritativeMovementState authoritative;
+	authoritative.oldState = state;
+	realm->AddNewAuthoritativeMovementState(localId, serverId, authoritative);
 	PlayAnimation_virtual(serverId, modelName, state, currentAnimation,
 						  animationStartTick);
 }
