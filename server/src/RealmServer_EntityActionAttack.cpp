@@ -31,8 +31,15 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 					timer.currentTick) {
 					return;
 				} else {
-					LOG_INFO("Send play attack animation");
-					
+					auto mod = entityInstigator.get<ComponentModelName>();
+					if (mod) {
+						ClientRpcProxy::Broadcast_PlayAnimation(
+							this, instigatorId, mod->modelName, state,
+							"attack_1", timer.currentTick);
+
+						LOG_INFO("Send play attack animation");
+					}
+
 					atck.lastTimestamp = timer.currentTick;
 					entityInstigator
 						.set<ComponentCharacterSheet_AttackCooldown>(atck);

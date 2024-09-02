@@ -35,6 +35,7 @@ void EntityPrefabScript::_bind_methods()
 	METHOD_NO_ARGS(EntityPrefabScript, GetVelocity);
 	METHOD_NO_ARGS(EntityPrefabScript, GetOnGround);
 	METHOD_NO_ARGS(EntityPrefabScript, GetAnimationTree);
+	METHOD_NO_ARGS(EntityPrefabScript, PopOneOffAnimation);
 
 	METHOD_ARGS(EntityPrefabScript, _my_internal_process, "deltaTime");
 }
@@ -139,6 +140,7 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 
 			animationTree =
 				(AnimationTree *)(node->find_child("AnimationTree"));
+			
 		} else {
 			LOG_INFO("Failed to load scene: `%s`", model.modelName.c_str());
 		}
@@ -197,6 +199,17 @@ bool EntityPrefabScript::GetOnGround() const
 }
 
 AnimationTree *EntityPrefabScript::GetAnimationTree() { return animationTree; }
+
+String EntityPrefabScript::PopOneOffAnimation()
+{
+	if (oneShotAnimations.empty()) {
+		return "";
+	}
+	
+	std::string s = oneShotAnimations[0];
+	oneShotAnimations.erase(oneShotAnimations.begin());
+	return String::utf8(s.c_str());
+}
 
 EntityPrefabScript *EntityPrefabScript::CreateNew()
 {

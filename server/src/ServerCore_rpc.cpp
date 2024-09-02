@@ -220,6 +220,9 @@ void ServerCore::Attack(icon7::Peer *peer, ComponentMovementState state,
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
+		ComponentLastAuthoritativeMovementState ls;
+		ls.oldState = state;
+		UpdatePlayer(peer, ls);
 		realm->Attack(peer, state, targetId, targetPos, attackType, attackId,
 					  argInt);
 	}

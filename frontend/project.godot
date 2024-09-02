@@ -24,6 +24,16 @@ gameFrontend="*res://scripts/GameFrontendScript.gd"
 
 window/vsync/vsync_mode=0
 
+[game_settings]
+
+mouse/sensitivity=13.0
+monitoring/monitor=true
+monitoring/player_position=true
+monitoring/ping=true
+graphics/point_shadows=false
+server_addres/address="127.0.0.1"
+server_addres/port="25369"
+
 [input]
 
 movement_left={
@@ -68,8 +78,7 @@ attack_primary_powerfull={
 }
 attack_secondary={
 "deadzone": 0.5,
-"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":2,"position":Vector2(140, 18),"global_position":Vector2(144, 59),"factor":1.0,"button_index":2,"canceled":false,"pressed":true,"double_click":false,"script":null)
-]
+"events": []
 }
 attack_secondary_powerfull={
 "deadzone": 0.5,
@@ -600,6 +609,11 @@ skill_127={
 "deadzone": 0.5,
 "events": []
 }
+input_attack_0={
+"deadzone": 0.5,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(164, 19),"global_position":Vector2(168, 60),"factor":1.0,"button_index":1,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
 
 [physics]
 
@@ -610,13 +624,14 @@ common/physics_jitter_fix=0.0
 
 [rendering]
 
-renderer/rendering_method="mobile"
-lights_and_shadows/directional_shadow/size=1024
+renderer/rendering_method.mobile="gl_compatibility"
+lights_and_shadows/directional_shadow/size=2048
 lights_and_shadows/directional_shadow/size.mobile=512
 global_illumination/voxel_gi/quality=1
 camera/depth_of_field/depth_of_field_bokeh_shape=0
 camera/depth_of_field/depth_of_field_bokeh_quality=0
 global_illumination/sdfgi/probe_ray_count=5
 occlusion_culling/use_occlusion_culling=true
-lights_and_shadows/positional_shadow/atlas_size=1024
+lights_and_shadows/positional_shadow/atlas_size=2048
 lights_and_shadows/positional_shadow/atlas_size.mobile=512
+rendering/renderer/rendering_method="forward_plus"

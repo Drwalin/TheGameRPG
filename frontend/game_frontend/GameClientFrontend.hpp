@@ -29,7 +29,7 @@ public: // rpc callbacks
 	virtual void PlayDeathAndDestroyEntity_virtual(ComponentModelName modelName,
 												   ComponentMovementState state,
 												   ComponentName name) override;
-	virtual void PlayAnimation_virtual(uint64_t serverId,
+	virtual void PlayAnimation_virtual(uint64_t localId,
 									   ComponentModelName modelName,
 									   ComponentMovementState state,
 									   std::string currentAnimation,
