@@ -48,7 +48,7 @@ void EntityPrefabScript::_ready()
 	frontend = (GameFrontend *)(get_tree()->get_root()->get_node_or_null(
 		"gameFrontend"));
 
-	nodeContainingModel = (Node *)(get_node<Node>("Mesh"));
+	nodeContainingModel = Object::cast_to<Node3D>(get_node<Node>("Mesh"));
 }
 
 void EntityPrefabScript::_process(double dt) { _my_internal_process(dt); }
@@ -70,6 +70,12 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		SetPosition(state->pos);
 	} else {
 		LOG_ERROR("Entity %lu has no movement state", localEntityId);
+	}
+	
+	if (IsPlayer() && modelNode3D) {
+		if (modelNode3D->is_visible()) {
+			modelNode3D->hide();
+		}
 	}
 }
 
@@ -108,6 +114,7 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 		nodeContainingModel->remove_child(n);
 		n->queue_free();
 	}
+	modelNode3D = nullptr;
 
 	if (model.modelName != "") {
 		std::string path = std::string("res://assets/") + model.modelName;
@@ -118,12 +125,16 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 			Node *node = scene->instantiate();
 			nodeContainingModel->add_child(node);
 
-			if (IsPlayer()) {
-				// TODO: Replace hiding players own model with something better
-				// (to hide only animated mesh?)
-				if (Node3D *n = Object::cast_to<Node3D>(node)) {
-					n->hide();
+			if ((modelNode3D = Object::cast_to<Node3D>(node))) {
+				if (IsPlayer()) {
+					// TODO: Replace hiding players own model with something
+					// better (to hide only animated mesh?)
+					modelNode3D->hide();
 				}
+
+			} else {
+				LOG_WARN("Failed co convert scene '%s' to Node3D",
+						 path.c_str());
 			}
 
 			animationTree =

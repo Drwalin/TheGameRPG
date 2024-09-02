@@ -64,7 +64,8 @@ public: // variables
 	uint64_t localEntityId = 0;
 	GameFrontend *frontend = nullptr;
 
-	Node *nodeContainingModel = nullptr;
+	Node3D *nodeContainingModel = nullptr;
+	Node3D *modelNode3D = nullptr;
 	AnimationTree *animationTree = nullptr;
 
 	ComponentModelName currentModel = {};
