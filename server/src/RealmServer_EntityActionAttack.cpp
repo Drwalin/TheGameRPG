@@ -18,8 +18,6 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 		return;
 	}
 
-	LOG_INFO("Send play attack animation");
-
 	int32_t dmg = attackId;
 
 	if (instigatorId) {
@@ -33,6 +31,8 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 					timer.currentTick) {
 					return;
 				} else {
+					LOG_INFO("Send play attack animation");
+					
 					atck.lastTimestamp = timer.currentTick;
 					entityInstigator
 						.set<ComponentCharacterSheet_AttackCooldown>(atck);
