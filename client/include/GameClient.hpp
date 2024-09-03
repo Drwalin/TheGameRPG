@@ -57,24 +57,24 @@ private: // rpc receiving methods
 	void RequestSpawnOf(uint64_t serverId);
 	void GenericComponentUpdate(icon7::ByteReader *reader);
 
-	void PlayDeathAndDestroyEntity(uint64_t serverId,
-								   ComponentModelName modelName,
-								   ComponentMovementState state,
-								   ComponentName name);
+	void
+	PlayDeathAndDestroyEntity(uint64_t serverId, ComponentModelName modelName,
+							  ComponentLastAuthoritativeMovementState state,
+							  ComponentName name);
 	void PlayAnimation(uint64_t serverId, ComponentModelName modelName,
-					   ComponentMovementState state,
+					   ComponentLastAuthoritativeMovementState state,
 					   std::string currentAnimation,
 					   int64_t animationStartTick);
 
 public: // rpc callbacks
-	virtual void PlayDeathAndDestroyEntity_virtual(ComponentModelName modelName,
-												   ComponentMovementState state,
-												   ComponentName name) = 0;
-	virtual void PlayAnimation_virtual(uint64_t serverId,
-									   ComponentModelName modelName,
-									   ComponentMovementState state,
-									   std::string currentAnimation,
-									   int64_t animationStartTick) = 0;
+	virtual void PlayDeathAndDestroyEntity_virtual(
+		ComponentModelName modelName,
+		ComponentLastAuthoritativeMovementState state, ComponentName name) = 0;
+	virtual void
+	PlayAnimation_virtual(uint64_t serverId, ComponentModelName modelName,
+						  ComponentLastAuthoritativeMovementState state,
+						  std::string currentAnimation,
+						  int64_t animationStartTick) = 0;
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
 						int64_t timeStartPlaying,

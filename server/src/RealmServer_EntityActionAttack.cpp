@@ -10,7 +10,8 @@
 
 #include "../include/RealmServer.hpp"
 
-void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
+void RealmServer::Attack(uint64_t instigatorId,
+						 ComponentLastAuthoritativeMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
@@ -31,13 +32,11 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 					timer.currentTick) {
 					return;
 				} else {
-					auto mod = entityInstigator.get<ComponentModelName>();
-					if (mod) {
+					auto modelName = entityInstigator.get<ComponentModelName>();
+					if (modelName) {
 						ClientRpcProxy::Broadcast_PlayAnimation(
-							this, instigatorId, mod->modelName, state,
-							"attack_1", timer.currentTick);
-
-						LOG_INFO("Send play attack animation");
+							this, instigatorId, *modelName, state, "attack_1",
+							timer.currentTick);
 					}
 
 					atck.lastTimestamp = timer.currentTick;
@@ -74,7 +73,7 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 				ComponentCharacterSheet_Health hp = *hp_;
 				if (hp.hp > 0) {
 					hp.hp -= dmg;
-					LOG_INFO("Play damage received animation or effect");
+					LOG_INFO("TODO: Play damage received animation and effect");
 					if (hp.hp <= 0) {
 						hp.hp = 0;
 
@@ -113,7 +112,8 @@ void RealmServer::Attack(uint64_t instigatorId, ComponentMovementState state,
 	}
 }
 
-void RealmServer::Attack(icon7::Peer *peer, ComponentMovementState state,
+void RealmServer::Attack(icon7::Peer *peer,
+						 ComponentLastAuthoritativeMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {

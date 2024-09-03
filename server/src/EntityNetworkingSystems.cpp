@@ -16,7 +16,7 @@ void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
 }
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
-						const ComponentMovementState &state,
+						const ComponentLastAuthoritativeMovementState &state,
 						const ComponentShape &shape,
 						const ComponentModelName &entityModelName,
 						const ComponentName &entityName,
@@ -49,7 +49,8 @@ void RegisterObservers(RealmServer *realm)
 
 	realm->RegisterObserver(
 		flecs::OnAdd,
-		[realm](flecs::entity entity, const ComponentMovementState &state,
+		[realm](flecs::entity entity,
+				const ComponentLastAuthoritativeMovementState &state,
 				const ComponentShape &shape,
 				const ComponentModelName &entityModelName,
 				const ComponentName &entityName,

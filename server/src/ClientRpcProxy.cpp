@@ -180,7 +180,7 @@ void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 }
 
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const ComponentMovementState &state,
+						   const ComponentLastAuthoritativeMovementState &state,
 						   const ComponentShape &shape,
 						   const ComponentModelName &entityModelName,
 						   const ComponentName &entityName,
@@ -297,33 +297,37 @@ void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 
 void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)
 {
-	LOG_INFO("TODO: verify");
 	auto entity = realm->Entity(entityId);
-	auto modelName = entity.get<ComponentModelName>();
-	auto state = entity.get<ComponentMovementState>();
-	auto name = entity.get<ComponentName>();
-
-	if (modelName == nullptr || state == nullptr || name == nullptr) {
-		LOG_INFO("Entity does not have one of: ModeLname, MovementState, Name");
-		return;
+	if (entity.is_valid() && entity.is_alive()) {
+		auto modelName = entity.get<ComponentModelName>();
+		auto state = entity.get<ComponentLastAuthoritativeMovementState>();
+		auto name = entity.get<ComponentName>();
+		if (modelName == nullptr || state == nullptr || name == nullptr) {
+			LOG_INFO(
+				"Entity does not have one of: ModeLname, MovementState, Name");
+			return;
+		}
+		realm->BroadcastReliable(
+			ClientRpcFunctionNames::PlayDeathAndDestroyEntity, entityId,
+			*modelName, *state, *name);
+	} else {
+		LOG_WARN("Trying to broadcast death of already dead entity.");
 	}
-
-	realm->BroadcastReliable(ClientRpcFunctionNames::PlayDeathAndDestroyEntity,
-							 entityId, *modelName, *state, *name);
 }
 
 void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
-							 std::string modelName,
-							 ComponentMovementState state,
+							 ComponentModelName modelName,
+							 ComponentLastAuthoritativeMovementState state,
 							 std::string currentAnimation,
 							 int64_t animationStartTick)
 {
-	LOG_INFO("TODO: verify");
+	LOG_INFO("TODO: move arguments fetching to inside of this function to "
+			 "reduce arguments count and error proneness.");
 	realm->BroadcastReliable(ClientRpcFunctionNames::PlayAnimation, entityId,
 							 modelName, state, currentAnimation);
 }
 
-void Broadcast_PlayFX(RealmServer *realm, std::string modelName,
+void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 					  ComponentStaticTransform transform,
 					  int64_t timeStartPlaying, uint64_t attachToEntityId)
 {

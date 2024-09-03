@@ -26,14 +26,15 @@ public: // callbacks
 								   TerrainCollisionData *data) override;
 
 public: // rpc callbacks
-	virtual void PlayDeathAndDestroyEntity_virtual(ComponentModelName modelName,
-												   ComponentMovementState state,
-												   ComponentName name) override;
-	virtual void PlayAnimation_virtual(uint64_t localId,
-									   ComponentModelName modelName,
-									   ComponentMovementState state,
-									   std::string currentAnimation,
-									   int64_t animationStartTick) override;
+	virtual void PlayDeathAndDestroyEntity_virtual(
+		ComponentModelName modelName,
+		ComponentLastAuthoritativeMovementState state,
+		ComponentName name) override;
+	virtual void
+	PlayAnimation_virtual(uint64_t localId, ComponentModelName modelName,
+						  ComponentLastAuthoritativeMovementState state,
+						  std::string currentAnimation,
+						  int64_t animationStartTick) override;
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
 						int64_t timeStartPlaying,
