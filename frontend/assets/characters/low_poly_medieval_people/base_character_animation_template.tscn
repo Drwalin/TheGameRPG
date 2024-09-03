@@ -59,28 +59,23 @@ sync = true
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_13ynb"]
 animation = &"attack_straight_right_01"
 
-[sub_resource type="GDScript" id="GDScript_q1fqb"]
-script/source = "
-
-var animation_name:String = \"\";
-var attack_start_time = 0.1;
-
-"
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_j0f23"]
 advance_mode = 2
 advance_expression = "animation_name == \"attack_1\""
-script = SubResource("GDScript_q1fqb")
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_tmgrl"]
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3ho75"]
+advance_mode = 2
+advance_expression = "animation_name == \"\" || animation_name == null || attack_start_time > 0.1"
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_k1g0y"]
 states/Start/position = Vector2(184, 100)
 states/attack_straight_right_01/node = SubResource("AnimationNodeAnimation_13ynb")
 states/attack_straight_right_01/position = Vector2(522, -103)
-transitions = ["Start", "attack_straight_right_01", SubResource("AnimationNodeStateMachineTransition_j0f23"), "attack_straight_right_01", "End", SubResource("AnimationNodeStateMachineTransition_tmgrl")]
+transitions = ["Start", "attack_straight_right_01", SubResource("AnimationNodeStateMachineTransition_j0f23"), "attack_straight_right_01", "End", SubResource("AnimationNodeStateMachineTransition_tmgrl"), "Start", "End", SubResource("AnimationNodeStateMachineTransition_3ho75")]
 graph_offset = Vector2(10, -157)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gs8uk"]
@@ -101,14 +96,13 @@ advance_condition = &"onGround"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e144l"]
 advance_mode = 2
-advance_expression = "animation_name != \"\" && attack_start_time < 0.01"
+advance_expression = "animation_name != \"\" && attack_start_time < 0.0001"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_bi355"]
 advance_mode = 2
-advance_expression = "animation_name != \"\" && attack_start_time < 0.01"
+advance_expression = "animation_name != \"\" && attack_start_time < 0.0001"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7xer8"]
-xfade_time = 0.25
 switch_mode = 2
 advance_mode = 2
 
@@ -122,14 +116,14 @@ states/Start/position = Vector2(261, 304)
 states/jump/node = SubResource("AnimationNodeAnimation_gs8uk")
 states/jump/position = Vector2(789, 329)
 transitions = ["Start", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_7k0la"), "FlatLocomotion", "jump", SubResource("AnimationNodeStateMachineTransition_4sl7p"), "jump", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_0eb84"), "jump", "OneOffAnimation", SubResource("AnimationNodeStateMachineTransition_e144l"), "FlatLocomotion", "OneOffAnimation", SubResource("AnimationNodeStateMachineTransition_bi355"), "OneOffAnimation", "FlatLocomotion", SubResource("AnimationNodeStateMachineTransition_7xer8")]
-graph_offset = Vector2(12, 169)
+graph_offset = Vector2(-25.1491, 155.724)
 
 [node name="Root Scene" type="Node3D"]
 
 [node name="RootNode" type="Node3D" parent="."]
 
 [node name="Armature" type="Node3D" parent="RootNode"]
-transform = Transform3D(100, 0, 0, 0, 100, -4.37114e-06, 0, 4.37114e-06, 100, 0, 0, 0)
+transform = Transform3D(100, 0, 0, 0, 100, -4.37114e-06, 0, 4.37114e-06, 100, -2.17994e-05, -8.59009e-12, 4.16539e-05)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

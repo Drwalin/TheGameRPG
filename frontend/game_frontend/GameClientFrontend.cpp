@@ -281,6 +281,7 @@ void GameClientFrontend::PlayAnimation_virtual(uint64_t localId,
 {
 	flecs::entity entity = realm->Entity(localId);
 	if (!(entity.is_alive() && entity.is_valid())) {
+		LOG_INFO("Failed to add animation");
 		return;
 	}
 	ComponentGodotNode *node =
@@ -289,7 +290,11 @@ void GameClientFrontend::PlayAnimation_virtual(uint64_t localId,
 		if (node->node) {
 			node->node->oneShotAnimations.push_back(currentAnimation);
 			LOG_INFO("Add animationStartTick as well");
+		} else {
+			LOG_INFO("Failed to add animation");
 		}
+	} else {
+		LOG_INFO("Failed to add animation");
 	}
 }
 
