@@ -78,7 +78,7 @@ public: // rpc callbacks
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
 						int64_t timeStartPlaying,
-						uint64_t attachToEntityId) = 0;
+						uint64_t attachToEntityId, int32_t ttlMs) = 0;
 
 public: // game output api
 	// may be called multiple times per single entity
@@ -129,7 +129,7 @@ public:
 	std::string username;
 
 	int64_t authdauthoritativePlayerSendDelay = 200;
-	bool needSendPlayerMovementInput;
+	bool needSendPlayerMovementInput = false;
 	int64_t lastTickAuthoritativeSent = 0;
 	TickTimer pingTimer;
 	int64_t lastPingTime = 0;
