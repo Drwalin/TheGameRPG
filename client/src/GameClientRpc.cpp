@@ -284,17 +284,16 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 	}
 }
 
-void GameClient::PlayDeathAndDestroyEntity(uint64_t serverId,
-										   ComponentModelName modelName,
-										   ComponentMovementState state,
-										   ComponentName name)
+void GameClient::PlayDeathAndDestroyEntity(
+	uint64_t serverId, ComponentModelName modelName,
+	ComponentLastAuthoritativeMovementState state, ComponentName name)
 {
 	RemoveEntity(serverId);
 	PlayDeathAndDestroyEntity_virtual(modelName, state, name);
 }
 
 void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
-							   ComponentMovementState state,
+							   ComponentLastAuthoritativeMovementState state,
 							   std::string currentAnimation,
 							   int64_t animationStartTick)
 {
@@ -304,9 +303,7 @@ void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 		return;
 	}
 	uint64_t localId = it->second;
-	ComponentLastAuthoritativeMovementState authoritative;
-	authoritative.oldState = state;
-	realm->AddNewAuthoritativeMovementState(localId, serverId, authoritative);
+	realm->AddNewAuthoritativeMovementState(localId, serverId, state);
 	PlayAnimation_virtual(localId, modelName, state, currentAnimation,
 						  animationStartTick);
 }

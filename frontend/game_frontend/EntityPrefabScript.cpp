@@ -72,7 +72,7 @@ void EntityPrefabScript::_my_internal_process(double dt)
 	} else {
 		LOG_ERROR("Entity %lu has no movement state", localEntityId);
 	}
-	
+
 	if (IsPlayer() && modelNode3D) {
 		if (modelNode3D->is_visible()) {
 			modelNode3D->hide();
@@ -140,7 +140,7 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 
 			animationTree =
 				(AnimationTree *)(node->find_child("AnimationTree"));
-			
+
 		} else {
 			LOG_INFO("Failed to load scene: `%s`", model.modelName.c_str());
 		}
@@ -205,7 +205,7 @@ String EntityPrefabScript::PopOneOffAnimation()
 	if (oneShotAnimations.empty()) {
 		return "";
 	}
-	
+
 	std::string s = oneShotAnimations[0];
 	oneShotAnimations.erase(oneShotAnimations.begin());
 	return String::utf8(s.c_str());

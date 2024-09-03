@@ -70,7 +70,7 @@ public: // variables
 	AnimationTree *animationTree = nullptr;
 
 	ComponentModelName currentModel = {};
-	
+
 	std::vector<std::string> oneShotAnimations;
 
 public:

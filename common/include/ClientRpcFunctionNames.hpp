@@ -11,11 +11,12 @@ inline const std::string JoinRealm = "JoinRealm";
 //                           StaticCollisionShapeName}, ...)
 inline const std::string SpawnStaticEntities = "SpawnStaticEntities";
 
-// void SpawnEntities({entityId, MovementState, EntityName, ModelName,
+// void SpawnEntities({entityId, LastAuthoritativeMovementState, EntityName,
+// ModelName,
 //                     EntityShape, MovementParams}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
-// void UpdateEntities({entityId, MovementState}, ...)
+// void UpdateEntities({entityId, LastAuthoritativeMovementState}, ...)
 inline const std::string UpdateEntities = "UpdateEntities";
 
 // void SetModel(entityId, ModelName, EntityShape)
@@ -44,11 +45,11 @@ inline const std::string Pong = "Pong";
 inline const std::string GenericComponentUpdate = "GenericComponentUpdate";
 
 // void PlayDeathAndDestroyEntity(entityId, string ModelName,
-// 								  MovementState, EntityName)
+// 								  LastAuthoritativeMovementState, EntityName)
 inline const std::string PlayDeathAndDestroyEntity =
 	"PlayDeathAndDestroyEntity";
 
-// void PlayAnimation(entityId, ModelName, MovementState,
+// void PlayAnimation(entityId, ModelName, LastAuthoritativeMovementState,
 // 					  string currentAnimation, int64_t animationStartTick)
 inline const std::string PlayAnimation = "PlayAnimation";
 

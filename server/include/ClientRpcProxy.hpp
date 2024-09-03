@@ -31,7 +31,7 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer);
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const ComponentMovementState &state,
+						   const ComponentLastAuthoritativeMovementState &state,
 						   const ComponentShape &shape,
 						   const ComponentModelName &entityModelName,
 						   const ComponentName &entityName,
@@ -73,11 +73,11 @@ void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 
 void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId);
 void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
-							 std::string modelName,
-							 ComponentMovementState state,
+							 ComponentModelName modelName,
+							 ComponentLastAuthoritativeMovementState state,
 							 std::string currentAnimation,
 							 int64_t animationStartTick);
-void Broadcast_PlayFX(RealmServer *realm, std::string modelName,
+void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 					  ComponentStaticTransform transform,
 					  int64_t timeStartPlaying, uint64_t attachToEntityId);
 } // namespace ClientRpcProxy

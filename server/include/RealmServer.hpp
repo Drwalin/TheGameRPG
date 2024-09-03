@@ -86,16 +86,20 @@ public: // Entity Actions
 	 *    1 - for released attack button
 	 */
 	void InteractInLineOfSight(uint64_t instigatorId,
-							   ComponentMovementState state, uint64_t targetId,
-							   glm::vec3 dstPos, glm::vec3 normal);
-	void Attack(uint64_t instigatorId, ComponentMovementState state,
+							   ComponentLastAuthoritativeMovementState state,
+							   uint64_t targetId, glm::vec3 dstPos,
+							   glm::vec3 normal);
+	void Attack(uint64_t instigatorId,
+				ComponentLastAuthoritativeMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
-	void InteractInLineOfSight(icon7::Peer *peer, ComponentMovementState state,
+	void InteractInLineOfSight(icon7::Peer *peer,
+							   ComponentLastAuthoritativeMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
-	void Attack(icon7::Peer *peer, ComponentMovementState state,
+	void Attack(icon7::Peer *peer,
+				ComponentLastAuthoritativeMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 

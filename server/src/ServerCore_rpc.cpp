@@ -200,29 +200,42 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 	}
 }
 
-void ServerCore::InteractInLineOfSight(icon7::Peer *peer,
-									   ComponentMovementState state,
-									   uint64_t targetId, glm::vec3 dstPos,
-									   glm::vec3 normal)
+void ServerCore::InteractInLineOfSight(
+	icon7::Peer *peer, ComponentLastAuthoritativeMovementState state,
+	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
 	// TODO: add server side verification
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
+		UpdatePlayer(peer, state);
+		flecs::entity entity = realm->Entity(data->entityId);
+		if (entity.is_alive()) {
+			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
+			if (s) {
+				state = *s;
+			}
+		}
 		realm->InteractInLineOfSight(peer, state, targetId, dstPos, normal);
 	}
 }
 
-void ServerCore::Attack(icon7::Peer *peer, ComponentMovementState state,
+void ServerCore::Attack(icon7::Peer *peer,
+						ComponentLastAuthoritativeMovementState state,
 						uint64_t targetId, glm::vec3 targetPos,
 						int64_t attackType, int64_t attackId, int64_t argInt)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
-		ComponentLastAuthoritativeMovementState ls;
-		ls.oldState = state;
-		UpdatePlayer(peer, ls);
+		UpdatePlayer(peer, state);
+		flecs::entity entity = realm->Entity(data->entityId);
+		if (entity.is_alive()) {
+			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
+			if (s) {
+				state = *s;
+			}
+		}
 		realm->Attack(peer, state, targetId, targetPos, attackType, attackId,
 					  argInt);
 	}
