@@ -307,6 +307,6 @@ void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 	ComponentLastAuthoritativeMovementState authoritative;
 	authoritative.oldState = state;
 	realm->AddNewAuthoritativeMovementState(localId, serverId, authoritative);
-	PlayAnimation_virtual(serverId, modelName, state, currentAnimation,
+	PlayAnimation_virtual(localId, modelName, state, currentAnimation,
 						  animationStartTick);
 }

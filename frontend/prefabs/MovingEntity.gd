@@ -28,5 +28,4 @@ func UpdateAnimationState()->void:
 		if oneOffAnimationName != "":
 			animationTree.animation_name = oneOffAnimationName;
 			animationTree.attack_start_time = 0.0;
-		else:
-			animationTree.animation_name = "";
+	
