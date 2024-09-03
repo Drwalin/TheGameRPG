@@ -54,6 +54,6 @@ inline const std::string PlayDeathAndDestroyEntity =
 inline const std::string PlayAnimation = "PlayAnimation";
 
 // void PlayFX(ModelName, StaticTransform, int64_t timeStartPlaying,
-// 			   attachToEntityId)
+// 			   attachToEntityId, int32_t ttlMs)
 inline const std::string PlayFX = "PlayFX";
 } // namespace ClientRpcFunctionNames

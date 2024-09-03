@@ -288,7 +288,7 @@ void GameClientFrontend::PlayAnimation_virtual(
 	if (node) {
 		if (node->node) {
 			node->node->oneShotAnimations.push_back(currentAnimation);
-			LOG_INFO("Add animationStartTick as well");
+			// TODO: use animationStartTick
 		} else {
 			LOG_INFO("Failed to add animation");
 		}
@@ -300,6 +300,82 @@ void GameClientFrontend::PlayAnimation_virtual(
 void GameClientFrontend::PlayFX(ComponentModelName modelName,
 								ComponentStaticTransform transform,
 								int64_t timeStartPlaying,
-								uint64_t attachToEntityId)
+								uint64_t attachToEntityId, int32_t ttlMs)
 {
+	if (modelName.modelName != "") {
+		std::string path = std::string("res://assets/") + modelName.modelName;
+
+		ResourceLoader *rl = ResourceLoader::get_singleton();
+		Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
+		if (scene.is_null() == false && scene.is_valid()) {
+			Node *node = scene->instantiate();
+			if (node == nullptr) {
+				LOG_ERROR("Cannot instantiate '%s'", path.c_str());
+				return;
+			}
+			Node3D *node3d = Object::cast_to<Node3D>(node);
+			if (node3d == nullptr) {
+				LOG_ERROR("Cannot convert scene to godot::Node3D to play death "
+						  "animation. '%s'",
+						  path.c_str());
+				delete node;
+				return;
+			}
+
+			if (attachToEntityId != 0) {
+				auto it =
+					mapServerEntityIdToLocalEntityId.find(attachToEntityId);
+				if (it != mapServerEntityIdToLocalEntityId.end()) {
+					flecs::entity entity = realm->Entity(it->second);
+					if (entity.is_valid() && entity.is_alive()) {
+
+						bool has = false;
+						if (auto gn = entity.get<ComponentGodotNode>()) {
+							if (gn->node) {
+								has = true;
+								gn->node->add_child(node3d);
+							}
+						}
+
+						if (auto gsn = entity.get<ComponentStaticGodotNode>()) {
+							if (gsn->node) {
+								has = true;
+								gsn->node->add_child(node3d);
+							}
+						}
+
+						if (has == false) {
+							attachToEntityId = 0;
+						}
+					} else {
+						attachToEntityId = 0;
+					}
+				} else {
+					attachToEntityId = 0;
+				}
+			}
+
+			if (attachToEntityId == 0) {
+				frontend->entitiesContainer->add_child(node3d);
+			}
+
+			node3d->set_transform(Transform3D{Basis(ToGodot(transform.rot)),
+											  ToGodot(transform.pos)});
+			node3d->set_scale(ToGodot(transform.scale));
+
+			if (ttlMs != 0) {
+
+				NodeRemoverAfterTimer *rem =
+					Object::cast_to<NodeRemoverAfterTimer>(
+						ClassDB::instantiate("NodeRemoverAfterTimer"));
+				rem->remainingSeconds = (timeStartPlaying + (int64_t)ttlMs -
+										 realm->timer.currentTick) *
+										0.001f;
+				node->add_child(rem);
+				rem->set_owner(node);
+			}
+		} else {
+			LOG_INFO("Failed to load scene: `%s`", modelName.modelName.c_str());
+		}
+	}
 }

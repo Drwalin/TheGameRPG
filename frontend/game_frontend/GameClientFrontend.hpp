@@ -38,7 +38,7 @@ public: // rpc callbacks
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
 						int64_t timeStartPlaying,
-						uint64_t attachToEntityId) override;
+						uint64_t attachToEntityId, int32_t ttlMs) override;
 
 public:
 	class GameFrontend *frontend;
