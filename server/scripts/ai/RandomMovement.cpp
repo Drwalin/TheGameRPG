@@ -145,7 +145,7 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 			state.vel = {V.x, V.y, V.z};
 		}
 	}
-	entity.set<ComponentLastAuthoritativeMovementState>({lastState});
+	entity.set<ComponentLastAuthoritativeMovementState>({state});
 }
 
 extern "C" void

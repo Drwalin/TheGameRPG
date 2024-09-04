@@ -54,6 +54,18 @@ public: // variables
 	double get_stepHeight() { return stepHeight; }
 	void set_stepHeight(double v) { stepHeight = v; }
 
+	int64_t initialXp = 0;
+	int64_t get_initialXp() { return initialXp; }
+	void set_initialXp(int64_t v) { initialXp = v; }
+
+	int64_t initialMaxHp = 10;
+	int64_t get_initialMaxHp() { return initialMaxHp; }
+	void set_initialMaxHp(int64_t v) { initialMaxHp = v; }
+
+	int64_t initialHp = 10;
+	int64_t get_initialHp() { return initialHp; }
+	void set_initialHp(int64_t v) { initialHp = v; }
+
 private:
 	Node3D *graph = nullptr;
 };

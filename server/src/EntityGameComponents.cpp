@@ -13,6 +13,7 @@ GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentSingleDoorTransformStates, "SDST");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTeleport, "TELEPORT");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTrigger, "TRIGGER");
 GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentAITick, "AITICK");
+GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentSpawner, "CSPAWNER");
 
 int RegisterEntityComponents(flecs::world &ecs);
 int RegisterEntityComponentsServer(flecs::world &ecs);
@@ -21,6 +22,7 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 {
 	RegisterEntityComponents(ecs);
 	RegisterEntityComponentsServer(ecs);
+	ecs.component<ComponentSpawner>();
 	ecs.component<ComponentOnUse>();
 	ecs.component<ComponentSingleDoorTransformStates>();
 	ecs.component<ComponentTeleport>();
@@ -50,6 +52,18 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 		[](class Realm *realm, ComponentCharacterSheet_AttackCooldown *hp) {
 			hp->lastTimestamp -= realm->timer.currentTick;
 		};
+
+	reg::ComponentConstructor<ComponentSpawner>::singleton
+		->callbackDeserializePersistent = [](class Realm *realm,
+											 flecs::entity entity,
+											 ComponentSpawner *spawner) {
+		spawner->lastSpawnedTimestamp += realm->timer.currentTick;
+	};
+	reg::ComponentConstructor<ComponentSpawner>::singleton
+		->callbackSerializePersistent = [](class Realm *realm,
+										   ComponentSpawner *spawner) {
+		spawner->lastSpawnedTimestamp -= realm->timer.currentTick;
+	};
 
 	return 0;
 }
@@ -138,3 +152,13 @@ ComponentAITick::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 	aiTick->Serialize(&aiTick, s);
 	return s;
 }
+
+BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentSpawner, {
+	s.op(maxAmount);
+	s.op(spawnCooldown);
+	s.op(spawnRadius);
+	s.op(radiusToCheckAmountEntities);
+	s.op(lastSpawnedTimestamp);
+	s.op(prefabsData);
+	s.op(prefabsOffset);
+});

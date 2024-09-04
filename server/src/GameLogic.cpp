@@ -7,4 +7,5 @@ void RealmServer::RegisterGameLogic()
 {
 	System(GameLogic::LevelUp);
 	System(GameLogic::HealthRegenerate);
+	System(GameLogic::Spawner);
 }

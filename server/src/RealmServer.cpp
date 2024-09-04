@@ -65,11 +65,11 @@ void RealmServer::Init(const std::string &realmName)
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 	}
 
-	RegisterGameLogic();
-
 	System([this](flecs::entity entity, ComponentTrigger &trigger) {
 		trigger.Tick(entity.id(), this);
 	});
+
+	RegisterGameLogic();
 
 	sendEntitiesToClientsTimer = 0;
 }
