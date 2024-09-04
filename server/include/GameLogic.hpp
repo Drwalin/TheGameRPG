@@ -1,8 +1,10 @@
 #pragma once
 
+#include <flecs.h>
+
 #include "../../common/include/ComponentCharacterSheet.hpp"
 
-#include <flecs.h>
+#include "EntityGameComponents.hpp"
 
 class Realm;
 class RealmServer;
@@ -17,4 +19,7 @@ void LevelUp(flecs::entity entity, ComponentCharacterSheet_LevelXP lvl,
 void HealthRegenerate(RealmServer *realm, flecs::entity entity,
 					  ComponentCharacterSheet_Health hp,
 					  ComponentCharacterSheet_HealthRegen hpReg);
+void Spawner(RealmServer *realm, flecs::entity entity,
+			 ComponentSpawner &spawner,
+			 const ComponentStaticTransform &transform);
 } // namespace GameLogic

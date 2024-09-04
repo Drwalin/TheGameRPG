@@ -3148,6 +3148,46 @@ transform = Transform3D(1.05107, 0.038399, 0.580032, 0.03538, 1.19204, -0.143026
 graphic_Mesh_or_PackedScene = ExtResource("39_80ei8")
 transform = Transform3D(0.0949867, 0.0549901, -1.25336, -0.061329, 1.25565, 0.0504427, 1.25306, 0.0572869, 0.0974778, 61.1253, 0.593878, -91.2251)
 
+[node name="Spawners" type="Node3D" parent="."]
+
+[node name="PrefabServerSpawner" type="PrefabServerSpawner" parent="Spawners"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 59.0436, 9.2914, -85.9558)
+
+[node name="PrefabServerNPC32" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC37" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 10
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC40" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 20
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC43" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 100
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC44" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 500
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC45" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 1000
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC46" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 5000
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC47" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 25000
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="PrefabServerNPC48" parent="Spawners/PrefabServerSpawner" instance=ExtResource("56_bakn2")]
+initialXp = 75000
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
 [node name="NPCs" type="Node3D" parent="."]
 
 [node name="PrefabServerNPC" parent="NPCs" instance=ExtResource("56_bakn2")]

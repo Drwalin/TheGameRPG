@@ -6,6 +6,7 @@
 #include "../GodotGlm.hpp"
 
 #include "PrefabServerBase.hpp"
+#include "PrefabServerSpawner.hpp"
 
 namespace editor
 {
@@ -16,6 +17,9 @@ void PrefabServerBase::_bind_methods() {}
 
 void PrefabServerBase::ClearChildren()
 {
+	if (dynamic_cast<PrefabServerSpawner *>(this) != nullptr) {
+		return;
+	}
 	while (get_child_count() > 0) {
 		auto child = get_child(0);
 		remove_child(child);

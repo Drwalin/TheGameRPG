@@ -5,6 +5,7 @@
 #include <icon7/Debug.hpp>
 
 #include "../../include/CollisionWorld.hpp"
+#include "../../include/Realm.hpp"
 #include "../../include/GlmBullet.hpp"
 
 #if not __unix__
@@ -127,9 +128,11 @@ size_t CollisionWorld::InternalTestConvexShapeForEntities(
 						return 0;
 					}
 				}
-				hasHit = true;
-				objs->push_back(id);
-				count++;
+				if (cw->realm->Entity(id).is_alive()) {
+					hasHit = true;
+					objs->push_back(id);
+					count++;
+				}
 			}
 			return 0.0;
 		}

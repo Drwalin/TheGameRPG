@@ -62,3 +62,20 @@ struct ComponentAITick {
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentAITick, MV(aiTick));
 };
+
+struct ComponentSpawner {
+	int64_t maxAmount = 10;
+	int64_t spawnCooldown = 3000;
+	float spawnRadius = 32.0f;
+	float radiusToCheckAmountEntities = 128.0f;
+	int64_t lastSpawnedTimestamp = 0;
+	std::vector<uint8_t> prefabsData;
+	std::vector<uint32_t> prefabsOffset;
+
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	DEFAULT_CONSTRUCTORS_AND_MOVE(
+		ComponentSpawner,
+		{MV(maxAmount) MV(spawnCooldown) MV(spawnRadius)
+			 MV(radiusToCheckAmountEntities) MV(lastSpawnedTimestamp)
+				 MV(prefabsData) MV(prefabsOffset)});
+};

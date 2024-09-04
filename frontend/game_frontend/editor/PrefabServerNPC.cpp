@@ -88,15 +88,15 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentCharacterSheet_Ranges{},
 									   writer);
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   ComponentCharacterSheet_Health{},
-									   writer);
+	reg::Registry::SerializePersistent(
+		GameClientFrontend::singleton->realm,
+		ComponentCharacterSheet_Health(initialMaxHp, initialHp), writer);
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentCharacterSheet_HealthRegen{},
 									   writer);
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   ComponentCharacterSheet_LevelXP{},
-									   writer);
+	reg::Registry::SerializePersistent(
+		GameClientFrontend::singleton->realm,
+		ComponentCharacterSheet_LevelXP{0, initialXp}, writer);
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentCharacterSheet_Strength{},
 									   writer);
@@ -124,6 +124,13 @@ void PrefabServerNPC::_bind_methods()
 					  "movementSpeed");
 	REGISTER_PROPERTY(PrefabServerNPC, stepHeight, Variant::Type::FLOAT,
 					  "stepHeight");
+
+	REGISTER_PROPERTY(PrefabServerNPC, initialXp, Variant::Type::INT,
+					  "initialXp");
+	REGISTER_PROPERTY(PrefabServerNPC, initialMaxHp, Variant::Type::INT,
+					  "initialMaxHp");
+	REGISTER_PROPERTY(PrefabServerNPC, initialHp, Variant::Type::INT,
+					  "initialHp");
 }
 
 void PrefabServerNPC::_ready()
