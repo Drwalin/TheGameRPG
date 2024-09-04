@@ -112,10 +112,10 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 					ls.oldState.pos = data->nextRealmPosition;
 					ls.oldState.onGround = false;
 
-					entity.set(ls);
+					entity.set<ComponentLastAuthoritativeMovementState>(ls);
 
 					if (entity.has<ComponentMovementState>()) {
-						entity.set(ls.oldState);
+						entity.set<ComponentMovementState>(ls.oldState);
 					}
 				}
 			}

@@ -118,11 +118,9 @@ godot::Transform3D ToGodot(ComponentStaticTransform t)
 
 ComponentStaticTransform ToGame(godot::Transform3D t)
 {
-	ComponentStaticTransform ret;
-	ret.pos = ToGlm(t.get_origin());
-	ret.rot = ToGlm(t.get_basis().get_rotation_quaternion());
-	ret.scale = ToGlm(t.get_basis().get_scale());
-	return ret;
+	return {ToGlm(t.get_origin()),
+			ToGlm(t.get_basis().get_rotation_quaternion()),
+			ToGlm(t.get_basis().get_scale())};
 }
 
 } // namespace editor

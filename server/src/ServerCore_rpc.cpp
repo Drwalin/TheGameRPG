@@ -43,16 +43,23 @@ void ServerCore::UpdatePlayer(
 			// TODO: verify movement state
 
 			auto s = entity.get<ComponentMovementState>();
-			if (s && glm::length(s->pos - state.oldState.pos) < 5) {
-				realm->currentlyUpdatingPlayerPeerEntityMovement = true;
-				entity.set<ComponentLastAuthoritativeMovementState>(state);
-				entity.set<ComponentMovementState>(state.oldState);
-				realm->currentlyUpdatingPlayerPeerEntityMovement = false;
+			if (s) {
+				if (glm::length(s->pos - state.oldState.pos) < 5) {
+					realm->currentlyUpdatingPlayerPeerEntityMovement = true;
+					entity.set<ComponentLastAuthoritativeMovementState>(state);
+					entity.set<ComponentMovementState>(state.oldState);
+					realm->currentlyUpdatingPlayerPeerEntityMovement = false;
+				} else {
+					ComponentLastAuthoritativeMovementState correct;
+					correct.oldState = *s;
+					entity.set<ComponentLastAuthoritativeMovementState>({*s});
+					ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(),
+																peer);
+				}
 			} else {
-				ComponentLastAuthoritativeMovementState correct;
-				correct.oldState = *s;
-				entity.set(correct);
-				ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(), peer);
+				LOG_FATAL(
+					"Player entity %lu does not have ComponentMovementState",
+					data->entityId);
 			}
 		}
 	}
@@ -102,10 +109,13 @@ void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 									ls.oldState.pos = data->nextRealmPosition;
 									ls.oldState.onGround = false;
 
-									entity.set(ls);
+									entity.set<
+										ComponentLastAuthoritativeMovementState>(
+										ls);
 
 									if (entity.has<ComponentMovementState>()) {
-										entity.set(ls.oldState);
+										entity.set<ComponentMovementState>(
+											ls.oldState);
 									}
 								}
 

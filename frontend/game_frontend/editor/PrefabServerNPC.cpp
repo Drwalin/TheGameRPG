@@ -70,16 +70,12 @@ void PrefabServerNPC::Serialize(icon7::ByteWriter &writer)
 			graphicPath = graphicPath.replace(0, RES_PREFIX.size(), "");
 		}
 	}
-	ComponentModelName modelName;
-	modelName.modelName = graphicPath;
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   modelName, writer);
+									   ComponentModelName{graphicPath}, writer);
 
-	ComponentName name;
-	name.name = nameNPC.utf8().ptr();
-	;
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   name, writer);
+									   ComponentName{nameNPC.utf8().ptr()},
+									   writer);
 
 	std::string onAiTick = aiTickName.utf8().ptr();
 	named_callbacks::registry_entries::AiBehaviorTick aiTickEntry{

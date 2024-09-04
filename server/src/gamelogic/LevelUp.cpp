@@ -18,19 +18,19 @@ void LevelUp(flecs::entity entity, ComponentCharacterSheet_LevelXP lvl,
 			switch ((lvl.level - 1) % 4) {
 			case 0:
 				hp.maxHP += 2;
-				entity.set(hp);
+				entity.set<ComponentCharacterSheet_Health>(hp);
 				break;
 			case 1:
 				str.strength += 1;
-				entity.set(str);
+				entity.set<ComponentCharacterSheet_Strength>(str);
 				break;
 			case 2:
 				ap.armorPoints += 1;
-				entity.set(ap);
+				entity.set<ComponentCharacterSheet_Protection>(ap);
 				break;
 			case 3:
 				hp.maxHP += 2;
-				entity.set(hp);
+				entity.set<ComponentCharacterSheet_Health>(hp);
 				break;
 			}
 			update = true;
@@ -39,7 +39,7 @@ void LevelUp(flecs::entity entity, ComponentCharacterSheet_LevelXP lvl,
 		}
 	}
 	if (update) {
-		entity.set(lvl);
+		entity.set<ComponentCharacterSheet_LevelXP>(lvl);
 	}
 }
 } // namespace GameLogic

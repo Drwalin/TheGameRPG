@@ -287,21 +287,16 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 			}
 		}
 
-		ComponentStaticTransform transform;
-		transform.rot = glm::quat(1, 0, 0, 0);
-		transform.pos = glm::vec3(0, 0, 0);
-		transform.scale = glm::vec3(1, 1, 1);
-		ComponentModelName model;
-		model.modelName = graphicPath;
-		ComponentStaticCollisionShapeName collision;
-		collision.shapeName = collisionPath;
-
+		reg::Registry::SerializePersistent(
+			GameClientFrontend::singleton->realm,
+			ComponentStaticTransform{{0, 0, 0}, {1, 0, 0, 0}, {1, 1, 1}},
+			writer);
 		reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-										   transform, writer);
-		reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-										   model, writer);
-		reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-										   collision, writer);
+										   ComponentModelName{graphicPath},
+										   writer);
+		reg::Registry::SerializePersistent(
+			GameClientFrontend::singleton->realm,
+			ComponentStaticCollisionShapeName{collisionPath}, writer);
 		writer.op("");
 	}
 }

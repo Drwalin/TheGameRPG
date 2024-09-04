@@ -144,13 +144,8 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 						  glm::vec4(0, 0, params.maxMovementSpeedHorizontal, 0);
 			state.vel = {V.x, V.y, V.z};
 		}
-
-		lastState.oldState = state;
-		entity.set<ComponentLastAuthoritativeMovementState>(lastState);
-	} else {
-		lastState.oldState = state;
-		entity.set<ComponentLastAuthoritativeMovementState>(lastState);
 	}
+	entity.set<ComponentLastAuthoritativeMovementState>({lastState});
 }
 
 extern "C" void

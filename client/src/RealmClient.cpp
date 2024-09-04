@@ -78,10 +78,8 @@ void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 	ComponentMovementState state;
 	ExecuteMovementUpdate(localId, &state);
 	flecs::entity entity = Entity(localId);
-	ComponentLastAuthoritativeMovementState s;
-	s.oldState = state;
 	entity.set<ComponentMovementState>(state);
-	entity.set<ComponentLastAuthoritativeMovementState>(s);
+	entity.set<ComponentLastAuthoritativeMovementState>({state});
 }
 
 void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
@@ -144,10 +142,8 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				ComponentMovementState next = states[id + 1];
 
 				{
-					ComponentLastAuthoritativeMovementState p;
-					p.oldState = prev;
 					EntitySystems::UpdateMovement(this, entity, *shape,
-												  *currentState, p,
+												  *currentState, {prev},
 												  *movementParams);
 				}
 

@@ -77,8 +77,8 @@ public: // rpc callbacks
 						  int64_t animationStartTick) = 0;
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
-						int64_t timeStartPlaying,
-						uint64_t attachToEntityId, int32_t ttlMs) = 0;
+						int64_t timeStartPlaying, uint64_t attachToEntityId,
+						int32_t ttlMs) = 0;
 
 public: // game output api
 	// may be called multiple times per single entity
