@@ -46,6 +46,11 @@ struct ComponentMovementState {
 struct ComponentLastAuthoritativeMovementState {
 	ComponentMovementState oldState;
 
+	ComponentLastAuthoritativeMovementState(ComponentMovementState state)
+		: oldState(state)
+	{
+	}
+
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentLastAuthoritativeMovementState,
 								  MV(oldState));
@@ -53,6 +58,8 @@ struct ComponentLastAuthoritativeMovementState {
 
 struct ComponentName {
 	std::string name;
+
+	ComponentName(std::string name) : name(name) {}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentName, MV(name));
@@ -71,6 +78,8 @@ struct ComponentMovementParameters {
 struct ComponentModelName {
 	std::string modelName;
 
+	ComponentModelName(std::string modelName) : modelName(modelName) {}
+
 	bool operator==(const ComponentModelName &o) const
 	{
 		return modelName == o.modelName;
@@ -85,6 +94,11 @@ struct ComponentStaticTransform {
 	glm::quat rot = {0, 0, 0, 1};
 	glm::vec3 scale = {1, 1, 1};
 
+	ComponentStaticTransform(glm::vec3 pos, glm::quat rot, glm::vec3 scale)
+		: pos(pos), rot(rot), scale(scale)
+	{
+	}
+
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticTransform,
 								  {MV(pos) MV(rot) MV(scale)});
@@ -92,6 +106,11 @@ struct ComponentStaticTransform {
 
 struct ComponentStaticCollisionShapeName {
 	std::string shapeName;
+
+	ComponentStaticCollisionShapeName(std::string shapeName)
+		: shapeName(shapeName)
+	{
+	}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticCollisionShapeName,

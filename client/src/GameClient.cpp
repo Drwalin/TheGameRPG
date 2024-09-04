@@ -294,7 +294,7 @@ void GameClient::SetRotation(glm::vec3 rotation)
 	if (oldState) {
 		auto state = *oldState;
 		state.rot = rotation;
-		player.set(state);
+		player.set<ComponentMovementState>(state);
 		needSendPlayerMovementInput = true;
 	} else {
 		LOG_TRACE("ERROR");
@@ -334,7 +334,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 
 		state.vel = vel;
 
-		player.set(state);
+		player.set<ComponentMovementState>(state);
 		needSendPlayerMovementInput = true;
 	}
 }
@@ -363,7 +363,7 @@ void GameClient::TryPerformJump()
 
 	state.vel = vel;
 
-	player.set(state);
+	player.set<ComponentMovementState>(state);
 	needSendPlayerMovementInput = true;
 }
 

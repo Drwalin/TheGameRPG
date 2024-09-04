@@ -29,18 +29,14 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 		}
 	}
 
-	ComponentStaticTransform transform = ToGame(get_global_transform());
-	ComponentModelName model;
-	model.modelName = graphicPath;
-	ComponentStaticCollisionShapeName collision;
-	collision.shapeName = collisionPath;
-
+	reg::Registry::SerializePersistent(
+		GameClientFrontend::singleton->realm,
+		ComponentStaticTransform{ToGame(get_global_transform())}, writer);
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   transform, writer);
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   model, writer);
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   collision, writer);
+									   ComponentModelName{graphicPath}, writer);
+	reg::Registry::SerializePersistent(
+		GameClientFrontend::singleton->realm,
+		ComponentStaticCollisionShapeName{collisionPath}, writer);
 }
 
 Transform3D PrefabServerStaticMesh_Base::GetMergingData(

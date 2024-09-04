@@ -73,7 +73,13 @@ void RealmServer::Attack(uint64_t instigatorId,
 				ComponentCharacterSheet_Health hp = *hp_;
 				if (hp.hp > 0) {
 					hp.hp -= dmg;
+
 					LOG_INFO("TODO: Play damage received animation and effect");
+					ClientRpcProxy::Broadcast_PlayFX(
+						this, {"fx/Blood.tscn"},
+						{targetPos, {1, 0, 0, 0}, {1, 1, 1}}, timer.currentTick,
+						0, 5000);
+
 					if (hp.hp <= 0) {
 						hp.hp = 0;
 
@@ -100,12 +106,14 @@ void RealmServer::Attack(uint64_t instigatorId,
 									auto ilvl = *ilvl_;
 
 									ilvl.xp += xp;
-									entityInstigator.set(ilvl);
+									entityInstigator
+										.set<ComponentCharacterSheet_LevelXP>(
+											ilvl);
 								}
 							}
 						}
 					}
-					entityTarget.set(hp);
+					entityTarget.set<ComponentCharacterSheet_Health>(hp);
 				}
 			}
 		}

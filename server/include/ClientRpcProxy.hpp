@@ -79,5 +79,6 @@ void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 int64_t animationStartTick);
 void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 					  ComponentStaticTransform transform,
-					  int64_t timeStartPlaying, uint64_t attachToEntityId, int32_t ttlMs);
+					  int64_t timeStartPlaying, uint64_t attachToEntityId,
+					  int32_t ttlMs);
 } // namespace ClientRpcProxy

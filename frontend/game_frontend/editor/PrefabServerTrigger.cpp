@@ -37,9 +37,9 @@ void PrefabServerTrigger::Serialize(icon7::ByteWriter &writer)
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   teleport, writer);
 
-	ComponentStaticTransform transform = ToGame(get_global_transform());
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   transform, writer);
+	reg::Registry::SerializePersistent(
+		GameClientFrontend::singleton->realm,
+		ComponentStaticTransform{ToGame(get_global_transform())}, writer);
 }
 
 void PrefabServerTrigger::_bind_methods()

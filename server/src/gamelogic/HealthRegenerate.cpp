@@ -20,7 +20,7 @@ void HealthRegenerate(RealmServer *realm, flecs::entity entity,
 		return;
 	}
 	if (count != 0) {
-		entity.set(hpReg);
+		entity.set<ComponentCharacterSheet_HealthRegen>(hpReg);
 	}
 	if (count > 0) {
 		int64_t amount = count * hpReg.amount;
@@ -29,7 +29,7 @@ void HealthRegenerate(RealmServer *realm, flecs::entity entity,
 		} else {
 			hp.hp += amount;
 		}
-		entity.set(hp);
+		entity.set<ComponentCharacterSheet_Health>(hp);
 	}
 }
 } // namespace GameLogic
