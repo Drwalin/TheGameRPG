@@ -72,6 +72,8 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 
 	glm::vec3 eyes = state->pos;
 	eyes.y += shape->height;
+	glm::vec3 hitPos = {100000, 100000, 100000};
+	uint64_t targetHitId = 0;
 
 	for (uint64_t id : entities) {
 		if (id != entityId) {
@@ -83,21 +85,26 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 					target.get<ComponentMovementState>();
 				const ComponentShape *sh = target.get<ComponentShape>();
 
-				uint64_t targetHit = 0;
+				glm::vec3 _hitPos;
+				uint64_t _targetHitId = 0;
 				if (realm->collisionWorld.RayTestFirstHit(
 						eyes, s->pos + glm::vec3(0, sh->height * 0.5f, 0),
-						nullptr, nullptr, &targetHit, nullptr, nullptr,
+						&_hitPos, nullptr, &_targetHitId, nullptr, nullptr,
 						entityId)) {
-					if (targetHit == id) {
+					if (_targetHitId == id) {
 						if (found) {
 							if (glm::length2(state->pos - targetPos) >
 								glm::length2(state->pos - s->pos)) {
 								found = id;
 								targetPos = s->pos;
+								targetHitId = _targetHitId;
+								hitPos = _hitPos;
 							}
 						} else {
 							found = id;
 							targetPos = s->pos;
+							targetHitId = _targetHitId;
+							hitPos = _hitPos;
 						}
 					}
 				}
@@ -107,6 +114,18 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 
 	if (found != 0) {
 		MoveTo(state, params, targetPos, acceptableDistance);
+
+		if (rand() % 10 == 0) {
+			if (glm::length2(eyes - hitPos) < 10.0f) {
+				ComponentLastAuthoritativeMovementState ls{*state};
+				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 0);
+				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 1);
+				LOG_INFO("Attack %lu->%lu", entityId, targetHitId);
+			} else {
+				LOG_INFO("Miss %lu->%lu     dist: %.2f", entityId, targetHitId,
+						 glm::length(eyes - hitPos));
+			}
+		}
 		return true;
 	}
 	return false;
@@ -130,10 +149,10 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 								  lastState, *movementParams);
 
 	if (state.onGround) {
-		// TODO: Replace 5.0f and 60.0f with apropriate values from some
+		// TODO: Replace 3.0f and 15.0f with apropriate values from some
 		// component with parameters
 		if (false == TryFollowingPlayer(realm, entityId, &state, shape,
-										movementParams, 5.0f, 15.0f)) {
+										movementParams, 3.0f, 15.0f)) {
 			state.rot.y += 0.15;
 			float angle = state.rot.y;
 			glm::quat rot = glm::angleAxis(angle, glm::vec3(0, 1, 0));
