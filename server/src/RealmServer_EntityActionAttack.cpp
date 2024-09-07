@@ -1,3 +1,11 @@
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/ext/quaternion_trigonometric.hpp>
+#include <glm/matrix.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
 #include <icon7/Debug.hpp>
@@ -20,6 +28,8 @@ void RealmServer::Attack(uint64_t instigatorId,
 	}
 
 	int32_t dmg = attackId;
+
+	bool inRange = false;
 
 	if (instigatorId) {
 		flecs::entity entityInstigator = Entity(instigatorId);
@@ -51,10 +61,23 @@ void RealmServer::Attack(uint64_t instigatorId,
 				auto str = *str_;
 				dmg += str.strength;
 			}
+
+			if (auto range =
+					entityInstigator.get<ComponentCharacterSheet_Ranges>()) {
+				glm::vec3 eyes = state.oldState.pos;
+				if (auto shape = entityInstigator.get<ComponentShape>()) {
+					eyes.y += shape->height;
+				}
+
+				if (glm::length2(eyes - targetPos) <=
+					range->attackRange * range->attackRange) {
+					inRange = true;
+				}
+			}
 		}
 	}
 
-	if (targetId) {
+	if (targetId && inRange) {
 		flecs::entity entityTarget = Entity(targetId);
 		if (entityTarget.is_alive()) {
 
