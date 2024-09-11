@@ -114,10 +114,8 @@ void Realm::RegisterObservers()
 
 					if (currentState.onGround == false) {
 						dt = realm->minMovementDeltaTicks;
-						;
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
 						dt = realm->minMovementDeltaTicks;
-						;
 					}
 					EntityEvent event;
 					event.dueTick = realm->timer.currentTick + dt;

@@ -118,3 +118,34 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 		peer->userPointer = nullptr;
 	}
 }
+
+void ServerCore::RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
+	icon7::Peer *peer)
+{
+	if (peer == nullptr) {
+		LOG_FATAL("peer == nullptr");
+		return;
+	}
+	class DisconnectDeadPlayer : public icon7::commands::ExecuteOnPeer
+	{
+	public:
+		ServerCore *serverCore = nullptr;
+		DisconnectDeadPlayer() = default;
+		~DisconnectDeadPlayer() = default;
+		virtual void Execute() override
+		{
+			PeerData *data = ((PeerData *)(peer->userPointer));
+			if (data) {
+				serverCore->usernameToPeer.erase(data->userName);
+				data->userName = "";
+				data->storedEntityData.clear();
+			} else {
+				LOG_FATAL("peer data is nullptr");
+			}
+		}
+	};
+	auto com = icon7::CommandHandle<DisconnectDeadPlayer>::Create();
+	com->peer = peer->shared_from_this();
+	com->serverCore = this;
+	host->GetCommandExecutionQueue()->EnqueueCommand(std::move(com));
+}

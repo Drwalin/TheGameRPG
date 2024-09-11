@@ -92,9 +92,14 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 
 void RealmServer::DisconnectPeer(icon7::Peer *peer)
 {
+	if (peer == nullptr) {
+		LOG_ERROR("peer == nullptr");
+		return;
+	}
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data == nullptr) {
 		LOG_ERROR("peer->userPointer is nullptr when shouldn't");
+		return;
 	}
 	auto pw = peer->shared_from_this();
 	auto it = peers.find(pw);
@@ -118,6 +123,9 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 						entity.set<ComponentMovementState>(ls.oldState);
 					}
 				}
+			}
+			if (auto cpcp = entity.get_mut<ComponentPlayerConnectionPeer>()) {
+				cpcp->peer = nullptr;
 			}
 		}
 
