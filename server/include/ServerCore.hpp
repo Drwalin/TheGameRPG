@@ -48,6 +48,8 @@ public:
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
+	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::Peer *peer);
+
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
 	static void _OnPeerDisconnect(icon7::Peer *peer);

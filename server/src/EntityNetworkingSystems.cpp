@@ -1,4 +1,5 @@
 #include <icon7/Peer.hpp>
+#include <icon7/Debug.hpp>
 
 #include "../include/RealmServer.hpp"
 
@@ -31,7 +32,11 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						const ComponentPlayerConnectionPeer &peer,
 						const ComponentName &entityName)
 {
-	ClientRpcProxy::Broadcast_DeleteEntity(realm, entity.id());
+	if (peer.peer.get() == nullptr) {
+		LOG_ERROR("peer == nullptr");
+		return;
+	}
+
 	// TODO: check if this realm->peers.erase() is required
 	realm->peers.erase(peer.peer);
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));

@@ -58,7 +58,6 @@ public:
 	TickTimer timer;
 	int64_t minMovementDeltaTicks = 50;
 	int64_t maxMovementDeltaTicks = 200;
-	int64_t ticksBeforeIgnoringInputMovement = 500;
 
 	float gravity = -9.81f;
 

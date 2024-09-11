@@ -4,6 +4,7 @@
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
+#include "../include/ServerCore.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -11,6 +12,10 @@
 	RegisterObserver(                                                          \
 		flecs::OnSet, [this](flecs::entity entity, const CLASS &component,     \
 							 const ComponentPlayerConnectionPeer &peer) {      \
+			if (peer.peer.get() == nullptr) {                                  \
+				LOG_ERROR("peer == nullptr");                                  \
+				return;                                                        \
+			}                                                                  \
 			icon7::ByteWriter writer(256);                                     \
 			ClientRpcProxy::GenericComponentUpdate_Start(this, &writer);       \
 			ClientRpcProxy::GenericComponentUpdate_Update<CLASS>(              \
@@ -56,11 +61,29 @@ void RealmServer::RegisterObservers_CharacterSheet()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
 					 const ComponentCharacterSheet_Health &hp,
-					 const ComponentPlayerConnectionPeer &peer) {
+					 const ComponentPlayerConnectionPeer peer) {
 			if (hp.hp <= 0) {
 				ClientRpcProxy::Broadcast_PlayDeathAndDestroyEntity(
 					this, entity.id());
-				LOG_INFO("Send death and play animation for player");
+				LOG_INFO(
+					"TODO: Send death and play animation for player owner");
+
+				if (peer.peer.get() == nullptr) {
+					LOG_FATAL("peer == nullptr");
+				} else {
+					PeerData *data = ((PeerData *)(peer.peer->userPointer));
+					if (data == nullptr) {
+						LOG_ERROR("peer->userPointer is nullptr");
+					} else {
+						peers.erase(peer.peer);
+						data->realm.reset();
+						data->storedEntityData.clear();
+					}
+				}
+
+				serverCore->RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
+					peer.peer.get());
+
 				entity.destruct();
 			}
 		});
