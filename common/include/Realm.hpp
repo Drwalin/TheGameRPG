@@ -54,6 +54,8 @@ public:
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) = 0;
 
+	template <typename FF> void TrueDeferWhenNeeded(FF &&func);
+
 public:
 	TickTimer timer;
 	int64_t minMovementDeltaTicks = 50;
@@ -125,3 +127,22 @@ public: // accessors
 		return flecs::entity(ecs.get_world(), entity).is_alive();
 	}
 };
+
+template <typename FF> void Realm::TrueDeferWhenNeeded(FF &&func)
+{
+	if (ecs.is_deferred()) {
+		struct CtxData {
+			FF func;
+		};
+		CtxData *ctx = new CtxData{std::move(func)};
+		ecs.run_post_frame(
+			+[](ecs_world_t *world, void *_ctx) {
+				CtxData *ctx = (CtxData *)_ctx;
+				ctx->func();
+				delete ctx;
+			},
+			ctx);
+	} else {
+		func();
+	}
+}
