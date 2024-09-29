@@ -12,6 +12,7 @@
 
 #include "GodotGlm.hpp"
 
+#include "AsyncLoadedPlaceholder.hpp"
 #include "EntityPrefabScript.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -73,9 +74,15 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		LOG_ERROR("Entity %lu has no movement state", localEntityId);
 	}
 
-	if (IsPlayer() && modelNode3D) {
-		if (modelNode3D->is_visible()) {
-			modelNode3D->hide();
+	if (modelNode3D) {
+		if (IsPlayer()) {
+			if (modelNode3D->is_visible()) {
+				modelNode3D->hide();
+			}
+		} else {
+			if (!modelNode3D->is_visible()) {
+				modelNode3D->show();
+			}
 		}
 	}
 }
@@ -120,30 +127,10 @@ void EntityPrefabScript::SetModel(const ComponentModelName &model)
 	if (model.modelName != "") {
 		std::string path = std::string("res://assets/") + model.modelName;
 
-		ResourceLoader *rl = ResourceLoader::get_singleton();
-		Ref<PackedScene> scene = rl->load(path.c_str(), "PackedScene");
-		if (scene.is_null() == false && scene.is_valid()) {
-			Node *node = scene->instantiate();
-			nodeContainingModel->add_child(node);
-
-			if ((modelNode3D = Object::cast_to<Node3D>(node))) {
-				if (IsPlayer()) {
-					// TODO: Replace hiding players own model with something
-					// better (to hide only animated mesh?)
-					modelNode3D->hide();
-				}
-
-			} else {
-				LOG_WARN("Failed co convert scene '%s' to Node3D",
-						 path.c_str());
-			}
-
-			animationTree =
-				(AnimationTree *)(node->find_child("AnimationTree"));
-
-		} else {
-			LOG_INFO("Failed to load scene: `%s`", model.modelName.c_str());
-		}
+		AsyncLoadedPlaceholder3D *loader =
+			AsyncLoadedPlaceholder3D::CreateNew();
+		loader->Init(path, &modelNode3D, nullptr, &animationTree);
+		nodeContainingModel->add_child(loader);
 	}
 }
 

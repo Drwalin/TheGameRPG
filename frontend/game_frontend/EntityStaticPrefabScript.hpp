@@ -32,12 +32,8 @@ public: // Godot bound functions
 	EntityStaticPrefabScript();
 	static void _bind_methods();
 
-	// void _enter_tree() override;
-	// void _exit_tree() override;
 	void _ready() override;
 	void _process(double dt) override;
-	// void _my_internal_process(double dt);
-	// void _physics_process(double dt) override;
 
 	void Init(uint64_t localEntityId, const ComponentModelName &model,
 			  ComponentStaticTransform transform);
