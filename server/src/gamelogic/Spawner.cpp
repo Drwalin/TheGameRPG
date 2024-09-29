@@ -6,6 +6,10 @@
 #include "../include/RealmServer.hpp"
 #include "../include/GameLogic.hpp"
 
+#ifndef M_PI
+#define M_PI 3.141592653589793238462643
+#endif
+
 namespace GameLogic
 {
 void Spawner(RealmServer *realm, flecs::entity spawnerEntity,

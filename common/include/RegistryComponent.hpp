@@ -16,8 +16,11 @@ namespace reg
 class ComponentConstructorBase
 {
 public:
-	ComponentConstructorBase(std::string name, std::string fullName)
-		: name(name), fullName(fullName)
+	ComponentConstructorBase(std::string name, std::string fullName,
+							 std::string c_fileName, int line)
+		: name(name), fullName(fullName),
+		  FILE_NAME_LINE(c_fileName + ":" + std::to_string(line)),
+		  FILE_NAME(c_fileName), LINE(line)
 	{
 	}
 	virtual ~ComponentConstructorBase() {}
@@ -41,6 +44,10 @@ public:
 
 	const std::string name = "";
 	const std::string fullName = "";
+
+	const std::string FILE_NAME_LINE = "";
+	const std::string FILE_NAME = "";
+	const int LINE = -1;
 };
 
 class Registry
@@ -51,7 +58,7 @@ class Registry
 public:
 	static Registry &Singleton();
 
-	template <typename T> void RegisterComponent(std::string name);
+	template <typename T> void RegisterComponent(const std::string name);
 
 	template <typename T>
 	static void SerializePersistent(class Realm *realm, const T &component,

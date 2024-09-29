@@ -8,13 +8,6 @@
 
 #include "../include/EntityGameComponents.hpp"
 
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentOnUse, "TCBONU");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentSingleDoorTransformStates, "SDST");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTeleport, "TELEPORT");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentTrigger, "TRIGGER");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentAITick, "AITICK");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentSpawner, "CSPAWNER");
-
 int RegisterEntityComponents(flecs::world &ecs);
 int RegisterEntityComponentsServer(flecs::world &ecs);
 
@@ -22,12 +15,14 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 {
 	RegisterEntityComponents(ecs);
 	RegisterEntityComponentsServer(ecs);
-	ecs.component<ComponentSpawner>();
-	ecs.component<ComponentOnUse>();
-	ecs.component<ComponentSingleDoorTransformStates>();
-	ecs.component<ComponentTeleport>();
-	ecs.component<ComponentTrigger>();
-	ecs.component<ComponentAITick>();
+
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentSpawner, "CSPAWNER");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentOnUse, "TCBONU");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentSingleDoorTransformStates,
+									 "SDST");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentTeleport, "TELEPORT");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentTrigger, "TRIGGER");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentAITick, "AITICK");
 
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
 		->callbackDeserializePersistent =

@@ -2,31 +2,22 @@
 
 #include "../include/ComponentCharacterSheet.hpp"
 
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_Ranges, "CS_RANGE");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_Health, "CS_HP");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_HealthRegen,
-								   "CS_HPREGEN");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_LevelXP, "CS_XP");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_Strength, "CS_STR");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_AttackCooldown,
-								   "CS_ATACK");
-
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentCharacterSheet_Protection, "CS_AP");
-
 int RegisterEntityComponentsCharacterSheet(flecs::world &ecs)
 {
-	ecs.component<ComponentCharacterSheet_Ranges>();
-	ecs.component<ComponentCharacterSheet_Health>();
-	ecs.component<ComponentCharacterSheet_HealthRegen>();
-	ecs.component<ComponentCharacterSheet_LevelXP>();
-	ecs.component<ComponentCharacterSheet_Strength>();
-	ecs.component<ComponentCharacterSheet_AttackCooldown>();
-	ecs.component<ComponentCharacterSheet_Protection>();
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_Ranges,
+									 "CS_RANGE");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_Health,
+									 "CS_HP");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_HealthRegen,
+									 "CS_HPREGEN");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_LevelXP,
+									 "CS_XP");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_Strength,
+									 "CS_STR");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(
+		ecs, ComponentCharacterSheet_AttackCooldown, "CS_ATACK");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCharacterSheet_Protection,
+									 "CS_AP");
 
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
 		->callbackDeserializePersistent =
