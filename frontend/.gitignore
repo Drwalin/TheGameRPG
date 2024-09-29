@@ -3,3 +3,4 @@
 *.dll
 *.dylib
 override.cfg
+export_presets.cfg

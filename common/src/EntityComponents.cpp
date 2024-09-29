@@ -4,16 +4,6 @@
 
 #include "../include/EntityComponents.hpp"
 
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentShape, "S");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentName, "N");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementParameters, "MV");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentModelName, "MN");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticTransform, "ST");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentStaticCollisionShapeName, "SCS");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentMovementState, "CP");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentLastAuthoritativeMovementState,
-								   "AP");
-
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);
 int RegisterEntityComponentsCharacterSheet(flecs::world &ecs);
@@ -25,14 +15,17 @@ int RegisterEntityComponents(flecs::world &ecs)
 	RegisterEntityComponentsCollisionWorld(ecs);
 	RegisterEntityComponentsInventory(ecs);
 	RegisterEntityComponentsCharacterSheet(ecs);
-	ecs.component<ComponentShape>();
-	ecs.component<ComponentName>();
-	ecs.component<ComponentMovementParameters>();
-	ecs.component<ComponentModelName>();
-	ecs.component<ComponentStaticTransform>();
-	ecs.component<ComponentStaticCollisionShapeName>();
-	ecs.component<ComponentMovementState>();
-	ecs.component<ComponentLastAuthoritativeMovementState>();
+
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentShape, "S");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentName, "N");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentMovementParameters, "MV");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentModelName, "MN");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentStaticTransform, "ST");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentStaticCollisionShapeName,
+									 "SCS");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentMovementState, "CP");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(
+		ecs, ComponentLastAuthoritativeMovementState, "AP");
 
 	reg::ComponentConstructor<ComponentMovementState>::singleton
 		->callbackDeserializePersistent = [](class Realm *realm,

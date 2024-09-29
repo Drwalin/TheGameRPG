@@ -17,11 +17,12 @@ namespace reg
 template <typename T>
 class ComponentConstructor : public ComponentConstructorBase
 {
-	static uint32_t __dummy;
+	// 	static uint32_t __dummy;
 
 public:
-	ComponentConstructor(std::string name, std::string fullName)
-		: ComponentConstructorBase(name, fullName)
+	ComponentConstructor(std::string name, std::string fullName,
+						 std::string c_fileName, int line)
+		: ComponentConstructorBase(name, fullName, c_fileName, line)
 	{
 		LOG_TRACE("Registering component: %s -> %s", fullName.c_str(),
 				  name.c_str());
@@ -121,9 +122,16 @@ public:
 
 public:
 	static ComponentConstructor<T> *singleton;
+
+public: // function pointer holders
+	static void (*__PTR_HOLDER_1__)(class Realm *, const T &,
+									icon7::ByteWriter &);
+	static void (*__PTR_HOLDER_2__)(class Realm *, const T &,
+									icon7::ByteWriter &);
 };
 
-template <typename T> extern void Registry::RegisterComponent(std::string name)
+template <typename T>
+extern void Registry::RegisterComponent(const std::string name)
 {
 	if (nameToComponent.count(name) != 0) {
 		LOG_FATAL("Component with name %s already exists", name.c_str());
@@ -150,40 +158,36 @@ extern void Registry::SerializeTemporal(class Realm *realm, const T &component,
 }
 
 template <typename T>
-ComponentConstructor<T> *ComponentConstructor<T>::singleton;
+ComponentConstructor<T> *ComponentConstructor<T>::singleton = nullptr;
+template <typename T>
+void (*ComponentConstructor<T>::__PTR_HOLDER_1__)(
+	class Realm *, const T &, icon7::ByteWriter &) = nullptr;
+template <typename T>
+void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
+	class Realm *, const T &, icon7::ByteWriter &) = nullptr;
 } // namespace reg
 
-#define GAME_REGISTER_ECS_COMPONENT_STATIC(COMPONENT, NAME)                    \
-	namespace reg                                                              \
+#define REGISTER_COMPONENT_FOR_ECS_WORLD(ECS, COMPONENT, NAME)                 \
 	{                                                                          \
-	template <>                                                                \
-	ComponentConstructor<COMPONENT>                                            \
-		*ComponentConstructor<COMPONENT>::singleton =                          \
-			new ComponentConstructor<COMPONENT>(NAME, #COMPONENT);             \
-	template <>                                                                \
-	uint32_t ComponentConstructor<COMPONENT>::__dummy =                        \
-		(Registry::Singleton().RegisterComponent<COMPONENT>(NAME), 0);         \
-	extern auto                                                                \
-		__##COMPONENT##_holder_of_serialize_deserialize(const COMPONENT &c,    \
-														icon7::ByteWriter &w)  \
-	{                                                                          \
-		LOG_FATAL("This function cannot ever be called");                      \
-		return &Registry::RegisterComponent<COMPONENT>;                        \
-	}                                                                          \
-	template <>                                                                \
-	void Registry::SerializePersistent<COMPONENT>(class Realm * realm,         \
-												  const COMPONENT &component,  \
-												  icon7::ByteWriter &writer)   \
-	{                                                                          \
-		ComponentConstructor<COMPONENT>::SerializePersistent(realm, component, \
-															 writer);          \
-	}                                                                          \
-	template <>                                                                \
-	void Registry::SerializeTemporal<COMPONENT>(class Realm * realm,           \
-												const COMPONENT &component,    \
-												icon7::ByteWriter &writer)     \
-	{                                                                          \
-		ComponentConstructor<COMPONENT>::SerializeTemporal(realm, component,   \
-														   writer);            \
-	}                                                                          \
+		ECS.component<COMPONENT>();                                            \
+		if (reg::ComponentConstructor<COMPONENT>::singleton != nullptr) {      \
+			if (reg::ComponentConstructor<COMPONENT>::singleton->FILE_NAME ==  \
+					__FILE__ &&                                                \
+				reg::ComponentConstructor<COMPONENT>::singleton->LINE ==       \
+					__LINE__) {                                                \
+			} else {                                                           \
+				LOG_FATAL("Component %s is already initiated elsewhere with "  \
+						  "name %s",                                           \
+						  #COMPONENT, std::string(NAME).c_str());              \
+			}                                                                  \
+		} else {                                                               \
+			reg::ComponentConstructor<COMPONENT>::singleton =                  \
+				new reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT,     \
+														 __FILE__, __LINE__);  \
+			reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME);     \
+			reg::ComponentConstructor<COMPONENT>::__PTR_HOLDER_1__ =           \
+				&reg::Registry::SerializePersistent;                           \
+			reg::ComponentConstructor<COMPONENT>::__PTR_HOLDER_2__ =           \
+				&reg::Registry::SerializeTemporal;                             \
+		}                                                                      \
 	}
