@@ -11,6 +11,7 @@
 
 #include "GodotGlm.hpp"
 
+#include "AsyncLoadedPlaceholder.hpp"
 #include "EntityStaticPrefabScript.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -56,23 +57,11 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 			"trying to initialize EntityStaticPrefabScript with entityId == 0");
 	}
 
-	ResourceLoader *rl = ResourceLoader::get_singleton();
-	Ref<Resource> resource =
-		rl->load((std::string("res://assets/") + model.modelName).c_str());
+	std::string path = std::string("res://assets/") + model.modelName;
 
-	if (resource.is_null() == false && resource.is_valid()) {
-		Ref<Mesh> mesh = resource;
-		Ref<PackedScene> packedScene = resource;
-		if (mesh.is_valid() && mesh.is_null() == false) {
-			MeshInstance3D *meshInstance = new MeshInstance3D();
-			meshInstance->set_mesh(mesh);
-			add_child(meshInstance);
-		}
-		if (packedScene.is_valid() && packedScene.is_null() == false) {
-			Node *node = packedScene->instantiate();
-			add_child(node);
-		}
-	}
+	AsyncLoadedPlaceholder3D *loader = AsyncLoadedPlaceholder3D::CreateNew();
+	loader->Init(path, nullptr, nullptr, nullptr);
+	add_child(loader);
 }
 
 void EntityStaticPrefabScript::SetTransform(

@@ -38,6 +38,8 @@ void GameClient::SpawnEntities(icon7::ByteReader *reader)
 
 		if (reader->is_valid()) {
 			SpawnEntity(serverId, state, name, model, shape, movementParams);
+		} else {
+			LOG_WARN("Reader became not valid.");
 		}
 	}
 	ServerRpcProxy::Ping(this, true);
@@ -183,10 +185,10 @@ void GameClient::SpawnEntity(
 	if (serverId == serverPlayerEntityId) {
 		localPlayerEntityId = localId;
 		OnSetPlayerId(localPlayerEntityId);
-		LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
+		// LOG_DEBUG("Spawn   player: [%lu>%lu]", serverId, localId);
 	} else {
-		LOG_DEBUG("Spawn   entity: [%lu>%lu]     %lu != %lu", serverId, localId,
-				  serverId, serverPlayerEntityId);
+		// LOG_DEBUG("Spawn   entity: [%lu>%lu]     %lu != %lu", serverId,
+		// 			 localId, serverId, serverPlayerEntityId);
 	}
 }
 

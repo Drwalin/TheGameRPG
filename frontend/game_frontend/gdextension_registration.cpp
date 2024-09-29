@@ -15,6 +15,7 @@
 #include "EntityPrefabScript.hpp"
 #include "EntityStaticPrefabScript.hpp"
 #include "NodeRemoverAfterTimer.hpp"
+#include "AsyncLoadedPlaceholder.hpp"
 
 int RegisterFrontendEntityComponents(flecs::world &ecs);
 
@@ -30,6 +31,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		RegisterFrontendEntityComponents(ecs);
 	}
 
+	godot::ClassDB::register_class<AsyncLoadedPlaceholder3D>();
 	godot::ClassDB::register_class<GameFrontend>();
 	godot::ClassDB::register_class<EntityPrefabScript>();
 	godot::ClassDB::register_class<EntityStaticPrefabScript>();
