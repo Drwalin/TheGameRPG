@@ -24,8 +24,6 @@
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/capsule_shape3d.hpp>
 
-#include <glm/glm.hpp>
-
 #include <icon7/Forward.hpp>
 
 #include "../../../common/include/EntityComponents.hpp"

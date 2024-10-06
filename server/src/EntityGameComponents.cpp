@@ -1,7 +1,9 @@
 #include "../../common/include/RegistryComponent.inl.hpp"
 #include "../../common/include/ComponentCharacterSheet.hpp"
-#include "../include/RealmServer.hpp"
 
+#include "../include/ComponentCallbackRegistry.hpp"
+
+#include "../include/RealmServer.hpp"
 #include "../include/callbacks/CallbackAiBehaviorTick.hpp"
 #include "../include/callbacks/CallbackOnTriggerEnterExit.hpp"
 #include "../include/callbacks/CallbackOnUse.hpp"
