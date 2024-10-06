@@ -2,10 +2,12 @@
 
 #include <vector>
 
-#include <glm/glm.hpp>
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+#include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
+
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
 #include <icon7/Debug.hpp>
 

@@ -3,7 +3,6 @@
 #include <string>
 #include <functional>
 
-#include <glm/glm.hpp>
 #include <flecs.h>
 
 #include "TickTimer.hpp"

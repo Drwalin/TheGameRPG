@@ -4,7 +4,9 @@
 #include <string>
 #include <shared_mutex>
 
-#include <glm/glm.hpp>
+#include "../../thirdparty/glm/glm/ext/vector_float2.hpp"
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/glm/glm/ext/vector_float4.hpp"
 
 class ConfigStorage
 {
