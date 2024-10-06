@@ -18,7 +18,7 @@
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/capsule_shape3d.hpp>
 
-#include <glm/glm.hpp>
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
