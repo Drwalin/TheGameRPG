@@ -1,7 +1,9 @@
 #pragma once
+
 #include <vector>
 
-#include <glm/glm.hpp>
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/glm/glm/ext/quaternion_float.hpp"
 #include <flecs.h>
 
 struct TerrainCollisionData {

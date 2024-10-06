@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-#include <glm/glm.hpp>
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
 #include <flecs.h>
 

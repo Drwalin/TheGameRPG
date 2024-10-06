@@ -1,8 +1,6 @@
 #include <icon7/Debug.hpp>
 
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
 
 #include "../../include/GlmBullet.hpp"
 

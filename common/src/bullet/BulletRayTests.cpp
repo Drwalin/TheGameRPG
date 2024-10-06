@@ -1,8 +1,7 @@
 #include <icon7/Debug.hpp>
 
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+#include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
 
 #include "../../include/GlmBullet.hpp"
 #include "../../include/Realm.hpp"
