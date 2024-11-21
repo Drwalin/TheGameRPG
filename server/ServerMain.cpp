@@ -11,9 +11,9 @@ int RegisterEntityGameComponents(flecs::world &ecs);
 
 int main(int argc, char **argv)
 {
+	LOG_INFO("Main thread started");
 	srand(time(NULL));
 	icon7::Initialize();
-	LOG_INFO("Main thread started");
 	{
 		flecs::world initializer;
 		RegisterEntityGameComponents(initializer);
