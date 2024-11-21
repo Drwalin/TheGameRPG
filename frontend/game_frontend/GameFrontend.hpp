@@ -12,8 +12,6 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/camera3d.hpp>
 
-#include <glm/glm.hpp>
-
 #include "GameClientFrontend.hpp"
 #include "godot_cpp/variant/dictionary.hpp"
 

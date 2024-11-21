@@ -6,6 +6,10 @@
 #include "../include/RealmServer.hpp"
 #include "../include/GameLogic.hpp"
 
+#ifndef M_PI
+#define M_PI 3.141592653589793238462643
+#endif
+
 namespace GameLogic
 {
 void Spawner(RealmServer *realm, flecs::entity spawnerEntity,
@@ -72,25 +76,38 @@ void Spawner(RealmServer *realm, flecs::entity spawnerEntity,
 			}
 		}
 
-		if (auto _ms =
-				spawnedEntity.get<ComponentLastAuthoritativeMovementState>()) {
-			auto ms = *_ms;
-			ms.oldState.pos = pos;
-			ms.oldState.onGround = false;
-			ms.oldState.timestamp = realm->timer.currentTick;
-			ms.oldState.rot.y += dist2pi(mt);
-			spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
-			spawnedEntity.set<ComponentMovementState>(ms.oldState);
-		} else if (auto _ts = spawnedEntity.get<ComponentStaticTransform>()) {
-			auto ts = *_ts;
-			ts.pos = pos;
-			ts.rot.y += dist2pi(mt);
-			spawnedEntity.set<ComponentStaticTransform>(ts);
-		} else {
-			LOG_INFO("Spawned entity from spawner does not have "
-					 "ComponentLastAuthoritativeMovementState nor "
-					 "ComponentStaticTransform.");
-		}
+		float yRot = dist2pi(mt);
+		realm->TrueDeferWhenNeeded([realm, pos, spawnedEntity, yRot]() {
+			if (auto _ms =
+					spawnedEntity
+						.get<ComponentLastAuthoritativeMovementState>()) {
+				auto ms = *_ms;
+				ms.oldState.pos = pos;
+				ms.oldState.onGround = false;
+				ms.oldState.timestamp = realm->timer.currentTick;
+				ms.oldState.rot.y += yRot;
+				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
+				spawnedEntity.set<ComponentMovementState>(ms.oldState);
+			} else if (auto _ms = spawnedEntity.get<ComponentMovementState>()) {
+				auto ms = *_ms;
+				ms.pos = pos;
+				ms.onGround = false;
+				ms.timestamp = realm->timer.currentTick;
+				ms.rot.y += yRot;
+				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
+				spawnedEntity.set<ComponentMovementState>(ms);
+			} else if (auto _ts =
+						   spawnedEntity.get<ComponentStaticTransform>()) {
+				auto ts = *_ts;
+				ts.pos = pos;
+				spawnedEntity.set<ComponentStaticTransform>(ts);
+			} else {
+				LOG_INFO("Spawned entity from spawner does not have "
+						 "ComponentLastAuthoritativeMovementState nor "
+						 "ComponentMovementState nor "
+						 "ComponentStaticTransform.");
+			}
+		});
 	}
 }
 } // namespace GameLogic

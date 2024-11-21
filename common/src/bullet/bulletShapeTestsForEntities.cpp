@@ -1,6 +1,9 @@
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBoxShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCylinderShape.h"
+
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
 #include <icon7/Debug.hpp>
 

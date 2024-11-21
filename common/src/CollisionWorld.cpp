@@ -1,8 +1,16 @@
 #include <icon7/Debug.hpp>
 
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
+#include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
+#include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBoxShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCylinderShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCapsuleShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btTriangleMesh.h"
 
 #include "../include/GlmBullet.hpp"
 #include "../include/EntityComponents.hpp"

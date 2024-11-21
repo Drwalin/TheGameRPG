@@ -1,8 +1,6 @@
-build
-release
-windows-release
-windows-debug
+build*
+release*
+windows*
 exports
-frontend/export_presets.cfg
 .cache
 tmp_build_currently_works
