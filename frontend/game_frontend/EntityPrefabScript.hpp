@@ -18,7 +18,7 @@
 #include <godot_cpp/classes/collision_shape3d.hpp>
 #include <godot_cpp/classes/capsule_shape3d.hpp>
 
-#include <glm/glm.hpp>
+#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
@@ -34,12 +34,9 @@ public: // Godot bound functions
 	~EntityPrefabScript();
 	static void _bind_methods();
 
-	// void _enter_tree() override;
-	// void _exit_tree() override;
 	void _ready() override;
 	void _process(double dt) override;
 	void _my_internal_process(double dt);
-	// void _physics_process(double dt) override;
 
 	void Init(uint64_t localEntityId);
 

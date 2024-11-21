@@ -1,22 +1,37 @@
 #include <fstream>
-#include <sstream>
 
 #include <icon7/Debug.hpp>
 
 #include "../include/CollisionLoader.hpp"
 
-void CollisionLoader::LoadOBJ(std::istream &stream)
+void CollisionLoader::LoadOBJ(const void *fileBuffer, size_t bytes)
 {
 	collisionData.indices.reserve(1000);
 	collisionData.vertices.reserve(1000);
 	collisionData.indices.clear();
 	collisionData.vertices.clear();
 	std::vector<uint32_t> ind;
+	ind.reserve(16);
 	char line[4096];
 	char word[1024];
 	glm::vec3 v;
-	while (!stream.eof() && stream.good()) {
-		stream.getline(line, 4095);
+
+	char const *begin = (const char *)fileBuffer;
+	char const *end = (const char *)fileBuffer + bytes;
+	char const *ptr = begin;
+
+	while (ptr + 2 < end) {
+		const char *endLine = (const char *)memchr(ptr + 1, '\n', end - ptr);
+
+		size_t count = endLine - ptr;
+		if (count > 4094) {
+			count = 4094;
+			LOG_FATAL("Line in OBJ file longer than maximum 4094 bytes");
+		}
+		memcpy(line, ptr, count);
+		line[count] = 0;
+		ptr = endLine;
+
 		char *lineOffset = line;
 		int off = 0;
 		sscanf(lineOffset, "%s%n", word, &off);
@@ -61,13 +76,14 @@ bool CollisionLoader::LoadOBJ(std::string fileName)
 		LOG_FATAL("Failed to open file: `%s`", fileName.c_str());
 		return false;
 	}
-	LoadOBJ(stream);
-	return true;
-}
 
-void CollisionLoader::LoadOBJ(const void *fileBuffer, size_t bytes)
-{
-	std::stringstream stream;
-	stream.write((const char *)fileBuffer, bytes);
-	LoadOBJ(stream);
+	stream.seekg(0, std::ios::end);
+	std::ifstream::pos_type fileSize = stream.tellg();
+	stream.seekg(0, std::ios::beg);
+
+	char *buffer = (char *)malloc(fileSize);
+	stream.read(buffer, fileSize);
+
+	LoadOBJ(buffer, fileSize);
+	return true;
 }

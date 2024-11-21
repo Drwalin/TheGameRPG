@@ -1,10 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext/quaternion_trigonometric.hpp>
-#include <glm/matrix.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/vector_angle.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include "../../thirdparty/glm/glm/gtx/vector_angle.hpp"
+#include "../../thirdparty/glm/glm/gtx/quaternion.hpp"
 
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>

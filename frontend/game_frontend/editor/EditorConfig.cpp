@@ -4,7 +4,6 @@
 #include "godot_cpp/classes/file_access.hpp"
 #include "godot_cpp/classes/resource_saver.hpp"
 
-#include <glm/geometric.hpp>
 #include <icon7/Debug.hpp>
 #include <icon7/ByteWriter.hpp>
 

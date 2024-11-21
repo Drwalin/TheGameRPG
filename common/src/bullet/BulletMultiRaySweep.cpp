@@ -1,7 +1,3 @@
-#include <bullet/LinearMath/btVector3.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletDynamics/Character/btKinematicCharacterController.h>
-
 #include "../../include/CollisionWorld.hpp"
 #include "../../include/EntityComponents.hpp"
 

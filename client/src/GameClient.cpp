@@ -1,10 +1,6 @@
 #include <chrono>
 #include <thread>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/mat3x3.hpp>
-#include <glm/gtx/quaternion.hpp>
-
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>

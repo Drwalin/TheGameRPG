@@ -2,13 +2,10 @@
 
 #include "../include/ComponentInventory.hpp"
 
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentInventory, "INV");
-GAME_REGISTER_ECS_COMPONENT_STATIC(ComponentEquippedInventory, "EQINV");
-
 int RegisterEntityComponentsInventory(flecs::world &ecs)
 {
-	ecs.component<ComponentInventory>();
-	ecs.component<ComponentEquippedInventory>();
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentInventory, "INV");
+	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentEquippedInventory, "EQINV");
 	return 0;
 }
 

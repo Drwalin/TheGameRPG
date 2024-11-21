@@ -1,6 +1,6 @@
-#include <glm/glm.hpp>
-#include <glm/ext/quaternion_float.hpp>
-#include <glm/ext/quaternion_common.hpp>
+#include "../../thirdparty/glm/glm/glm.hpp"
+#include "../../thirdparty/glm/glm/ext/quaternion_float.hpp"
+#include "../../thirdparty/glm/glm/ext/quaternion_common.hpp"
 
 #include <icon7/ByteBuffer.hpp>
 #include <icon7/ByteReader.hpp>
