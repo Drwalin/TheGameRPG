@@ -20,7 +20,7 @@ void CommandParser::InitializeCommands()
 							  serverCore->Destroy();
 						  });
 
-	RegisterCustomCommand({"help"}, "Shows help for commands",
+	RegisterCustomCommand({"help", "h", "?"}, "Shows help for commands",
 						  [this](const std::vector<std::string> &args) {
 							  std::string helpString;
 							  if (args.size() > 1) {
@@ -52,7 +52,8 @@ void CommandParser::InitializeCommands()
 		});
 
 	RegisterCustomCommand({"source", "run"},
-						  "Executes contents of given path\n"
+						  "Executes contents of given file as configuration"
+						  "file\n"
 						  "arguments:\n"
 						  "  - file path with script)",
 						  [this](const std::vector<std::string> &args) {
@@ -62,7 +63,7 @@ void CommandParser::InitializeCommands()
 
 	RegisterCustomCommand(
 		{"load_symbols", "dlopen", "dlsym"},
-		"Loads shared object and execute symbols given symbols\n"
+		"Loads shared object and execute given symbols\n"
 		"arguments:\n"
 		"  - shared object file path\n"
 		"  ... funtion symbols to execute",
