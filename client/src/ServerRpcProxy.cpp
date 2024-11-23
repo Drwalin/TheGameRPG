@@ -11,11 +11,11 @@
 
 namespace ServerRpcProxy
 {
-void Login(GameClient *gameClient, std::string username, std::string password)
+void Login(GameClient *gameClient, std::string username)
 {
 	gameClient->rpc->Send(gameClient->peer.get(),
 						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
-						  ServerRpcFunctionNames::Login, username, password);
+						  ServerRpcFunctionNames::Login, username);
 }
 
 void UpdatePlayer(GameClient *gameClient, const ComponentMovementState &state)

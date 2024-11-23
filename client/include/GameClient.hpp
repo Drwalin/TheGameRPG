@@ -19,7 +19,7 @@ public:
 	bool ConnectToServer(const std::string &ip, uint16_t port);
 	void DisconnectRealmPeer();
 
-	void Login(const std::string &username, const std::string &password);
+	void Login(const std::string &username);
 
 	virtual void RunOneEpoch();
 

@@ -42,7 +42,7 @@ GameFrontend::~GameFrontend()
 void GameFrontend::_bind_methods()
 {
 	METHOD_ARGS(GameFrontend, Connect, "ip", "port");
-	METHOD_ARGS(GameFrontend, Login, "username", "password");
+	METHOD_ARGS(GameFrontend, Login, "username");
 	METHOD_NO_ARGS(GameFrontend, Disconnect);
 
 	METHOD_NO_ARGS(GameFrontend, GetNodeToAddEntities);
@@ -110,9 +110,9 @@ void GameFrontend::Connect(const String &ip, int64_t port)
 	client->ConnectToServer(ip.utf8().ptr(), port);
 }
 
-void GameFrontend::Login(const String &username, const String &password)
+void GameFrontend::Login(const String &username)
 {
-	client->Login(username.utf8().ptr(), password.utf8().ptr());
+	client->Login(username.utf8().ptr());
 }
 
 void GameFrontend::Disconnect() { client->DisconnectRealmPeer(); }

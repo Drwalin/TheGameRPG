@@ -8,7 +8,7 @@ class GameClient;
 
 namespace ServerRpcProxy
 {
-void Login(GameClient *gameClient, std::string username, std::string password);
+void Login(GameClient *gameClient, std::string username);
 
 void UpdatePlayer(GameClient *gameClient, const ComponentMovementState &state);
 

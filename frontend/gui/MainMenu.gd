@@ -1,7 +1,6 @@
 extends Control;
 
 var username: String = "";
-var password: String = "";
 
 func _on_connect_to_server_pressed():
 	var address:String = $Address.text;
@@ -25,9 +24,8 @@ func _on_disconnect_pressed():
 
 func _OnLoginPressed():
 	username = $Username.text;
-	password = $Password.text;
 	if username != "":
-		gameFrontend.Login(username, password);
+		gameFrontend.Login(username);
 
 func _input(event)->void:
 	if event is InputEventKey:
