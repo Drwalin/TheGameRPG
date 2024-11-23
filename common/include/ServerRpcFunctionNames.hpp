@@ -4,7 +4,7 @@
 
 namespace ServerRpcFunctionNames
 {
-// bool Login(string, string)
+// bool Login(string userName)
 inline const std::string Login = "Login";
 
 // void UpdatePlayer(EntityLastAuthoritativeMovementState)

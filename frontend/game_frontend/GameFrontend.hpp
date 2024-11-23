@@ -38,7 +38,7 @@ public: // Godot bound functions
 	void InternalProcess();
 
 	void Connect(const String &ip, int64_t port);
-	void Login(const String &username, const String &password);
+	void Login(const String &username);
 	void Disconnect();
 
 	Node *GetNodeToAddEntities();

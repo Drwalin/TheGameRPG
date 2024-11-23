@@ -251,9 +251,9 @@ void GameClient::RemoveEntity(uint64_t serverId)
 	LOG_DEBUG("Despawn entity: [%lu>%lu]", serverId, localId);
 }
 
-void GameClient::Login(const std::string &username, const std::string &password)
+void GameClient::Login(const std::string &username)
 {
-	ServerRpcProxy::Login(this, username, password);
+	ServerRpcProxy::Login(this, username);
 }
 
 void GameClient::RequestSpawnOf(uint64_t serverId)

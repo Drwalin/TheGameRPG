@@ -68,25 +68,6 @@ offset_bottom = 377.0
 text = "Bilbo Baggins"
 placeholder_text = "login"
 
-[node name="LabelPassword" type="Label" parent="."]
-layout_mode = 0
-offset_left = 540.0
-offset_top = 400.0
-offset_right = 660.0
-offset_bottom = 423.0
-text = "Hasło:"
-
-[node name="Password" type="LineEdit" parent="."]
-layout_mode = 0
-offset_left = 395.0
-offset_top = 450.0
-offset_right = 768.0
-offset_bottom = 481.0
-placeholder_text = "password"
-clear_button_enabled = true
-selecting_enabled = false
-secret = true
-
 [node name="ButtonLogin" type="Button" parent="."]
 layout_mode = 0
 offset_left = 538.0
