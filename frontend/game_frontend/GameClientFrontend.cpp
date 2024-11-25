@@ -60,18 +60,13 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
-	for (int i = 0; i < 1000000 &&
-					frontend->entitiesContainer->get_children(true).size() > 0;
-		 ++i) {
-		auto c = frontend->entitiesContainer->get_children(true);
-		c[c.size() - 1].call("queue_free");
-	}
-	for (int i = 0; i < 1000000 &&
-					frontend->staticMapContainer->get_children(true).size() > 0;
-		 ++i) {
-		auto c = frontend->staticMapContainer->get_children(true);
-		c[c.size() - 1].call("queue_free");
-	}
+	auto Del = [](decltype(frontend->entitiesContainer->get_children(true)) c){
+		for (int i=0; i<c.size(); ++i) {
+			c[i].call("queue_free");
+		}
+	};
+	Del(frontend->entitiesContainer->get_children(true));
+	Del(frontend->staticMapContainer->get_children(true));
 }
 
 void GameClientFrontend::OnSetPlayerId(uint64_t localId)
