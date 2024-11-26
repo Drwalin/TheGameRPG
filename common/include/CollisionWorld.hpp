@@ -187,4 +187,6 @@ private:
 	class btCollisionWorld *collisionWorld;
 
 	class Realm *realm;
+	
+	int dynamicUpdateCounter = 0;
 };

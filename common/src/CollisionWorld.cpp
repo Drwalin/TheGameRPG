@@ -3,6 +3,7 @@
 #include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
 #include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h"
+#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
@@ -62,7 +63,8 @@ CollisionWorld::CollisionWorld(Realm *realm)
 	// TODO: Replace this code with some proper *.so compilation configuration
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
 	this->realm = realm;
-	broadphase = new btSimpleBroadphase();
+// 	broadphase = new btSimpleBroadphase();
+	broadphase = new btDbvtBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	collisionWorld =
@@ -155,6 +157,8 @@ void CollisionWorld::OnStaticCollisionShape(
 		collisionWorld->addCollisionObject(object,
 										   btBroadphaseProxy::StaticFilter);
 		collisionWorld->updateSingleAabb(object);
+		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
 
 		if (entity.has<ComponentBulletCollisionObject>()) {
 			ComponentBulletCollisionObject *obj =
@@ -189,6 +193,8 @@ void CollisionWorld::OnAddEntity(flecs::entity entity,
 	collisionWorld->addCollisionObject(object,
 									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
+		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
 	entity.set<ComponentBulletCollisionObject>({object});
 }
 
@@ -215,6 +221,10 @@ void CollisionWorld::UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
 	obj.object->setWorldTransform(
 		btTransform(btQuaternion::getIdentity(), ToBullet(pos)));
 	collisionWorld->updateSingleAabb(obj.object);
+	if (((++dynamicUpdateCounter) & 0x1F) == 13) {
+		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
+	}
 }
 
 void CollisionWorld::UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
@@ -234,6 +244,8 @@ void CollisionWorld::EntitySetTransform(
 		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 	obj.object->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
 	collisionWorld->updateSingleAabb(obj.object);
+		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
 }
 
 void CollisionWorld::GetObjectsInAABB(
@@ -260,6 +272,8 @@ void CollisionWorld::GetObjectsInAABB(
 
 void CollisionWorld::StartEpoch()
 {
+	((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(10);
+	((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(10);
 	/*
 	collisionWorld->setForceUpdateAllAabbs(true);
 	collisionWorld->updateAabbs();
