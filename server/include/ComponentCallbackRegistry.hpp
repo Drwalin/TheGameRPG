@@ -27,7 +27,8 @@ template <typename T> struct Registry {
 
 		if (it1 != registry.end() && it2 != registry.end()) {
 			if (it1->second != it2->second) {
-				LOG_FATAL("Trying to re-register existing named collback with "
+				sharedMutex.unlock();
+				LOG_FATAL("Trying to re-register existing named callback with "
 						  "differing "
 						  "full and short names. Named callback registry "
 						  "entries of `%s` "
@@ -40,6 +41,26 @@ template <typename T> struct Registry {
 						  it2->second->shortName.c_str());
 				return;
 			}
+		} else if (it1 != registry.end()) {
+			sharedMutex.unlock();
+			LOG_FATAL("Trying to register or re-register named callback with "
+					  "existing full name but with different short name."
+					  "Trying to register {'%s' , '%s'} but found "
+					  "(%p):{'%s' , '%s'}",
+					  fullName.c_str(), shortName.c_str(), it1->second,
+					  it1->second->fullName.c_str(),
+					  it1->second->shortName.c_str());
+			return;
+		} else if (it2 != registry.end()) {
+			sharedMutex.unlock();
+			LOG_FATAL("Trying to register or re-register named callback with "
+					  "existing short name but with different full name."
+					  "Trying to register {'%s' , '%s'} but found "
+					  "(%p):{'%s' , '%s'}",
+					  fullName.c_str(), shortName.c_str(), it2->second,
+					  it2->second->fullName.c_str(),
+					  it2->second->shortName.c_str());
+			return;
 		}
 
 		if (it1 != registry.end()) {
