@@ -22,7 +22,7 @@ public:
 	void DisconnectAllAndDestroy();
 
 	virtual void Init(const std::string &realmName) override;
-	std::string GetReadFileName();
+	std::string GetReadFileName(bool *isFromSavedState);
 	std::string GetWriteFileName();
 	bool LoadFromFile();
 	void SaveAllEntitiesToFiles();
