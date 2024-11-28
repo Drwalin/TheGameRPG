@@ -6,6 +6,8 @@ var enablePointShadows:bool = true;
 var camera:Camera3D;
 
 var SENSITIVITY:float = 0.01;
+var CAMERA_KEY_SENSITIVITY:float = 1.0;
+var SPEED_UP_CAMERA_KEY_SENSITIVITY_FACTOR:float = 3.0;
 
 var animationTree:AnimationTree;
 var isInHud:bool = false;
@@ -36,11 +38,29 @@ func _input(event)->void:
 			elif Input.is_action_pressed("attack_secondary"):
 				Input.action_release("attack_secondary");
 
-func _process(_delta: float)->void:
+func IsDownOrJustReleased(action: StringName)->bool:
+	return (Input.is_action_just_released(action) || Input.is_action_pressed(action)) && !Input.is_action_just_pressed(action);
+
+func _process(dt: float)->void:
 	InternalProcess();
 	
 	if IsInPlayerControl() == false:
 		return;
+	
+	var cameraDeltaRotation:Vector2 = Vector2(0,0);
+	if IsDownOrJustReleased("camera_left"):
+		cameraDeltaRotation.x -= 1;
+	if IsDownOrJustReleased("camera_right"):
+		cameraDeltaRotation.x += 1;
+	if IsDownOrJustReleased("camera_up"):
+		cameraDeltaRotation.y -= 1;
+	if IsDownOrJustReleased("camera_down"):
+		cameraDeltaRotation.y += 1;
+	cameraDeltaRotation *= dt;
+	cameraDeltaRotation *= CAMERA_KEY_SENSITIVITY;
+	if IsDownOrJustReleased("camera_key_rotation_boost"):
+		cameraDeltaRotation *= SPEED_UP_CAMERA_KEY_SENSITIVITY_FACTOR;
+	Rotate(-cameraDeltaRotation.y, -cameraDeltaRotation.x);
 	
 	var d:Vector3;
 	var rot:Vector3;
