@@ -48,8 +48,21 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 										 flecs::entity entity,
 										 icon7::ByteWriter &writer) const
 {
-	for (auto c : components) {
-		c->SerializePersistentEntityComponent(realm, entity, writer);
+	auto type = entity.type();
+	for (int i=0; i<type.count(); ++i) {
+		flecs::id cid = type.get(i);
+		if (!cid.is_entity()) {
+			continue;
+		}
+		flecs::entity ce = cid.entity();
+		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
+		if (bp == nullptr) {
+			continue;
+		}
+		if (bp->ptr == nullptr) {
+			continue;
+		}
+		bp->ptr->SerializePersistentEntityComponent(realm, entity, writer);
 	}
 	writer.op("");
 }
@@ -88,8 +101,21 @@ void Registry::DeserializeTemporalAllEntityComponents(class Realm *realm,
 void Registry::SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
 									   icon7::ByteWriter &writer) const
 {
-	for (auto c : components) {
-		c->SerializeTemporalEntityComponent(realm, entity, writer);
+	auto type = entity.type();
+	for (int i=0; i<type.count(); ++i) {
+		flecs::id cid = type.get(i);
+		if (!cid.is_entity()) {
+			continue;
+		}
+		flecs::entity ce = cid.entity();
+		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
+		if (bp == nullptr) {
+			continue;
+		}
+		if (bp->ptr == nullptr) {
+			continue;
+		}
+		bp->ptr->SerializeTemporalEntityComponent(realm, entity, writer);
 	}
 	writer.op("");
 }

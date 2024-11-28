@@ -169,7 +169,7 @@ void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
 
 #define REGISTER_COMPONENT_FOR_ECS_WORLD(ECS, COMPONENT, NAME)                 \
 	{                                                                          \
-		ECS.component<COMPONENT>();                                            \
+		auto ce = ECS.component<COMPONENT>();                                  \
 		if (reg::ComponentConstructor<COMPONENT>::singleton != nullptr) {      \
 			if (reg::ComponentConstructor<COMPONENT>::singleton->FILE_NAME ==  \
 					__FILE__ &&                                                \
@@ -181,13 +181,15 @@ void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
 						  #COMPONENT, std::string(NAME).c_str());              \
 			}                                                                  \
 		} else {                                                               \
-			reg::ComponentConstructor<COMPONENT>::singleton =                  \
-				new reg::ComponentConstructor<COMPONENT>(NAME, #COMPONENT,     \
-														 __FILE__, __LINE__);  \
+			auto ptr = new reg::ComponentConstructor<COMPONENT>(               \
+				NAME, #COMPONENT, __FILE__, __LINE__);                         \
+			reg::ComponentConstructor<COMPONENT>::singleton = ptr;             \
 			reg::Registry::Singleton().RegisterComponent<COMPONENT>(NAME);     \
 			reg::ComponentConstructor<COMPONENT>::__PTR_HOLDER_1__ =           \
 				&reg::Registry::SerializePersistent;                           \
 			reg::ComponentConstructor<COMPONENT>::__PTR_HOLDER_2__ =           \
 				&reg::Registry::SerializeTemporal;                             \
+                                                                               \
+			ce.set<_InternalComponent_ComponentConstructorBasePointer>({ptr}); \
 		}                                                                      \
 	}
