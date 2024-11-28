@@ -12,8 +12,7 @@ int RegisterEntityComponentsInventory(flecs::world &ecs);
 int RegisterEntityComponents(flecs::world &ecs)
 {
 	ecs.component<_InternalComponent_ComponentConstructorBasePointer>();
-	ecs.component<TagAllEntity>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, TagAllEntity);
 
 	RegisterEntityEventQueueComponent(ecs);
 	RegisterEntityComponentsCollisionWorld(ecs);
@@ -30,11 +29,9 @@ int RegisterEntityComponents(flecs::world &ecs)
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentMovementState, "CP");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(
 		ecs, ComponentLastAuthoritativeMovementState, "AP");
-	
-	ecs.component<ComponentEventsQueue>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
-	ecs.component<ComponentBulletCollisionObject>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
+
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentEventsQueue);
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentBulletCollisionObject);
 
 	reg::ComponentConstructor<ComponentMovementState>::singleton
 		->callbackDeserializePersistent = [](class Realm *realm,
