@@ -25,7 +25,13 @@ public:
 	std::string GetReadFileName();
 	std::string GetWriteFileName();
 	bool LoadFromFile();
-	bool SaveEntitesToFiles();
+	void SaveAllEntitiesToFiles();
+	void SaveNonPlayerEntitiesToFile();
+	void SavePlayerEntitiesToFiles();
+	void SavePlayerEntityToFile(flecs::entity entity);
+
+	void FlushSavingData();
+	void WaitForFlushedData();
 
 	// returns false if was not busy
 	virtual bool OneEpoch() override;
