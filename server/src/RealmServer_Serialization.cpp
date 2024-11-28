@@ -17,13 +17,15 @@
 
 #include "../include/RealmServer.hpp"
 
-std::string RealmServer::GetReadFileName()
+std::string RealmServer::GetReadFileName(bool *isFromSavedState)
 {
 	const std::string fileNameSecond = GetWriteFileName();
 
 	if (std::filesystem::exists(fileNameSecond)) {
+		*isFromSavedState = true;
 		return fileNameSecond;
 	}
+	*isFromSavedState = false;
 
 	std::string filePrefix, fileSuffix;
 	if (serverCore->configStorage.GetString(
@@ -51,12 +53,18 @@ std::string RealmServer::GetWriteFileName()
 
 bool RealmServer::LoadFromFile()
 {
-	std::string fileName = GetReadFileName();
+	int64_t startingTimerTick = 0;
+	bool isFromSavedState = false;
+	std::string fileName = GetReadFileName(&isFromSavedState);
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
 		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(),
 				 fileName.c_str());
 		icon7::ByteReader reader(buffer, 0);
+		if (isFromSavedState) {
+			reader.op(startingTimerTick);
+		}
+		timer.Start(startingTimerTick);
 		while (reader.get_remaining_bytes() > 9) {
 			uint64_t entityId = NewEntity();
 			flecs::entity entity = Entity(entityId);
@@ -70,6 +78,7 @@ bool RealmServer::LoadFromFile()
 		System([this](flecs::entity entity, ComponentTrigger &trigger) {
 			trigger.Tick(entity.id(), this);
 		});
+		timer.Start(startingTimerTick);
 		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
 		return true;
 	} else {
@@ -87,6 +96,7 @@ void RealmServer::SaveAllEntitiesToFiles()
 void RealmServer::SaveNonPlayerEntitiesToFile()
 {
 	icon7::ByteWriter writer(1024 * 1024);
+	writer.op(timer.currentTick);
 	ecs.each([&](flecs::entity entity, TagNonPlayerEntity) {
 		reg::Registry::Singleton().SerializePersistentEntity(this, entity,
 															 writer);
