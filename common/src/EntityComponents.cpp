@@ -30,6 +30,11 @@ int RegisterEntityComponents(flecs::world &ecs)
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentMovementState, "CP");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(
 		ecs, ComponentLastAuthoritativeMovementState, "AP");
+	
+	ecs.component<ComponentEventsQueue>()
+		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
+	ecs.component<ComponentBulletCollisionObject>()
+		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
 
 	reg::ComponentConstructor<ComponentMovementState>::singleton
 		->callbackDeserializePersistent = [](class Realm *realm,
