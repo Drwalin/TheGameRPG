@@ -22,6 +22,10 @@ public:
 	void DisconnectAllAndDestroy();
 
 	virtual void Init(const std::string &realmName) override;
+	std::string GetReadFileName();
+	std::string GetWriteFileName();
+	bool LoadFromFile();
+	bool SaveEntitesToFiles();
 
 	// returns false if was not busy
 	virtual bool OneEpoch() override;
@@ -33,6 +37,8 @@ public:
 
 	virtual void ExecuteMovementUpdate(uint64_t entityId,
 									   ComponentMovementState *state) override;
+
+	virtual uint64_t NewEntity() override;
 
 	void RegisterObservers();
 	void RegisterObservers_CharacterSheet();

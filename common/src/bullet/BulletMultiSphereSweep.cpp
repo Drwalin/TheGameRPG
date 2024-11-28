@@ -256,7 +256,8 @@ bool CollisionWorld::PerformObjectSweep(
 	while (true) {
 		int contactsOffset = contacts->size();
 		glm::vec3 point = start + dir * *distanceTraveled;
-		object->setWorldTransform(btTransform(btQuaternion::getIdentity(), ToBullet(point)));
+		object->setWorldTransform(
+			btTransform(btQuaternion::getIdentity(), ToBullet(point)));
 		if (TestObjectCollision(object, otherObjects, contacts)) {
 			for (int i = contactsOffset; i < contacts->size(); ++i) {
 				Contact &c = contacts->at(i);

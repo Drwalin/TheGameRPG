@@ -17,6 +17,21 @@ void RealmServer::RegisterObservers()
 	EntityNetworkingSystems::RegisterObservers(this);
 	RegisterObservers_CharacterSheet();
 
+	RegisterObserver(flecs::OnAdd, [](flecs::entity entity, TagPlayerEntity) {
+		if (entity.has<TagNonPlayerEntity>()) {
+			entity.remove<TagNonPlayerEntity>();
+		}
+	});
+
+	RegisterObserver(
+		flecs::OnAdd, [](flecs::entity entity, TagNonPlayerEntity) {
+			if (entity.has<TagPlayerEntity>()) {
+				LOG_FATAL("Entity has added TagNonPlayerEntity while having "
+						  "TagPlayerEntity component.");
+				entity.remove<TagNonPlayerEntity>();
+			}
+		});
+
 	queryLastAuthoritativeState =
 		ecs.query<const ComponentLastAuthoritativeMovementState>();
 

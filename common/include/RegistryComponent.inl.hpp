@@ -169,7 +169,7 @@ void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
 
 #define REGISTER_COMPONENT_FOR_ECS_WORLD(ECS, COMPONENT, NAME)                 \
 	{                                                                          \
-		auto ce = ECS.component<COMPONENT>();                                  \
+		flecs::entity ce = ECS.component<COMPONENT>();                         \
 		if (reg::ComponentConstructor<COMPONENT>::singleton != nullptr) {      \
 			if (reg::ComponentConstructor<COMPONENT>::singleton->FILE_NAME ==  \
 					__FILE__ &&                                                \
@@ -189,7 +189,7 @@ void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
 				&reg::Registry::SerializePersistent;                           \
 			reg::ComponentConstructor<COMPONENT>::__PTR_HOLDER_2__ =           \
 				&reg::Registry::SerializeTemporal;                             \
-                                                                               \
-			ce.set<_InternalComponent_ComponentConstructorBasePointer>({ptr}); \
 		}                                                                      \
+		auto ptr = reg::ComponentConstructor<COMPONENT>::singleton;            \
+		ce.set<_InternalComponent_ComponentConstructorBasePointer>({ptr});     \
 	}

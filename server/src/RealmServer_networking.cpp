@@ -20,8 +20,8 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	data->realm = weak_from_this();
 
 	uint64_t entityId = NewEntity();
-
 	flecs::entity entity = Entity(entityId);
+	entity.add<TagPlayerEntity>();
 
 	auto pw = peer->shared_from_this();
 	peers[pw] = entityId;

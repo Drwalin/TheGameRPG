@@ -3,6 +3,7 @@
 #include "../include/EntitySystems.hpp"
 #include "../include/EntityEvent.hpp"
 #include "../include/EntityComponents.hpp"
+#include "../include/RegistryComponent.hpp"
 
 #include "../include/Realm.hpp"
 
@@ -29,36 +30,8 @@ void Realm::Destroy()
 void Realm::Clear()
 {
 	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentShape &) { entity.destruct(); });
+	ecs.each([](flecs::entity entity, TagAllEntity) { entity.destruct(); });
 	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentEventsQueue &) {
-		entity.destruct();
-	});
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentMovementState &) {
-		entity.destruct();
-	});
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentName &) { entity.destruct(); });
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentStaticCollisionShapeName &) {
-		entity.destruct();
-	});
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each([](flecs::entity entity, ComponentStaticTransform &) {
-		entity.destruct();
-	});
-	ecs.defer_end();
-	ecs.defer_begin();
-	ecs.each(
-		[](flecs::entity entity, ComponentModelName &) { entity.destruct(); });
-	ecs.defer_end();
-
 	collisionWorld.Clear();
 }
 
@@ -73,6 +46,7 @@ void Realm::Init(const std::string &realmName)
 uint64_t Realm::NewEntity()
 {
 	flecs::entity entity = ecs.entity();
+	entity.add<TagAllEntity>();
 	return entity.id();
 }
 

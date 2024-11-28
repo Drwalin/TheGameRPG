@@ -113,7 +113,9 @@ private:
 };
 } // namespace reg
 
-struct _InternalComponent_ComponentConstructorBasePointer
-{
+struct _InternalComponent_ComponentConstructorBasePointer {
 	reg::ComponentConstructorBase *ptr = nullptr;
+};
+
+struct TagAllEntity {
 };

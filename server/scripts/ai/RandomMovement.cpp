@@ -118,10 +118,10 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 				ComponentLastAuthoritativeMovementState ls{*state};
 				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 0);
 				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 1);
-				LOG_INFO("Attack %lu->%lu", entityId, targetHitId);
+				// LOG_INFO("Attack %lu->%lu", entityId, targetHitId);
 			} else {
-				LOG_INFO("Miss %lu->%lu     dist: %.2f", entityId, targetHitId,
-						 glm::length(eyes - hitPos));
+				// LOG_INFO("Miss %lu->%lu     dist: %.2f", entityId,
+				// targetHitId, glm::length(eyes - hitPos));
 			}
 		}
 		return true;
