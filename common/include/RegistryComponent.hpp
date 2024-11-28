@@ -112,3 +112,8 @@ private:
 	std::map<std::string, ComponentConstructorBase *> nameToComponent;
 };
 } // namespace reg
+
+struct _InternalComponent_ComponentConstructorBasePointer
+{
+	reg::ComponentConstructorBase *ptr = nullptr;
+};
