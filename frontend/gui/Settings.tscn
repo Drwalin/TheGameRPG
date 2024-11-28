@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://bfa43a2yl6n3p"]
+[gd_scene load_steps=4 format=3 uid="uid://bfa43a2yl6n3p"]
 
 [ext_resource type="Script" path="res://gui/Settings.gd" id="1_0ux04"]
+[ext_resource type="PackedScene" uid="uid://dfs7vih5bhiuy" path="res://gui/templates/NumericalSettingsTemplate.tscn" id="3_d8ydw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_l32oa"]
 font_size = 32
@@ -39,9 +40,12 @@ horizontal_alignment = 1
 
 [node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
 layout_mode = 2
+current_tab = 1
 
 [node name="Graphics" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="VBoxContainer/TabContainer/Graphics"]
 layout_mode = 2
@@ -72,16 +76,16 @@ text = "Silnik renderowania (zmiana ustawienia wymaga restartu)
 2 - 'forward_plus', wysoka jakość, wymaga lepszego i nowszego sprzętu)"
 
 [node name="Sterowanie" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 alignment = 1
-
-[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Sterowanie"]
-layout_mode = 2
-text = "Czułość myszy"
+metadata/_tab_index = 1
 
 [node name="MouseSensitivity" type="HBoxContainer" parent="VBoxContainer/TabContainer/Sterowanie"]
 layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity"]
+layout_mode = 2
+text = "Czułość myszy"
 
 [node name="Numerical" type="LineEdit" parent="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity"]
 layout_mode = 2
@@ -95,9 +99,26 @@ size_flags_horizontal = 8
 min_value = 1.0
 value = 1.0
 
+[node name="CameraKeySensitivity" parent="VBoxContainer/TabContainer/Sterowanie" instance=ExtResource("3_d8ydw")]
+layout_mode = 2
+defaultValue = 100
+min = 1
+max = 10000
+varName = "Czułość klawiszy kamera"
+settingPath = "game_settings/mouse/camera_key_sensitivity"
+
+[node name="CameraKeySensitivityModifierMultiplier" parent="VBoxContainer/TabContainer/Sterowanie" instance=ExtResource("3_d8ydw")]
+layout_mode = 2
+defaultValue = 300
+min = 1
+max = 10000
+varName = "Modyfikator czułości klawiszy kamera"
+settingPath = "game_settings/mouse/camera_key_sensitivity_modifier_multiplier"
+
 [node name="Monitoring" type="VBoxContainer" parent="VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Monitoring"]
 layout_mode = 2
@@ -137,6 +158,8 @@ text = "Pokaż ping"
 [connection signal="value_changed" from="VBoxContainer/TabContainer/Graphics/RendererDriver/Slider" to="." method="_on_rendering_driver_value_changed"]
 [connection signal="text_submitted" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Numerical" to="." method="_on_mouse_sensitivity_numerical_changed"]
 [connection signal="value_changed" from="VBoxContainer/TabContainer/Sterowanie/MouseSensitivity/Slider" to="." method="_on_mouse_sensitivity_slider_changed"]
+[connection signal="on_value_changed" from="VBoxContainer/TabContainer/Sterowanie/CameraKeySensitivity" to="." method="_on_camera_key_sensitivity_on_value_changed"]
+[connection signal="on_value_changed" from="VBoxContainer/TabContainer/Sterowanie/CameraKeySensitivityModifierMultiplier" to="." method="_on_camera_key_sensitivity_modifier_multiplier_on_value_changed"]
 [connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer/EnableMonitoring" to="." method="_on_enable_monitoring_toggled"]
 [connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer2/ShowPlayerPosition" to="." method="_on_show_player_position_toggled"]
 [connection signal="toggled" from="VBoxContainer/TabContainer/Monitoring/HBoxContainer3/ShowPing" to="." method="_on_show_ping_toggled"]

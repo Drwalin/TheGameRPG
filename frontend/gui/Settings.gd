@@ -91,3 +91,10 @@ func _on_rendering_driver_value_changed(value):
 		_:
 			ProjectSettings.set_setting("rendering/renderer/rendering_method", "gl_compatibility");
 	save = true;
+
+
+func _on_camera_key_sensitivity_on_value_changed(value: int) -> void:
+	gameFrontend.CAMERA_KEY_SENSITIVITY = value/50.0;
+
+func _on_camera_key_sensitivity_modifier_multiplier_on_value_changed(value: int) -> void:
+	gameFrontend.SPEED_UP_CAMERA_KEY_SENSITIVITY_FACTOR = value/100.0;
