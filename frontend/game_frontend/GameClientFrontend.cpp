@@ -60,8 +60,8 @@ bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)
 {
-	auto Del = [](decltype(frontend->entitiesContainer->get_children(true)) c){
-		for (int i=0; i<c.size(); ++i) {
+	auto Del = [](decltype(frontend->entitiesContainer->get_children(true)) c) {
+		for (int i = 0; i < c.size(); ++i) {
 			c[i].call("queue_free");
 		}
 	};

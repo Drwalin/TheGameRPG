@@ -31,7 +31,7 @@ public:
 
 	virtual void Init(const std::string &realmName);
 
-	uint64_t NewEntity();
+	virtual uint64_t NewEntity();
 	void RemoveEntity(uint64_t entity);
 
 	void RegisterObservers();

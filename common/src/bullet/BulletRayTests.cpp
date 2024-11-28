@@ -16,7 +16,8 @@ bool CollisionWorld::RayTestFirstHitWithObjects(
 {
 	glm::vec3 end = start + direction;
 	btVector3 _start = ToBullet(start), _end = ToBullet(end);
-	btTransform _startT{btQuaternion::getIdentity(), _start}, _endT{btQuaternion::getIdentity(), _end};
+	btTransform _startT{btQuaternion::getIdentity(), _start},
+		_endT{btQuaternion::getIdentity(), _end};
 
 	btCollisionWorld::ClosestRayResultCallback callback(_start, _end);
 
@@ -68,7 +69,8 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 		object = obj->object;
 	}
 	ClosestRayResultNotMe cb(object, start, end);
-	cb.m_collisionFilterMask = btBroadphaseProxy::StaticFilter | btBroadphaseProxy::CharacterFilter;
+	cb.m_collisionFilterMask =
+		btBroadphaseProxy::StaticFilter | btBroadphaseProxy::CharacterFilter;
 	collisionWorld->rayTest({start.x, start.y, start.z}, {end.x, end.y, end.z},
 							cb);
 	if (cb.hasHit() == false) {

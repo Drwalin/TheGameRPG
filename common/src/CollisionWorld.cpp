@@ -63,7 +63,6 @@ CollisionWorld::CollisionWorld(Realm *realm)
 	// TODO: Replace this code with some proper *.so compilation configuration
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
 	this->realm = realm;
-// 	broadphase = new btSimpleBroadphase();
 	broadphase = new btDbvtBroadphase();
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -157,8 +156,8 @@ void CollisionWorld::OnStaticCollisionShape(
 		collisionWorld->addCollisionObject(object,
 										   btBroadphaseProxy::StaticFilter);
 		collisionWorld->updateSingleAabb(object);
-		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
+		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
 
 		if (entity.has<ComponentBulletCollisionObject>()) {
 			ComponentBulletCollisionObject *obj =
@@ -193,8 +192,8 @@ void CollisionWorld::OnAddEntity(flecs::entity entity,
 	collisionWorld->addCollisionObject(object,
 									   btBroadphaseProxy::CharacterFilter);
 	collisionWorld->updateSingleAabb(object);
-		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
+	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
+	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
 	entity.set<ComponentBulletCollisionObject>({object});
 }
 
@@ -222,8 +221,8 @@ void CollisionWorld::UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
 		btTransform(btQuaternion::getIdentity(), ToBullet(pos)));
 	collisionWorld->updateSingleAabb(obj.object);
 	if (((++dynamicUpdateCounter) & 0x1F) == 13) {
-		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
+		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
+		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
 	}
 }
 
@@ -244,8 +243,8 @@ void CollisionWorld::EntitySetTransform(
 		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 	obj.object->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
 	collisionWorld->updateSingleAabb(obj.object);
-		((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(1);
+	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
+	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
 }
 
 void CollisionWorld::GetObjectsInAABB(
@@ -272,8 +271,8 @@ void CollisionWorld::GetObjectsInAABB(
 
 void CollisionWorld::StartEpoch()
 {
-	((btDbvtBroadphase*)broadphase)->m_sets[0].optimizeIncremental(10);
-	((btDbvtBroadphase*)broadphase)->m_sets[1].optimizeIncremental(10);
+	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(10);
+	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(10);
 	/*
 	collisionWorld->setForceUpdateAllAabbs(true);
 	collisionWorld->updateAabbs();

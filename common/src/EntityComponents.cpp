@@ -12,6 +12,8 @@ int RegisterEntityComponentsInventory(flecs::world &ecs);
 int RegisterEntityComponents(flecs::world &ecs)
 {
 	ecs.component<_InternalComponent_ComponentConstructorBasePointer>();
+	ecs.component<TagAllEntity>()
+		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
 
 	RegisterEntityEventQueueComponent(ecs);
 	RegisterEntityComponentsCollisionWorld(ecs);

@@ -16,3 +16,8 @@ struct ComponentPlayerConnectionPeer {
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentPlayerConnectionPeer, MV(peer));
 };
+
+struct TagNonPlayerEntity {
+};
+struct TagPlayerEntity {
+};

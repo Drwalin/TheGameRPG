@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include <icon7/Flags.hpp>
 #include <icon7/ByteReader.hpp>
 
@@ -15,7 +17,13 @@
 
 #include "../include/RealmServer.hpp"
 
-RealmServer::RealmServer() { RealmServer::RegisterObservers(); }
+int RegisterEntityGameComponents(flecs::world &ecs);
+
+RealmServer::RealmServer()
+{
+	RealmServer::RegisterObservers();
+	RegisterEntityGameComponents(ecs);
+}
 
 RealmServer::~RealmServer() { DisconnectAllAndDestroy(); }
 
@@ -32,10 +40,32 @@ void RealmServer::DisconnectAllAndDestroy()
 	}
 }
 
+uint64_t RealmServer::NewEntity()
+{
+	uint64_t id = Realm::NewEntity();
+	Entity(id).add<TagNonPlayerEntity>();
+	return id;
+}
+
 void RealmServer::Init(const std::string &realmName)
 {
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
+
+	LoadFromFile();
+
+	RegisterGameLogic();
+
+	sendEntitiesToClientsTimer = 0;
+}
+
+std::string RealmServer::GetReadFileName()
+{
+	const std::string fileNameSecond = GetWriteFileName();
+
+	if (std::filesystem::exists(fileNameSecond)) {
+		return fileNameSecond;
+	}
 
 	std::string filePrefix, fileSuffix;
 	if (serverCore->configStorage.GetString(
@@ -45,6 +75,25 @@ void RealmServer::Init(const std::string &realmName)
 			"config.realm_map_file.file_path.suffix", &fileSuffix)) {
 	}
 	const std::string fileName = filePrefix + realmName + fileSuffix;
+	return fileName;
+}
+
+std::string RealmServer::GetWriteFileName()
+{
+	std::string filePrefix, fileSuffixSecond;
+	if (serverCore->configStorage.GetString(
+			"config.realm_map_file.file_path.prefix", &filePrefix)) {
+	}
+	if (serverCore->configStorage.GetString(
+			"config.realm_map_file.file_path.suffix_saved_file",
+			&fileSuffixSecond)) {
+	}
+	return filePrefix + realmName + fileSuffixSecond;
+}
+
+bool RealmServer::LoadFromFile()
+{
+	std::string fileName = GetReadFileName();
 	icon7::ByteBuffer buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
 		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(),
@@ -60,19 +109,18 @@ void RealmServer::Init(const std::string &realmName)
 				break;
 			}
 		}
+		System([this](flecs::entity entity, ComponentTrigger &trigger) {
+			trigger.Tick(entity.id(), this);
+		});
 		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
+		return true;
 	} else {
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
+		return false;
 	}
-
-	System([this](flecs::entity entity, ComponentTrigger &trigger) {
-		trigger.Tick(entity.id(), this);
-	});
-
-	RegisterGameLogic();
-
-	sendEntitiesToClientsTimer = 0;
 }
+
+bool RealmServer::SaveEntitesToFiles() {}
 
 bool RealmServer::GetCollisionShape(std::string collisionShapeName,
 									TerrainCollisionData *data)

@@ -49,7 +49,7 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 										 icon7::ByteWriter &writer) const
 {
 	auto type = entity.type();
-	for (int i=0; i<type.count(); ++i) {
+	for (int i = 0; i < type.count(); ++i) {
 		flecs::id cid = type.get(i);
 		if (!cid.is_entity()) {
 			continue;
@@ -57,6 +57,9 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 		flecs::entity ce = cid.entity();
 		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
 		if (bp == nullptr) {
+			LOG_ERROR("Component %lu (%s) of an entity %lu does not have "
+					  "_InternalComponent_ComponentConstructorBasePointer",
+					  cid.entity().id(), cid.str().c_str(), entity.id());
 			continue;
 		}
 		if (bp->ptr == nullptr) {
@@ -102,7 +105,7 @@ void Registry::SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
 									   icon7::ByteWriter &writer) const
 {
 	auto type = entity.type();
-	for (int i=0; i<type.count(); ++i) {
+	for (int i = 0; i < type.count(); ++i) {
 		flecs::id cid = type.get(i);
 		if (!cid.is_entity()) {
 			continue;
@@ -110,6 +113,9 @@ void Registry::SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
 		flecs::entity ce = cid.entity();
 		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
 		if (bp == nullptr) {
+			LOG_ERROR("Component %lu (%s) of an entity %lu does not have "
+					  "_InternalComponent_ComponentConstructorBasePointer",
+					  cid.entity().id(), cid.str().c_str(), entity.id());
 			continue;
 		}
 		if (bp->ptr == nullptr) {
