@@ -6,12 +6,10 @@
 
 int RegisterEntityComponentsServer(flecs::world &ecs)
 {
-	ecs.component<TagNonPlayerEntity>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
-	ecs.component<TagPlayerEntity>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, TagNonPlayerEntity);
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, TagPlayerEntity);
 
-	ecs.component<ComponentPlayerConnectionPeer>()
-		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr});
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentPlayerConnectionPeer);
+
 	return 0;
 }

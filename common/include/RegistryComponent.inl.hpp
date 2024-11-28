@@ -193,3 +193,7 @@ void (*ComponentConstructor<T>::__PTR_HOLDER_2__)(
 		auto ptr = reg::ComponentConstructor<COMPONENT>::singleton;            \
 		ce.set<_InternalComponent_ComponentConstructorBasePointer>({ptr});     \
 	}
+
+#define REGISTER_COMPONENT_NO_SERIALISATION(ECS, COMPONENT)                    \
+	ECS.component<COMPONENT>()                                                 \
+		.set<_InternalComponent_ComponentConstructorBasePointer>({nullptr})
