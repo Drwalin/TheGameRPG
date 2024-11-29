@@ -117,6 +117,7 @@ public: // Entity Actions
 
 private:
 	void StorePlayerDataInPeerAndFile(icon7::Peer *peer);
+	void SetNextTickFotSavingData();
 
 public:
 	void Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId);
@@ -164,6 +165,8 @@ public:
 
 private:
 	bool queueDestroy = false;
+	
+	int64_t nextTickToSaveAllDataToFiles = 0;
 
 public:
 	bool currentlyUpdatingPlayerPeerEntityMovement = false;
