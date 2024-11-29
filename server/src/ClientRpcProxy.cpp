@@ -26,7 +26,8 @@ void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 
 void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data)
 {
-	// TODO: correct
+	// TODO: verify and correct this behavior and implement both ways ping
+	//       testing
 	PeerData *peerData = ((PeerData *)(peer->userPointer));
 	int64_t currentTick = 0;
 	if (peerData) {
@@ -321,8 +322,8 @@ void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 std::string currentAnimation,
 							 int64_t animationStartTick)
 {
-	LOG_INFO("TODO: move arguments fetching to inside of this function to "
-			 "reduce arguments count and error proneness.");
+	// TODO: move arguments fetching to inside of this function to reduce
+	//       arguments count and error proneness
 	realm->BroadcastReliable(ClientRpcFunctionNames::PlayAnimation, entityId,
 							 modelName, state, currentAnimation);
 }
@@ -332,7 +333,7 @@ void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 					  int64_t timeStartPlaying, uint64_t attachToEntityId,
 					  int32_t ttlMs)
 {
-	LOG_INFO("TODO: verify");
+	// TODO: verify
 	realm->BroadcastReliable(ClientRpcFunctionNames::PlayFX, modelName,
 							 transform, timeStartPlaying, attachToEntityId);
 }

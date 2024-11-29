@@ -93,7 +93,6 @@ void RealmServer::Attack(uint64_t instigatorId,
 				if (hp.hp > 0) {
 					hp.hp -= dmg;
 
-					LOG_INFO("TODO: Play damage received animation and effect");
 					ClientRpcProxy::Broadcast_PlayFX(
 						this, {"fx/Blood.tscn"},
 						{targetPos, {1, 0, 0, 0}, {1, 1, 1}}, timer.currentTick,

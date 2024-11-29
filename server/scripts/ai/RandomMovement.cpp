@@ -148,7 +148,7 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 
 	if (state.onGround) {
 		// TODO: Replace 3.0f and 15.0f with apropriate values from some
-		// component with parameters
+		//       component with parameters
 		if (false == TryFollowingPlayer(realm, entityId, &state, shape,
 										movementParams, 3.0f, 15.0f)) {
 			state.rot.y += 0.15;

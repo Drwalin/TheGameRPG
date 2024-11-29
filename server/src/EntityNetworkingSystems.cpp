@@ -37,7 +37,8 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 		return;
 	}
 
-	// TODO: check if this realm->peers.erase() is required
+	// TODO: check if this realm->peers.erase() is required ot if it's in
+	//       observer
 	realm->peers.erase(peer.peer);
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));
 	data->realm.reset();

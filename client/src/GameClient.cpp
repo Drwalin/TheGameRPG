@@ -207,7 +207,6 @@ void GameClient::PerformSendPlayerMovementInput()
 glm::vec3 GameClient::GetRotation()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -221,7 +220,6 @@ glm::vec3 GameClient::GetRotation()
 glm::vec3 GameClient::GetPosition()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -235,7 +233,6 @@ glm::vec3 GameClient::GetPosition()
 glm::vec3 GameClient::GetVelocity()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -249,7 +246,6 @@ glm::vec3 GameClient::GetVelocity()
 bool GameClient::GetOnGround()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return true;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -263,8 +259,7 @@ bool GameClient::GetOnGround()
 ComponentShape GameClient::GetShape()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
-		return {0, 0};
+		return {1.8, 0.6};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto shape = player.get<ComponentShape>();
@@ -282,7 +277,6 @@ bool GameClient::IsInPlayerControl()
 void GameClient::SetRotation(glm::vec3 rotation)
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -300,7 +294,6 @@ void GameClient::SetRotation(glm::vec3 rotation)
 void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -338,7 +331,6 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 void GameClient::TryPerformJump()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -354,7 +346,7 @@ void GameClient::TryPerformJump()
 	}
 
 	glm::vec3 vel = state.vel;
-	// TODO: use some true jump velocity
+	// TODO: use some true jump velocity instead of random value from fingertip
 	vel.y = 5.0f;
 
 	state.vel = vel;
@@ -366,7 +358,6 @@ void GameClient::TryPerformJump()
 void GameClient::PerformInteractionUse()
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -397,7 +388,6 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 							   int64_t argInt)
 {
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
@@ -429,7 +419,6 @@ uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 	*serverEntityId = 0;
 	*hasNormal = false;
 	if (localPlayerEntityId == 0) {
-		// TODO: maybe error?
 		return 0;
 	}
 

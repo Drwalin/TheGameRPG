@@ -156,7 +156,6 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 			writer.Buffer().Init(4096);
 		}
 		writer.Buffer().resize(0);
-		// TODO: write new realm for player
 		writer.op(data->nextRealm);
 		reg::Registry::Singleton().SerializePersistentEntity(this, entity,
 															 writer);

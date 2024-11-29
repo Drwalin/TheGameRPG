@@ -65,8 +65,6 @@ void RealmServer::RegisterObservers_CharacterSheet()
 			if (hp.hp <= 0) {
 				ClientRpcProxy::Broadcast_PlayDeathAndDestroyEntity(
 					this, entity.id());
-				LOG_INFO(
-					"TODO: Send death and play animation for player owner");
 
 				if (peer.peer.get() == nullptr) {
 					LOG_FATAL("peer == nullptr");
