@@ -82,6 +82,10 @@ bool RealmServer::OneEpoch()
 	// TODO: here do other server updates, AI, other mechanics and logic, defer
 	//       some work to other worker threads (ai, db)  maybe?
 
+	if (nextTickToSaveAllDataToFiles <= timer.currentTick) {
+		SaveAllEntitiesToFiles();
+	}
+	
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;

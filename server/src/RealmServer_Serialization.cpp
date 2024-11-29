@@ -85,12 +85,23 @@ bool RealmServer::LoadFromFile()
 		LOG_ERROR("Failed to open map file: '%s'", fileName.c_str());
 		return false;
 	}
+	SetNextTickFotSavingData();
 }
 
 void RealmServer::SaveAllEntitiesToFiles()
 {
 	SaveNonPlayerEntitiesToFile();
 	SavePlayerEntitiesToFiles();
+	SetNextTickFotSavingData();
+}
+
+void RealmServer::SetNextTickFotSavingData()
+{
+	nextTickToSaveAllDataToFiles =
+		timer.currentTick +
+		serverCore->configStorage.GetOrSetInteger(
+			"config.milliseconds_between_saving_all_data_to_database",
+			1000 * 60 * 5);
 }
 
 void RealmServer::SaveNonPlayerEntitiesToFile()
