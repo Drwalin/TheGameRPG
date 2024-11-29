@@ -120,10 +120,7 @@ bool Realm::OneEpoch()
 
 	// TODO: update due queued entity events
 	int executedEvents = 0;
-	while (true) {
-		if (eventsPriorityQueue.Empty()) {
-			break;
-		}
+	while (!eventsPriorityQueue.Empty()) {
 		EntityEventEntry event = eventsPriorityQueue.Top();
 		if (event.dueTick <= timer.currentTick) {
 			eventsPriorityQueue.Pop();
@@ -138,6 +135,7 @@ bool Realm::OneEpoch()
 		}
 	}
 
+	// TODO: Replace flecs::system with queued event entries
 	ecs.progress();
 
 	if (executedEvents == 0) {

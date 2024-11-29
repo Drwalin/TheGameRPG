@@ -138,6 +138,6 @@ void RealmServer::FlushSavingData()
 
 void RealmServer::WaitForFlushedData()
 {
-	// TODO: Implement database write waiting
+	// TODO: Implement database write sync/wait
 	LOG_TRACE("Waiting for flushed database write is not implemented.");
 }

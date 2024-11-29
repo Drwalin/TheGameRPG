@@ -223,7 +223,7 @@ void GameClient::UpdateEntity(
 		realm->UpdateEntityCurrentState(localId, serverId);
 	} else {
 		// TODO: implement server authority correction of client-side player
-		//       entity
+		//       entity movement
 	}
 }
 

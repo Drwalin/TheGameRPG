@@ -31,7 +31,6 @@ bool RealmServer::IsQueuedToDestroy() { return queueDestroy; }
 
 void RealmServer::DisconnectAllAndDestroy()
 {
-	// TODO: safe all entities and states
 	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> p = peers;
 	for (auto it : p) {
 		DisconnectPeer(it.first.get());
@@ -80,8 +79,8 @@ bool RealmServer::OneEpoch()
 {
 	bool busy = executionQueue.Execute(128) != 0;
 	busy |= Realm::OneEpoch();
-	// TODO: here do other server updates, AI, other mechanics and logic,
-	// defer some work to other worker threads (ai, db)  maybe?
+	// TODO: here do other server updates, AI, other mechanics and logic, defer
+	//       some work to other worker threads (ai, db)  maybe?
 
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {

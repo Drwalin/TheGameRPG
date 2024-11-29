@@ -40,7 +40,8 @@ void ServerCore::UpdatePlayer(
 	if (realm) {
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
-			// TODO: verify movement state
+			// TODO: verify movement state to prevent cheating (here implement
+			//       anti-cheat)
 
 			if (auto s = entity.get<ComponentMovementState>()) {
 				if (glm::length(s->pos - state.oldState.pos) < 5) {
@@ -64,8 +65,8 @@ void ServerCore::UpdatePlayer(
 
 void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 {
-	LOG_INFO("TODO: replace ServerCore::ConnectPeerToRealm with something "
-			 "suitable to use with database.");
+	// TODO: replace ServerCore::ConnectPeerToRealm with something suitable to
+	//       use with database
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");
@@ -211,7 +212,7 @@ void ServerCore::InteractInLineOfSight(
 	icon7::Peer *peer, ComponentLastAuthoritativeMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
-	// TODO: add server side verification
+	// TODO: add server side verification of raycast
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
