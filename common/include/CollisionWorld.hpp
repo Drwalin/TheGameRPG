@@ -74,6 +74,12 @@ public:
 							   int approximationSpheresAmount, float stepHeight,
 							   float minNormalYcomponent,
 							   float maxDistancePerIteration) const;
+	bool TestCollisionMovementCylinder(ComponentShape shape, glm::vec3 start,
+									   glm::vec3 end,
+									   glm::vec3 *finalCorrectedPosition,
+									   bool *isOnGround, glm::vec3 *normal,
+									   float stepHeight,
+									   float minNormalYcomponent);
 
 	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
 						glm::vec3 *normal, float stepHeight,
@@ -189,4 +195,8 @@ private:
 	class Realm *realm;
 
 	int dynamicUpdateCounter = 0;
+	
+	class btCollisionShape *someCollisionShape;
+	class btCollisionObject *objectThatCanCollideWithTerrainAsCharacter;
+	void InitObjectThatCanCollideWithTerrainAsCharacter();
 };

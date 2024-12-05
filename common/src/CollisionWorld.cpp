@@ -68,6 +68,23 @@ CollisionWorld::CollisionWorld(Realm *realm)
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 	collisionWorld =
 		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
+
+	InitObjectThatCanCollideWithTerrainAsCharacter();
+}
+
+void CollisionWorld::InitObjectThatCanCollideWithTerrainAsCharacter()
+{
+	auto object = objectThatCanCollideWithTerrainAsCharacter =
+		AllocateNewCollisionObject();
+	object->setUserIndex(FILTER_CHARACTER);
+	object->setUserIndex2(0);
+	object->setUserIndex3(0);
+	someCollisionShape = new btCylinderShape{btVector3{1,1,1}};
+	object->setCollisionShape(someCollisionShape);
+	object->setWorldTransform(btTransform(
+				btQuaternion::getIdentity(), {0, -1000000000.0f, 0}));
+	collisionWorld->addCollisionObject(object,
+									   btBroadphaseProxy::CharacterFilter);
 }
 
 CollisionWorld::~CollisionWorld()
@@ -86,6 +103,7 @@ void CollisionWorld::Clear()
 			collisionWorld->getCollisionObjectArray()[0];
 		RemoveAndDestroyCollisionObject(object);
 	}
+	InitObjectThatCanCollideWithTerrainAsCharacter();
 }
 
 void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
@@ -117,7 +135,6 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	object->setUserIndex(0);
 	object->setUserIndex2(0);
 	object->setUserIndex3(0);
-
 	return object;
 }
 

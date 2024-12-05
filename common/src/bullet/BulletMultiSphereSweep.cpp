@@ -1,4 +1,4 @@
-#include <icon7/Debug.hpp>
+#include "../../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btCollisionAlgorithm.h"
 
