@@ -8,10 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
+if(ENABLE_LTO)
 	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-else()
 endif()
 
 include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
