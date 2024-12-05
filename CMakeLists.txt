@@ -8,16 +8,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-else()
-endif()
-
 option(THEGAMERPG_PRECOMPILE_HEADERS "Enable pracompiled headers" OFF)
 option(THEGAMERPG_TIME_REPORT "Enable time report for compilation" OFF)
 option(THEGAMERPG_MAP_EDITOR "Enable map editor" OFF)
 option(THEGAMERPG_UNITY_BUILD "Enable unity build" OFF)
+
+if(ENABLE_LTO)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
 include_directories(thirdparty/flecs/include)
 include_directories(thirdparty/bullet/src)
