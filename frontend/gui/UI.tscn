@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dlqxx5gv1iniy"]
+[gd_scene load_steps=11 format=3 uid="uid://dlqxx5gv1iniy"]
 
 [ext_resource type="Script" path="res://gui/UI.gd" id="1_42nwq"]
 [ext_resource type="PackedScene" uid="uid://cc7kmfkyvb075" path="res://gui/Hud.tscn" id="2_xjobv"]
@@ -8,40 +8,16 @@
 [ext_resource type="Script" path="res://gui/ConnectionState.gd" id="6_0ys31"]
 [ext_resource type="AudioStream" uid="uid://cvnaebqi1yo4t" path="res://assets/audio/ambient/Ambient 1.ogg" id="7_yi8be"]
 [ext_resource type="AudioStream" uid="uid://ce6xxa1876s5f" path="res://assets/audio/ambient/Ambient 2.ogg" id="8_si1il"]
-[ext_resource type="AudioStream" uid="uid://cjea50p652kux" path="res://assets/audio/ambient/Ambient 3.ogg" id="9_2wjb6"]
-[ext_resource type="AudioStream" uid="uid://cxb4howy300gt" path="res://assets/audio/ambient/Ambient 4.ogg" id="10_yc0rg"]
-[ext_resource type="AudioStream" uid="uid://x7tr0ad0vy0q" path="res://assets/audio/ambient/Ambient 5.ogg" id="11_t6pto"]
-[ext_resource type="AudioStream" uid="uid://d3mk7m5tld7ax" path="res://assets/audio/ambient/Ambient 6.ogg" id="12_13mlm"]
-[ext_resource type="AudioStream" uid="uid://cxwfrux3b0j8a" path="res://assets/audio/ambient/Ambient 7.ogg" id="13_2nxrl"]
-[ext_resource type="AudioStream" uid="uid://rfpxdle2lu1k" path="res://assets/audio/ambient/Ambient 8.ogg" id="14_4ulwl"]
-[ext_resource type="AudioStream" uid="uid://qj0tno6tonw5" path="res://assets/audio/ambient/Ambient 9.ogg" id="15_ketnc"]
-[ext_resource type="AudioStream" uid="uid://bt53b88sjgybb" path="res://assets/audio/ambient/Ambient 10.ogg" id="16_310m5"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_171tq"]
 font_color = Color(1, 0.156863, 0.14902, 1)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_sctqa"]
-streams_count = 10
+streams_count = 2
 stream_0/stream = ExtResource("7_yi8be")
 stream_0/weight = 1.0
 stream_1/stream = ExtResource("8_si1il")
 stream_1/weight = 1.0
-stream_2/stream = ExtResource("9_2wjb6")
-stream_2/weight = 1.0
-stream_3/stream = ExtResource("10_yc0rg")
-stream_3/weight = 1.0
-stream_4/stream = ExtResource("11_t6pto")
-stream_4/weight = 1.0
-stream_5/stream = ExtResource("12_13mlm")
-stream_5/weight = 1.0
-stream_6/stream = ExtResource("13_2nxrl")
-stream_6/weight = 1.0
-stream_7/stream = ExtResource("14_4ulwl")
-stream_7/weight = 1.0
-stream_8/stream = ExtResource("15_ketnc")
-stream_8/weight = 1.0
-stream_9/stream = ExtResource("16_310m5")
-stream_9/weight = 1.0
 
 [node name="UI" type="Node"]
 script = ExtResource("1_42nwq")
