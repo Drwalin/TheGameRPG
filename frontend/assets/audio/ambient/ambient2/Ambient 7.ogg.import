@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cxwfrux3b0j8a"
+path="res://.godot/imported/Ambient 7.ogg-6663ea424358cd048877e7b2790eeb79.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/audio/ambient/ambient2/Ambient 7.ogg"
+dest_files=["res://.godot/imported/Ambient 7.ogg-6663ea424358cd048877e7b2790eeb79.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
