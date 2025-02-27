@@ -44,17 +44,17 @@ size_flags_vertical = 3
 [node name="Sterowanie" type="RichTextLabel" parent="VBoxContainer/TabContainer"]
 layout_mode = 2
 text = "
-Aby obrócić głową swojej postaci należy poruszać myszką.
+Aby obrócić kamerą (głową swojej postaci) należy poruszać myszką lub użyć
+klawiszy strzałek.
 
 Poruszanie się postaci wykonuje się naciskają klawisze WASD.
 Do skakania należy użyć spację.
 
-Do wykonania interakcji (na przykład otwarcia drzwi) należy nacisnąć przcisk E.
-
-Aby otworzyć kartę postaci, należy nacisnąć przycisk C. (Nie zaimplementowane)
+Do wykonania interakcji (otwarcia lub zamknięcia drzwi) należy nacisnąć przcisk
+E po wcześniejszym nakierowaniu celownika na drzwi z rozsądnej odległości.
 
 Aby zaatakować przeciwnika należy nacisnąć lewy przycisk myszy.
 
-Wejście we fioletową poświatę skutkuje teleportacją."
+Wejście w fioletową poświatę skutkuje teleportacją do innego poziomu."
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ToMainMenu" to="." method="_on_main_menu_pressed"]
