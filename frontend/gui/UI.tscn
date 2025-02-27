@@ -35,7 +35,7 @@ offset_left = 857.0
 offset_top = 31.0
 offset_right = 1109.0
 offset_bottom = 54.0
-text = "Connection status: disconnected"
+text = "Brak połączenia z serverem!"
 script = ExtResource("6_0ys31")
 
 [node name="LoginFailed" type="Label" parent="."]
