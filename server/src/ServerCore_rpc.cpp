@@ -4,6 +4,8 @@
 #include <icon7/Flags.hpp>
 #include <icon7/Debug.hpp>
 #include <icon7/Command.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
+#include <icon7/CoroutineHelper.hpp>
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
