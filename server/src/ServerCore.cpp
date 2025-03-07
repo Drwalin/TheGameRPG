@@ -149,3 +149,29 @@ void ServerCore::RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
 	com->serverCore = this;
 	host->GetCommandExecutionQueue()->EnqueueCommand(std::move(com));
 }
+
+icon7::CommandExecutionQueue::CoroutineAwaitable
+ServerCore::ScheduleInRealm(std::weak_ptr<RealmServer> &realm)
+{
+	icon7::CommandExecutionQueue::CoroutineAwaitable awaitable;
+	std::shared_ptr<RealmServer> oldRealm = realm.lock();
+	if (oldRealm.get()) {
+		return oldRealm->executionQueue.Schedule(oldRealm);
+	}
+	return {};
+}
+
+icon7::CommandExecutionQueue::CoroutineAwaitable
+ServerCore::ScheduleInRealmOrCore(std::weak_ptr<RealmServer> &realm)
+{
+	icon7::CommandExecutionQueue::CoroutineAwaitable awaitable;
+	{
+		std::shared_ptr<RealmServer> oldRealm = realm.lock();
+		if (oldRealm.get()) {
+			awaitable = oldRealm->executionQueue.Schedule(oldRealm);
+		} else {
+			this->host->GetCommandExecutionQueue()->Schedule(nullptr);
+		}
+	}
+	return awaitable;
+}

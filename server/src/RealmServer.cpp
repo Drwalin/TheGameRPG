@@ -2,7 +2,6 @@
 #include <icon7/ByteReader.hpp>
 
 #include "../../common/include/EntitySystems.hpp"
-#include "../../common/include/RegistryComponent.hpp"
 #include "../../common/include/CollisionLoader.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
@@ -10,8 +9,6 @@
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
-#include "../include/FileOperations.hpp"
-#include "../include/EntityGameComponents.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -51,6 +48,8 @@ uint64_t RealmServer::NewEntity()
 
 void RealmServer::Init(const std::string &realmName)
 {
+	executionQueue.userSmartPtr = this->shared_from_this();
+	
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
 

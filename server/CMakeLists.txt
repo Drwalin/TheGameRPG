@@ -5,7 +5,7 @@ include(../precompile_headers.cmake)
 
 option(THEGAMERPG_SERVER_SCRIPTS_PCH "Enable pch for server scripts" OFF)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -14,8 +14,6 @@ if(ENABLE_LTO)
 	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-include_directories(../ICon7-godot-client/ICon7/bitscpp/include)
-include_directories(../ICon7-godot-client/ICon7/include)
 include_directories(../common/include)
 include_directories(include)
 
