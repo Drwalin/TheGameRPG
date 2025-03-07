@@ -4,6 +4,7 @@
 
 #include <icon7/Flags.hpp>
 #include <icon7/Forward.hpp>
+#include <icon7/CoroutineHelper.hpp>
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
