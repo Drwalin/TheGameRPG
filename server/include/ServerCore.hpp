@@ -10,6 +10,7 @@
 #include "PeerData.hpp"
 #include "CommandParser.hpp"
 #include "ConfigStorage.hpp"
+#include "icon7/CommandExecutionQueue.hpp"
 
 class ServerCore
 {
@@ -20,7 +21,7 @@ public:
 
 	void CreateRealm(std::string realmName);
 
-	void ConnectPeerToRealm(icon7::Peer *peer);
+	icon7::CoroutineSchedulable ConnectPeerToRealm(icon7::Peer *peer);
 
 	void Disconnect(icon7::Peer *peer);
 
@@ -49,6 +50,11 @@ public:
 				int64_t attackId, int64_t argInt);
 
 	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::Peer *peer);
+	
+	static icon7::CommandExecutionQueue::CoroutineAwaitable ScheduleInRealm(
+			std::weak_ptr<RealmServer> &realm);
+	icon7::CommandExecutionQueue::CoroutineAwaitable ScheduleInRealmOrCore(
+			std::weak_ptr<RealmServer> &realm);
 
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
