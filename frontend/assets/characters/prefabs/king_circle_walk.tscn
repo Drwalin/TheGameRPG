@@ -6,6 +6,3 @@
 graphic_Mesh_or_PackedScene = ExtResource("1_x28eu")
 nameNPC = "Mad King"
 aiTickName = "AIRandomMove"
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="CDFD8B6F86254D8145C15E00D83BB7D1" type="Node3D" parent="." instance=ExtResource("1_x28eu")]
