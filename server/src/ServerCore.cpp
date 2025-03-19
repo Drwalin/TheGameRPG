@@ -2,6 +2,7 @@
 #include <icon7/Debug.hpp>
 #include <icon7/Peer.hpp>
 #include <icon7/Host.hpp>
+#include <icon7/Loop.hpp>
 #include <icon7/Flags.hpp>
 
 #include "../include/FunctorCommands.hpp"
@@ -62,7 +63,7 @@ void ServerCore::Listen(const std::string &addressInterface, uint16_t port,
 
 void ServerCore::RunNetworkLoopAsync()
 {
-	host->RunAsync();
+	loop->RunAsync();
 	host->EnqueueCommand(
 		icon7::CommandHandle<CommandFunctor<void (*)()>>::Create(
 			+[]() { LOG_INFO("Networking thread started"); }));
