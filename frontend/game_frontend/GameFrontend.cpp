@@ -5,6 +5,8 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label.hpp>
 
+#include <valarray>
+
 #include <icon7/Debug.hpp>
 
 #include "../../common/include/EntityComponents.hpp"
@@ -96,13 +98,49 @@ void GameFrontend::InternalReady()
 	nodeUI = get_node_or_null("/root/SceneRoot/UI");
 }
 
+int GLOB_FRAME_ID = 0;
+
 void GameFrontend::InternalProcess()
 {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
+	
+	++GLOB_FRAME_ID;
 
+	static std::valarray<float> vv;
+	static int size = (vv.resize(171), 0);
+	
+	auto a = std::chrono::steady_clock::now();
 	client->RunOneEpoch();
+	auto b = std::chrono::steady_clock::now();
+	float c =
+		std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count() /
+		(1000.0 * 1000.0);
+	
+	vv[size] = c;
+	
+	++size;
+	if (size == vv.size()) {
+		std::valarray<float> v = vv;
+		
+		size = 0;
+
+		float min = v.min();
+		float max = v.max();
+		float avg = v.sum() / v.size();
+		std::sort(std::begin(v), std::end(v));
+		float mean = v[v.size()/2];
+		float p95 = v[v.size()-2];
+
+		char str[1024];
+		sprintf(str,
+				"process: avg: %8.8f    min: %8.8f    max: %8.8f      mean: "
+				"%8.8f     p95: %8.8f",
+				avg, min, max, mean, p95);
+
+		UtilityFunctions::print(str);
+	}
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)

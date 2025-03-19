@@ -5,13 +5,13 @@
 #include <icon7/Flags.hpp>
 #include <icon7/Forward.hpp>
 #include <icon7/CoroutineHelper.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
 #include "PeerData.hpp"
 #include "CommandParser.hpp"
 #include "ConfigStorage.hpp"
-#include "icon7/CommandExecutionQueue.hpp"
 
 class ServerCore
 {
@@ -76,7 +76,8 @@ public:
 	RealmWorkThreadedManager realmManager;
 
 	icon7::RPCEnvironment *rpc;
-	icon7::Host *host;
+	std::shared_ptr<icon7::Host> host;
+	std::shared_ptr<icon7::Loop> loop;
 
 	std::string spawnRealm;
 

@@ -4,6 +4,7 @@
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
+#include <icon7/LoopUS.hpp>
 #include <icon7/Command.hpp>
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
@@ -17,11 +18,17 @@ GameClient::GameClient()
 {
 	realm = new RealmClient(this);
 	rpc = new icon7::RPCEnvironment();
-	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
-	_host->Init();
-	host = _host;
-	host->SetRpcEnvironment(rpc);
+	
+	std::shared_ptr<icon7::uS::Loop> loop = std::make_shared<icon7::uS::Loop>();
+	this->loop = loop;
+	loop->Init(3);
+	loop->userPointer = this;
+	
+	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);;
+	this->host = host;
 	host->userPointer = this;
+	
+	host->SetRpcEnvironment(rpc);
 
 	// host->SetOnDisconnect();
 	pingTimer.Start();
@@ -72,13 +79,11 @@ bool GameClient::IsDisconnected()
 
 void GameClient::Destroy()
 {
-	if (host) {
+	if (loop) {
 		peer = nullptr;
-		host->DisconnectAllAsync();
-		host->StopListening();
-		host->WaitStopRunning();
-		delete host;
 		host = nullptr;
+		loop->Destroy();
+		loop = nullptr;
 	}
 	if (realm) {
 		realm->Destroy();
@@ -87,7 +92,7 @@ void GameClient::Destroy()
 	}
 }
 
-void GameClient::RunNetworkLoopAsync() { host->RunAsync(); }
+void GameClient::RunNetworkLoopAsync() { loop->RunAsync(); }
 
 void GameClient::DisconnectRealmPeer()
 {

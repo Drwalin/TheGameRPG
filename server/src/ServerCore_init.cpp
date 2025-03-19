@@ -4,6 +4,7 @@
 #include <icon7/Flags.hpp>
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
+#include <icon7/LoopUS.hpp>
 
 #include "../include/ServerCore.hpp"
 
@@ -30,19 +31,22 @@ void ServerCore::Destroy()
 
 	realmManager.DestroyAllRealmsAndStop();
 
-	if (host) {
-		host->WaitStopRunning();
-		host->_InternalDestroy();
-		delete host;
+	if (loop) {
 		host = nullptr;
+		loop->Destroy();
+		loop = nullptr;
 	}
 }
 
 void ServerCore::StartService()
 {
-	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
-	_host->Init();
-	host = _host;
+	std::shared_ptr<icon7::uS::Loop> loop = std::make_shared<icon7::uS::Loop>();
+	this->loop = loop;
+	loop->Init(3);
+	loop->userPointer = this;
+	
+	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);
+	this->host = host;
 	host->userPointer = this;
 
 	host->SetOnConnect(_OnPeerConnect);
