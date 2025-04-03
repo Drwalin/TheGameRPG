@@ -6,13 +6,12 @@
 #include <godot_cpp/classes/label.hpp>
 
 #include "../../ICon7/include/icon7/Time.hpp"
-#include "../../ICon7/include/icon7/StatsCollector.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
 #include "GodotGlm.hpp"
-#include "icon7/Time.hpp"
 
+#include "../../common/include/StatsCollector.hpp"
 #include "GameFrontend.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -108,7 +107,7 @@ void GameFrontend::InternalProcess()
 
 	++GLOB_FRAME_ID;
 
-	static icon7::StatsCollector stats(
+	static StatsCollector stats(
 		"GameFrontend total internal process time [ms]");
 
 	uint64_t a = icon7::time::GetTimestamp();
