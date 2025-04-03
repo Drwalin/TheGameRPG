@@ -44,7 +44,7 @@ void ServerCore::StartService()
 	this->loop = loop;
 	loop->Init(3);
 	loop->userPointer = this;
-	
+
 	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);
 	this->host = host;
 	host->userPointer = this;

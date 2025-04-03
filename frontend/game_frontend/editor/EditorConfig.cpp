@@ -133,7 +133,8 @@ bool GameEditorConfig::SelectNodes(Node *node)
 				dynamic_cast<PrefabServerStaticMesh *>(pref);
 			PrefabServerStaticMesh_Base *stBasePref =
 				dynamic_cast<PrefabServerStaticMesh_Base *>(pref);
-			if (stPref && stPref->isTrullyStaticForMerge && merge_static_objects) {
+			if (stPref && stPref->isTrullyStaticForMerge &&
+				merge_static_objects) {
 				objectsToMerge.push_back(stPref);
 			} else if (stBasePref) {
 				staticToGoSecond.push_back(stBasePref);

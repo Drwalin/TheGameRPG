@@ -80,17 +80,19 @@ void UpdateMovement(
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 			normal = glm::normalize(normal);
 			vel -= normal * glm::dot(normal, vel);
-// 			if (vel.y > 0) {
-// 				glm::vec3 vv = vel;
-// 				vv.y = 0.0f;
-// 				float vvl = glm::length(vv);
-// 				float frictionFactor = 0.5 * dt;
-// 				if (frictionFactor >= vvl) {
-// 					vel = {0, 0, 0};
-// 				} else {
-// 					vel -= vv * (frictionFactor / vvl);
-// 				}
-// 			}
+			/*
+			if (vel.y > 0) {
+				glm::vec3 vv = vel;
+				vv.y = 0.0f;
+				float vvl = glm::length(vv);
+				float frictionFactor = 0.5 * dt;
+				if (frictionFactor >= vvl) {
+					vel = {0, 0, 0};
+				} else {
+					vel -= vv * (frictionFactor / vvl);
+				}
+			}
+			*/
 		}
 
 		if (vel.y < -50) {

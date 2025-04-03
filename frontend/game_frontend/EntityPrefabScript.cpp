@@ -6,9 +6,9 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label3d.hpp>
 
-#include <valarray>
-
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Time.hpp"
+#include "../../ICon7/include/icon7/StatsCollector.hpp"
 
 #include "GameFrontend.hpp"
 
@@ -64,22 +64,12 @@ void EntityPrefabScript::_my_internal_process(double dt)
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
-	
-	static std::vector<float> vvv;
-	static int lastFrame = GLOB_FRAME_ID;
-	
-	static std::valarray<float> vv;
-	static int size = (vv.resize(171), 0);
-	
-	static int CCCOUNT = 0;
-	
-	auto a = std::chrono::steady_clock::now();
 
-	
-	
-	
-	
-	
+	static int nextFrameToSample = GLOB_FRAME_ID + 1001;
+	static icon7::StatsCollector stats("EntityPrefabScript::process time [us]");
+
+	uint64_t a = icon7::time::GetTimestamp();
+
 	flecs::entity entity = frontend->client->realm->Entity(localEntityId);
 	if (entity.is_alive() == false) {
 		LOG_ERROR("Entity %lu is not alive/not present in ecs", localEntityId);
@@ -104,62 +94,19 @@ void EntityPrefabScript::_my_internal_process(double dt)
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	auto b = std::chrono::steady_clock::now();
-	float c =
-		std::chrono::duration_cast<std::chrono::nanoseconds>(b - a).count() /
-		(1000.0 * 1000.0);
-	CCCOUNT++;
-	
-	if (lastFrame != GLOB_FRAME_ID) {
-		lastFrame = GLOB_FRAME_ID;
-		
-		lastFrame = GLOB_FRAME_ID;
-		
-		float sum = 0;
-		for (float t : vvv) {
-			sum += t;
-		}
-		vvv.clear();
-		
-		vv[size] = sum;
-		
-		++size;
-		if (size == vv.size()) {
-			std::valarray<float> v = vv;
-			
-			size = 0;
-			
-			
-			float min = v.min();
-			float max = v.max();
-			float avg = v.sum() / v.size();
-			std::sort(std::begin(v), std::end(v));
-			float mean = v[v.size()/2];
-			float p95 = v[v.size()-2];
 
-			char str[1024];
-			sprintf(str,
-					"entity_update: avg: %8.8f    min: %8.8f    max: %8.8f     "
-					" mean: %8.8f     p95: %8.8f      totalUpdates: %i     "
-					"updatesPerFrame: %.2f",
-					avg, min, max, mean, p95, CCCOUNT, CCCOUNT / 71.0);
+	uint64_t b = icon7::time::GetTimestamp();
+	double c = icon7::time::DeltaNsBetweenTimestamps(a, b) / 1000.0;
 
-			UtilityFunctions::print(str);
-			CCCOUNT = 0;
-			
-			
-		}
+	if (nextFrameToSample <= GLOB_FRAME_ID) {
+		nextFrameToSample = GLOB_FRAME_ID + 1001;
+
+		auto s = stats.CalcStats();
+		std::string str = s.ToString();
+		UtilityFunctions::print(str.c_str());
+		stats.Reset();
 	}
-	
-	vvv.push_back(c);
+	stats.PushValue(c);
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)

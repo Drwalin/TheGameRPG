@@ -49,7 +49,7 @@ uint64_t RealmServer::NewEntity()
 void RealmServer::Init(const std::string &realmName)
 {
 	executionQueue.userSmartPtr = this->shared_from_this();
-	
+
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
 
@@ -84,7 +84,7 @@ bool RealmServer::OneEpoch()
 	if (nextTickToSaveAllDataToFiles <= timer.currentTick) {
 		SaveAllEntitiesToFiles();
 	}
-	
+
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;

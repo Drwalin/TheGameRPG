@@ -165,7 +165,7 @@ public:
 
 private:
 	bool queueDestroy = false;
-	
+
 	int64_t nextTickToSaveAllDataToFiles = 0;
 
 public:
