@@ -3,19 +3,21 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
-#include <unordered_set>
 #include <string>
 #include <atomic>
 #include <thread>
-#include <mutex>
 #include <memory>
+#include <mutex>
+
+#include "../../common/include/ThreadSafeValue.hpp"
 
 class RealmServer;
+class ServerCore;
 
 class RealmWorkThreadedManager final
 {
 public:
-	RealmWorkThreadedManager();
+	RealmWorkThreadedManager(ServerCore *serverCore);
 	~RealmWorkThreadedManager();
 
 	void DestroyAllRealmsAndStop();
@@ -34,7 +36,10 @@ public:
 	std::vector<std::shared_ptr<RealmServer>> GetAllRealms();
 
 private:
-	void SingleRunner();
+	void SingleRunner(int threadId, int workerThreadsCount);
+
+	int millisecondsBetweenStatsReport = 60000;
+	int millisecondsBetweenSleepStatsReport = 300000;
 
 private:
 	std::mutex mutex;
@@ -44,4 +49,9 @@ private:
 	std::atomic<bool> requestStopRunning;
 	std::atomic<int> runningThreads;
 	std::vector<std::thread> threads;
+
+	std::vector<ThreadSafeValue<std::shared_ptr<RealmServer>>>
+		currentlyRunningRealmInThread;
+
+	ServerCore *serverCore;
 };

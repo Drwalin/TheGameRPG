@@ -33,9 +33,6 @@ public:
 	void FlushSavingData();
 	void WaitForFlushedData();
 
-	// returns false if was not busy
-	virtual bool OneEpoch() override;
-
 	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);
 
@@ -55,6 +52,10 @@ public:
 
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
+
+protected:
+	// returns false if was not busy
+	virtual bool OneEpoch() override;
 
 public: // ecs
 	template <typename Fun, typename... Args>

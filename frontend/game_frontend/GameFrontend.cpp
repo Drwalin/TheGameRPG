@@ -8,10 +8,10 @@
 #include "../../ICon7/include/icon7/Time.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
+#include "../../common/include/StatsCollector.hpp"
 
 #include "GodotGlm.hpp"
 
-#include "../../common/include/StatsCollector.hpp"
 #include "GameFrontend.hpp"
 
 #define METHOD_NO_ARGS(CLASS, NAME)                                            \
@@ -97,30 +97,18 @@ void GameFrontend::InternalReady()
 	nodeUI = get_node_or_null("/root/SceneRoot/UI");
 }
 
-int GLOB_FRAME_ID = 0;
-
 void GameFrontend::InternalProcess()
 {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
 
-	++GLOB_FRAME_ID;
-
-	static StatsCollector stats(
-		"GameFrontend total internal process time [ms]");
-
 	uint64_t a = icon7::time::GetTimestamp();
 	client->RunOneEpoch();
 	uint64_t b = icon7::time::GetTimestamp();
-	double c = icon7::time::DeltaNsBetweenTimestamps(a, b) / (1000.0 * 1000.0);
-	stats.PushValue(c);
-	if (stats.GetSamplesCount() >= 1001) {
-		auto s = stats.CalcStats();
-		std::string str = s.ToString();
-		UtilityFunctions::print(str.c_str());
-		stats.Reset();
-	}
+	double c = icon7::time::DeltaMSecBetweenTimestamps(a, b);
+	statsInternalProcessDuration.PushValue(c);
+	statsInternalProcessDuration.PrintAndResetStatsIfExpired(15 * 60 * 1000);
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)

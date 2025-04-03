@@ -48,6 +48,9 @@ uint64_t RealmServer::NewEntity()
 
 void RealmServer::Init(const std::string &realmName)
 {
+	millisecondsBetweenStatsReport = serverCore->configStorage.GetOrSetInteger(
+		"metrics.realm.milliseconds_between_stats_report", 60000);
+
 	executionQueue.userSmartPtr = this->shared_from_this();
 
 	// TODO: load static realm data from database/disk

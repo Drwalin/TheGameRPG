@@ -16,6 +16,9 @@ public:
 		{
 		}
 
+		StatEntry(const StatEntry &) = default;
+		StatEntry &operator=(const StatEntry &) = default;
+
 		std::string name;
 
 		uint64_t count = 0;
@@ -44,15 +47,23 @@ public:
 	};
 
 	StatsCollector(std::string name);
+	StatsCollector(const StatsCollector &other) = default;
+	StatsCollector &operator=(const StatsCollector &other) = default;
 	~StatsCollector();
 
 	void PushValue(double value);
 	StatEntry CalcStats();
 	void Reset();
 	uint64_t GetSamplesCount() const;
+	StatEntry CalcAndReset();
+
+	void SetName(const std::string &name);
+
+	void PrintAndResetStatsIfExpired(int64_t milliseconds);
 
 public:
 	StatEntry stats;
+	StatEntry prevStats;
 
 private:
 	std::string name;

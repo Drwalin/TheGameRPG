@@ -41,6 +41,8 @@ void EntityPrefabScript::_bind_methods()
 	METHOD_NO_ARGS(EntityPrefabScript, PopOneOffAnimation);
 
 	METHOD_ARGS(EntityPrefabScript, _my_internal_process, "deltaTime");
+
+	statsProcessDuration = {"EntityPrefabScript::process time [us]"};
 }
 
 void EntityPrefabScript::_ready()
@@ -57,16 +59,11 @@ void EntityPrefabScript::_ready()
 
 void EntityPrefabScript::_process(double dt) { _my_internal_process(dt); }
 
-extern int GLOB_FRAME_ID;
-
 void EntityPrefabScript::_my_internal_process(double dt)
 {
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
-
-	static int nextFrameToSample = GLOB_FRAME_ID + 1001;
-	static StatsCollector stats("EntityPrefabScript::process time [us]");
 
 	uint64_t a = icon7::time::GetTimestamp();
 
@@ -97,16 +94,8 @@ void EntityPrefabScript::_my_internal_process(double dt)
 
 	uint64_t b = icon7::time::GetTimestamp();
 	double c = icon7::time::DeltaNsBetweenTimestamps(a, b) / 1000.0;
-
-	if (nextFrameToSample <= GLOB_FRAME_ID) {
-		nextFrameToSample = GLOB_FRAME_ID + 1001;
-
-		auto s = stats.CalcStats();
-		std::string str = s.ToString();
-		UtilityFunctions::print(str.c_str());
-		stats.Reset();
-	}
-	stats.PushValue(c);
+	statsProcessDuration.PushValue(c);
+	statsProcessDuration.PrintAndResetStatsIfExpired(15 * 60 * 1000);
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)
@@ -231,3 +220,6 @@ EntityPrefabScript *EntityPrefabScript::CreateNew()
 	auto ret = (EntityPrefabScript *)(prefab->instantiate());
 	return ret;
 }
+
+StatsCollector EntityPrefabScript::statsProcessDuration = {
+	"EntityPrefabScript::process time [us]"};

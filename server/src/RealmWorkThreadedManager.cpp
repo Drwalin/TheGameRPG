@@ -1,13 +1,20 @@
 #include <chrono>
 #include <mutex>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Time.hpp"
 
 #include "../include/RealmServer.hpp"
+#include "../include/ServerCore.hpp"
+#include "../../common/include/StatsCollector.hpp"
 
 #include "../include/RealmWorkThreadedManager.hpp"
 
-RealmWorkThreadedManager::RealmWorkThreadedManager() { runningThreads = 0; }
+RealmWorkThreadedManager::RealmWorkThreadedManager(ServerCore *serverCore)
+	: serverCore(serverCore)
+{
+	runningThreads = 0;
+}
 
 RealmWorkThreadedManager::~RealmWorkThreadedManager()
 {
@@ -61,13 +68,24 @@ RealmWorkThreadedManager::GetRealm(const std::string &realmName)
 
 void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 {
+	millisecondsBetweenStatsReport = serverCore->configStorage.GetOrSetInteger(
+		"metrics.thread_manager.realm_process_duration.milliseconds_between_"
+		"stats_report",
+		60000);
+	millisecondsBetweenSleepStatsReport =
+		serverCore->configStorage.GetOrSetInteger(
+			"metrics.thread_manager.sleeping_duration.milliseconds_between_"
+			"stats_report",
+			300000);
+	currentlyRunningRealmInThread.resize(workerThreadsCount);
+
 	requestStopRunning = false;
 	std::lock_guard lock(mutex);
 	for (int i = threads.size(); i < workerThreadsCount; ++i) {
 		threads.push_back(std::thread(
 			+[](RealmWorkThreadedManager *manager, int id, int count) {
 				LOG_INFO("Realms worker thread %i / %i", id + 1, count);
-				manager->SingleRunner();
+				manager->SingleRunner(id, count);
 			},
 			this, i, workerThreadsCount));
 	}
@@ -89,13 +107,23 @@ void RealmWorkThreadedManager::WaitStopRunning()
 
 bool RealmWorkThreadedManager::IsRunning() { return runningThreads > 0; }
 
-void RealmWorkThreadedManager::SingleRunner()
+void RealmWorkThreadedManager::SingleRunner(int threadId,
+											int workerThreadsCount)
 {
+	StatsCollector statsDuration("RealmWOrkerThread_duration_" +
+								 std::to_string(threadId) + ",[ms]");
+	StatsCollector statsSleep("RealmWorkerThread_sleep_" +
+							  std::to_string(threadId) + ",[ms]");
+	currentlyRunningRealmInThread[threadId] =
+		std::shared_ptr<RealmServer>(nullptr);
+
 	int notBusyCount = 0;
 	++runningThreads;
 	int sleepMilliseconds = 1;
 	uint32_t countBusySinceLastSleep = 0;
 	while (true) {
+		uint64_t begin = icon7::time::GetTimestamp();
+
 		bool destroyRealm = false;
 		std::shared_ptr<RealmServer> realm = nullptr;
 		{
@@ -103,14 +131,19 @@ void RealmWorkThreadedManager::SingleRunner()
 			if (realmsQueue.empty() == false) {
 				realm = realmsQueue.front();
 				realmsQueue.pop();
-				if (realm->IsQueuedToDestroy() || requestStopRunning == true) {
-					realms.erase(realm->realmName);
-					destroyRealm = true;
-				}
-			} else if (requestStopRunning) {
-				break;
 			}
 		}
+
+		if (realm.get() == nullptr && requestStopRunning) {
+			break;
+		} else if (realm.get()) {
+			if (realm->IsQueuedToDestroy() || requestStopRunning == true) {
+				realms.erase(realm->realmName);
+				destroyRealm = true;
+			}
+		}
+
+		currentlyRunningRealmInThread[threadId] = realm;
 
 		if (destroyRealm) {
 			realm->DisconnectAllAndDestroy();
@@ -118,7 +151,7 @@ void RealmWorkThreadedManager::SingleRunner()
 			realm = nullptr;
 			notBusyCount = 0;
 		} else if (realm) {
-			if (realm->OneEpoch() == false) {
+			if (realm->RunOneEpoch() == false) {
 				notBusyCount++;
 			} else {
 				notBusyCount = 0;
@@ -129,10 +162,21 @@ void RealmWorkThreadedManager::SingleRunner()
 				std::lock_guard lock(mutex);
 				realmsQueue.push(realm);
 			}
+
 			realm = nullptr;
 		} else {
 			notBusyCount++;
 		}
+
+		currentlyRunningRealmInThread[threadId] =
+			std::shared_ptr<RealmServer>(nullptr);
+
+		uint64_t end = icon7::time::GetTimestamp();
+		double duration = icon7::time::DeltaMSecBetweenTimestamps(begin, end);
+		statsDuration.PushValue(duration);
+		statsDuration.PrintAndResetStatsIfExpired(
+			millisecondsBetweenStatsReport);
+
 		if (notBusyCount >= 6) {
 			if (countBusySinceLastSleep > 5) {
 				sleepMilliseconds = std::max(sleepMilliseconds - 1, 1);
@@ -141,13 +185,21 @@ void RealmWorkThreadedManager::SingleRunner()
 			}
 			std::this_thread::sleep_for(
 				std::chrono::milliseconds(sleepMilliseconds));
+			statsSleep.PushValue(sleepMilliseconds);
 			notBusyCount = 0;
 			countBusySinceLastSleep = 0;
 		}
+
+		statsSleep.PrintAndResetStatsIfExpired(
+			millisecondsBetweenSleepStatsReport);
 	}
+	currentlyRunningRealmInThread[threadId] =
+		std::shared_ptr<RealmServer>(nullptr);
 	if ((--runningThreads) == 0) {
 		requestStopRunning = false;
 	}
+	currentlyRunningRealmInThread[threadId] =
+		std::shared_ptr<RealmServer>(nullptr);
 }
 
 std::vector<std::shared_ptr<RealmServer>>
