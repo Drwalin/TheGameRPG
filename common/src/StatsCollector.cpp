@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "../../ICon7/include/icon7/Time.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/StatsCollector.hpp"
 
@@ -10,39 +11,42 @@ std::string StatsCollector::StatEntry::ToString() const
 {
 	std::string ret;
 
+	double seconds =
+		icon7::time::DeltaSecBetweenTimestamps(timestampStart, timestampEnd);
+
 	char str[4096];
-	snprintf(
-		str, 4095,
-		"stats:"
-		"  count: %8lu"
-		"  min: %8.3f"
-		"  avg: %8.3f"
-		"  max: %8.3f"
-		"      p25: %8.3f"
-		"  p33: %8.3f"
-		"  p50: %8.3f"
-		"  p66: %8.3f"
-		"  p75: %8.3f"
-		"  p90: %8.3f"
-		"  p95: %8.3f"
-		"  p99: %8.3f"
-		"  p996: %8.3f"
-		"  p999: %8.3f"
-		"  stddev: %8.3f"
-		"  samplingTime: %8.3f [s]"
-		"  %s  -  %s",
-		count, min, avg, max, p25, p33, p50, p66, p75, p90, p95, p99, p996,
-		p999, stddev,
-		icon7::time::DeltaNsBetweenTimestamps(timestampStart, timestampEnd) /
-			(1000.0 * 1000.0 * 1000.0),
-		icon7::time::TimestampToString(timestampEnd, 3).c_str(), name.c_str());
+	snprintf(str, 4095,
+			 "stats:"
+			 "  count: %8lu"
+			 "  min: %8.3f"
+			 "  avg: %8.3f"
+			 "  max: %8.3f"
+			 "      p25: %8.3f"
+			 "  p33: %8.3f"
+			 "  p50: %8.3f"
+			 "  p66: %8.3f"
+			 "  p75: %8.3f"
+			 "  p90: %8.3f"
+			 "  p95: %8.3f"
+			 "  p99: %8.3f"
+			 "  p996: %8.3f"
+			 "  p999: %8.3f"
+			 "  stddev: %8.3f"
+			 "  persec: %10.5f"
+			 "  samplingTime: %8.3f [s]"
+			 "  %s  -  %s",
+			 count, min, avg, max, p25, p33, p50, p66, p75, p90, p95, p99, p996,
+			 p999, stddev, (count * avg) / seconds, seconds,
+			 icon7::time::TimestampToString(timestampEnd, 3).c_str(),
+			 name.c_str());
 
 	ret = str;
 
 	return ret;
 }
 
-StatsCollector::StatsCollector(std::string name) : stats(name), name(name)
+StatsCollector::StatsCollector(std::string name)
+	: stats(name), prevStats(name), name(name)
 {
 	lastResetTimestamp = icon7::time::GetTimestamp();
 	this->name = name;
@@ -56,7 +60,7 @@ StatsCollector::StatEntry StatsCollector::CalcStats()
 {
 	stats.count = values.size();
 	if (stats.count == 0) {
-		return stats = StatsCollector::StatEntry(name, 0, -1);
+		return stats = StatsCollector::StatEntry(name, 0, 0);
 	} else if (stats.count == 1) {
 		return stats = StatsCollector::StatEntry(name, 1, values[0]);
 	}
@@ -97,8 +101,33 @@ StatsCollector::StatEntry StatsCollector::CalcStats()
 
 void StatsCollector::Reset()
 {
+	prevStats = stats;
 	values.clear();
 	lastResetTimestamp = icon7::time::GetTimestamp();
 }
 
+StatsCollector::StatEntry StatsCollector::CalcAndReset()
+{
+	CalcStats();
+	Reset();
+	return stats;
+}
+
 uint64_t StatsCollector::GetSamplesCount() const { return values.size(); }
+
+void StatsCollector::SetName(const std::string &name)
+{
+	this->name = name;
+	stats.name = name;
+	prevStats.name = name;
+}
+
+void StatsCollector::PrintAndResetStatsIfExpired(int64_t milliseconds)
+{
+	uint64_t t = icon7::time::GetTimestamp();
+	if (icon7::time::DeltaNsBetweenTimestamps(lastResetTimestamp, t) >=
+		(milliseconds * (1000ll * 1000ll))) {
+		CalcAndReset();
+		icon7::log::PrintLineSync("%s", stats.ToString().c_str());
+	}
+}

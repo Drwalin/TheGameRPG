@@ -8,7 +8,8 @@
 
 #include "../include/ServerCore.hpp"
 
-ServerCore::ServerCore() : commandParser(this), configStorage(this)
+ServerCore::ServerCore()
+	: realmManager(this), commandParser(this), configStorage(this)
 {
 	host = nullptr;
 	rpc = new icon7::RPCEnvironment();

@@ -8,6 +8,7 @@
 #include "TickTimer.hpp"
 #include "CollisionWorld.hpp"
 #include "EntityEvent.hpp"
+#include "StatsCollector.hpp"
 
 struct RealmPtr {
 	class Realm *realm;
@@ -37,7 +38,7 @@ public:
 	void RegisterObservers();
 
 	// returns false if was not busy or if does not need to be busy
-	virtual bool OneEpoch();
+	bool RunOneEpoch();
 
 	virtual void UpdateEntityAuthoritativeState(
 		uint64_t entityId,
@@ -54,6 +55,13 @@ public:
 								   TerrainCollisionData *data) = 0;
 
 	template <typename FF> void TrueDeferWhenNeeded(FF &&func);
+
+protected:
+	// returns false if was not busy or if does not need to be busy
+	virtual bool OneEpoch();
+	StatsCollector statsOneEpochDuration;
+
+	int64_t millisecondsBetweenStatsReport = 60000;
 
 public:
 	TickTimer timer;

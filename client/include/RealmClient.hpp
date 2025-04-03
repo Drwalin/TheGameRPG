@@ -18,9 +18,6 @@ public:
 	virtual void Clear() override;
 	void Reinit(const std::string &realmName);
 
-	// returns false if was not busy
-	virtual bool OneEpoch() override;
-
 	void AddNewAuthoritativeMovementState(
 		uint64_t localId, uint64_t serverId,
 		ComponentLastAuthoritativeMovementState state);
@@ -33,6 +30,10 @@ public:
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
+
+protected:
+	// returns false if was not busy
+	virtual bool OneEpoch() override;
 
 public:
 	GameClient *gameClient;

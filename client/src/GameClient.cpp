@@ -162,7 +162,7 @@ void GameClient::RunOneEpoch()
 	executionQueue.Execute(128);
 
 	PerformSendPlayerMovementInput();
-	realm->OneEpoch();
+	realm->RunOneEpoch();
 	PerformSendPlayerMovementInput();
 
 	pingTimer.Update();
@@ -183,7 +183,7 @@ void GameClient::RunOneEpoch()
 					RequestSpawnOf(it->second);
 				} else {
 					LOG_FATAL("There is an entity with localId=%lu but without "
-							  "serer id",
+							  "server id",
 							  entity.id());
 				}
 			}

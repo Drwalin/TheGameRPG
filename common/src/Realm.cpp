@@ -4,10 +4,13 @@
 #include "../include/EntityEvent.hpp"
 #include "../include/EntityComponents.hpp"
 #include "../include/RegistryComponent.hpp"
+#include "icon7/Time.hpp"
 
 #include "../include/Realm.hpp"
 
-Realm::Realm() : ecs(/*ecs_mini()*/), collisionWorld(this)
+Realm::Realm()
+	: statsOneEpochDuration("!!UNINITIALIZED!!"), ecs(/*ecs_mini()*/),
+	  collisionWorld(this)
 {
 	ECS_IMPORT(ecs.get_world(), FlecsSystem);
 	ECS_IMPORT(ecs.get_world(), FlecsPipeline);
@@ -37,6 +40,8 @@ void Realm::Clear()
 
 void Realm::Init(const std::string &realmName)
 {
+	statsOneEpochDuration.SetName("One_Epoch_Duration:" + realmName + ",[ms]");
+
 	this->realmName = realmName;
 	timer.Start();
 
@@ -110,6 +115,18 @@ void Realm::RegisterObservers()
 			event.event = &defaultMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
+}
+
+bool Realm::RunOneEpoch()
+{
+	uint64_t begin = icon7::time::GetTimestamp();
+	bool ret = OneEpoch();
+	uint64_t end = icon7::time::GetTimestamp();
+	double duration = icon7::time::DeltaMSecBetweenTimestamps(begin, end);
+	statsOneEpochDuration.PushValue(duration);
+	statsOneEpochDuration.PrintAndResetStatsIfExpired(
+		millisecondsBetweenStatsReport);
+	return ret;
 }
 
 bool Realm::OneEpoch()
