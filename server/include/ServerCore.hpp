@@ -51,11 +51,11 @@ public:
 				int64_t attackId, int64_t argInt);
 
 	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::Peer *peer);
-	
-	static icon7::CommandExecutionQueue::CoroutineAwaitable ScheduleInRealm(
-			std::weak_ptr<RealmServer> &realm);
-	icon7::CommandExecutionQueue::CoroutineAwaitable ScheduleInRealmOrCore(
-			std::weak_ptr<RealmServer> &realm);
+
+	static icon7::CommandExecutionQueue::CoroutineAwaitable
+	ScheduleInRealm(std::weak_ptr<RealmServer> &realm);
+	icon7::CommandExecutionQueue::CoroutineAwaitable
+	ScheduleInRealmOrCore(std::weak_ptr<RealmServer> &realm);
 
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);

@@ -35,7 +35,7 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 	if (peer.peer.get() == nullptr) {
 		return;
 	}
-	
+
 	// Probably duplicate of some of RealmServer::DisconnectPeer code.
 
 	// TODO: check if this realm->peers.erase() is required or if it's in
