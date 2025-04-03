@@ -8,12 +8,12 @@
 
 #include "../../ICon7/include/icon7/Debug.hpp"
 #include "../../ICon7/include/icon7/Time.hpp"
-#include "../../ICon7/include/icon7/StatsCollector.hpp"
 
 #include "GameFrontend.hpp"
 
 #include "GodotGlm.hpp"
 
+#include "../../common/include/StatsCollector.hpp"
 #include "AsyncLoadedPlaceholder.hpp"
 #include "EntityPrefabScript.hpp"
 
@@ -66,7 +66,7 @@ void EntityPrefabScript::_my_internal_process(double dt)
 	}
 
 	static int nextFrameToSample = GLOB_FRAME_ID + 1001;
-	static icon7::StatsCollector stats("EntityPrefabScript::process time [us]");
+	static StatsCollector stats("EntityPrefabScript::process time [us]");
 
 	uint64_t a = icon7::time::GetTimestamp();
 
