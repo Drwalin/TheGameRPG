@@ -52,6 +52,7 @@ private:
 
 	std::vector<ThreadSafeValue<std::shared_ptr<RealmServer>>>
 		currentlyRunningRealmInThread;
+	std::vector<uint64_t> timestampOfStartRunningCurrentRealmInThread;
 
 	ServerCore *serverCore;
 };
