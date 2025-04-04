@@ -9,11 +9,14 @@
 #include "../include/Realm.hpp"
 
 Realm::Realm()
-	: statsOneEpochDuration("!!UNINITIALIZED!!"), ecs(/*ecs_mini()*/),
+	: statsOneEpochDuration("!!UNINITIALIZED!!"), ecs(ecs_mini()),
 	  collisionWorld(this)
 {
+	/*
+	UNDELETE
 	ECS_IMPORT(ecs.get_world(), FlecsSystem);
 	ECS_IMPORT(ecs.get_world(), FlecsPipeline);
+	*/
 	Realm::RegisterObservers();
 }
 
@@ -83,8 +86,9 @@ void Realm::RegisterObservers()
 		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
 					 const ComponentMovementParameters &) {
 			static EntityEventTemplate defaultMovementEvent{
-				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
-				   uint64_t entityId) {
+				"ExecuteMovementUpdate",
+				+[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
+					uint64_t entityId) {
 					ComponentMovementState currentState;
 					realm->ExecuteMovementUpdate(entityId, &currentState);
 
@@ -96,19 +100,9 @@ void Realm::RegisterObservers()
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
 						dt = realm->minMovementDeltaTicks;
 					}
-					EntityEvent event;
-					event.dueTick = realm->timer.currentTick + dt;
-					event.event = &defaultMovementEvent;
-
-					ComponentEventsQueue *eventsQueue =
-						realm->AccessComponent<ComponentEventsQueue>(entityId);
-					if (eventsQueue == nullptr) {
-						LOG_FATAL("Events queue removed but event "
-								  "ExecuteMovementUpdate  was executed.");
-						return;
-					}
-
-					eventsQueue->ScheduleEvent(realm, entityId, event);
+					realm->ScheduleEntityEvent(
+						entityId,
+						{realm->timer.currentTick + dt, &defaultMovementEvent});
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 100;
@@ -151,9 +145,6 @@ bool Realm::OneEpoch()
 			break;
 		}
 	}
-
-	// TODO: Replace flecs::system with queued event entries
-	ecs.progress();
 
 	if (executedEvents == 0) {
 		collisionWorld.EndEpoch();
@@ -198,4 +189,20 @@ Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
 	entity.set<ComponentStaticCollisionShapeName>(shape);
 
 	return entityId;
+}
+
+void Realm::ScheduleEntityEvent(flecs::entity entity, EntityEvent event)
+{
+	ComponentEventsQueue *eventsQueue = entity.get_mut<ComponentEventsQueue>();
+	if (eventsQueue == nullptr) {
+		LOG_FATAL("Trying to add event `%s` to entity without event queue.",
+				  event.event->name);
+		return;
+	}
+
+	eventsQueue->ScheduleEvent(this, entity.id(), event);
+}
+void Realm::ScheduleEntityEvent(uint64_t entityId, EntityEvent event)
+{
+	ScheduleEntityEvent(Entity(entityId), event);
 }

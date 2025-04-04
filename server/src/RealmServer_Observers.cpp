@@ -91,8 +91,9 @@ void RealmServer::RegisterObservers()
 		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
 					 const ComponentAITick &) {
 			static EntityEventTemplate defaultAiMovementEvent{
-				[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
-				   uint64_t entityId) {
+				"defaultAiMovementEvent",
+				+[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
+					uint64_t entityId) {
 					flecs::entity entity = realm->Entity(entityId);
 					if (entity.has<ComponentAITick>()) {
 						auto tick = entity.get<ComponentAITick>();
@@ -106,19 +107,9 @@ void RealmServer::RegisterObservers()
 
 					int64_t dt = realm->maxMovementDeltaTicks;
 
-					EntityEvent event;
-					event.dueTick = realm->timer.currentTick + dt;
-					event.event = &defaultAiMovementEvent;
-
-					ComponentEventsQueue *eventsQueue =
-						realm->AccessComponent<ComponentEventsQueue>(entityId);
-					if (eventsQueue == nullptr) {
-						LOG_FATAL("Events queue removed but event AIUpdate was "
-								  "executed.");
-						return;
-					}
-
-					eventsQueue->ScheduleEvent(realm, entityId, event);
+					realm->ScheduleEntityEvent(entityId,
+											   {realm->timer.currentTick + dt,
+												&defaultAiMovementEvent});
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 100;
@@ -168,6 +159,13 @@ void RealmServer::RegisterObservers()
 					ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
 						this, peer.peer.get(), {entity.id()});
 				}
+			}
+		});
+
+	RegisterObserver(
+		flecs::OnAdd, +[](flecs::entity entity, ComponentSpawner &) {
+			if (entity.has<ComponentEventsQueue>() == false) {
+				entity.add<ComponentEventsQueue>();
 			}
 		});
 }
