@@ -9,6 +9,7 @@
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
+#include "../include/EntityGameComponents.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -58,8 +59,6 @@ void RealmServer::Init(const std::string &realmName)
 
 	LoadFromFile();
 
-	RegisterGameLogic();
-
 	sendEntitiesToClientsTimer = 0;
 }
 
@@ -81,6 +80,12 @@ bool RealmServer::OneEpoch()
 {
 	bool busy = executionQueue.Execute(128) != 0;
 	busy |= Realm::OneEpoch();
+
+	// TODO: replace with observer inside collision world on collision
+	ecs.each([this](flecs::entity entity, ComponentTrigger &trigger) {
+		trigger.Tick(entity.id(), this);
+	});
+
 	// TODO: here do other server updates, AI, other mechanics and logic, defer
 	//       some work to other worker threads (ai, db)  maybe?
 

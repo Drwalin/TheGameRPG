@@ -56,6 +56,10 @@ public:
 
 	template <typename FF> void TrueDeferWhenNeeded(FF &&func);
 
+public:
+	void ScheduleEntityEvent(flecs::entity entity, EntityEvent event);
+	void ScheduleEntityEvent(uint64_t entityId, EntityEvent event);
+
 protected:
 	// returns false if was not busy or if does not need to be busy
 	virtual bool OneEpoch();
@@ -81,7 +85,7 @@ public:
 
 public:
 	template <typename... TArgs>
-	auto GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
+	auto _GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
 	{
 		return ecs.observer<TArgs...>();
 	}
@@ -90,7 +94,7 @@ public:
 	void RegisterObserver(flecs::entity_t event, Fun &&func)
 	{
 		decltype(std::function(*&func)) f;
-		GetObserver(f).event(event).each(std::move(func));
+		_GetObserver(f).event(event).each(std::move(func));
 	}
 
 public: // accessors

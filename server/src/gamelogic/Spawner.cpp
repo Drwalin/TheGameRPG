@@ -1,10 +1,10 @@
 #include <icon7/ByteReader.hpp>
 #include <random>
 
-#include "../../common/include/RegistryComponent.hpp"
+#include "../../../common/include/RegistryComponent.hpp"
 
-#include "../include/RealmServer.hpp"
-#include "../include/GameLogic.hpp"
+#include "../../include/RealmServer.hpp"
+#include "../../include/GameLogic.hpp"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643
@@ -12,15 +12,39 @@
 
 namespace GameLogic
 {
-void Spawner(RealmServer *realm, flecs::entity spawnerEntity,
-			 ComponentSpawner &spawner,
-			 const ComponentStaticTransform &transform)
+static void Spawner(RealmServer *realm, int64_t scheduledTick,
+					int64_t currentTick, uint64_t entityId);
+
+static EntityEventTemplate eventSpawner{
+	"Spawner", (EntityEventTemplate::CallbackType)Spawner};
+
+static void Spawner(RealmServer *realm, int64_t scheduledTick,
+					int64_t currentTick, uint64_t entityId)
 {
+	flecs::entity spawnerEntity = realm->Entity(entityId);
+	ComponentSpawner *_spawner = spawnerEntity.get_mut<ComponentSpawner>();
+	const ComponentStaticTransform *_transform =
+		spawnerEntity.get<ComponentStaticTransform>();
+
+	if (_spawner == nullptr || _transform == nullptr) {
+		realm->ScheduleEntityEvent(spawnerEntity,
+								   {currentTick + 1000 * 12, &eventSpawner});
+		return;
+	}
+	auto &spawner = *_spawner;
+	auto transform = *_transform;
+
 	if (spawner.prefabsData.empty() || spawner.prefabsOffset.size() <= 1) {
+		realm->ScheduleEntityEvent(
+			spawnerEntity,
+			{currentTick + spawner.spawnCooldown, &eventSpawner});
 		return;
 	}
 	if (spawner.lastSpawnedTimestamp + spawner.spawnCooldown >=
 		realm->timer.currentTick) {
+		realm->ScheduleEntityEvent(
+			spawnerEntity,
+			{currentTick + spawner.spawnCooldown, &eventSpawner});
 		return;
 	}
 	spawner.lastSpawnedTimestamp = realm->timer.currentTick;
@@ -109,5 +133,17 @@ void Spawner(RealmServer *realm, flecs::entity spawnerEntity,
 			}
 		});
 	}
+	realm->ScheduleEntityEvent(
+		spawnerEntity, {currentTick + spawner.spawnCooldown, &eventSpawner});
+}
+
+void SpawnerSchedule(flecs::entity spawnerEntity, ComponentSpawner &spawner,
+					 const ComponentStaticTransform &transform,
+					 ComponentEventsQueue &)
+{
+	RealmPtr *rp = spawnerEntity.world().get_mut<RealmPtr>();
+	rp->realm->ScheduleEntityEvent(
+		spawnerEntity,
+		{rp->realm->timer.currentTick + spawner.spawnCooldown, &eventSpawner});
 }
 } // namespace GameLogic

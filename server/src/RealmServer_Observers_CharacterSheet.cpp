@@ -5,6 +5,7 @@
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../include/ServerCore.hpp"
+#include "../include/GameLogic.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -85,4 +86,9 @@ void RealmServer::RegisterObservers_CharacterSheet()
 				entity.destruct();
 			}
 		});
+
+	RegisterObserver(flecs::OnSet, GameLogic::LevelUp);
+
+	RegisterObserver(flecs::OnAdd, GameLogic::HealthRegenerateSchedule);
+	RegisterObserver(flecs::OnAdd, GameLogic::SpawnerSchedule);
 }
