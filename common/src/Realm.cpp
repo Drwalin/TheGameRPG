@@ -12,11 +12,6 @@ Realm::Realm()
 	: statsOneEpochDuration("!!UNINITIALIZED!!"), ecs(ecs_mini()),
 	  collisionWorld(this)
 {
-	/*
-	UNDELETE
-	ECS_IMPORT(ecs.get_world(), FlecsSystem);
-	ECS_IMPORT(ecs.get_world(), FlecsPipeline);
-	*/
 	Realm::RegisterObservers();
 }
 
@@ -88,7 +83,7 @@ void Realm::RegisterObservers()
 			static EntityEventTemplate defaultMovementEvent{
 				"ExecuteMovementUpdate",
 				+[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
-					uint64_t entityId) {
+					uint64_t entityId) -> int64_t {
 					ComponentMovementState currentState;
 					realm->ExecuteMovementUpdate(entityId, &currentState);
 
@@ -100,9 +95,8 @@ void Realm::RegisterObservers()
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
 						dt = realm->minMovementDeltaTicks;
 					}
-					realm->ScheduleEntityEvent(
-						entityId,
-						{realm->timer.currentTick + dt, &defaultMovementEvent});
+
+					return dt;
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 100;

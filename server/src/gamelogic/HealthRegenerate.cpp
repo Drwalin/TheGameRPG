@@ -6,14 +6,14 @@
 
 namespace GameLogic
 {
-static void HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
-							 int64_t currentTick, uint64_t entityId);
+static int64_t HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
+								int64_t currentTick, uint64_t entityId);
 
 static EntityEventTemplate eventHealthRegen{
 	"HealthRegenerate", (EntityEventTemplate::CallbackType)HealthRegenerate};
 
-static void HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
-							 int64_t currentTick, uint64_t entityId)
+static int64_t HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
+								int64_t currentTick, uint64_t entityId)
 {
 	flecs::entity entity = realm->Entity(entityId);
 	const ComponentCharacterSheet_Health *_hp =
@@ -21,25 +21,20 @@ static void HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
 	const ComponentCharacterSheet_HealthRegen *_hpReg =
 		entity.get<ComponentCharacterSheet_HealthRegen>();
 	if (_hp == nullptr || _hpReg == nullptr) {
-		return;
+		return 0;
 	}
 	auto hp = *_hp;
 	auto hpReg = *_hpReg;
 
 	if (hp.hp <= 0) {
-		realm->ScheduleEntityEvent(
-			entityId,
-			{hpReg.lastTimestamp + hpReg.cooldown, &eventHealthRegen});
-		return;
+		return hpReg.cooldown;
 	}
 	int64_t count =
 		(realm->timer.currentTick - hpReg.lastTimestamp) / hpReg.cooldown;
 	hpReg.lastTimestamp += count * hpReg.cooldown;
 	if (hp.hp >= hp.maxHP) {
-		realm->ScheduleEntityEvent(
-			entityId,
-			{hpReg.lastTimestamp + hpReg.cooldown, &eventHealthRegen});
-		return;
+		return std::max<int64_t>(10, hpReg.lastTimestamp + hpReg.cooldown -
+										 currentTick);
 	}
 	if (count != 0) {
 		entity.set<ComponentCharacterSheet_HealthRegen>(hpReg);
@@ -53,8 +48,8 @@ static void HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
 		}
 		entity.set<ComponentCharacterSheet_Health>(hp);
 	}
-	realm->ScheduleEntityEvent(
-		entityId, {hpReg.lastTimestamp + hpReg.cooldown, &eventHealthRegen});
+	return std::max<int64_t>(10, hpReg.lastTimestamp + hpReg.cooldown -
+									 currentTick);
 }
 
 void HealthRegenerateSchedule(flecs::entity entity,
