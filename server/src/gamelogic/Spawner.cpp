@@ -12,14 +12,14 @@
 
 namespace GameLogic
 {
-static void Spawner(RealmServer *realm, int64_t scheduledTick,
-					int64_t currentTick, uint64_t entityId);
+static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
+					   int64_t currentTick, uint64_t entityId);
 
 static EntityEventTemplate eventSpawner{
 	"Spawner", (EntityEventTemplate::CallbackType)Spawner};
 
-static void Spawner(RealmServer *realm, int64_t scheduledTick,
-					int64_t currentTick, uint64_t entityId)
+static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
+					   int64_t currentTick, uint64_t entityId)
 {
 	flecs::entity spawnerEntity = realm->Entity(entityId);
 	ComponentSpawner *_spawner = spawnerEntity.get_mut<ComponentSpawner>();
@@ -27,25 +27,17 @@ static void Spawner(RealmServer *realm, int64_t scheduledTick,
 		spawnerEntity.get<ComponentStaticTransform>();
 
 	if (_spawner == nullptr || _transform == nullptr) {
-		realm->ScheduleEntityEvent(spawnerEntity,
-								   {currentTick + 1000 * 12, &eventSpawner});
-		return;
+		return 1000 * 12;
 	}
 	auto &spawner = *_spawner;
 	auto transform = *_transform;
 
 	if (spawner.prefabsData.empty() || spawner.prefabsOffset.size() <= 1) {
-		realm->ScheduleEntityEvent(
-			spawnerEntity,
-			{currentTick + spawner.spawnCooldown, &eventSpawner});
-		return;
+		return spawner.spawnCooldown;
 	}
 	if (spawner.lastSpawnedTimestamp + spawner.spawnCooldown >=
 		realm->timer.currentTick) {
-		realm->ScheduleEntityEvent(
-			spawnerEntity,
-			{currentTick + spawner.spawnCooldown, &eventSpawner});
-		return;
+		return spawner.spawnCooldown;
 	}
 	spawner.lastSpawnedTimestamp = realm->timer.currentTick;
 
@@ -133,8 +125,7 @@ static void Spawner(RealmServer *realm, int64_t scheduledTick,
 			}
 		});
 	}
-	realm->ScheduleEntityEvent(
-		spawnerEntity, {currentTick + spawner.spawnCooldown, &eventSpawner});
+	return spawner.spawnCooldown;
 }
 
 void SpawnerSchedule(flecs::entity spawnerEntity, ComponentSpawner &spawner,

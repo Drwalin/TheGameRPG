@@ -53,15 +53,19 @@ void ComponentEventsQueue::Update(int64_t currentTick, uint64_t entityId,
 		}
 	}
 
-	while (true) {
+	for (int i = 0; i < 128; ++i) {
 		if (events.Empty()) {
 			break;
 		}
 		EntityEvent event = events.Top();
 		if (event.dueTick <= currentTick) {
 			events.Pop();
-			event.event->callback(realm, event.dueTick, currentTick, entityId);
-			if (event.event->destroy) {
+			int64_t dt = event.event->callback(realm, event.dueTick,
+											   currentTick, entityId);
+			if (dt > 0) {
+				event.dueTick = currentTick + dt;
+				ScheduleEvent(realm, entityId, event);
+			} else if (event.event->singleUse) {
 				delete event.event;
 			}
 		} else {

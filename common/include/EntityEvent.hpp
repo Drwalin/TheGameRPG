@@ -29,12 +29,12 @@ struct EntityEventEntry {
  * same as application
  */
 struct EntityEventTemplate {
-	using CallbackType = void (*)(class Realm *, int64_t scheduledTick,
-								  int64_t currentTick, uint64_t entityId);
+	using CallbackType = int64_t (*)(class Realm *, int64_t scheduledTick,
+									 int64_t currentTick, uint64_t entityId);
 
 	const char *name;
 	const CallbackType callback;
-	const bool destroy = false;
+	const bool singleUse = false;
 };
 
 struct EntityEvent {
