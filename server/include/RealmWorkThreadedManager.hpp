@@ -9,7 +9,7 @@
 #include <memory>
 #include <mutex>
 
-#include "../../common/include/ThreadSafeValue.hpp"
+#include "../../ICon7/concurrent/thread_safe_value.hpp"
 
 class RealmServer;
 class ServerCore;
@@ -50,7 +50,7 @@ private:
 	std::atomic<int> runningThreads;
 	std::vector<std::thread> threads;
 
-	std::vector<ThreadSafeValue<std::shared_ptr<RealmServer>>>
+	std::vector<concurrent::thread_safe_value<std::shared_ptr<RealmServer>>>
 		currentlyRunningRealmInThread;
 	std::vector<uint64_t> timestampOfStartRunningCurrentRealmInThread;
 

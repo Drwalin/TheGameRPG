@@ -1,14 +1,13 @@
 #pragma once
 
-#include <chrono>
 #include <memory>
 #include <atomic>
 #include <string>
 
-#include <bitscpp/ByteWriter.hpp>
-#include <bitscpp/ByteReader.hpp>
-#include <icon7/ByteBuffer.hpp>
-#include <icon7/Debug.hpp>
+#include "../../ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
+#include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "SharedObject.hpp"
 #include "ComponentCallbackRegistry.hpp"
@@ -22,7 +21,7 @@ template <typename TFinal, typename TCb> struct EntryBase {
 
 	const std::string fullName;
 	const std::string shortName;
-	std::chrono::system_clock::time_point setTimestamp;
+	int64_t setTimestamp;
 	std::atomic<TCb> callback;
 	std::shared_ptr<SharedObject> sharedObject;
 
