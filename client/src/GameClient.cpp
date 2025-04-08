@@ -1,6 +1,3 @@
-#include <chrono>
-#include <thread>
-
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
@@ -142,12 +139,12 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 	host->Connect(ip, port, std::move(com));
 
-	auto end = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-	while (end > std::chrono::steady_clock::now()) {
+	auto end = icon7::time::GetTemporaryTimestamp() + 5*1000ll*1000ll*1000ll;
+	while (end > icon7::time::GetTemporaryTimestamp()) {
 		if (state->s != 0) {
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		icon7::time::SleepMSec(10);
 	}
 	if (state->rp.load() == nullptr) {
 		return false;
@@ -174,8 +171,8 @@ void GameClient::RunOneEpoch()
 	realm->ecs.each<ComponentLastAuthoritativeStateUpdateTime>(
 		[this](flecs::entity entity,
 			   ComponentLastAuthoritativeStateUpdateTime &tp) {
-			auto now = std::chrono::steady_clock::now();
-			auto early = now - std::chrono::seconds(2);
+			auto now = icon7::time::GetTemporaryTimestamp();
+			auto early = now - 2*1000ll*1000ll*1000ll;
 			if (early > tp.timepoint) {
 				tp.timepoint = now;
 				auto it = mapLocalEntityIdToServerEntityId.find(entity.id());

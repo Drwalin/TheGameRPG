@@ -1,4 +1,3 @@
-#include <chrono>
 #include <mutex>
 
 #include "../../ICon7/include/icon7/Debug.hpp"
@@ -189,8 +188,7 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 			} else if (countBusySinceLastSleep == 0) {
 				sleepMilliseconds = std::min(sleepMilliseconds + 1, 35);
 			}
-			std::this_thread::sleep_for(
-				std::chrono::milliseconds(sleepMilliseconds));
+			icon7::time::SleepMSec(sleepMilliseconds);
 			statsSleep.PushValue(sleepMilliseconds);
 			notBusyCount = 0;
 			countBusySinceLastSleep = 0;

@@ -217,7 +217,7 @@ void GameClient::UpdateEntity(
 	if (localId != localPlayerEntityId) {
 		realm->SetComponent<ComponentLastAuthoritativeStateUpdateTime>(
 			localId, ComponentLastAuthoritativeStateUpdateTime{
-						 std::chrono::steady_clock::now(),
+						 icon7::time::GetTemporaryTimestamp(),
 						 realm->timer.currentTick, state.oldState.timestamp});
 		realm->AddNewAuthoritativeMovementState(localId, serverId, state);
 		realm->UpdateEntityCurrentState(localId, serverId);
