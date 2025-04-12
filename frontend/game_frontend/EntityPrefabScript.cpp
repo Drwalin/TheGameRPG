@@ -95,7 +95,8 @@ void EntityPrefabScript::_my_internal_process(double dt)
 	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
 	double c = icon7::time::DeltaUSecBetweenTimepoints(a, b);
 	statsProcessDuration.PushValue(c);
-	statsProcessDuration.PrintAndResetStatsIfExpired(icon7::time::seconds(15 * 60));
+	statsProcessDuration.PrintAndResetStatsIfExpired(
+		icon7::time::seconds(15 * 60));
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)

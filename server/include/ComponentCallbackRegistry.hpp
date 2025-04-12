@@ -70,8 +70,9 @@ template <typename T> struct Registry {
 			LOG_TRACE("Re-registering callback '%s' -> '%s'", fullName.c_str(),
 					  shortName.c_str());
 		} else {
-			T *ptr = new T{fullName, shortName,
-						   icon7::time::GetTemporaryTimestamp(), cb, sharedObject};
+			T *ptr =
+				new T{fullName, shortName, icon7::time::GetTemporaryTimestamp(),
+					  cb, sharedObject};
 			registry[fullName] = ptr;
 			registry[shortName] = ptr;
 			LOG_TRACE("Registering callback '%s' -> '%s'", fullName.c_str(),
