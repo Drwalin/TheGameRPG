@@ -17,9 +17,8 @@ struct ComponentLastAuthoritativeStateUpdateTime {
 	int64_t tick;
 	int64_t tickInState;
 
-	ComponentLastAuthoritativeStateUpdateTime(
-		icon7::time::Point tp, int64_t tick,
-		int64_t tickInState)
+	ComponentLastAuthoritativeStateUpdateTime(icon7::time::Point tp,
+											  int64_t tick, int64_t tickInState)
 		: timepoint(tp), tick(tick), tickInState(tickInState)
 	{
 	}

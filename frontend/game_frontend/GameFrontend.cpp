@@ -108,7 +108,8 @@ void GameFrontend::InternalProcess()
 	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
 	double c = icon7::time::DeltaMSecBetweenTimepoints(a, b);
 	statsInternalProcessDuration.PushValue(c);
-	statsInternalProcessDuration.PrintAndResetStatsIfExpired(icon7::time::seconds(15 * 60));
+	statsInternalProcessDuration.PrintAndResetStatsIfExpired(
+		icon7::time::seconds(15 * 60));
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)
