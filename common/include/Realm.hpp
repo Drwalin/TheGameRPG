@@ -65,7 +65,7 @@ protected:
 	virtual bool OneEpoch();
 	StatsCollector statsOneEpochDuration;
 
-	int64_t millisecondsBetweenStatsReport = 60000;
+	icon7::time::Diff millisecondsBetweenStatsReport = icon7::time::seconds(60);
 
 public:
 	TickTimer timer;

@@ -8,6 +8,7 @@
 #include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
 #include "../../ICon7/include/icon7/ByteBuffer.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Time.hpp"
 
 #include "SharedObject.hpp"
 #include "ComponentCallbackRegistry.hpp"
@@ -21,7 +22,7 @@ template <typename TFinal, typename TCb> struct EntryBase {
 
 	const std::string fullName;
 	const std::string shortName;
-	int64_t setTimestamp;
+	icon7::time::Point setTimestamp;
 	std::atomic<TCb> callback;
 	std::shared_ptr<SharedObject> sharedObject;
 

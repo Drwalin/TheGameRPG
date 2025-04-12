@@ -65,7 +65,7 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		return;
 	}
 
-	uint64_t a = icon7::time::GetTimestamp();
+	icon7::time::Point a = icon7::time::GetTemporaryTimestamp();
 
 	flecs::entity entity = frontend->client->realm->Entity(localEntityId);
 	if (entity.is_alive() == false) {
@@ -92,10 +92,10 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		}
 	}
 
-	uint64_t b = icon7::time::GetTimestamp();
-	double c = icon7::time::DeltaNsBetweenTimestamps(a, b) / 1000.0;
+	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
+	double c = icon7::time::DeltaUSecBetweenTimepoints(a, b);
 	statsProcessDuration.PushValue(c);
-	statsProcessDuration.PrintAndResetStatsIfExpired(15 * 60 * 1000);
+	statsProcessDuration.PrintAndResetStatsIfExpired(icon7::time::seconds(15 * 60));
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)

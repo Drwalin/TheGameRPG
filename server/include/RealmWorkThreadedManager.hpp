@@ -9,6 +9,7 @@
 #include <memory>
 #include <mutex>
 
+#include "../../ICon7/include/icon7/Time.hpp"
 #include "../../ICon7/concurrent/thread_safe_value.hpp"
 
 class RealmServer;
@@ -38,8 +39,8 @@ public:
 private:
 	void SingleRunner(int threadId, int workerThreadsCount);
 
-	int millisecondsBetweenStatsReport = 60000;
-	int millisecondsBetweenSleepStatsReport = 300000;
+	icon7::time::Diff timeBetweenStatsReport = icon7::time::seconds(60);
+	icon7::time::Diff timeBetweenSleepStatsReport = icon7::time::seconds(300);
 
 private:
 	std::mutex mutex;
@@ -52,7 +53,8 @@ private:
 
 	std::vector<concurrent::thread_safe_value<std::shared_ptr<RealmServer>>>
 		currentlyRunningRealmInThread;
-	std::vector<uint64_t> timestampOfStartRunningCurrentRealmInThread;
+	std::vector<icon7::time::Timestamp>
+		timestampOfStartRunningCurrentRealmInThread;
 
 	ServerCore *serverCore;
 };

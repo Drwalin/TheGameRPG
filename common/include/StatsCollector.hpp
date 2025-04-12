@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "../../ICon7/include/icon7/Time.hpp"
+
 class StatsCollector
 {
 public:
@@ -40,8 +42,8 @@ public:
 
 		double stddev = -1.0;
 
-		uint64_t timestampStart;
-		uint64_t timestampEnd;
+		icon7::time::Timestamp timestampStart;
+		icon7::time::Timestamp timestampEnd;
 
 		std::string ToString() const;
 	};
@@ -59,7 +61,7 @@ public:
 
 	void SetName(const std::string &name);
 
-	void PrintAndResetStatsIfExpired(int64_t milliseconds);
+	void PrintAndResetStatsIfExpired(icon7::time::Diff dt);
 
 public:
 	StatEntry stats;
@@ -68,5 +70,5 @@ public:
 private:
 	std::string name;
 	std::vector<double> values;
-	uint64_t lastResetTimestamp;
+	icon7::time::Timestamp lastResetTimestamp;
 };

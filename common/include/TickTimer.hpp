@@ -10,14 +10,14 @@ public:
 	inline void Start()
 	{
 		currentTick = 0;
-		startTickCountingTime = icon7::time::GetTemporaryTimestamp();
+		startTickCountingTimePoint = icon7::time::GetTemporaryTimestamp();
 	}
 
 	inline void Start(int64_t currentTick)
 	{
 		Start();
 		this->currentTick = currentTick;
-		startTickCountingTime -= currentTick*1000ll*1000ll;
+		startTickCountingTimePoint -= icon7::time::milliseconds(currentTick);
 	}
 
 	[[nodiscard]] inline int64_t GetCurrentTick() const { return currentTick; }
@@ -27,15 +27,16 @@ public:
 	[[nodiscard]] inline int64_t CalcCurrentTick() const
 	{
 		const auto currentTime = icon7::time::GetTemporaryTimestamp();
-		return TicksBetween(startTickCountingTime, currentTime);
+		return TicksBetween(startTickCountingTimePoint, currentTime);
 	}
 
-	inline static int64_t TicksBetween(int64_t start, int64_t end)
+	inline static int64_t TicksBetween(icon7::time::Point start,
+									   icon7::time::Point end)
 	{
-		return (end - start)/1000ll*1000ll;
+		return (end - start).ns / (1'000'000ll);
 	}
 
 public:
-	int64_t startTickCountingTime;
+	icon7::time::Point startTickCountingTimePoint;
 	int64_t currentTick = 0;
 };

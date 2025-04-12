@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "../../ICon7/include/icon7/Time.hpp"
+
 #include "../../common/include/EntityComponents.hpp"
 
 struct ComponentMovementHistory {
@@ -11,12 +13,12 @@ struct ComponentMovementHistory {
 };
 
 struct ComponentLastAuthoritativeStateUpdateTime {
-	int64_t timepoint;
+	icon7::time::Point timepoint;
 	int64_t tick;
 	int64_t tickInState;
 
 	ComponentLastAuthoritativeStateUpdateTime(
-		int64_t tp, int64_t tick,
+		icon7::time::Point tp, int64_t tick,
 		int64_t tickInState)
 		: timepoint(tp), tick(tick), tickInState(tickInState)
 	{
