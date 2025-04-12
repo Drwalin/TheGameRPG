@@ -67,15 +67,16 @@ RealmWorkThreadedManager::GetRealm(const std::string &realmName)
 
 void RealmWorkThreadedManager::RunAsync(int workerThreadsCount)
 {
-	millisecondsBetweenStatsReport = serverCore->configStorage.GetOrSetInteger(
-		"metrics.thread_manager.realm_process_duration.milliseconds_between_"
-		"stats_report",
-		60000);
-	millisecondsBetweenSleepStatsReport =
-		serverCore->configStorage.GetOrSetInteger(
+	timeBetweenStatsReport =
+		icon7::time::milliseconds(serverCore->configStorage.GetOrSetInteger(
+			"metrics.thread_manager.realm_process_duration.milliseconds_"
+			"between_stats_report",
+			60000));
+	timeBetweenSleepStatsReport =
+		icon7::time::milliseconds(serverCore->configStorage.GetOrSetInteger(
 			"metrics.thread_manager.sleeping_duration.milliseconds_between_"
 			"stats_report",
-			300000);
+			300000));
 	currentlyRunningRealmInThread.resize(workerThreadsCount);
 	timestampOfStartRunningCurrentRealmInThread.resize(workerThreadsCount);
 
@@ -122,7 +123,7 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 	int sleepMilliseconds = 1;
 	uint32_t countBusySinceLastSleep = 0;
 	while (true) {
-		uint64_t begin = icon7::time::GetTimestamp();
+		icon7::time::Point begin = icon7::time::GetTemporaryTimestamp();
 		int64_t realmsCount = 0;
 
 		bool destroyRealm = false;
@@ -176,11 +177,10 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 		currentlyRunningRealmInThread[threadId] =
 			std::shared_ptr<RealmServer>(nullptr);
 
-		uint64_t end = icon7::time::GetTimestamp();
-		double duration = icon7::time::DeltaMSecBetweenTimestamps(begin, end);
+		icon7::time::Point end = icon7::time::GetTemporaryTimestamp();
+		double duration = icon7::time::DeltaMSecBetweenTimepoints(begin, end);
 		statsDuration.PushValue(duration);
-		statsDuration.PrintAndResetStatsIfExpired(
-			millisecondsBetweenStatsReport);
+		statsDuration.PrintAndResetStatsIfExpired(timeBetweenStatsReport);
 
 		if (notBusyCount >= realmsCount / workerThreadsCount) {
 			if (countBusySinceLastSleep > 5) {
@@ -188,14 +188,13 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 			} else if (countBusySinceLastSleep == 0) {
 				sleepMilliseconds = std::min(sleepMilliseconds + 1, 35);
 			}
-			icon7::time::SleepMSec(sleepMilliseconds);
+			icon7::time::Sleep(icon7::time::milliseconds(sleepMilliseconds));
 			statsSleep.PushValue(sleepMilliseconds);
 			notBusyCount = 0;
 			countBusySinceLastSleep = 0;
 		}
 
-		statsSleep.PrintAndResetStatsIfExpired(
-			millisecondsBetweenSleepStatsReport);
+		statsSleep.PrintAndResetStatsIfExpired(timeBetweenSleepStatsReport);
 	}
 	currentlyRunningRealmInThread[threadId] =
 		std::shared_ptr<RealmServer>(nullptr);

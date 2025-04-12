@@ -139,12 +139,12 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 	host->Connect(ip, port, std::move(com));
 
-	auto end = icon7::time::GetTemporaryTimestamp() + 5*1000ll*1000ll*1000ll;
+	auto end = icon7::time::GetTemporaryTimestamp() + icon7::time::seconds(5);
 	while (end > icon7::time::GetTemporaryTimestamp()) {
 		if (state->s != 0) {
 			break;
 		}
-		icon7::time::SleepMSec(10);
+		icon7::time::Sleep(icon7::time::milliseconds(10));
 	}
 	if (state->rp.load() == nullptr) {
 		return false;
@@ -172,7 +172,7 @@ void GameClient::RunOneEpoch()
 		[this](flecs::entity entity,
 			   ComponentLastAuthoritativeStateUpdateTime &tp) {
 			auto now = icon7::time::GetTemporaryTimestamp();
-			auto early = now - 2*1000ll*1000ll*1000ll;
+			auto early = now - icon7::time::seconds(2);
 			if (early > tp.timepoint) {
 				tp.timepoint = now;
 				auto it = mapLocalEntityIdToServerEntityId.find(entity.id());

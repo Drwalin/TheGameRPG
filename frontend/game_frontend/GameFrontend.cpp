@@ -103,12 +103,12 @@ void GameFrontend::InternalProcess()
 		return;
 	}
 
-	uint64_t a = icon7::time::GetTimestamp();
+	icon7::time::Point a = icon7::time::GetTemporaryTimestamp();
 	client->RunOneEpoch();
-	uint64_t b = icon7::time::GetTimestamp();
-	double c = icon7::time::DeltaMSecBetweenTimestamps(a, b);
+	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
+	double c = icon7::time::DeltaMSecBetweenTimepoints(a, b);
 	statsInternalProcessDuration.PushValue(c);
-	statsInternalProcessDuration.PrintAndResetStatsIfExpired(15 * 60 * 1000);
+	statsInternalProcessDuration.PrintAndResetStatsIfExpired(icon7::time::seconds(15 * 60));
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)

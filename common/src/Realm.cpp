@@ -1,10 +1,11 @@
 #include <icon7/Debug.hpp>
 
+#include "../../ICon7/include/icon7/Time.hpp"
+
 #include "../include/EntitySystems.hpp"
 #include "../include/EntityEvent.hpp"
 #include "../include/EntityComponents.hpp"
 #include "../include/RegistryComponent.hpp"
-#include "icon7/Time.hpp"
 
 #include "../include/Realm.hpp"
 
@@ -107,10 +108,10 @@ void Realm::RegisterObservers()
 
 bool Realm::RunOneEpoch()
 {
-	uint64_t begin = icon7::time::GetTimestamp();
+	icon7::time::Point begin = icon7::time::GetTemporaryTimestamp();
 	bool ret = OneEpoch();
-	uint64_t end = icon7::time::GetTimestamp();
-	double duration = icon7::time::DeltaMSecBetweenTimestamps(begin, end);
+	icon7::time::Point end = icon7::time::GetTemporaryTimestamp();
+	double duration = icon7::time::DeltaMSecBetweenTimepoints(begin, end);
 	statsOneEpochDuration.PushValue(duration);
 	statsOneEpochDuration.PrintAndResetStatsIfExpired(
 		millisecondsBetweenStatsReport);

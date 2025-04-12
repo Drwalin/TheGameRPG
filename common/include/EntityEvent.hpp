@@ -31,7 +31,6 @@ struct EntityEventEntry {
 struct EntityEventTemplate {
 	using CallbackType = int64_t (*)(class Realm *, int64_t scheduledTick,
 									 int64_t currentTick, uint64_t entityId);
-
 	const char *name;
 	const CallbackType callback;
 	const bool singleUse = false;

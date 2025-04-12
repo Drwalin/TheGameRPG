@@ -122,11 +122,10 @@ void StatsCollector::SetName(const std::string &name)
 	prevStats.name = name;
 }
 
-void StatsCollector::PrintAndResetStatsIfExpired(int64_t milliseconds)
+void StatsCollector::PrintAndResetStatsIfExpired(icon7::time::Diff dt)
 {
-	uint64_t t = icon7::time::GetTimestamp();
-	if (icon7::time::DeltaNsBetweenTimestamps(lastResetTimestamp, t) >=
-		(milliseconds * (1000ll * 1000ll))) {
+	icon7::time::Timestamp t = icon7::time::GetTimestamp();
+	if ((t - lastResetTimestamp) >= dt) {
 		CalcAndReset();
 		icon7::log::PrintLineSync("%s", stats.ToString().c_str());
 	}
