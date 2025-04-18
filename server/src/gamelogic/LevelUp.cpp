@@ -1,4 +1,4 @@
-#include "../include/GameLogic.hpp"
+#include "../../include/GameLogic.hpp"
 
 namespace GameLogic
 {

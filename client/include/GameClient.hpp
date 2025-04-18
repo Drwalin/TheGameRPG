@@ -119,7 +119,8 @@ public:
 	RealmClient *realm;
 
 	icon7::RPCEnvironment *rpc;
-	icon7::Host *host;
+	std::shared_ptr<icon7::Host> host;
+	std::shared_ptr<icon7::Loop> loop;
 	std::shared_ptr<icon7::Peer> peer;
 
 	icon7::CommandExecutionQueue executionQueue;

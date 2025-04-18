@@ -1,7 +1,7 @@
 def Settings( **kwargs ):
   return {
     'flags': ['-x', 'c++', '-Wall', '-pedantic',
-    '-std=c++20',
+    '-std=c++23',
     '-I/usr/include',
     '-Ithirdparty/godot-cpp/include',
     '-Ithirdparty/godot-cpp/gdextension',

@@ -3,6 +3,7 @@
 
 #include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h"
 
+#include "../ICon7/include/icon7/Time.hpp"
 #include "../ICon7/include/icon7/Debug.hpp"
 #include "../ICon7/include/icon7/Host.hpp"
 #include "../ICon7/include/icon7/MemoryPool.hpp"
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 						 allocatedBlocks.load(),
 						 (allocatedBlocks * 16) / (1024.0f * 1024.0f),
 						 totalMallocs.load());
-				std::this_thread::sleep_for(std::chrono::seconds(10));
+				icon7::time::SleepSeconds(10);
 			}
 		}).detach();
 		*/

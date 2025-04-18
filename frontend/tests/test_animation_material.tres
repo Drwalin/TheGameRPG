@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://b2aotaimibutv"]
+
+[ext_resource type="Shader" path="res://tests/test_animation.gdshader" id="1_8228i"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_8228i")
+shader_parameter/bbones = null
+shader_parameter/bonesCount = null

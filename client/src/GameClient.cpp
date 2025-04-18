@@ -1,9 +1,7 @@
-#include <chrono>
-#include <thread>
-
 #include <icon7/RPCEnvironment.hpp>
 #include <icon7/PeerUStcp.hpp>
 #include <icon7/HostUStcp.hpp>
+#include <icon7/LoopUS.hpp>
 #include <icon7/Command.hpp>
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
@@ -17,11 +15,17 @@ GameClient::GameClient()
 {
 	realm = new RealmClient(this);
 	rpc = new icon7::RPCEnvironment();
-	icon7::uS::tcp::Host *_host = new icon7::uS::tcp::Host();
-	_host->Init();
-	host = _host;
-	host->SetRpcEnvironment(rpc);
+
+	std::shared_ptr<icon7::uS::Loop> loop = std::make_shared<icon7::uS::Loop>();
+	this->loop = loop;
+	loop->Init(3);
+	loop->userPointer = this;
+
+	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);
+	this->host = host;
 	host->userPointer = this;
+
+	host->SetRpcEnvironment(rpc);
 
 	// host->SetOnDisconnect();
 	pingTimer.Start();
@@ -72,13 +76,11 @@ bool GameClient::IsDisconnected()
 
 void GameClient::Destroy()
 {
-	if (host) {
+	if (loop) {
 		peer = nullptr;
-		host->DisconnectAllAsync();
-		host->StopListening();
-		host->WaitStopRunning();
-		delete host;
 		host = nullptr;
+		loop->Destroy();
+		loop = nullptr;
 	}
 	if (realm) {
 		realm->Destroy();
@@ -87,7 +89,7 @@ void GameClient::Destroy()
 	}
 }
 
-void GameClient::RunNetworkLoopAsync() { host->RunAsync(); }
+void GameClient::RunNetworkLoopAsync() { loop->RunAsync(); }
 
 void GameClient::DisconnectRealmPeer()
 {
@@ -137,12 +139,12 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 
 	host->Connect(ip, port, std::move(com));
 
-	auto end = std::chrono::steady_clock::now() + std::chrono::seconds(5);
-	while (end > std::chrono::steady_clock::now()) {
+	auto end = icon7::time::GetTemporaryTimestamp() + icon7::time::seconds(5);
+	while (end > icon7::time::GetTemporaryTimestamp()) {
 		if (state->s != 0) {
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		icon7::time::Sleep(icon7::time::milliseconds(10));
 	}
 	if (state->rp.load() == nullptr) {
 		return false;
@@ -157,7 +159,7 @@ void GameClient::RunOneEpoch()
 	executionQueue.Execute(128);
 
 	PerformSendPlayerMovementInput();
-	realm->OneEpoch();
+	realm->RunOneEpoch();
 	PerformSendPlayerMovementInput();
 
 	pingTimer.Update();
@@ -169,8 +171,8 @@ void GameClient::RunOneEpoch()
 	realm->ecs.each<ComponentLastAuthoritativeStateUpdateTime>(
 		[this](flecs::entity entity,
 			   ComponentLastAuthoritativeStateUpdateTime &tp) {
-			auto now = std::chrono::steady_clock::now();
-			auto early = now - std::chrono::seconds(2);
+			auto now = icon7::time::GetTemporaryTimestamp();
+			auto early = now - icon7::time::seconds(2);
 			if (early > tp.timepoint) {
 				tp.timepoint = now;
 				auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
@@ -178,7 +180,7 @@ void GameClient::RunOneEpoch()
 					RequestSpawnOf(it->second);
 				} else {
 					LOG_FATAL("There is an entity with localId=%lu but without "
-							  "serer id",
+							  "server id",
 							  entity.id());
 				}
 			}

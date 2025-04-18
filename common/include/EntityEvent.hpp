@@ -2,7 +2,6 @@
 
 #include <cstdint>
 
-#include <functional>
 #include <vector>
 
 #include "ComponentsUtility.hpp"
@@ -30,10 +29,11 @@ struct EntityEventEntry {
  * same as application
  */
 struct EntityEventTemplate {
-	const std::function<void(class Realm *, int64_t scheduledTick,
-							 int64_t currentTick, uint64_t entityId)>
-		callback;
-	const bool destroy = false;
+	using CallbackType = int64_t (*)(class Realm *, int64_t scheduledTick,
+									 int64_t currentTick, uint64_t entityId);
+	const char *name;
+	const CallbackType callback;
+	const bool singleUse = false;
 };
 
 struct EntityEvent {

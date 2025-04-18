@@ -20,6 +20,7 @@
 
 #include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
 
+#include "../../common/include/StatsCollector.hpp"
 #include "../../common/include/EntityComponents.hpp"
 
 using namespace godot;
@@ -69,6 +70,9 @@ public: // variables
 	ComponentModelName currentModel = {};
 
 	std::vector<std::string> oneShotAnimations;
+
+public: // stats
+	static StatsCollector statsProcessDuration;
 
 public:
 	static EntityPrefabScript *CreateNew();

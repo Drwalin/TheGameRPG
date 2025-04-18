@@ -2,26 +2,22 @@
 
 #include <cstdint>
 
-#include <chrono>
+#include "../../ICon7/include/icon7/Time.hpp"
 
 class TickTimer
 {
 public:
-	using steady_clock = std::chrono::steady_clock;
-	using milliseconds = std::chrono::milliseconds;
-	using time_point = steady_clock::time_point;
-
 	inline void Start()
 	{
 		currentTick = 0;
-		startTickCountingTime = steady_clock::now();
+		startTickCountingTimePoint = icon7::time::GetTemporaryTimestamp();
 	}
 
 	inline void Start(int64_t currentTick)
 	{
 		Start();
 		this->currentTick = currentTick;
-		startTickCountingTime -= milliseconds(currentTick);
+		startTickCountingTimePoint -= icon7::time::milliseconds(currentTick);
 	}
 
 	[[nodiscard]] inline int64_t GetCurrentTick() const { return currentTick; }
@@ -30,16 +26,17 @@ public:
 
 	[[nodiscard]] inline int64_t CalcCurrentTick() const
 	{
-		const auto currentTime = steady_clock::now();
-		return TicksBetween(startTickCountingTime, currentTime);
+		const auto currentTime = icon7::time::GetTemporaryTimestamp();
+		return TicksBetween(startTickCountingTimePoint, currentTime);
 	}
 
-	inline static int64_t TicksBetween(time_point start, time_point end)
+	inline static int64_t TicksBetween(icon7::time::Point start,
+									   icon7::time::Point end)
 	{
-		return std::chrono::duration_cast<milliseconds>(end - start).count();
+		return (end - start).ns / (1'000'000ll);
 	}
 
 public:
-	time_point startTickCountingTime;
+	icon7::time::Point startTickCountingTimePoint;
 	int64_t currentTick = 0;
 };

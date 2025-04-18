@@ -3,9 +3,7 @@
 #include <icon7/Flags.hpp>
 #include <icon7/ByteReader.hpp>
 
-#include "../../common/include/EntitySystems.hpp"
 #include "../../common/include/RegistryComponent.hpp"
-#include "../../common/include/CollisionLoader.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 
@@ -13,7 +11,6 @@
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
 #include "../include/FileOperations.hpp"
-#include "../include/EntityGameComponents.hpp"
 
 #include "../include/RealmServer.hpp"
 
@@ -75,9 +72,6 @@ bool RealmServer::LoadFromFile()
 				break;
 			}
 		}
-		System([this](flecs::entity entity, ComponentTrigger &trigger) {
-			trigger.Tick(entity.id(), this);
-		});
 		timer.Start(startingTimerTick);
 		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
 		return true;

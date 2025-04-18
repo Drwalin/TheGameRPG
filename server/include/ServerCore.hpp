@@ -4,6 +4,8 @@
 
 #include <icon7/Flags.hpp>
 #include <icon7/Forward.hpp>
+#include <icon7/CoroutineHelper.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"
@@ -20,7 +22,7 @@ public:
 
 	void CreateRealm(std::string realmName);
 
-	void ConnectPeerToRealm(icon7::Peer *peer);
+	icon7::CoroutineSchedulable ConnectPeerToRealm(icon7::Peer *peer);
 
 	void Disconnect(icon7::Peer *peer);
 
@@ -50,6 +52,11 @@ public:
 
 	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::Peer *peer);
 
+	static icon7::CommandExecutionQueue::CoroutineAwaitable
+	ScheduleInRealm(std::weak_ptr<RealmServer> &realm);
+	icon7::CommandExecutionQueue::CoroutineAwaitable
+	ScheduleInRealmOrCore(std::weak_ptr<RealmServer> &realm);
+
 private:
 	static void _OnPeerConnect(icon7::Peer *peer);
 	static void _OnPeerDisconnect(icon7::Peer *peer);
@@ -69,7 +76,8 @@ public:
 	RealmWorkThreadedManager realmManager;
 
 	icon7::RPCEnvironment *rpc;
-	icon7::Host *host;
+	std::shared_ptr<icon7::Host> host;
+	std::shared_ptr<icon7::Loop> loop;
 
 	std::string spawnRealm;
 

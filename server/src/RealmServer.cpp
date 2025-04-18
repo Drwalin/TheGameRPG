@@ -2,7 +2,6 @@
 #include <icon7/ByteReader.hpp>
 
 #include "../../common/include/EntitySystems.hpp"
-#include "../../common/include/RegistryComponent.hpp"
 #include "../../common/include/CollisionLoader.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
@@ -10,7 +9,6 @@
 #include "../include/ServerCore.hpp"
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/EntityNetworkingSystems.hpp"
-#include "../include/FileOperations.hpp"
 #include "../include/EntityGameComponents.hpp"
 
 #include "../include/RealmServer.hpp"
@@ -51,12 +49,16 @@ uint64_t RealmServer::NewEntity()
 
 void RealmServer::Init(const std::string &realmName)
 {
+	millisecondsBetweenStatsReport =
+		icon7::time::milliseconds(serverCore->configStorage.GetOrSetInteger(
+			"metrics.realm.milliseconds_between_stats_report", 60000));
+
+	executionQueue.userSmartPtr = this->shared_from_this();
+
 	// TODO: load static realm data from database/disk
 	Realm::Init(realmName);
 
 	LoadFromFile();
-
-	RegisterGameLogic();
 
 	sendEntitiesToClientsTimer = 0;
 }
@@ -79,13 +81,19 @@ bool RealmServer::OneEpoch()
 {
 	bool busy = executionQueue.Execute(128) != 0;
 	busy |= Realm::OneEpoch();
+
+	// TODO: replace with observer inside collision world on collision
+	ecs.each([this](flecs::entity entity, ComponentTrigger &trigger) {
+		trigger.Tick(entity.id(), this);
+	});
+
 	// TODO: here do other server updates, AI, other mechanics and logic, defer
 	//       some work to other worker threads (ai, db)  maybe?
 
 	if (nextTickToSaveAllDataToFiles <= timer.currentTick) {
 		SaveAllEntitiesToFiles();
 	}
-	
+
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;
