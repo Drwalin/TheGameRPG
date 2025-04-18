@@ -11,9 +11,11 @@
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/classes/ref_counted.hpp>
 #include <godot_cpp/classes/camera3d.hpp>
+#include "godot_cpp/variant/dictionary.hpp"
+
+#include "../../common/include/StatsCollector.hpp"
 
 #include "GameClientFrontend.hpp"
-#include "godot_cpp/variant/dictionary.hpp"
 
 using namespace godot;
 
@@ -76,6 +78,10 @@ public: // variables
 	Node *entitiesContainer = nullptr;
 	Node *staticMapContainer = nullptr;
 	Node *nodeUI = nullptr;
+
+public: // stats
+	StatsCollector statsInternalProcessDuration = {
+		"GameFrontend total internal process time [ms]"};
 
 public: // singleton
 	static GameFrontend *singleton;

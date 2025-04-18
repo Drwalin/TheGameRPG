@@ -1,7 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <chrono>
+
+#include "../../ICon7/include/icon7/Time.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 
@@ -12,13 +13,12 @@ struct ComponentMovementHistory {
 };
 
 struct ComponentLastAuthoritativeStateUpdateTime {
-	std::chrono::steady_clock::time_point timepoint;
+	icon7::time::Point timepoint;
 	int64_t tick;
 	int64_t tickInState;
 
-	ComponentLastAuthoritativeStateUpdateTime(
-		std::chrono::steady_clock::time_point tp, int64_t tick,
-		int64_t tickInState)
+	ComponentLastAuthoritativeStateUpdateTime(icon7::time::Point tp,
+											  int64_t tick, int64_t tickInState)
 		: timepoint(tp), tick(tick), tickInState(tickInState)
 	{
 	}

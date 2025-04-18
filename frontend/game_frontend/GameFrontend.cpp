@@ -5,9 +5,10 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Time.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
+#include "../../common/include/StatsCollector.hpp"
 
 #include "GodotGlm.hpp"
 
@@ -102,7 +103,13 @@ void GameFrontend::InternalProcess()
 		return;
 	}
 
+	icon7::time::Point a = icon7::time::GetTemporaryTimestamp();
 	client->RunOneEpoch();
+	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
+	double c = icon7::time::DeltaMSecBetweenTimepoints(a, b);
+	statsInternalProcessDuration.PushValue(c);
+	statsInternalProcessDuration.PrintAndResetStatsIfExpired(
+		icon7::time::seconds(15 * 60));
 }
 
 void GameFrontend::Connect(const String &ip, int64_t port)

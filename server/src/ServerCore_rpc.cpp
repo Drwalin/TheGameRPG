@@ -4,6 +4,8 @@
 #include <icon7/Flags.hpp>
 #include <icon7/Debug.hpp>
 #include <icon7/Command.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
+#include <icon7/CoroutineHelper.hpp>
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"
@@ -63,138 +65,115 @@ void ServerCore::UpdatePlayer(
 	}
 }
 
-void ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
+icon7::CoroutineSchedulable ServerCore::ConnectPeerToRealm(icon7::Peer *peer)
 {
+	std::shared_ptr<icon7::Peer> _peerHolder = peer->shared_from_this();
 	// TODO: replace ServerCore::ConnectPeerToRealm with something suitable to
 	//       use with database
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");
-		return;
-	}
-	std::shared_ptr<RealmServer> newRealm =
-		realmManager.GetRealm(data->nextRealm);
-	if (newRealm == nullptr) {
-		LOG_INFO("Invalid realm");
-		return;
+		co_return;
 	}
 
-	std::shared_ptr<RealmServer> oldRealm = data->realm.lock();
+	std::string newRealm = data->nextRealm;
+	std::string oldRealm;
+	{
+		std::shared_ptr<RealmServer> olr = data->realm.lock();
+		if (olr.get()) {
+			oldRealm = olr->realmName;
+		}
+	}
+
+_LABEL_BEGINING_CONNECT_PEER_TO_REALM:
+
 	if (oldRealm == newRealm) {
 		if (data->useNextRealmPosition) {
-			class CommandTeleport : public icon7::commands::ExecuteOnPeer
-			{
-			public:
-				CommandTeleport() = default;
-				~CommandTeleport() = default;
+			auto awaitable = ScheduleInRealm(data->realm);
+			if (awaitable.IsValid() == false) {
+				LOG_FATAL("Trying to teleport player within deleted realm.");
+				co_return;
+			}
+			co_await awaitable;
 
-				std::weak_ptr<RealmServer> realm;
-				virtual void Execute() override
-				{
-					std::shared_ptr<RealmServer> realm = this->realm.lock();
-					PeerData *data = ((PeerData *)(peer->userPointer));
-					if (realm && realm == data->realm.lock()) {
-						flecs::entity entity = realm->Entity(data->entityId);
-						if (entity.is_alive()) {
+			std::shared_ptr<RealmServer> realm = data->realm.lock();
+			PeerData *data = ((PeerData *)(peer->userPointer));
+			if (realm && realm == data->realm.lock()) {
+				flecs::entity entity = realm->Entity(data->entityId);
+				if (entity.is_alive()) {
 
-							if (data->useNextRealmPosition) {
+					if (data->useNextRealmPosition) {
 
-								data->useNextRealmPosition = false;
-								auto *_ls = entity.get<
-									ComponentLastAuthoritativeMovementState>();
-								if (_ls) {
-									auto ls = *_ls;
-									ls.oldState.pos = data->nextRealmPosition;
-									ls.oldState.onGround = false;
+						data->useNextRealmPosition = false;
+						auto *_ls =
+							entity
+								.get<ComponentLastAuthoritativeMovementState>();
+						if (_ls) {
+							auto ls = *_ls;
+							ls.oldState.pos = data->nextRealmPosition;
+							ls.oldState.onGround = false;
 
-									entity.set<
-										ComponentLastAuthoritativeMovementState>(
-										ls);
+							entity.set<ComponentLastAuthoritativeMovementState>(
+								ls);
 
-									if (entity.has<ComponentMovementState>()) {
-										entity.set<ComponentMovementState>(
-											ls.oldState);
-									}
-								}
-
-								ClientRpcProxy::SpawnPlayerEntity_ForPlayer(
-									realm.get(), peer.get());
+							if (entity.has<ComponentMovementState>()) {
+								entity.set<ComponentMovementState>(ls.oldState);
 							}
 						}
+
+						ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(),
+																	peer);
 					}
 				}
-			};
-			auto com = icon7::CommandHandle<CommandTeleport>::Create();
-			com->peer = peer->shared_from_this();
-			com->realm = newRealm;
-			newRealm->executionQueue.EnqueueCommand(std::move(com));
+			}
+			co_return;
 		}
-		return;
-	} else if (oldRealm) {
-		class CommandDisconnectPeer : public icon7::commands::ExecuteOnPeer
-		{
-		public:
-			CommandDisconnectPeer() = default;
-			~CommandDisconnectPeer() = default;
+		co_return;
+	} else if (data->realm.lock().get()) {
+		auto awaitable = ScheduleInRealm(data->realm);
+		if (awaitable.IsValid() == false) {
+			LOG_FATAL("Trying to teleport player within deleted realm. "
+					  "Solution not implemented!!!");
+			co_return;
+		}
+		co_await awaitable;
 
-			std::weak_ptr<RealmServer> newRealm;
-			std::weak_ptr<RealmServer> oldRealm;
-			virtual void Execute() override
-			{
-				std::shared_ptr<RealmServer> oldRealm = this->oldRealm.lock();
-				std::shared_ptr<RealmServer> newRealm = this->newRealm.lock();
-				if (oldRealm) {
-					oldRealm->DisconnectPeer(peer.get());
-
-					class CommandConnectPeerToRealm
-						: public icon7::commands::ExecuteOnPeer
-					{
-					public:
-						CommandConnectPeerToRealm() = default;
-						~CommandConnectPeerToRealm() = default;
-						ServerCore *serverCore;
-						virtual void Execute() override
-						{
-							serverCore->ConnectPeerToRealm(peer.get());
-						}
-					};
-					auto com = icon7::CommandHandle<
-						CommandConnectPeerToRealm>::Create();
-					com->peer = peer->shared_from_this();
-					com->serverCore = oldRealm->serverCore;
-
-					if (newRealm) {
-						newRealm->executionQueue.EnqueueCommand(std::move(com));
-					}
-				}
-			}
-		};
-		auto com = icon7::CommandHandle<CommandDisconnectPeer>::Create();
-		com->peer = peer->shared_from_this();
-		com->oldRealm = oldRealm;
-		com->newRealm = newRealm;
-		newRealm->executionQueue.EnqueueCommand(std::move(com));
+		std::shared_ptr<RealmServer> _oldRealm = data->realm.lock();
+		if (_oldRealm) {
+			_oldRealm->DisconnectPeer(peer);
+			goto _LABEL_BEGINING_CONNECT_PEER_TO_REALM;
+		} else {
+			LOG_FATAL(
+				"Current realm `%s` of player residence is not loaded (maybe "
+				"got unloaded after initialising transfer of player entity to "
+				"new realm). Solution not implemented!!!",
+				oldRealm.c_str());
+		}
+		co_return;
 	} else {
-		class CommandConnectPeerToRealm : public icon7::commands::ExecuteOnPeer
-		{
-		public:
-			CommandConnectPeerToRealm() = default;
-			~CommandConnectPeerToRealm() = default;
-			std::weak_ptr<RealmServer> realm;
-			virtual void Execute() override
-			{
-				auto r = realm.lock();
-				if (r) {
-					r->ConnectPeer(peer.get());
-				} else {
-					LOG_FATAL("Realm object already destroyed");
-				}
-			}
-		};
-		auto com = icon7::CommandHandle<CommandConnectPeerToRealm>::Create();
-		com->peer = peer->shared_from_this();
-		com->realm = newRealm;
-		newRealm->executionQueue.EnqueueCommand(std::move(com));
+		std::weak_ptr<RealmServer> _w_newRealm =
+			realmManager.GetRealm(newRealm);
+
+		if (_w_newRealm.lock().get() == nullptr) {
+			LOG_FATAL("New realm `%s` for player is not loaded. Solution not "
+					  "implemented!!!",
+					  newRealm.c_str());
+			co_return;
+		}
+
+		auto awaitable = ScheduleInRealm(_w_newRealm);
+		if (awaitable.IsValid() == false) {
+			LOG_FATAL("Trying to teleport player within deleted realm.");
+			co_return;
+		}
+		co_await awaitable;
+
+		auto r = _w_newRealm.lock();
+		if (r) {
+			r->ConnectPeer(peer);
+		} else {
+			LOG_FATAL("Realm object destroy befor finished connecing player");
+		}
 	}
 }
 

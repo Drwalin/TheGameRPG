@@ -44,8 +44,11 @@ void GameEditorConfig::_bind_methods()
 	REGISTER_PROPERTY_WITH_HINT(
 		GameEditorConfig, save_map_file_path, Variant::Type::STRING,
 		PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "", "save_map_file_path");
+
 	REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
 					  "save_scene");
+	REGISTER_PROPERTY(GameEditorConfig, merge_static_objects,
+					  Variant::Type::BOOL, "merge_static_objects");
 }
 
 void GameEditorConfig::_process(double dt)
@@ -130,7 +133,8 @@ bool GameEditorConfig::SelectNodes(Node *node)
 				dynamic_cast<PrefabServerStaticMesh *>(pref);
 			PrefabServerStaticMesh_Base *stBasePref =
 				dynamic_cast<PrefabServerStaticMesh_Base *>(pref);
-			if (stPref && stPref->isTrullyStaticForMerge) {
+			if (stPref && stPref->isTrullyStaticForMerge &&
+				merge_static_objects) {
 				objectsToMerge.push_back(stPref);
 			} else if (stBasePref) {
 				staticToGoSecond.push_back(stBasePref);

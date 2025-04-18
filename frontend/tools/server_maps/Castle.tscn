@@ -1900,72 +1900,54 @@ transform = Transform3D(0.866339, 0, -0.499456, 0, 1, 0, 0.499456, 0, 0.866339, 
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65.2928, 8.1383, 0)
 
 [node name="PrefabServerNPC31" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC32" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC33" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC34" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC35" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 10
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC36" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 10
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC37" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 10
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC38" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 20
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC39" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 20
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC40" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 20
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC41" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 50
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC42" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 100
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC43" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 100
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC44" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 500
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC45" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 1000
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC46" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 5000
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC47" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 25000
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="PrefabServerNPC48" parent="Spawners/PrefabServerSpawner" instance=ExtResource("73_0tyve")]
 initialXp = 75000
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Characters" type="Node3D" parent="."]
 

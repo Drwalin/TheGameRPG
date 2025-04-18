@@ -33,9 +33,6 @@ public:
 	void FlushSavingData();
 	void WaitForFlushedData();
 
-	// returns false if was not busy
-	virtual bool OneEpoch() override;
-
 	void ConnectPeer(icon7::Peer *peer);
 	void DisconnectPeer(icon7::Peer *peer);
 
@@ -48,7 +45,6 @@ public:
 
 	void RegisterObservers();
 	void RegisterObservers_CharacterSheet();
-	void RegisterGameLogic();
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) override;
@@ -56,40 +52,9 @@ public:
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
 
-public: // ecs
-	template <typename Fun, typename... Args>
-	auto _System(Fun &&func, std::function<void(flecs::entity, Args...)> f)
-	{
-		return ecs.system<Args...>().each(std::move(func));
-	}
-
-	template <typename Fun, typename... Args>
-	auto _System(Fun &&func, std::function<void(Args...)> f)
-	{
-		return ecs.system<Args...>().each(std::move(func));
-	}
-
-	template <typename Fun, typename... Args>
-	auto _System(Fun &&func,
-				 std::function<void(RealmServer *, flecs::entity, Args...)> f)
-	{
-		return ecs.system<Args...>().each(
-			[this, func](flecs::entity entity, Args... args) {
-				func(this, entity, args...);
-			});
-	}
-
-	template <typename Fun, typename... Args>
-	auto _System(Fun &&func, std::function<void(RealmServer *, Args...)> f)
-	{
-		return ecs.system<Args...>().each(
-			[this, func](Args... args) { func(this, args...); });
-	}
-
-	template <typename Fun> auto System(Fun &&func)
-	{
-		return _System(std::move(func), std::function(func));
-	}
+protected:
+	// returns false if was not busy
+	virtual bool OneEpoch() override;
 
 public: // Entity Actions
 	/*
@@ -165,7 +130,7 @@ public:
 
 private:
 	bool queueDestroy = false;
-	
+
 	int64_t nextTickToSaveAllDataToFiles = 0;
 
 public:

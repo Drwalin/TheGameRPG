@@ -1,12 +1,12 @@
 #pragma once
 
-#include <chrono>
 #include <shared_mutex>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Time.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "SharedObject.hpp"
 
@@ -64,14 +64,15 @@ template <typename T> struct Registry {
 		}
 
 		if (it1 != registry.end()) {
-			it1->second->setTimestamp = std::chrono::system_clock::now();
+			it1->second->setTimestamp = icon7::time::GetTemporaryTimestamp();
 			it1->second->callback = cb;
 			it1->second->sharedObject = sharedObject;
 			LOG_TRACE("Re-registering callback '%s' -> '%s'", fullName.c_str(),
 					  shortName.c_str());
 		} else {
-			T *ptr = new T{fullName, shortName,
-						   std::chrono::system_clock::now(), cb, sharedObject};
+			T *ptr =
+				new T{fullName, shortName, icon7::time::GetTemporaryTimestamp(),
+					  cb, sharedObject};
 			registry[fullName] = ptr;
 			registry[shortName] = ptr;
 			LOG_TRACE("Registering callback '%s' -> '%s'", fullName.c_str(),

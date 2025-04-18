@@ -33,11 +33,12 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 						const ComponentName &entityName)
 {
 	if (peer.peer.get() == nullptr) {
-		LOG_ERROR("peer == nullptr");
 		return;
 	}
 
-	// TODO: check if this realm->peers.erase() is required ot if it's in
+	// Probably duplicate of some of RealmServer::DisconnectPeer code.
+
+	// TODO: check if this realm->peers.erase() is required or if it's in
 	//       observer
 	realm->peers.erase(peer.peer);
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));

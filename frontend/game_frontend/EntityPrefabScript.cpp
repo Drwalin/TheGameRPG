@@ -6,12 +6,14 @@
 #include <godot_cpp/classes/packed_scene.hpp>
 #include <godot_cpp/classes/label3d.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Time.hpp"
 
 #include "GameFrontend.hpp"
 
 #include "GodotGlm.hpp"
 
+#include "../../common/include/StatsCollector.hpp"
 #include "AsyncLoadedPlaceholder.hpp"
 #include "EntityPrefabScript.hpp"
 
@@ -39,6 +41,8 @@ void EntityPrefabScript::_bind_methods()
 	METHOD_NO_ARGS(EntityPrefabScript, PopOneOffAnimation);
 
 	METHOD_ARGS(EntityPrefabScript, _my_internal_process, "deltaTime");
+
+	statsProcessDuration = {"EntityPrefabScript::process time [us]"};
 }
 
 void EntityPrefabScript::_ready()
@@ -60,6 +64,8 @@ void EntityPrefabScript::_my_internal_process(double dt)
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
+
+	icon7::time::Point a = icon7::time::GetTemporaryTimestamp();
 
 	flecs::entity entity = frontend->client->realm->Entity(localEntityId);
 	if (entity.is_alive() == false) {
@@ -85,6 +91,12 @@ void EntityPrefabScript::_my_internal_process(double dt)
 			}
 		}
 	}
+
+	icon7::time::Point b = icon7::time::GetTemporaryTimestamp();
+	double c = icon7::time::DeltaUSecBetweenTimepoints(a, b);
+	statsProcessDuration.PushValue(c);
+	statsProcessDuration.PrintAndResetStatsIfExpired(
+		icon7::time::seconds(15 * 60));
 }
 
 void EntityPrefabScript::Init(uint64_t localEntityId)
@@ -209,3 +221,6 @@ EntityPrefabScript *EntityPrefabScript::CreateNew()
 	auto ret = (EntityPrefabScript *)(prefab->instantiate());
 	return ret;
 }
+
+StatsCollector EntityPrefabScript::statsProcessDuration = {
+	"EntityPrefabScript::process time [us]"};

@@ -8,6 +8,7 @@
 #include "TickTimer.hpp"
 #include "CollisionWorld.hpp"
 #include "EntityEvent.hpp"
+#include "StatsCollector.hpp"
 
 struct RealmPtr {
 	class Realm *realm;
@@ -37,7 +38,7 @@ public:
 	void RegisterObservers();
 
 	// returns false if was not busy or if does not need to be busy
-	virtual bool OneEpoch();
+	bool RunOneEpoch();
 
 	virtual void UpdateEntityAuthoritativeState(
 		uint64_t entityId,
@@ -54,6 +55,17 @@ public:
 								   TerrainCollisionData *data) = 0;
 
 	template <typename FF> void TrueDeferWhenNeeded(FF &&func);
+
+public:
+	void ScheduleEntityEvent(flecs::entity entity, EntityEvent event);
+	void ScheduleEntityEvent(uint64_t entityId, EntityEvent event);
+
+protected:
+	// returns false if was not busy or if does not need to be busy
+	virtual bool OneEpoch();
+	StatsCollector statsOneEpochDuration;
+
+	icon7::time::Diff millisecondsBetweenStatsReport = icon7::time::seconds(60);
 
 public:
 	TickTimer timer;
@@ -73,7 +85,7 @@ public:
 
 public:
 	template <typename... TArgs>
-	auto GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
+	auto _GetObserver(std::function<void(flecs::entity, TArgs...)> &func)
 	{
 		return ecs.observer<TArgs...>();
 	}
@@ -82,7 +94,7 @@ public:
 	void RegisterObserver(flecs::entity_t event, Fun &&func)
 	{
 		decltype(std::function(*&func)) f;
-		GetObserver(f).event(event).each(std::move(func));
+		_GetObserver(f).event(event).each(std::move(func));
 	}
 
 public: // accessors

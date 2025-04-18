@@ -1,6 +1,8 @@
 #include <icon7/Debug.hpp>
 #include <icon7/Host.hpp>
 #include <icon7/Peer.hpp>
+#include <icon7/CoroutineHelper.hpp>
+#include <icon7/CommandExecutionQueue.hpp>
 
 #include "../include/PeerData.hpp"
 #include "../include/RealmServer.hpp"
@@ -12,8 +14,9 @@
 
 namespace peer_transitions
 {
-void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
-					 const std::string &username)
+icon7::CoroutineSchedulable OnReceivedLogin(ServerCore *serverCore,
+											icon7::Peer *peer,
+											const std::string &username)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data->realm.lock().get() != nullptr || data->userName != "" ||
@@ -24,7 +27,7 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
 				 data->peer.expired() ? "true" : "false");
 		ClientRpcProxy::LoginFailed(
 			peer, "Invalid login or connection or you are already logged in");
-		return;
+		co_return;
 	} else {
 		auto it = serverCore->usernameToPeer.find(username);
 		if (it == serverCore->usernameToPeer.end()) {
@@ -35,11 +38,13 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
 			LOG_INFO("User already in-game: `%s`", username.c_str());
 			ClientRpcProxy::LoginFailed(
 				peer, "User with this username is already logged in");
-			return;
+			co_return;
 		}
 	}
 	data->userName = username;
 	auto core = ((ServerCore *)(peer->host->userPointer));
+
+	std::weak_ptr<icon7::Peer> weakPeer = peer->weak_from_this();
 
 	{
 		// TODO: read it from database or something
@@ -47,6 +52,8 @@ void OnReceivedLogin(ServerCore *serverCore, icon7::Peer *peer,
 
 		// TODO: replace with async delayed scheduled read from database or file
 		//       and then call core->ConnectPeerToRealm(peer)
+		// use something like:
+		//     co_await ScheduleReadFromDatabase(...);
 
 		// Load player data from file
 
