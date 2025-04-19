@@ -233,7 +233,7 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 
 			node3d->set_rotation(ToGodot({0, state.oldState.rot.y, 0}));
 			node3d->set_position(ToGodot(state.oldState.pos));
-			Label3D *label = new Label3D();
+			Label3D *label = memnew(Label3D);
 			label->set_text(String::utf8(name.name.c_str()));
 			node3d->add_child(label);
 			label->set_position({0, 2, 0});

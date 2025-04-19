@@ -3,17 +3,17 @@
 #include <flecs.h>
 
 class Realm;
-class ComponentShape;
-class ComponentMovementState;
-class ComponentLastAuthoritativeMovementState;
-class ComponentMovementParameters;
+struct ComponentShape;
+struct ComponentMovementState;
+struct ComponentLastAuthoritativeMovementState;
+struct ComponentMovementParameters;
 
 namespace EntitySystems
 {
 void UpdateMovement(Realm *realm, flecs::entity entity,
-					const class ::ComponentShape shape,
-					class ::ComponentMovementState &currentState,
-					const class ::ComponentLastAuthoritativeMovementState
+					const struct ::ComponentShape shape,
+					struct ::ComponentMovementState &currentState,
+					const struct ::ComponentLastAuthoritativeMovementState
 						&lastAuthoritativeState,
-					const class ::ComponentMovementParameters &movementParams);
+					const struct ::ComponentMovementParameters &movementParams);
 };

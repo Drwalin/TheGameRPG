@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/mesh.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
 #include <godot_cpp/classes/animation_tree.hpp>
+#include <godot_cpp/core/memory.hpp>
 
 #include <icon7/Debug.hpp>
 
@@ -57,7 +58,8 @@ void AsyncLoadedPlaceholder3D::_process(double dt)
 		if (resource.is_null() == false && resource.is_valid()) {
 			Ref<Mesh> mesh = resource;
 			if (mesh.is_valid() && mesh.is_null() == false) {
-				MeshInstance3D *meshInstance = new MeshInstance3D();
+				MeshInstance3D *meshInstance =
+					memnew(MeshInstance3D);
 				meshInstance->set_mesh(mesh);
 
 				get_parent()->add_child(meshInstance);

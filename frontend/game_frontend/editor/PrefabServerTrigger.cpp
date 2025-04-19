@@ -57,7 +57,7 @@ void PrefabServerTrigger::_bind_methods()
 void PrefabServerTrigger::_ready()
 {
 	PrefabServerBase::_ready();
-	renderBox = new CSGBox3D();
+	renderBox = memnew(CSGBox3D);
 	renderBox->set_use_collision(true);
 	add_child(renderBox);
 	renderBox->set_owner(this);
