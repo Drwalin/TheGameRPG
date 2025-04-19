@@ -74,7 +74,7 @@ void PrefabServerSpawner::_ready()
 {
 	PrefabServerBase::_ready();
 	if (renderSphere == nullptr) {
-		renderSphere = new CSGSphere3D();
+		renderSphere = memnew(CSGSphere3D);
 		renderSphere->set_use_collision(true);
 		add_child(renderSphere);
 		renderSphere->set_owner(this);

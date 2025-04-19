@@ -23,9 +23,9 @@ class btCollisionObject;
 
 class Realm;
 
-class ComponentStaticCollisionShapeName;
-class ComponentStaticTransform;
-class ComponentShape;
+struct ComponentStaticCollisionShapeName;
+struct ComponentStaticTransform;
+struct ComponentShape;
 
 class CollisionWorld
 {

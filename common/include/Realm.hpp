@@ -14,12 +14,12 @@ struct RealmPtr {
 	class Realm *realm;
 };
 
-class ComponentShape;
-class ComponentModelName;
-class ComponentMovementState;
-class ComponentLastAuthoritativeMovementState;
-class ComponentMovementParameters;
-class ComponentName;
+struct ComponentShape;
+struct ComponentModelName;
+struct ComponentMovementState;
+struct ComponentLastAuthoritativeMovementState;
+struct ComponentMovementParameters;
+struct ComponentName;
 
 class Realm
 {

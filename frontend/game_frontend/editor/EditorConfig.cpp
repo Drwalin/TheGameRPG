@@ -109,7 +109,7 @@ bool CheckIfPrefab(Node *node)
 	for (int i = 0; i < children.size(); ++i) {
 		auto c = children[i];
 		Node *n = Object::cast_to<Node>(c.operator Object *());
-		if (PrefabServerBase *pref = Object::cast_to<PrefabServerBase>(n)) {
+		if (Object::cast_to<PrefabServerBase>(n)) {
 			return true;
 		} else {
 			if (CheckIfPrefab(n)) {
@@ -163,9 +163,9 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 		return;
 	}
 
-	Node3D *rootNode = new Node3D();
+	Node3D *rootNode = memnew(Node3D);
 	rootNode->set_transform(
-		Transform3D(Basis(Quaternion(Vector3(0, 0, 0)), Vector3(1, 1, 1)),
+		Transform3D(Basis(Quaternion::from_euler(Vector3(0, 0, 0)), Vector3(1, 1, 1)),
 					Vector3(0, 0, 0)));
 
 	bool hasCollision = false;
@@ -229,7 +229,7 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 					}
 				}
 
-				for (int i = 0; i + 2 < colData.indices.size(); i += 3) {
+				for (int i = 0; i + 2 < (int64_t)colData.indices.size(); i += 3) {
 					int32_t id[3];
 					for (int j = 0; j < 3; ++j) {
 						id[j] = indexOffset + colData.indices[i + j];
@@ -316,7 +316,7 @@ Node3D *GameEditorConfig::InstantiateGraphicMesh(Ref<Resource> res)
 
 		Ref<Mesh> mesh = res;
 		if (mesh.is_null() == false && mesh.is_valid()) {
-			MeshInstance3D *m = new MeshInstance3D();
+			MeshInstance3D *m = memnew(MeshInstance3D);
 			m->set_mesh(mesh);
 		}
 	}

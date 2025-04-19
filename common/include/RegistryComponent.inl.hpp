@@ -139,7 +139,7 @@ extern void Registry::RegisterComponent(const std::string name)
 	}
 	ComponentConstructorBase *com = ComponentConstructor<T>::singleton;
 	components.push_back(com);
-	nameToComponent.insert({name, com});
+	nameToComponent.insert(std::pair{name, com});
 }
 
 template <typename T>

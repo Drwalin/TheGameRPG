@@ -75,7 +75,7 @@ void PrefabServerBase::_RecreateResourceRenderer(TNode **nodeStorage,
 
 			Ref<Mesh> mesh = *resourceStorage;
 			if (mesh.is_null() == false && mesh.is_valid()) {
-				MeshInstance3D *m = new MeshInstance3D();
+				MeshInstance3D *m = memnew(MeshInstance3D);
 				m->set_mesh(mesh);
 				(*nodeStorage) = m;
 				(*nodeStorage)->set_name(GetRandomString());
