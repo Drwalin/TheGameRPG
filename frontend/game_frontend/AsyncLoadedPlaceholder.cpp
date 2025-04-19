@@ -25,7 +25,7 @@ void AsyncLoadedPlaceholder3D::_ready()
 	}
 }
 
-void AsyncLoadedPlaceholder3D::_process(double dt)
+void AsyncLoadedPlaceholder3D::_process(double)
 {
 	if (is_queued_for_deletion()) {
 		return;

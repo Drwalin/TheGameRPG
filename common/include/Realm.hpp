@@ -145,14 +145,13 @@ template <typename FF> void Realm::TrueDeferWhenNeeded(FF &&func)
 		struct CtxData {
 			FF func;
 		};
+		void (*f)(ecs_world_t *, void *) = +[](ecs_world_t *world, void *_ctx) {
+			CtxData *ctx = (CtxData *)_ctx;
+			ctx->func();
+			delete ctx;
+		};
 		CtxData *ctx = new CtxData{std::move(func)};
-		ecs.run_post_frame(
-			+[](ecs_world_t *world, void *_ctx) {
-				CtxData *ctx = (CtxData *)_ctx;
-				ctx->func();
-				delete ctx;
-			},
-			ctx);
+		ecs.run_post_frame(f, ctx);
 	} else {
 		func();
 	}

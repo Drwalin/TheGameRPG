@@ -2,7 +2,6 @@
 
 #include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
 #include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btSimpleBroadphase.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
