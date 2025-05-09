@@ -50,7 +50,7 @@ void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 	uint64_t serverId;
 	ComponentStaticTransform transform;
 	ComponentModelName model;
-	ComponentStaticCollisionShapeName shape;
+	ComponentCollisionShape shape;
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(transform);
@@ -195,7 +195,7 @@ void GameClient::SpawnEntity(
 void GameClient::SpawnStaticEntity(uint64_t serverId,
 								   ComponentStaticTransform transform,
 								   ComponentModelName model,
-								   ComponentStaticCollisionShapeName shape)
+								   ComponentCollisionShape shape)
 {
 	uint64_t localId = realm->CreateStaticEntity(transform, model, shape);
 	mapServerEntityIdToLocalEntityId[serverId] = localId;

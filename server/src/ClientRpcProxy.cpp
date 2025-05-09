@@ -252,7 +252,7 @@ void LoginFailed(icon7::Peer *peer, const std::string &reason)
 void Broadcast_SpawnStaticEntities(
 	RealmServer *realm, uint64_t entityId,
 	const ComponentStaticTransform &transform, const ComponentModelName &model,
-	const ComponentStaticCollisionShapeName &shape)
+	const ComponentCollisionShape &shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
 							 entityId, transform, model, shape);
@@ -267,7 +267,7 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 	realm->queryStaticEntity.each(
 		[&](flecs::entity entity, const ComponentStaticTransform &transform,
 			const ComponentModelName &model,
-			const ComponentStaticCollisionShapeName &shape) {
+			const ComponentCollisionShape &shape) {
 			++written;
 			writer.op(entity.id());
 			writer.op(transform);

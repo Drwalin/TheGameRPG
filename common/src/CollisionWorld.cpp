@@ -122,7 +122,7 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 
 void CollisionWorld::OnStaticCollisionShape(
 	flecs::entity entity,
-	const ComponentStaticCollisionShapeName &collisionName,
+	const ComponentCollisionShape &collisionName,
 	const ComponentStaticTransform &transform)
 {
 	TerrainCollisionData data;
@@ -365,19 +365,19 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentBulletCollisionObject &obj) {
 			EntitySetTransform(obj, transform);
 		});
-	ecs.observer<ComponentStaticCollisionShapeName>()
+	ecs.observer<ComponentCollisionShape>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const ComponentStaticCollisionShapeName &collisionName) {
+					 const ComponentCollisionShape &collisionName) {
 			auto transform = entity.get<ComponentStaticTransform>();
 			if (transform && collisionName.shapeName != "") {
 				OnStaticCollisionShape(entity, collisionName, *transform);
 			}
 		});
-	ecs.observer<ComponentStaticCollisionShapeName>()
+	ecs.observer<ComponentCollisionShape>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity,
-					 const ComponentStaticCollisionShapeName &collisionName) {
+					 const ComponentCollisionShape &collisionName) {
 			auto transform = entity.get<ComponentStaticTransform>();
 			if (transform && collisionName.shapeName != "") {
 				OnStaticCollisionShape(entity, collisionName, *transform);

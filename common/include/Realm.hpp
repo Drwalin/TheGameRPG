@@ -49,7 +49,7 @@ public:
 
 	uint64_t CreateStaticEntity(const ComponentStaticTransform &transform,
 								const ComponentModelName &model,
-								const ComponentStaticCollisionShapeName &shape);
+								const ComponentCollisionShape &shape);
 
 	virtual bool GetCollisionShape(std::string collisionShapeName,
 								   TerrainCollisionData *data) = 0;

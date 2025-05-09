@@ -45,7 +45,7 @@ void LoginFailed(icon7::Peer *peer, const std::string &reason);
 void Broadcast_SpawnStaticEntities(
 	RealmServer *realm, uint64_t entityId,
 	const ComponentStaticTransform &transform, const ComponentModelName &model,
-	const ComponentStaticCollisionShapeName &shape);
+	const ComponentCollisionShape &shape);
 void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
 
 void GenericComponentUpdate_Start(RealmServer *realm,

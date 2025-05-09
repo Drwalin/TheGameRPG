@@ -36,7 +36,7 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 									   ComponentModelName{graphicPath}, writer);
 	reg::Registry::SerializePersistent(
 		GameClientFrontend::singleton->realm,
-		ComponentStaticCollisionShapeName{collisionPath}, writer);
+		ComponentCollisionShape{collisionPath}, writer);
 }
 
 Transform3D PrefabServerStaticMesh_Base::GetMergingData(

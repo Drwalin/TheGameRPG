@@ -23,7 +23,7 @@ class btCollisionObject;
 
 class Realm;
 
-struct ComponentStaticCollisionShapeName;
+struct ComponentCollisionShape;
 struct ComponentStaticTransform;
 struct ComponentShape;
 
@@ -44,7 +44,7 @@ public:
 
 	void OnStaticCollisionShape(
 		flecs::entity entity,
-		const ComponentStaticCollisionShapeName &collisionName,
+		const ComponentCollisionShape &collisionName,
 		const ComponentStaticTransform &transform);
 	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
 					 glm::vec3 pos);

@@ -42,7 +42,7 @@ void RealmServer::RegisterObservers()
 
 	queryStaticEntity =
 		ecs.query<const ComponentStaticTransform, const ComponentModelName,
-				  const ComponentStaticCollisionShapeName>();
+				  const ComponentCollisionShape>();
 
 	ecs.observer<ComponentLastAuthoritativeMovementState>()
 		.event(flecs::OnSet)
@@ -61,12 +61,12 @@ void RealmServer::RegisterObservers()
 		});
 
 	ecs.observer<ComponentStaticTransform, ComponentModelName,
-				 ComponentStaticCollisionShapeName>()
+				 ComponentCollisionShape>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
 					 const ComponentStaticTransform &transform,
 					 const ComponentModelName &model,
-					 const ComponentStaticCollisionShapeName &shape) {
+					 const ComponentCollisionShape &shape) {
 			// TODO: separate transform broadcast from model and shape broadcast
 			ClientRpcProxy::Broadcast_SpawnStaticEntities(
 				this, entity, transform, model, shape);

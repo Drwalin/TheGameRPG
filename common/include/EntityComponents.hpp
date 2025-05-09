@@ -1,9 +1,13 @@
 #pragma once
 
 #include <string>
+#include <memory>
+#include <variant>
 
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
+
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
 
 #include "ComponentsUtility.hpp"
 
@@ -103,15 +107,36 @@ struct ComponentStaticTransform {
 								  {MV(pos) MV(rot) MV(scale)});
 };
 
-struct ComponentStaticCollisionShapeName {
-	std::string shapeName;
+struct __InnerShape;
+struct CompoundShape {
+	std::shared_ptr<std::vector<__InnerShape>> shapes;
+	
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+};
 
-	ComponentStaticCollisionShapeName(std::string shapeName)
-		: shapeName(shapeName)
-	{
-	}
+struct __InnerShape {
+	enum Type : uint8_t {
+		NONE = 0,
+		VERTBOX = 1,
+		CYLINDER = 2,
+		HEIGHTMAP = 3,
+		COMPOUND_SHAPE = 4,
+	};
+	Type type = NONE;
+	ComponentStaticTransform trans;
+	
+	std::variant<Collision3D::VertBox, Collision3D::Cylinder,
+				 Collision3D::HeightMap<float>, CompoundShape>
+		shape;
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticCollisionShapeName,
-								  MV(shapeName));
+};
+
+struct ComponentCollisionShape {
+	__InnerShape shape;
+
+	ComponentCollisionShape(__InnerShape shape) : shape(shape) {}
+
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape, MV(shape));
 };

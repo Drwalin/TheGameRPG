@@ -125,7 +125,7 @@ public:
 		queryEntityLongState;
 
 	flecs::query<const ComponentStaticTransform, const ComponentModelName,
-				 const ComponentStaticCollisionShapeName>
+				 const ComponentCollisionShape>
 		queryStaticEntity;
 
 private:
