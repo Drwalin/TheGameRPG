@@ -3,8 +3,8 @@
 #include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
 #include "../../thirdparty/bullet/src/LinearMath/btQuaternion.h"
 
-#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
-#include "../../thirdparty/glm/glm/ext/quaternion_float.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
 
 inline glm::vec3 ToGlm(btVector3 v) { return {v.x(), v.y(), v.z()}; }
 

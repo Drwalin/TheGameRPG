@@ -1,6 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include "../../thirdparty/glm/glm/gtx/vector_angle.hpp"
-#include "../../thirdparty/glm/glm/gtx/quaternion.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/vector_angle.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/quaternion.hpp"
 
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>

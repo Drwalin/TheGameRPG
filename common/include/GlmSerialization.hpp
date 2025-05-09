@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../thirdparty/glm/glm/glm.hpp"
-#include "../../thirdparty/glm/glm/ext/quaternion_float.hpp"
-#include "../../thirdparty/glm/glm/ext/quaternion_common.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/glm.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_common.hpp"
 
 #include "ComponentsUtility.hpp"
 
