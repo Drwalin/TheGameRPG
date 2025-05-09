@@ -16,3 +16,6 @@
 [submodule "thirdparty/glm"]
 	path = thirdparty/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "thirdparty/Collision3D"]
+	path = thirdparty/Collision3D
+	url = https://github.com/Drwalin/Collision3D.git

@@ -4,9 +4,9 @@
 #include <string>
 #include <shared_mutex>
 
-#include "../../thirdparty/glm/glm/ext/vector_float2.hpp"
-#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
-#include "../../thirdparty/glm/glm/ext/vector_float4.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float2.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float4.hpp"
 
 class ConfigStorage
 {

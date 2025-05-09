@@ -27,6 +27,7 @@ add_library(common STATIC
 )
 target_link_libraries(common PUBLIC icon7)
 target_link_libraries(common PUBLIC flecs)
+target_link_libraries(common PUBLIC collision3d)
 target_link_libraries(common PUBLIC BulletCollision)
 target_link_libraries(common PUBLIC Bullet3Collision)
 target_link_libraries(common PUBLIC Bullet3Geometry)

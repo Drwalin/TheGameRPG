@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 
 #include <icon7/Command.hpp>
 

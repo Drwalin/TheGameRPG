@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "../../thirdparty/glm/glm/ext/vector_float3.hpp"
-#include "../../thirdparty/glm/glm/ext/quaternion_float.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
 
 #include "ComponentsUtility.hpp"
 
