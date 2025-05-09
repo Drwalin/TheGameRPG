@@ -299,7 +299,7 @@ void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
 										   writer);
 		reg::Registry::SerializePersistent(
 			GameClientFrontend::singleton->realm,
-			ComponentStaticCollisionShapeName{collisionPath}, writer);
+			ComponentCollisionShape{collisionPath}, writer);
 		writer.op("");
 	}
 }

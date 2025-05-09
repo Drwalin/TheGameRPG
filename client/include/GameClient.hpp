@@ -49,7 +49,7 @@ private: // rpc receiving methods
 	void SpawnStaticEntity(uint64_t serverId,
 						   ComponentStaticTransform transform,
 						   ComponentModelName model,
-						   ComponentStaticCollisionShapeName shape);
+						   ComponentCollisionShape shape);
 	void UpdateEntity(uint64_t serverId,
 					  const ComponentLastAuthoritativeMovementState state);
 	void RemoveEntity(uint64_t serverId);

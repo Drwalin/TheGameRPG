@@ -174,14 +174,14 @@ void Realm::UpdateEntityAuthoritativeState(
 uint64_t
 Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
 						  const ComponentModelName &model,
-						  const ComponentStaticCollisionShapeName &shape)
+						  const ComponentCollisionShape &shape)
 {
 	uint64_t entityId = NewEntity();
 	flecs::entity entity = Entity(entityId);
 
 	entity.set<ComponentStaticTransform>(transform);
 	entity.set<ComponentModelName>(model);
-	entity.set<ComponentStaticCollisionShapeName>(shape);
+	entity.set<ComponentCollisionShape>(shape);
 
 	return entityId;
 }

@@ -16,6 +16,7 @@ def Settings( **kwargs ):
     '-Ithirdparty/flecs/include',
     '-Ithirdparty/bullet/src',
     '-Ithirdparty/bullet/src/LinearMath',
-    '-Ithirdparty/glm'
+    '-Ithirdparty/Collision3D/SpatialPartitioning/glm'
+    '-Ithirdparty/Collision3D/SpatialPartitioning/glm/glm'
     ],
   }
