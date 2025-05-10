@@ -7,16 +7,12 @@
 #include <icon7/Debug.hpp>
 #include <icon7/ByteWriter.hpp>
 
-#include "../../../common/include/EntityComponents.hpp"
-#include "../../../common/include/RegistryComponent.hpp"
-
 #include "../GameClientFrontend.hpp"
 
 #include "../GameFrontend.hpp"
-#include "../GodotGlm.hpp"
 
 #include "PrefabServerBase.hpp"
-#include "PrefabServerStaticMesh.hpp"
+#include "PrefabServerStaticMesh_Base.hpp"
 
 #include "EditorConfig.hpp"
 
@@ -47,8 +43,6 @@ void GameEditorConfig::_bind_methods()
 
 	REGISTER_PROPERTY(GameEditorConfig, save_scene, Variant::Type::BOOL,
 					  "save_scene");
-	REGISTER_PROPERTY(GameEditorConfig, merge_static_objects,
-					  Variant::Type::BOOL, "merge_static_objects");
 }
 
 void GameEditorConfig::_process(double dt)
@@ -70,8 +64,6 @@ void GameEditorConfig::_process(double dt)
 
 void GameEditorConfig::SaveScene()
 {
-	objectsToMerge.clear();
-	otherNodesToMerge.clear();
 	otherObjects.clear();
 	staticToGoSecond.clear();
 
@@ -95,7 +87,6 @@ void GameEditorConfig::SaveScene()
 	icon7::ByteWriter writer(1024 * 1024);
 	SelectNodes(this);
 
-	MergeObjects(writer);
 	WriteSecondStatic(writer);
 	WriteOtherObjects(writer);
 
@@ -129,14 +120,9 @@ bool GameEditorConfig::SelectNodes(Node *node)
 		auto c = children[i];
 		Node *n = Object::cast_to<Node>(c.operator Object *());
 		if (PrefabServerBase *pref = Object::cast_to<PrefabServerBase>(n)) {
-			PrefabServerStaticMesh *stPref =
-				dynamic_cast<PrefabServerStaticMesh *>(pref);
 			PrefabServerStaticMesh_Base *stBasePref =
 				dynamic_cast<PrefabServerStaticMesh_Base *>(pref);
-			if (stPref && stPref->isTrullyStaticForMerge &&
-				merge_static_objects) {
-				objectsToMerge.push_back(stPref);
-			} else if (stBasePref) {
+			if (stBasePref) {
 				staticToGoSecond.push_back(stBasePref);
 			} else {
 				otherObjects.push_back(pref);
@@ -148,160 +134,7 @@ bool GameEditorConfig::SelectNodes(Node *node)
 			later.push_back(n);
 		}
 	}
-	for (auto n : later) {
-		bool v = SelectNodes(n);
-		if (v == false && ret == true) {
-			otherNodesToMerge.push_back(n);
-		}
-	}
 	return ret;
-}
-
-void GameEditorConfig::MergeObjects(icon7::ByteWriter &writer)
-{
-	if (objectsToMerge.empty() && otherNodesToMerge.empty()) {
-		return;
-	}
-
-	Node3D *rootNode = memnew(Node3D);
-	rootNode->set_transform(
-		Transform3D(Basis(Quaternion::from_euler(Vector3(0, 0, 0)), Vector3(1, 1, 1)),
-					Vector3(0, 0, 0)));
-
-	bool hasCollision = false;
-	for (auto it : objectsToMerge) {
-		Transform3D trans;
-		Ref<Resource> graphicMeshOrPackedScene;
-		Ref<Mesh> collisionMesh;
-		trans = it->GetMergingData(&graphicMeshOrPackedScene, &collisionMesh);
-
-		if (collisionMesh.is_valid() && !collisionMesh.is_null()) {
-			hasCollision = true;
-			break;
-		}
-	}
-
-	String collisionPath =
-		GenerateUniqueFileName("res://assets/generated/Col", ".obj.txt");
-	String graphicScenePath =
-		GenerateUniqueFileName("res://assets/generated/Scene", ".tscn");
-
-	Ref<FileAccess> file;
-	int32_t indexOffset = 1;
-	if (hasCollision) {
-		file = FileAccess::open(collisionPath, FileAccess::WRITE);
-	}
-
-	bool hasGraphics = false;
-	for (auto it : objectsToMerge) {
-		Transform3D trans;
-		Ref<Resource> graphicMeshOrPackedScene;
-		Ref<Mesh> collisionMesh;
-		trans = it->GetMergingData(&graphicMeshOrPackedScene, &collisionMesh);
-
-		Node3D *node = InstantiateGraphicMesh(graphicMeshOrPackedScene);
-		if (node) {
-			rootNode->add_child(node);
-			node->set_owner(rootNode);
-			node->set_transform(trans);
-			hasGraphics = true;
-		}
-
-		if (hasCollision && collisionMesh.is_valid() &&
-			!collisionMesh.is_null()) {
-
-			std::string srcCollisionPath =
-				collisionMesh->get_path().utf8().ptr();
-			if (srcCollisionPath.find(RES_PREFIX) == 0) {
-				srcCollisionPath =
-					srcCollisionPath.replace(0, RES_PREFIX.size(), "");
-			}
-			TerrainCollisionData colData;
-			if (GameClientFrontend::singleton->GetCollisionShape(
-					srcCollisionPath, &colData)) {
-
-				char line[128];
-				for (auto v : colData.vertices) {
-					v = ToGlm(trans.xform(::ToGodot(v)));
-					sprintf(line, "v %f %f %f\n", v.x, v.y, v.z);
-					for (char *c = line; *c; ++c) {
-						file->store_8(*c);
-					}
-				}
-
-				for (int i = 0; i + 2 < (int64_t)colData.indices.size(); i += 3) {
-					int32_t id[3];
-					for (int j = 0; j < 3; ++j) {
-						id[j] = indexOffset + colData.indices[i + j];
-					}
-
-					sprintf(line, "f %i// %i// %i//\n", id[0], id[1], id[2]);
-					for (char *c = line; *c; ++c) {
-						file->store_8(*c);
-					}
-				}
-
-				indexOffset += colData.vertices.size();
-			}
-		}
-	}
-
-	for (auto it : otherNodesToMerge) {
-		Node *nd = it->duplicate();
-
-		rootNode->add_child(nd);
-		nd->set_owner(rootNode);
-
-		Node3D *n3d = Object::cast_to<Node3D>(nd);
-		Node3D *sn3d = Object::cast_to<Node3D>(it);
-		if (n3d && sn3d) {
-			n3d->set_transform(sn3d->get_global_transform());
-		}
-		hasGraphics = true;
-	}
-
-	if (hasCollision) {
-		file->close();
-	}
-
-	if (hasGraphics) {
-		Ref<PackedScene> packedScene;
-		packedScene.instantiate();
-		packedScene->pack(rootNode);
-		ResourceSaver::get_singleton()->save(packedScene, graphicScenePath);
-	}
-	rootNode->queue_free();
-
-	{
-		std::string graphicPath;
-		if (hasGraphics) {
-			graphicPath = graphicScenePath.utf8().ptr();
-			if (graphicPath.find(RES_PREFIX) == 0) {
-				graphicPath = graphicPath.replace(0, RES_PREFIX.size(), "");
-			}
-		}
-
-		String colPath = collisionPath;
-		std::string collisionPath;
-		if (hasCollision) {
-			collisionPath = colPath.utf8().ptr();
-			if (collisionPath.find(RES_PREFIX) == 0) {
-				collisionPath = collisionPath.replace(0, RES_PREFIX.size(), "");
-			}
-		}
-
-		reg::Registry::SerializePersistent(
-			GameClientFrontend::singleton->realm,
-			ComponentStaticTransform{{0, 0, 0}, {1, 0, 0, 0}, {1, 1, 1}},
-			writer);
-		reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-										   ComponentModelName{graphicPath},
-										   writer);
-		reg::Registry::SerializePersistent(
-			GameClientFrontend::singleton->realm,
-			ComponentCollisionShape{collisionPath}, writer);
-		writer.op("");
-	}
 }
 
 Node3D *GameEditorConfig::InstantiateGraphicMesh(Ref<Resource> res)

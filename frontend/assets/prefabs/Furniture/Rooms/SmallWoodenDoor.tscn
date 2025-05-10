@@ -1,8 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://b2xw7oxjg5a5n"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Rooms/_SmallWoodenDoor.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://dxr011fm4w8c2" path="res://assets/collisions/Furniture/Rooms/_SmallWoodenDoor.col.obj" id="2_b"]
 
 [node name="SmallWoodenDoor" type="PrefabServerOpenableSingleDoor"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="2B5C8C67BF18323D7AB0FD305B3ED5D" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.499512, 1.00103, 0.00169373)
+size = Vector3(1.05566, 2.00342, 0.0582581)

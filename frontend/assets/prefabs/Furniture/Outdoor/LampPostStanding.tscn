@@ -1,8 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://cjsi1lgaqqjm5"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Outdoor/LampPostStanding.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Outdoor/_LampPostStanding.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://bmawnd4mki4ln" path="res://assets/meshes/Furniture/Outdoor/LampPostStanding.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://74tr75hdwsxy" path="res://assets/collisions/Furniture/Outdoor/_LampPostStanding.col.obj" id="2_b"]
 
 [node name="LampPostStanding" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="EC62952AC7DB5ACC6F77BBC070CE5C6A" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.183472, 0.0365295)
+size = Vector3(0.746094, 0.489014, 0.672791)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000152588, 1.18304, -0.000114441)
+size = Vector3(0.191956, 1.64124, 0.192673)

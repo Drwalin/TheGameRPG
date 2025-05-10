@@ -1,8 +1,22 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://dl3deg3q1miq"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Rooms/Bench.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Rooms/_Bench.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://843eofh534jp" path="res://assets/meshes/Furniture/Rooms/Bench.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://fxs288fjhbby" path="res://assets/collisions/Furniture/Rooms/_Bench.col.obj" id="2_b"]
 
 [node name="Bench" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="34B4D929B3351DD8C9F277036196E9B6" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00134277, 0.376625, -6.10352e-05)
+size = Vector3(0.595459, 0.047226, 1.99207)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00720215, 0.177063, 0.707764)
+size = Vector3(0.437256, 0.366577, 0.104004)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00720215, 0.177063, -0.699502)
+size = Vector3(0.437256, 0.366577, 0.104004)

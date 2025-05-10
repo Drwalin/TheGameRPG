@@ -67,7 +67,6 @@ public: // Godot bound functions
 	void SaveScene();
 	// returns true if has any PrefabServer nodes
 	bool SelectNodes(Node *node);
-	void MergeObjects(icon7::ByteWriter &writer);
 	void WriteSecondStatic(icon7::ByteWriter &writer);
 	void WriteOtherObjects(icon7::ByteWriter &writer);
 	static Node3D *InstantiateGraphicMesh(Ref<Resource> res);
@@ -91,17 +90,11 @@ public: // variables
 	bool get_save_scene() { return save_scene; }
 	void set_save_scene(bool v) { save_scene = v; }
 
-	bool merge_static_objects = false;
-	bool get_merge_static_objects() { return merge_static_objects; }
-	void set_merge_static_objects(bool v) { merge_static_objects = v; }
-
 	String save_map_file_path;
 	String get_save_map_file_path() { return save_map_file_path; }
 	void set_save_map_file_path(String v) { save_map_file_path = v; }
 
 public:
-	std::vector<PrefabServerStaticMesh_Base *> objectsToMerge;
-	std::vector<Node *> otherNodesToMerge;
 	std::vector<PrefabServerStaticMesh_Base *> staticToGoSecond;
 	std::vector<PrefabServerBase *> otherObjects;
 

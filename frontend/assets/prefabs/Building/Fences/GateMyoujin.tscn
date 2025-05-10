@@ -1,8 +1,22 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://da4wwquwmexgr"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Building/Fences/GateMyoujin.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Building/Fences/_GateMyoujin.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://dgcxrsg3bwmo5" path="res://assets/meshes/Building/Fences/GateMyoujin.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://btc0rxr7nvj8t" path="res://assets/collisions/Building/Fences/_GateMyoujin.col.obj" id="2_b"]
 
 [node name="GateMyoujin" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="742D4611A65A4AE9324E6907E43259D6" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00604248, 3.0022, -0.00012207)
+size = Vector3(0.317749, 1.01514, 3.53442)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000137329, 1.2262, 1.10431)
+size = Vector3(0.198334, 2.55042, 0.198364)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000137329, 1.2262, -1.09971)
+size = Vector3(0.198334, 2.55042, 0.198364)

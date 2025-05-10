@@ -1,8 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://btcve24nf5u73"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Storage/TubFullMead.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Storage/_MeadTub.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://uyk5dyf5icjj" path="res://assets/meshes/Furniture/Storage/TubFullMead.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://ktixfqw6ficb" path="res://assets/collisions/Furniture/Storage/_MeadTub.col.obj" id="2_b"]
 
 [node name="TubFullMead" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="6EEDDB0F02384166A4CB74D83E231DA" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.758179, 0)
+radius = 0.998
+height = 1.49194

@@ -2,9 +2,12 @@
 
 #include <vector>
 
+#include <flecs.h>
+
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
-#include <flecs.h>
+
+#include "../include/EntityComponents.hpp"
 
 struct TerrainCollisionData {
 	std::vector<glm::vec3> vertices;
@@ -15,6 +18,7 @@ struct ComponentBulletCollisionObject {
 	class btCollisionObject *object;
 };
 
+class btCollisionShape;
 class btCylinderShape;
 class btCapsuleShape;
 class btSphereShape;
@@ -41,10 +45,12 @@ public:
 	void EndEpoch();
 
 	static uint64_t GetObjectEntityID(const btCollisionObject *object);
+	
+	btCollisionShape *CreateBtShape(const __InnerShape& shape) const;
 
 	void OnStaticCollisionShape(
 		flecs::entity entity,
-		const ComponentCollisionShape &collisionName,
+		const ComponentCollisionShape &shape,
 		const ComponentStaticTransform &transform);
 	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
 					 glm::vec3 pos);
@@ -179,6 +185,7 @@ public:
 
 private:
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
+	void DestroyCollisionShape(btCollisionShape *shape);
 	class btCollisionObject *AllocateNewCollisionObject();
 
 	class btBroadphaseInterface *broadphase;

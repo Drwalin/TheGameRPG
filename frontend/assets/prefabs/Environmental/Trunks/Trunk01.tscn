@@ -1,8 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://cpwtmm0tv6x6m"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Environmental/Trunks/Trunk01.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Environmental/Trunks/_Trunk01.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://c3y0kn56s8nuc" path="res://assets/meshes/Environmental/Trunks/Trunk01.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://cyuvj8rwvteuj" path="res://assets/collisions/Environmental/Trunks/_Trunk01.col.obj" id="2_b"]
 
 [node name="Trunk01" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="8C5B9F4C7066C5507F8B0D0C52D96F22" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.294067, 0)
+radius = 0.368
+height = 0.891846

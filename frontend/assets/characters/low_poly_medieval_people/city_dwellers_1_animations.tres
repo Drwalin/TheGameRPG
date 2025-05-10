@@ -3741,20 +3741,20 @@ tracks/32/keys = PackedFloat32Array(0, 1, -0.667549, 0.00303768, -0.00644889, 0.
 
 [resource]
 _data = {
-"attack_straight_right_01": SubResource("Animation_bs00y"),
-"dying_1": SubResource("Animation_66nxy"),
-"dying_2": SubResource("Animation_l81th"),
-"dying_3": SubResource("Animation_kafbo"),
-"dying_4": SubResource("Animation_11vgf"),
-"dying_5": SubResource("Animation_ofe58"),
-"dying_6": SubResource("Animation_lybsv"),
-"falling": SubResource("Animation_r7po4"),
-"idle": SubResource("Animation_dxusq"),
-"jump": SubResource("Animation_xuqa4"),
-"left_running": SubResource("Animation_f6hsr"),
-"left_walking": SubResource("Animation_2y2dr"),
-"right_running": SubResource("Animation_6jv0t"),
-"right_walking": SubResource("Animation_bcb2g"),
-"running": SubResource("Animation_afyru"),
-"walking": SubResource("Animation_8ubyq")
+&"attack_straight_right_01": SubResource("Animation_bs00y"),
+&"dying_1": SubResource("Animation_66nxy"),
+&"dying_2": SubResource("Animation_l81th"),
+&"dying_3": SubResource("Animation_kafbo"),
+&"dying_4": SubResource("Animation_11vgf"),
+&"dying_5": SubResource("Animation_ofe58"),
+&"dying_6": SubResource("Animation_lybsv"),
+&"falling": SubResource("Animation_r7po4"),
+&"idle": SubResource("Animation_dxusq"),
+&"jump": SubResource("Animation_xuqa4"),
+&"left_running": SubResource("Animation_f6hsr"),
+&"left_walking": SubResource("Animation_2y2dr"),
+&"right_running": SubResource("Animation_6jv0t"),
+&"right_walking": SubResource("Animation_bcb2g"),
+&"running": SubResource("Animation_afyru"),
+&"walking": SubResource("Animation_8ubyq")
 }
