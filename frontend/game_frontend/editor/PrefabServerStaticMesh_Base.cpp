@@ -26,9 +26,9 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 		ComponentStaticTransform{ToGame(get_global_transform())}, writer);
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentModelName{graphicPath}, writer);
-	reg::Registry::SerializePersistent(
-		GameClientFrontend::singleton->realm,
-		ComponentCollisionShape{collisionPath}, writer);
+	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
+									   ComponentCollisionShape{collisionPath},
+									   writer);
 }
 
 void PrefabServerStaticMesh_Base::_bind_methods()

@@ -333,7 +333,7 @@ void CollisionWorld::Debug() const
 		auto o = objs.at(i);
 
 		auto shape = o->getCollisionShape();
-		
+
 		if (dynamic_cast<btCylinderShape *>(shape)) {
 			LOG_INFO("shape cylinder");
 		} else if (dynamic_cast<btCapsuleShape *>(shape)) {

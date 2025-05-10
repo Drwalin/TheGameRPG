@@ -45,13 +45,12 @@ public:
 	void EndEpoch();
 
 	static uint64_t GetObjectEntityID(const btCollisionObject *object);
-	
-	btCollisionShape *CreateBtShape(const __InnerShape& shape) const;
 
-	void OnStaticCollisionShape(
-		flecs::entity entity,
-		const ComponentCollisionShape &shape,
-		const ComponentStaticTransform &transform);
+	btCollisionShape *CreateBtShape(const __InnerShape &shape) const;
+
+	void OnStaticCollisionShape(flecs::entity entity,
+								const ComponentCollisionShape &shape,
+								const ComponentStaticTransform &transform);
 	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
 					 glm::vec3 pos);
 	void OnAddTrigger(flecs::entity entity,

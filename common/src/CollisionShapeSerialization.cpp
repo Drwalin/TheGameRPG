@@ -2,6 +2,8 @@
 #include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
 
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
+
 #include "../include/CollisionShapeSerialization.hpp"
 
 namespace bitscpp

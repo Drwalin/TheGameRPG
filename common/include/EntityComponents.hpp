@@ -110,7 +110,7 @@ struct ComponentStaticTransform {
 struct __InnerShape;
 struct CompoundShape {
 	std::shared_ptr<std::vector<__InnerShape>> shapes;
-	
+
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 };
 
@@ -124,7 +124,7 @@ struct __InnerShape {
 	};
 	Type type = NONE;
 	ComponentStaticTransform trans;
-	
+
 	std::variant<Collision3D::VertBox, Collision3D::Cylinder,
 				 Collision3D::HeightMap<float>, CompoundShape>
 		shape;
