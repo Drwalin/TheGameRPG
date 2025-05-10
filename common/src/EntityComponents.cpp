@@ -1,8 +1,11 @@
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 #include "../include/RegistryComponent.inl.hpp"
 #include "../include/Realm.hpp"
 
 #include "../include/EntityComponents.hpp"
+
+#include "../include/CollisionShapeSerialization.hpp"
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);
@@ -97,37 +100,31 @@ bitscpp::ByteReader<true> &
 __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 {
 	shape = {};
-	s.op(type);
+	uint8_t t;
+	s.op(t);
+	type = Type(t);
 	s.op(trans);
 	switch (type) {
-	case VERTBOX:
-		{
-			Collision3D::VertBox v;
-			s.op(v);
-			shape = v;
-		}
-		break;
-	case CYLINDER:
-		{
-			Collision3D::Cylinder v;
-			s.op(v);
-			shape = v;
-		}
-		break;
-	case HEIGHTMAP:
-		{
-			Collision3D::HeightMap<float> v;
-			s.op(v);
-			shape = v;
-		}
-		break;
-	case COMPOUND_SHAPE:
-		{
-			CompoundShape v;
-			s.op(v);
-			shape = v;
-		}
-		break;
+	case VERTBOX: {
+		Collision3D::VertBox v;
+		op(s, v);
+		shape = v;
+	} break;
+	case CYLINDER: {
+		Collision3D::Cylinder v;
+		op(s, v);
+		shape = v;
+	} break;
+	case HEIGHTMAP: {
+		Collision3D::HeightMap<float> v;
+		op(s, v);
+		shape = v;
+	} break;
+	case COMPOUND_SHAPE: {
+		CompoundShape v;
+		s.op(v);
+		shape = v;
+	} break;
 	default:
 		LOG_FATAL("Invalid collision shape type: %u", (uint32_t)type);
 	}
@@ -136,27 +133,27 @@ __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 bitscpp::ByteWriter<icon7::ByteBuffer> &
 __InnerShape::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 {
-	switch(shape.index()) {
-		case 0:
-			LOG_FATAL("CollisionShape is empty but should not be");
-			s.op(NONE);
-			break;
-		case 1:
-			s.op(VERTBOX);
-			s.op(std::get<0>(shape));
-			break;
-		case 2:
-			s.op(CYLINDER);
-			s.op(std::get<1>(shape));
-			break;
-		case 3:
-			s.op(HEIGHTMAP);
-			s.op(std::get<2>(shape));
-			break;
-		case 4:
-			s.op(COMPOUND_SHAPE);
-			s.op(std::get<3>(shape));
-			break;
+	switch (shape.index()) {
+	case 0:
+		LOG_FATAL("CollisionShape is empty but should not be");
+		s.op((uint8_t)NONE);
+		break;
+	case 1:
+		s.op((uint8_t)VERTBOX);
+		op(s, std::get<0>(shape));
+		break;
+	case 2:
+		s.op((uint8_t)CYLINDER);
+		op(s, std::get<1>(shape));
+		break;
+	case 3:
+		s.op((uint8_t)HEIGHTMAP);
+		op(s, std::get<2>(shape));
+		break;
+	case 4:
+		s.op((uint8_t)COMPOUND_SHAPE);
+		s.op(std::get<3>(shape));
+		break;
 	}
 	return s;
 }

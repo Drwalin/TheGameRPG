@@ -249,10 +249,10 @@ void LoginFailed(icon7::Peer *peer, const std::string &reason)
 		ClientRpcFunctionNames::LoginFailed, reason);
 }
 
-void Broadcast_SpawnStaticEntities(
-	RealmServer *realm, uint64_t entityId,
-	const ComponentStaticTransform &transform, const ComponentModelName &model,
-	const ComponentCollisionShape &shape)
+void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
+								   const ComponentStaticTransform &transform,
+								   const ComponentModelName &model,
+								   const ComponentCollisionShape &shape)
 {
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
 							 entityId, transform, model, shape);
@@ -264,16 +264,16 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 	realm->rpc->InitializeSerializeSend(
 		writer, ClientRpcFunctionNames::SpawnStaticEntities);
 	int written = 0;
-	realm->queryStaticEntity.each(
-		[&](flecs::entity entity, const ComponentStaticTransform &transform,
-			const ComponentModelName &model,
-			const ComponentCollisionShape &shape) {
-			++written;
-			writer.op(entity.id());
-			writer.op(transform);
-			writer.op(model);
-			writer.op(shape);
-		});
+	realm->queryStaticEntity.each([&](flecs::entity entity,
+									  const ComponentStaticTransform &transform,
+									  const ComponentModelName &model,
+									  const ComponentCollisionShape &shape) {
+		++written;
+		writer.op(entity.id());
+		writer.op(transform);
+		writer.op(model);
+		writer.op(shape);
+	});
 	if (written > 0) {
 		icon7::Flags flags =
 			icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;

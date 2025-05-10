@@ -58,8 +58,7 @@ void AsyncLoadedPlaceholder3D::_process(double)
 		if (resource.is_null() == false && resource.is_valid()) {
 			Ref<Mesh> mesh = resource;
 			if (mesh.is_valid() && mesh.is_null() == false) {
-				MeshInstance3D *meshInstance =
-					memnew(MeshInstance3D);
+				MeshInstance3D *meshInstance = memnew(MeshInstance3D);
 				meshInstance->set_mesh(mesh);
 
 				get_parent()->add_child(meshInstance);
