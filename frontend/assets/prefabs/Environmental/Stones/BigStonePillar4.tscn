@@ -1,8 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://ckt70t6c7svfg"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Environmental/Stones/BigStonePillar4.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Environmental/Stones/_BigStonePillar.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://c6f620g3uvsjg" path="res://assets/meshes/Environmental/Stones/BigStonePillar4.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://r6burmvdfle" path="res://assets/collisions/Environmental/Stones/_BigStonePillar.col.obj" id="2_b"]
 
 [node name="BigStonePillar4" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="A8C1C3D558E455B9D1FC075052829430" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0462646, 2.01135, 0.0172729)
+size = Vector3(1.95679, 4.07202, 0.966187)

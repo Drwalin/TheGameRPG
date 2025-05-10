@@ -1,8 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://bafkqd6heye24"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Furniture/Storage/BarrelClosedDarker.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Furniture/Storage/_BarrelClosed.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://dbhr00ehiw1dg" path="res://assets/meshes/Furniture/Storage/BarrelClosedDarker.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://deeir4epd8ofu" path="res://assets/collisions/Furniture/Storage/_BarrelClosed.col.obj" id="2_b"]
 
 [node name="BarrelClosedDarker" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="C3ACA5D98673871B9228F86DDDA4733B" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.346924, 0)
+radius = 0.271
+height = 0.693848

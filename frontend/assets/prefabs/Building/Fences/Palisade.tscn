@@ -1,8 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://1ydqgfjgopgx"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Building/Fences/Palisade.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Building/Fences/_Palisade.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://s4mh25f4omrn" path="res://assets/meshes/Building/Fences/Palisade.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://bc7wwbm5d5jkb" path="res://assets/collisions/Building/Fences/_Palisade.col.obj" id="2_b"]
 
 [node name="Palisade" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="222AD169B9A8A89E2A8A484D54929334" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0330811, 1.11761, -0.00668335)
+size = Vector3(0.284424, 2.23096, 1.85687)

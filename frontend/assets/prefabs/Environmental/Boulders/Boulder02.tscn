@@ -1,8 +1,14 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://ccycqm6p54su2"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Environmental/Boulders/Boulder02.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Environmental/Boulders/_Boulder02.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://bpqeqkiiv8y07" path="res://assets/meshes/Environmental/Boulders/Boulder02.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://cnjiq13g2pho2" path="res://assets/collisions/Environmental/Boulders/_Boulder02.col.obj" id="2_b"]
 
 [node name="Boulder02" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="5899D7D28E600303E6B5274E4F322BF7" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0198364, 0.0265198, 0.0626221)
+size = Vector3(0.773071, 0.581482, 0.786377)

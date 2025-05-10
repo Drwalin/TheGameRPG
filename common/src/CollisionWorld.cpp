@@ -1,16 +1,16 @@
 #include <icon7/Debug.hpp>
 
 #include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
-#include "../../../thirdparty/bullet/src/LinearMath/btVector3.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBoxShape.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCylinderShape.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCapsuleShape.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
-#include "../../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btTriangleMesh.h"
+#include "../../thirdparty/bullet/src/LinearMath/btTransform.h"
+#include "../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBoxShape.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCylinderShape.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCapsuleShape.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCompoundShape.h"
+#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 
 #include "../include/GlmBullet.hpp"
 #include "../include/EntityComponents.hpp"
@@ -87,27 +87,38 @@ void CollisionWorld::Clear()
 	}
 }
 
-void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
+void CollisionWorld::DestroyCollisionShape(btCollisionShape *shape)
 {
-	btCollisionShape *shape = object->getCollisionShape();
-
-	collisionWorld->removeCollisionObject(object);
-	delete object;
-
 	if (shape == nullptr) {
 		return;
 	}
 
 	if (auto *s = dynamic_cast<btCylinderShape *>(shape)) {
 		delete s;
+	} else if (auto *s = dynamic_cast<btBoxShape *>(shape)) {
+		delete s;
 	} else if (auto *s = dynamic_cast<btCapsuleShape *>(shape)) {
 		delete s;
 	} else if (auto *s = dynamic_cast<btSphereShape *>(shape)) {
 		delete s;
-	} else if (auto *s = dynamic_cast<btBvhTriangleMeshShape *>(shape)) {
-		delete s->getMeshInterface();
+	} else if (auto *s = dynamic_cast<btCompoundShape *>(shape)) {
+		for (int i = 0; i < s->getNumChildShapes(); ++i) {
+			DestroyCollisionShape(s->getChildShape(i));
+		}
 		delete s;
+	} else if (auto *s = dynamic_cast<btHeightfieldTerrainShape *>(shape)) {
+		delete s;
+	} else {
+		LOG_FATAL("Unknown btCollisionShape type: `%s`", shape->getName());
 	}
+}
+
+void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
+{
+	btCollisionShape *shape = object->getCollisionShape();
+	collisionWorld->removeCollisionObject(object);
+	delete object;
+	DestroyCollisionShape(shape);
 }
 
 btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
@@ -120,33 +131,66 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 	return object;
 }
 
+btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
+{
+	switch (shape.type) {
+	case __InnerShape::VERTBOX: {
+		auto s = std::get<Collision3D::VertBox>(shape.shape);
+		btCompoundShape *cs = new btCompoundShape(false, 1);
+		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btBoxShape *bs = new btBoxShape(ToBullet(s.halfExtents));
+		cs->addChildShape(trans, bs);
+		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		return cs;
+	} break;
+	case __InnerShape::CYLINDER: {
+		auto s = std::get<Collision3D::Cylinder>(shape.shape);
+		btCompoundShape *cs = new btCompoundShape(false, 1);
+		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btCylinderShape *bs =
+			new btCylinderShape({s.radius, s.height / 2.0f, s.radius});
+		cs->addChildShape(trans, bs);
+		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		return cs;
+	} break;
+	case __InnerShape::HEIGHTMAP: {
+		auto s = std::get<Collision3D::HeightMap<float>>(shape.shape);
+		btCompoundShape *cs = new btCompoundShape(false, 1);
+		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btHeightfieldTerrainShape *bs = new btHeightfieldTerrainShape(
+			s.width, s.height, (void *)s.mipmap[0].heights.data(), s.scale.y,
+			-10000.0f, 100000.0f, 1, PHY_FLOAT, false);
+		cs->addChildShape(trans, bs);
+		cs->setLocalScaling(ToBullet(shape.trans.scale *
+									 glm::vec3{s.scale.x, 1.0f, s.scale.z}));
+		return cs;
+	} break;
+	case __InnerShape::COMPOUND_SHAPE: {
+		auto s = std::get<CompoundShape>(shape.shape);
+		btCompoundShape *cs = new btCompoundShape(false, s.shapes->size());
+		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		for (const auto &ss : *s.shapes) {
+			cs->addChildShape(trans, CreateBtShape(ss));
+		}
+		return cs;
+	} break;
+	default:
+		LOG_FATAL("Unknown collision shape type");
+		return nullptr;
+	}
+}
+
 void CollisionWorld::OnStaticCollisionShape(
-	flecs::entity entity,
-	const ComponentCollisionShape &collisionName,
+	flecs::entity entity, const ComponentCollisionShape &shape,
 	const ComponentStaticTransform &transform)
 {
-	TerrainCollisionData data;
-	if (realm->GetCollisionShape(collisionName.shapeName, &data)) {
-		btTriangleMesh *triangles =
-			new btTriangleMesh((data.vertices.size() / 3) > (1 << 15), false);
-		triangles->preallocateVertices(data.vertices.size());
-		triangles->preallocateIndices(data.indices.size());
-		std::vector<uint32_t> map;
-		map.resize(data.vertices.size());
-		for (int i = 0; i < data.vertices.size(); ++i) {
-			const glm::vec3 &v = data.vertices[i];
-			map[i] = triangles->findOrAddVertex({v.x, v.y, v.z}, false);
-		}
-		for (int i = 0; i + 2 < data.indices.size(); i += 3) {
-			const uint32_t *idx = &(data.indices[i]);
-			triangles->addTriangleIndices(idx[0], idx[1], idx[2]);
-		}
-		btBvhTriangleMeshShape *shape =
-			new btBvhTriangleMeshShape(triangles, false, true);
-		shape->setLocalScaling(ToBullet(transform.scale));
-		shape->buildOptimizedBvh();
+	btCollisionShape *btShape = CreateBtShape(shape.shape);
+	if (btShape) {
+		btShape->setLocalScaling(btShape->getLocalScaling() *
+								 ToBullet(transform.scale));
 		btCollisionObject *object = AllocateNewCollisionObject();
-		object->setCollisionShape(shape);
+		object->setCollisionShape(btShape);
 		object->setWorldTransform(
 			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
 		object->setUserIndex(FILTER_TERRAIN);
@@ -170,8 +214,8 @@ void CollisionWorld::OnStaticCollisionShape(
 			entity.set<ComponentBulletCollisionObject>({object});
 		}
 	} else {
-		LOG_WARN("No such static collision shape: `%s`",
-				 collisionName.shapeName.c_str());
+		LOG_WARN("Failed to construct btCollisionShape from "
+				 "ComponentCollisionShape");
 	}
 }
 
@@ -289,42 +333,21 @@ void CollisionWorld::Debug() const
 		auto o = objs.at(i);
 
 		auto shape = o->getCollisionShape();
-
-		if (auto *s = dynamic_cast<btCylinderShape *>(shape)) {
+		
+		if (dynamic_cast<btCylinderShape *>(shape)) {
 			LOG_INFO("shape cylinder");
-		} else if (auto *s = dynamic_cast<btCapsuleShape *>(shape)) {
+		} else if (dynamic_cast<btCapsuleShape *>(shape)) {
 			LOG_INFO("shape capsule");
-		} else if (auto *s = dynamic_cast<btSphereShape *>(shape)) {
+		} else if (dynamic_cast<btSphereShape *>(shape)) {
 			LOG_INFO("shape sphere");
-		} else if (auto *s = dynamic_cast<btBvhTriangleMeshShape *>(shape)) {
-			auto a = o->getWorldTransform().getOrigin();
-			LOG_INFO("shape triangles: %f %f %f", a.x(), a.y(), a.z());
-			auto m = s->getMeshInterface();
-			class Cb : public btInternalTriangleIndexCallback
-			{
-			public:
-				virtual void internalProcessTriangleIndex(btVector3 *triangle,
-														  int partId,
-														  int triangleIndex)
-				{
-					processTriangle(triangle, partId, triangleIndex);
-				}
-
-				virtual void processTriangle(btVector3 *t, int partId,
-											 int triangleIndex)
-				{
-					LOG_INFO("partId: %i, triangleIndex: %i", partId,
-							 triangleIndex);
-
-					LOG_INFO("Triangle: (%f %f %f) (%f %f %f) (%f %f %f)",
-							 t[0].x(), t[0].y(), t[0].z(), t[1].x(), t[1].y(),
-							 t[1].z(), t[2].x(), t[2].y(), t[2].z());
-				}
-
-			} cb;
-
-			m->InternalProcessAllTriangles(&cb, {-100000, -100000, -100000},
-										   {100000, 100000, 100000});
+		} else if (dynamic_cast<btBoxShape *>(shape)) {
+			LOG_INFO("shape box");
+		} else if (dynamic_cast<btHeightfieldTerrainShape *>(shape)) {
+			LOG_INFO("shape heightmap");
+		} else if (dynamic_cast<btCompoundShape *>(shape)) {
+			LOG_INFO("shape compound: NOT PRINTING RECURSIVE");
+		} else {
+			LOG_INFO("Unknown shape used: %s", shape->getName());
 		}
 	}
 }
@@ -367,22 +390,18 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 		});
 	ecs.observer<ComponentCollisionShape>()
 		.event(flecs::OnSet)
-		.each([this](flecs::entity entity,
-					 const ComponentCollisionShape &collisionName) {
-			auto transform = entity.get<ComponentStaticTransform>();
-			if (transform && collisionName.shapeName != "") {
-				OnStaticCollisionShape(entity, collisionName, *transform);
-			}
-		});
+		.each(
+			[this](flecs::entity entity, const ComponentCollisionShape &shape) {
+				auto transform = entity.get<ComponentStaticTransform>();
+				OnStaticCollisionShape(entity, shape, *transform);
+			});
 	ecs.observer<ComponentCollisionShape>()
 		.event(flecs::OnAdd)
-		.each([this](flecs::entity entity,
-					 const ComponentCollisionShape &collisionName) {
-			auto transform = entity.get<ComponentStaticTransform>();
-			if (transform && collisionName.shapeName != "") {
-				OnStaticCollisionShape(entity, collisionName, *transform);
-			}
-		});
+		.each(
+			[this](flecs::entity entity, const ComponentCollisionShape &shape) {
+				auto transform = entity.get<ComponentStaticTransform>();
+				OnStaticCollisionShape(entity, shape, *transform);
+			});
 }
 
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)

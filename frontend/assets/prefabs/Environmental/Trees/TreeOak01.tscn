@@ -1,8 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://dsnxool7cft3j"]
 
-[ext_resource type="PackedScene" path="res://assets/meshes/Environmental/Trees/TreeOak01.glb" id="1_a"]
-[ext_resource type="ArrayMesh" path="res://assets/collisions/Environmental/Trees/_TreeOak01.col.obj" id="2_b"]
+[ext_resource type="PackedScene" uid="uid://pno2bevmisnj" path="res://assets/meshes/Environmental/Trees/TreeOak01.glb" id="1_a"]
+[ext_resource type="ArrayMesh" uid="uid://b6npvrcbd61gf" path="res://assets/collisions/Environmental/Trees/_TreeOak01.col.obj" id="2_b"]
 
 [node name="TreeOak01" type="PrefabServerStaticMesh"]
 graphic_Mesh_or_PackedScene = ExtResource("1_a")
 collision_mesh = ExtResource("2_b")
+
+[node name="B53DEB83E875E98E6B617EDA7280FF44" type="Node3D" parent="." instance=ExtResource("1_a")]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.40582, 0)
+radius = 0.856
+height = 3.11646

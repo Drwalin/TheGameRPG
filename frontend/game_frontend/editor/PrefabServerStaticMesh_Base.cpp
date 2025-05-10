@@ -21,14 +21,6 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 		}
 	}
 
-	std::string collisionPath;
-	if (collision_mesh.is_null() == false && collision_mesh.is_valid()) {
-		collisionPath = collision_mesh->get_path().utf8().ptr();
-		if (collisionPath.find(RES_PREFIX) == 0) {
-			collisionPath = collisionPath.replace(0, RES_PREFIX.size(), "");
-		}
-	}
-
 	reg::Registry::SerializePersistent(
 		GameClientFrontend::singleton->realm,
 		ComponentStaticTransform{ToGame(get_global_transform())}, writer);
@@ -39,46 +31,25 @@ void PrefabServerStaticMesh_Base::Serialize(icon7::ByteWriter &writer)
 		ComponentCollisionShape{collisionPath}, writer);
 }
 
-Transform3D PrefabServerStaticMesh_Base::GetMergingData(
-	Ref<Resource> *graphicMeshOrPackedScene, Ref<Mesh> *collisionMesh)
-{
-	*graphicMeshOrPackedScene = graphic_Mesh_or_PackedScene;
-	*collisionMesh = collision_mesh;
-	return get_global_transform();
-}
-
 void PrefabServerStaticMesh_Base::_bind_methods()
 {
 	REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh_Base,
 							   graphic_Mesh_or_PackedScene,
 							   Variant::Type::OBJECT, "Resource", "scene");
-	REGISTER_PROPERTY_RESOURCE(PrefabServerStaticMesh_Base, collision_mesh,
-							   Variant::Type::OBJECT, "Mesh", "mesh");
 }
 
 void PrefabServerStaticMesh_Base::_ready()
 {
 	PrefabServerBase::_ready();
-	col = nullptr;
 	graph = nullptr;
 }
 
 void PrefabServerStaticMesh_Base::_process(double dt)
 {
 	PrefabServerBase::_process(dt);
-	if ((col != nullptr) != GameEditorConfig::render_collision) {
-		RecreateCollision();
-	}
-
 	if ((graph != nullptr) != GameEditorConfig::render_graphic) {
 		RecreateGraphic();
 	}
-}
-
-void PrefabServerStaticMesh_Base::RecreateCollision()
-{
-	RecreateResourceRenderer(&col, &collision_mesh,
-							 GameEditorConfig::render_collision);
 }
 
 void PrefabServerStaticMesh_Base::RecreateGraphic()
@@ -108,15 +79,4 @@ void PrefabServerStaticMesh_Base::set_graphic_Mesh_or_PackedScene(
 
 	RecreateGraphic();
 }
-
-Ref<Mesh> PrefabServerStaticMesh_Base::get_collision_mesh()
-{
-	return collision_mesh;
-}
-void PrefabServerStaticMesh_Base::set_collision_mesh(Ref<Mesh> v)
-{
-	collision_mesh = v;
-	RecreateCollision();
-}
-
 } // namespace editor

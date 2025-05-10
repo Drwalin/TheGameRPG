@@ -7,4 +7,20 @@
 graphic_Mesh_or_PackedScene = ExtResource("1_kmd6n")
 collision_mesh = ExtResource("2_b")
 
-[node name="NameFFFDF18B596E83F76736DDA746ADB990" type="Node3D" parent="." instance=ExtResource("1_kmd6n")]
+[node name="62D981734321200C1D958BB1233E0618" type="Node3D" parent="." instance=ExtResource("1_kmd6n")]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.733357, 2.09116, -0.00524902)
+size = Vector3(0.32373, 0.429565, 0.314209)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.183472, 0.0365295)
+size = Vector3(0.746094, 0.489014, 0.672791)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000152588, 1.72635, -0.000114441)
+size = Vector3(0.191956, 2.72784, 0.192673)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.267618, 2.73833, -0.000709057)
+size = Vector3(1.12488, 0.177401, 0.137836)
