@@ -20,15 +20,13 @@ void PrefabServerBase::ClearChildren()
 	if (dynamic_cast<PrefabServerSpawner *>(this) != nullptr) {
 		return;
 	}
-	while (get_child_count() > 0) {
-		auto child = get_child(0);
-		remove_child(child);
-		child->queue_free();
-	}
-	while (get_child_count(true) > 0) {
-		auto child = get_child(0, true);
-		remove_child(child);
-		child->queue_free();
+	for (int i=0; i < get_child_count(); ++i) {
+		Node *child = get_child(i);
+		if (!dynamic_cast<CSGPrimitive3D *>(child)) {
+			remove_child(child);
+			child->queue_free();
+			--i;
+		}
 	}
 }
 
@@ -68,7 +66,7 @@ void PrefabServerBase::_RecreateResourceRenderer(TNode **nodeStorage,
 					(*nodeStorage) =
 						Object::cast_to<Node3D>(packedScene->instantiate());
 					(*nodeStorage)->set_name(GetRandomString());
-					add_child(*nodeStorage);
+					add_child(*nodeStorage, false, Node::InternalMode::INTERNAL_MODE_BACK);
 					(*nodeStorage)->set_owner(this);
 				}
 			}
@@ -79,7 +77,7 @@ void PrefabServerBase::_RecreateResourceRenderer(TNode **nodeStorage,
 				m->set_mesh(mesh);
 				(*nodeStorage) = m;
 				(*nodeStorage)->set_name(GetRandomString());
-				add_child(*nodeStorage);
+				add_child(*nodeStorage, false, Node::InternalMode::INTERNAL_MODE_BACK);
 				(*nodeStorage)->set_owner(this);
 			}
 		}
