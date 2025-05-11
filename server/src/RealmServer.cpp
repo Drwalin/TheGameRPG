@@ -2,7 +2,6 @@
 #include <icon7/ByteReader.hpp>
 
 #include "../../common/include/EntitySystems.hpp"
-#include "../../common/include/CollisionLoader.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 
@@ -61,20 +60,6 @@ void RealmServer::Init(const std::string &realmName)
 	LoadFromFile();
 
 	sendEntitiesToClientsTimer = 0;
-}
-
-bool RealmServer::GetCollisionShape(std::string collisionShapeName,
-									TerrainCollisionData *data)
-{
-	std::string filePrefix;
-	if (serverCore->configStorage.GetString(
-			"config.collision_shape.file_path.prefix", &filePrefix)) {
-		collisionShapeName = filePrefix + collisionShapeName;
-	}
-	CollisionLoader loader;
-	bool res = loader.LoadOBJ((const std::string &)collisionShapeName);
-	*data = std::move(loader.collisionData);
-	return res && data->vertices.size() >= 3 && data->indices.size() >= 3;
 }
 
 bool RealmServer::OneEpoch()

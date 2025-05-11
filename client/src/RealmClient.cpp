@@ -67,12 +67,6 @@ void RealmClient::AddNewAuthoritativeMovementState(
 	states.insert(states.begin() + i + 1, state);
 }
 
-bool RealmClient::GetCollisionShape(std::string collisionShapeName,
-									TerrainCollisionData *data)
-{
-	return gameClient->GetCollisionShape(collisionShapeName, data);
-}
-
 void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 {
 	ComponentMovementState state;

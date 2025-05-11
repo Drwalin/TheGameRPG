@@ -28,9 +28,6 @@ public:
 
 	void RegisterObservers();
 
-	virtual bool GetCollisionShape(std::string collisionShapeName,
-								   TerrainCollisionData *data) override;
-
 protected:
 	// returns false if was not busy
 	virtual bool OneEpoch() override;

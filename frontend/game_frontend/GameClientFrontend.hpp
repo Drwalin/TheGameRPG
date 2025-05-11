@@ -22,9 +22,6 @@ public: // callbacks
 
 	virtual void RunOneEpoch() override;
 
-	virtual bool GetCollisionShape(std::string collisionShapeName,
-								   TerrainCollisionData *data) override;
-
 public: // rpc callbacks
 	virtual void PlayDeathAndDestroyEntity_virtual(
 		ComponentModelName modelName,
