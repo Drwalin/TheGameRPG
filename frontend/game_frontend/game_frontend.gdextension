@@ -1,6 +1,6 @@
 [configuration]
 entry_symbol = "game_frontend_library_init"
-compatibility_minimum = "4.2.1"
+compatibility_minimum = "4.4"
 
 [libraries]
 linux.debug.x86_64 = "res://libgame_frontend.so"
