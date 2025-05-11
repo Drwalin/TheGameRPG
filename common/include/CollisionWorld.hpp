@@ -9,11 +9,6 @@
 
 #include "../include/EntityComponents.hpp"
 
-struct TerrainCollisionData {
-	std::vector<glm::vec3> vertices;
-	std::vector<uint32_t> indices;
-};
-
 struct ComponentBulletCollisionObject {
 	class btCollisionObject *object;
 };

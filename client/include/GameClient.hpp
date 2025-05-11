@@ -89,9 +89,6 @@ public: // game output api
 	virtual void LoginFailed(std::string reason) = 0;
 	virtual void LoginSuccessfull() = 0;
 
-	virtual bool GetCollisionShape(std::string collisionShapeName,
-								   TerrainCollisionData *data) = 0;
-
 public: // client input api
 	void SetRotation(glm::vec3 rotation);
 	void ProvideMovementInputDirection(glm::vec2 horizontalDirection);

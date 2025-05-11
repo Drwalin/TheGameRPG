@@ -9,7 +9,6 @@
 #include <icon7/Debug.hpp>
 
 #include "../../client/include/RealmClient.hpp"
-#include "../../common/include/CollisionLoader.hpp"
 
 #include "GodotGlm.hpp"
 #include "EntityPrefabScript.hpp"
@@ -39,23 +38,6 @@ void GameClientFrontend::Init()
 	RunNetworkLoopAsync();
 	GameClientFrontend::RegisterObservers();
 	RegisterFrontendEntityComponents(this->realm->ecs);
-}
-
-bool GameClientFrontend::GetCollisionShape(std::string collisionShapeName,
-										   TerrainCollisionData *data)
-{
-	String path = (std::string("res://assets/") + collisionShapeName).c_str();
-	PackedByteArray bytes = FileAccess::get_file_as_bytes(path);
-	if (bytes.size() == 0) {
-		return false;
-	}
-	CollisionLoader loader;
-	loader.LoadOBJ(bytes.ptr(), bytes.size());
-	std::swap(loader.collisionData, *data);
-	if (data->indices.size() >= 3 && data->vertices.size() >= 3) {
-		return true;
-	}
-	return false;
 }
 
 void GameClientFrontend::OnEnterRealm(const std::string &realmName)

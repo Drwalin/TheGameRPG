@@ -51,9 +51,6 @@ public:
 								const ComponentModelName &model,
 								const ComponentCollisionShape &shape);
 
-	virtual bool GetCollisionShape(std::string collisionShapeName,
-								   TerrainCollisionData *data) = 0;
-
 	template <typename FF> void TrueDeferWhenNeeded(FF &&func);
 
 public:

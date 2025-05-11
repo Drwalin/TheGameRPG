@@ -46,9 +46,6 @@ public:
 	void RegisterObservers();
 	void RegisterObservers_CharacterSheet();
 
-	virtual bool GetCollisionShape(std::string collisionShapeName,
-								   TerrainCollisionData *data) override;
-
 	void QueueDestroy();
 	bool IsQueuedToDestroy();
 
