@@ -20,6 +20,9 @@
 #include "../GameClientFrontend.hpp"
 
 #include "EditorConfig.hpp"
+#include "ComponentBase.hpp"
+#include "ComponentTrigger.hpp"
+#include "ComponentCharacterSheet.hpp"
 #include "EntityBase.hpp"
 
 namespace editor
@@ -27,7 +30,11 @@ namespace editor
 EntityBase::EntityBase() {}
 EntityBase::~EntityBase() {}
 
-void EntityBase::_bind_methods() {}
+void EntityBase::_bind_methods()
+{
+	REGISTER_PROPERTY_RESOURCE(EntityBase, graphic_Mesh_or_PackedScene,
+							   Variant::Type::OBJECT, "Resource", "scene");
+}
 
 void EntityBase::_ready() {}
 
@@ -35,9 +42,17 @@ void EntityBase::_process(double dt) {}
 
 void EntityBase::Serialize(icon7::ByteWriter &writer)
 {
-	SerializeGraphics(writer);
-	SerializeCollisions(writer);
+	UtilityFunctions::print("Saving entity");
+	
+	if (!IsMovingCharacter()) {
+		reg::Registry::SerializePersistent(
+			GameClientFrontend::singleton->realm,
+			ComponentStaticTransform{ToGame(get_global_transform())}, writer);
+	}
+	
 	SerializeComponents(writer);
+	SerializeCollisions(writer);
+	SerializeGraphics(writer);
 	writer.op("");
 }
 
@@ -55,10 +70,6 @@ void EntityBase::SerializeGraphics(icon7::ByteWriter &writer)
 		}
 	}
 
-	reg::Registry::SerializePersistent(
-		GameClientFrontend::singleton->realm,
-		ComponentStaticTransform{ToGame(get_global_transform())}, writer);
-
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentModelName{graphicPath}, writer);
 }
@@ -72,10 +83,12 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 			Node *child = n->get_child(i, false);
 			if (CSGPrimitive3D *csg = Object::cast_to<CSGPrimitive3D>(child)) {
 				primitives.push_back(csg);
+				UtilityFunctions::print("Child csg primitive ", primitives.size());
 				func(child);
 			}
 		}
 	};
+	func(this);
 
 	ComponentCollisionShape shape;
 	__InnerShape &is = shape.shape;
@@ -105,16 +118,18 @@ __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 
 	__InnerShape shape;
 	if (auto *cyl = Object::cast_to<CSGCylinder3D>(primitive)) {
+		UtilityFunctions::print("Creating from editor: cyl");
 		Collision3D::Cylinder s;
 		s.radius = cyl->get_radius();
 		s.height = cyl->get_height();
-		trans = trans.translated(Vector3(0, -s.height / 2, 0));
+// 		trans = trans.translated(Vector3(0, s.height / 2, 0));
 		shape.type = __InnerShape::CYLINDER;
 		shape.shape = s;
 	} else if (auto *box = Object::cast_to<CSGBox3D>(primitive)) {
+		UtilityFunctions::print("Creating from editor: vertbox");
 		Collision3D::VertBox s;
 		s.halfExtents = ToGlm(box->get_size()) * 0.5f;
-		trans = trans.translated(Vector3(0, -s.halfExtents.y, 0));
+// 		trans = trans.translated(Vector3(0, s.halfExtents.y, 0));
 		shape.type = __InnerShape::VERTBOX;
 		shape.shape = s;
 	} else if (/*auto *sphere =*/Object::cast_to<CSGSphere3D>(primitive)) {
@@ -139,6 +154,9 @@ __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 void EntityBase::SerializeComponents(icon7::ByteWriter &writer)
 {
 	for (int i = 0; i < get_child_count(true); ++i) {
+		if (auto *comp = Object::cast_to<ComponentBase>(get_child(i, true))) {
+			comp->Serialize(writer);
+		}
 	}
 }
 
@@ -203,6 +221,27 @@ void EntityBase::GenerateTriCollisionForAll(Node *node)
 	}
 }
 
+Ref<Resource> EntityBase::get_graphic_Mesh_or_PackedScene()
+{
+	return graphic_Mesh_or_PackedScene;
+}
+void EntityBase::set_graphic_Mesh_or_PackedScene(Ref<Resource> v)
+{
+	graphic_Mesh_or_PackedScene = Ref<Resource>{};
+
+	Ref<PackedScene> packedScene = v;
+	if (packedScene.is_null() == false && packedScene.is_valid()) {
+		graphic_Mesh_or_PackedScene = packedScene;
+		RecreateResourceRenderer(packedScene);
+	}
+
+	Ref<Mesh> mesh = v;
+	if (mesh.is_null() == false && mesh.is_valid()) {
+		graphic_Mesh_or_PackedScene = mesh;
+		RecreateResourceRenderer(mesh);
+	}
+}
+
 godot::Transform3D ToGodot(ComponentStaticTransform t)
 {
 	return Transform3D(Basis(::ToGodot(t.rot), ::ToGodot(t.scale)),
@@ -214,6 +253,26 @@ ComponentStaticTransform ToGame(godot::Transform3D t)
 	return {ToGlm(t.get_origin()),
 			ToGlm(t.get_basis().get_rotation_quaternion()),
 			ToGlm(t.get_basis().get_scale())};
+}
+
+bool EntityBase::IsTrigger()
+{
+	for (int i = 0; i < get_child_count(true); ++i) {
+		if (Object::cast_to<editor::ComponentTrigger>(get_child(i, true))) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool EntityBase::IsMovingCharacter()
+{
+	for (int i = 0; i < get_child_count(true); ++i) {
+		if (Object::cast_to<editor::ComponentCharacterSheet>(get_child(i, true))) {
+			return true;
+		}
+	}
+	return false;
 }
 
 } // namespace editor

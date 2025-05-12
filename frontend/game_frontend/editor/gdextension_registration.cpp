@@ -38,7 +38,6 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		return;
 	}
 
-	godot::ClassDB::register_abstract_class<editor::EntityBase>();
 	godot::ClassDB::register_abstract_class<editor::ComponentBase>();
 	godot::ClassDB::register_class<editor::ComponentAITick>();
 	godot::ClassDB::register_class<editor::ComponentArmorPoints>();
@@ -52,6 +51,7 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 	godot::ClassDB::register_class<editor::ComponentTeleport>();
 	godot::ClassDB::register_class<editor::ComponentTrigger>();
 	godot::ClassDB::register_class<editor::GameEditorConfig>();
+	godot::ClassDB::register_class<editor::EntityBase>();
 	// REGISTER CLASSES HERE LATER
 }
 

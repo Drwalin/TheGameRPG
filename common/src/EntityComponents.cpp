@@ -106,11 +106,13 @@ __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 	s.op(trans);
 	switch (type) {
 	case VERTBOX: {
+		printf("DeSerialize vertbox\n");
 		Collision3D::VertBox v;
 		op(s, v);
 		shape = v;
 	} break;
 	case CYLINDER: {
+		printf("DeSerialize cyl\n");
 		Collision3D::Cylinder v;
 		op(s, v);
 		shape = v;
@@ -130,30 +132,43 @@ __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 	}
 	return s;
 }
+
+void BreakPoint() {}
+
 bitscpp::ByteWriter<icon7::ByteBuffer> &
 __InnerShape::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 {
+	BreakPoint();
 	switch (shape.index()) {
-	case 0:
+	case std::variant_npos:
 		LOG_FATAL("CollisionShape is empty but should not be");
 		s.op((uint8_t)NONE);
+		s.op(trans);
 		break;
-	case 1:
+	case 0:
+		printf("Serialize vertbox\n");
 		s.op((uint8_t)VERTBOX);
+		s.op(trans);
 		op(s, std::get<0>(shape));
 		break;
-	case 2:
+	case 1:
+		printf("Serialize cyl\n");
 		s.op((uint8_t)CYLINDER);
+		s.op(trans);
 		op(s, std::get<1>(shape));
 		break;
-	case 3:
+	case 2:
 		s.op((uint8_t)HEIGHTMAP);
+		s.op(trans);
 		op(s, std::get<2>(shape));
 		break;
-	case 4:
+	case 3:
 		s.op((uint8_t)COMPOUND_SHAPE);
+		s.op(trans);
 		s.op(std::get<3>(shape));
 		break;
+	default:
+		LOG_FATAL("Invalid CollisionShape type index");
 	}
 	return s;
 }

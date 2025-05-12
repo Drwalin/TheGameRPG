@@ -13,6 +13,8 @@ ComponentOpenableSingleDoor::~ComponentOpenableSingleDoor() {}
 
 void ComponentOpenableSingleDoor::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving single door");
+	
 	Transform3D a = transformClosed;
 	Transform3D b = transformClosed * relativeTransformOpened;
 

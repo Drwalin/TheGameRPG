@@ -17,6 +17,7 @@ ComponentSpawner::~ComponentSpawner() {}
 
 void ComponentSpawner::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving spawner");
 	::ComponentSpawner spawner;
 	spawner.maxAmount = maxAmount;
 	spawner.spawnCooldown = spawnCooldown;

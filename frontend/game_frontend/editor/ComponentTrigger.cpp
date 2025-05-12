@@ -14,6 +14,7 @@ ComponentTrigger::~ComponentTrigger() {}
 
 void ComponentTrigger::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving trigger");
 	std::string onEnter = onTriggerEnter.utf8().ptr();
 	named_callbacks::registry_entries::OnTriggerEnterExit onTriggerEnter{
 		onEnter, onEnter, {}, nullptr, nullptr};

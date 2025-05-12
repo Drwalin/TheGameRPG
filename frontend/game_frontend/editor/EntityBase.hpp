@@ -49,6 +49,10 @@ public:
 	String graphicInstanceName = "";
 	String get_graphicInstanceName();
 	void set_graphicInstanceName(String v);
+	
+private:
+	bool IsTrigger();
+	bool IsMovingCharacter();
 
 private:
 	void SerializeGraphics(icon7::ByteWriter &writer);
