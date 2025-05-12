@@ -14,14 +14,22 @@
 
 #include <icon7/Debug.hpp>
 
-#include "PrefabServerBase.hpp"
-#include "PrefabServerStaticMesh.hpp"
-#include "PrefabServerStaticMesh_Base.hpp"
-#include "PrefabServerOpenableSingleDoor.hpp"
-#include "PrefabServerTrigger.hpp"
-#include "PrefabServerNPC.hpp"
+#include "EntityBase.hpp"
+
+#include "ComponentName.hpp"
+#include "ComponentTrigger.hpp"
+#include "ComponentTeleport.hpp"
+#include "ComponentOnUse.hpp"
+#include "ComponentArmorPoints.hpp"
+#include "ComponentOpenableSingleDoor.hpp"
+#include "ComponentBase.hpp"
+#include "ComponentAITick.hpp"
+#include "ComponentHealth.hpp"
+#include "ComponentSpawner.hpp"
+#include "ComponentHealthRegen.hpp"
+#include "ComponentCharacterSheet.hpp"
+
 #include "EditorConfig.hpp"
-#include "PrefabServerSpawner.hpp"
 
 static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 {
@@ -30,13 +38,19 @@ static void register_gameplay_types(godot::ModuleInitializationLevel p_level)
 		return;
 	}
 
-	godot::ClassDB::register_class<editor::PrefabServerBase>();
-	godot::ClassDB::register_class<editor::PrefabServerStaticMesh_Base>();
-	godot::ClassDB::register_class<editor::PrefabServerStaticMesh>();
-	godot::ClassDB::register_class<editor::PrefabServerOpenableSingleDoor>();
-	godot::ClassDB::register_class<editor::PrefabServerTrigger>();
-	godot::ClassDB::register_class<editor::PrefabServerNPC>();
-	godot::ClassDB::register_class<editor::PrefabServerSpawner>();
+	godot::ClassDB::register_class<editor::EntityBase>();
+	godot::ClassDB::register_class<editor::ComponentBase>();
+	godot::ClassDB::register_class<editor::ComponentAITick>();
+	godot::ClassDB::register_class<editor::ComponentArmorPoints>();
+	godot::ClassDB::register_class<editor::ComponentCharacterSheet>();
+	godot::ClassDB::register_class<editor::ComponentHealth>();
+	godot::ClassDB::register_class<editor::ComponentHealthRegen>();
+	godot::ClassDB::register_class<editor::ComponentName>();
+	godot::ClassDB::register_class<editor::ComponentOnUse>();
+	godot::ClassDB::register_class<editor::ComponentOpenableSingleDoor>();
+	godot::ClassDB::register_class<editor::ComponentSpawner>();
+	godot::ClassDB::register_class<editor::ComponentTeleport>();
+	godot::ClassDB::register_class<editor::ComponentTrigger>();
 	godot::ClassDB::register_class<editor::GameEditorConfig>();
 	// REGISTER CLASSES HERE LATER
 }
