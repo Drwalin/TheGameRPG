@@ -8,6 +8,9 @@
 #include <godot_cpp/classes/csg_box3d.hpp>
 #include <godot_cpp/classes/csg_cylinder3d.hpp>
 
+#include <icon7/ByteWriter.hpp>
+#include <icon7/ByteReader.hpp>
+
 #include "../../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
 
 #include "../../../common/include/EntityComponents.hpp"
@@ -35,6 +38,7 @@ void EntityBase::Serialize(icon7::ByteWriter &writer)
 	SerializeGraphics(writer);
 	SerializeCollisions(writer);
 	SerializeComponents(writer);
+	writer.op("");
 }
 
 void EntityBase::SerializeGraphics(icon7::ByteWriter &writer)

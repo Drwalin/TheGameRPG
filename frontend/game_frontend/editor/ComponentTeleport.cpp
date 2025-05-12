@@ -30,10 +30,6 @@ void ComponentTeleport::_bind_methods()
 					  Variant::Type::VECTOR3, "TeleportPosition");
 }
 
-void ComponentTeleport::_ready() {}
-
-void ComponentTeleport::_process(double dt) {}
-
 String ComponentTeleport::get_teleportRealm() { return teleportRealm; }
 void ComponentTeleport::set_teleportRealm(String v) { teleportRealm = v; }
 
