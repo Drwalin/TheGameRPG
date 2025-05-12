@@ -12,6 +12,7 @@ ComponentName::~ComponentName() {}
 
 void ComponentName::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving name: ", name.utf8());
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ::ComponentName{name.utf8().ptr()},
 									   writer);

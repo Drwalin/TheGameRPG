@@ -388,19 +388,17 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentBulletCollisionObject &obj) {
 			EntitySetTransform(obj, transform);
 		});
-	ecs.observer<ComponentCollisionShape>()
+	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
 		.event(flecs::OnSet)
 		.each(
-			[this](flecs::entity entity, const ComponentCollisionShape &shape) {
-				auto transform = entity.get<ComponentStaticTransform>();
-				OnStaticCollisionShape(entity, shape, *transform);
+			[this](flecs::entity entity, const ComponentCollisionShape &shape, const ComponentStaticTransform &transform) {
+				OnStaticCollisionShape(entity, shape, transform);
 			});
-	ecs.observer<ComponentCollisionShape>()
+	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
 		.event(flecs::OnAdd)
 		.each(
-			[this](flecs::entity entity, const ComponentCollisionShape &shape) {
-				auto transform = entity.get<ComponentStaticTransform>();
-				OnStaticCollisionShape(entity, shape, *transform);
+			[this](flecs::entity entity, const ComponentCollisionShape &shape, const ComponentStaticTransform &transform) {
+				OnStaticCollisionShape(entity, shape, transform);
 			});
 }
 

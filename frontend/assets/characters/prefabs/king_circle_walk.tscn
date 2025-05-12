@@ -2,7 +2,21 @@
 
 [ext_resource type="PackedScene" uid="uid://cukrviarc2sw6" path="res://assets/characters/low_poly_medieval_people/king_model.tscn" id="1_x28eu"]
 
-[node name="PrefabServerNPC" type="PrefabServerNPC"]
+[node name="PrefabServerNPC" type="EntityBase"]
 graphic_Mesh_or_PackedScene = ExtResource("1_x28eu")
-nameNPC = "Mad King"
+
+[node name="ComponentAITick" type="ComponentAITick" parent="."]
 aiTickName = "AIRandomMove"
+
+[node name="ComponentArmorPoints" type="ComponentArmorPoints" parent="."]
+
+[node name="ComponentCharacterSheet" type="ComponentCharacterSheet" parent="."]
+
+[node name="ComponentHealth" type="ComponentHealth" parent="."]
+
+[node name="ComponentHealthRegen" type="ComponentHealthRegen" parent="."]
+
+[node name="ComponentName" type="ComponentName" parent="."]
+name = "Mad King 1"
+
+[node name="8D0A376894A63943AC24F7BDE89E773" type="Node3D" parent="." instance=ExtResource("1_x28eu")]

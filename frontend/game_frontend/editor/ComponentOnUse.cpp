@@ -14,6 +14,7 @@ ComponentOnUse::~ComponentOnUse() {}
 
 void ComponentOnUse::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving onuse: ", OnUse, ", ", OnUse);
 	std::string onUseCallbackName = OnUse.utf8().ptr();
 	named_callbacks::registry_entries::OnUse onUseEntry{
 		onUseCallbackName, onUseCallbackName, {}, nullptr, nullptr};
@@ -26,7 +27,7 @@ void ComponentOnUse::Serialize(icon7::ByteWriter &writer)
 void ComponentOnUse::_bind_methods()
 {
 	REGISTER_PROPERTY(ComponentOnUse, OnUse,
-					  Variant::Type::TRANSFORM3D, "OnUseFunctionName");
+					  Variant::Type::STRING, "OnUseFunctionName");
 }
 
 String ComponentOnUse::get_OnUse() { return OnUse; }

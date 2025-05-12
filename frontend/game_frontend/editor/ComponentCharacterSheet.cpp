@@ -16,6 +16,8 @@ ComponentCharacterSheet::~ComponentCharacterSheet() {}
 
 void ComponentCharacterSheet::Serialize(icon7::ByteWriter &writer)
 {
+	UtilityFunctions::print("Saving character sheet");
+	
 	if (height < 0.1) {
 		godot::UtilityFunctions::print(this, " height cannot be below 0.1");
 		return;

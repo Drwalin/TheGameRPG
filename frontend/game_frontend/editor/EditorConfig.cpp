@@ -36,6 +36,8 @@ void GameEditorConfig::_bind_methods()
 					  "render collision");
 	REGISTER_PROPERTY(GameEditorConfig, render_triggers, Variant::Type::BOOL,
 					  "render triggers");
+	REGISTER_PROPERTY(GameEditorConfig, save_file, Variant::Type::BOOL,
+					  "save file");
 	REGISTER_PROPERTY_WITH_HINT(
 		GameEditorConfig, save_map_file_path, Variant::Type::STRING,
 		PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "", "save_map_file_path");
@@ -51,6 +53,11 @@ void GameEditorConfig::_ready()
 void GameEditorConfig::_process(double dt)
 {
 	set_transform({});
+	
+	if (save_file) {
+		SaveScene();
+		save_file = false;
+	}
 
 	if (Engine::get_singleton()->is_editor_hint() == false) {
 		++frameCounter;

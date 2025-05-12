@@ -106,6 +106,10 @@ public: // variables
 	static bool render_triggers;
 	bool get_render_triggers() { return render_triggers; }
 	void set_render_triggers(bool v);
+	
+	bool save_file = false;
+	bool get_save_file() { return save_file; }
+	void set_save_file(bool v) { save_file = v; }
 
 	String save_map_file_path;
 	String get_save_map_file_path() { return save_map_file_path; }
