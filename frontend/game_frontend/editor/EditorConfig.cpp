@@ -149,7 +149,7 @@ void GameEditorConfig::set_render_collision(bool v)
 	render_collision = v;
 	ForEachNode(
 		this, false, +[](Node *n, bool isInsideEntity) {
-			if (isInsideEntity && !IsTrigger(n)) {
+			if (isInsideEntity) {// && !IsTrigger(n)) {
 				if (auto csg = Object::cast_to<CSGPrimitive3D>(n)) {
 					// TODO: if not trigger
 					csg->set_visible(render_collision);
@@ -163,7 +163,7 @@ void GameEditorConfig::set_render_triggers(bool v)
 	render_triggers = v;
 	ForEachNode(
 		this, false, +[](Node *n, bool isInsideEntity) {
-			if (isInsideEntity && IsTrigger(n)) {
+			if (isInsideEntity) {// && IsTrigger(n)) {
 				if (auto csg = Object::cast_to<CSGPrimitive3D>(n)) {
 					// TODO: if not trigger
 					csg->set_visible(render_triggers);
