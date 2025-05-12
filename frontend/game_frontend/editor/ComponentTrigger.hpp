@@ -14,9 +14,6 @@ public: // Godot bound functions
 	virtual ~ComponentTrigger();
 	static void _bind_methods();
 
-	void _ready() override;
-	void _process(double dt) override;
-
 	virtual void Serialize(icon7::ByteWriter &writer) override;
 
 public: // variables

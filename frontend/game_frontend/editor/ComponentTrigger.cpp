@@ -35,10 +35,6 @@ void ComponentTrigger::_bind_methods()
 					  "OnExit");
 }
 
-void ComponentTrigger::_ready() {}
-
-void ComponentTrigger::_process(double dt) {}
-
 String ComponentTrigger::get_onTriggerEnter() { return onTriggerEnter; }
 void ComponentTrigger::set_onTriggerEnter(String v) { onTriggerEnter = v; }
 
