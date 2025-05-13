@@ -4,11 +4,11 @@ extends GPUParticles3D
 func _ready():
 	process_mode = get_parent().process_mode;
 	if ProjectSettings.get_setting("rendering/renderer/rendering_method") == "gl_compatibility":
-		visible = false;
-		process_mode = PROCESS_MODE_DISABLED;
+	#	visible = false;
+	#	process_mode = PROCESS_MODE_DISABLED;
 	#	get_parent().remove_child.call_deferred(self);
 	#	queue_free();
-	else:
+	#else:
 		visible = true;
 	global_basis = Basis();
 
@@ -17,4 +17,4 @@ func _process(_dt: float)->void:
 	c = c + 1;
 	if c > 0:
 		global_basis = Basis();
-		c = -100;
+		c = -1000;
