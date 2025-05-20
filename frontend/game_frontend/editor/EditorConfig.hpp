@@ -102,10 +102,6 @@ public: // variables
 	static bool render_collision;
 	bool get_render_collision() { return render_collision; }
 	void set_render_collision(bool v);
-
-	static bool render_triggers;
-	bool get_render_triggers() { return render_triggers; }
-	void set_render_triggers(bool v);
 	
 	bool save_file = false;
 	bool get_save_file() { return save_file; }

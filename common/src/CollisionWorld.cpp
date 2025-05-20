@@ -135,6 +135,7 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 {
 	switch (shape.type) {
 	case __InnerShape::VERTBOX: {
+		LOG_FATAL("vertbox");
 		auto s = std::get<Collision3D::VertBox>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
 		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
@@ -144,6 +145,7 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 		return cs;
 	} break;
 	case __InnerShape::CYLINDER: {
+		LOG_FATAL("cylinder");
 		auto s = std::get<Collision3D::Cylinder>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
 		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
@@ -154,6 +156,7 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 		return cs;
 	} break;
 	case __InnerShape::HEIGHTMAP: {
+		LOG_FATAL("heightmap");
 		auto s = std::get<Collision3D::HeightMap<float>>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
 		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
@@ -166,6 +169,7 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 		return cs;
 	} break;
 	case __InnerShape::COMPOUND_SHAPE: {
+		LOG_FATAL("compound start");
 		auto s = std::get<CompoundShape>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, s.shapes->size());
 		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
@@ -173,10 +177,11 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 		for (const auto &ss : *s.shapes) {
 			cs->addChildShape(trans, CreateBtShape(ss));
 		}
+		LOG_FATAL("compound   end");
 		return cs;
 	} break;
 	default:
-		LOG_FATAL("Unknown collision shape type");
+		LOG_FATAL("Unknown collision shape type: %i", (int)shape.type);
 		return nullptr;
 	}
 }
@@ -214,7 +219,7 @@ void CollisionWorld::OnStaticCollisionShape(
 			entity.set<ComponentBulletCollisionObject>({object});
 		}
 	} else {
-		LOG_WARN("Failed to construct btCollisionShape from "
+		LOG_ERROR("Failed to construct btCollisionShape from "
 				 "ComponentCollisionShape");
 	}
 }
@@ -388,14 +393,9 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentBulletCollisionObject &obj) {
 			EntitySetTransform(obj, transform);
 		});
+	
 	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
 		.event(flecs::OnSet)
-		.each(
-			[this](flecs::entity entity, const ComponentCollisionShape &shape, const ComponentStaticTransform &transform) {
-				OnStaticCollisionShape(entity, shape, transform);
-			});
-	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
-		.event(flecs::OnAdd)
 		.each(
 			[this](flecs::entity entity, const ComponentCollisionShape &shape, const ComponentStaticTransform &transform) {
 				OnStaticCollisionShape(entity, shape, transform);

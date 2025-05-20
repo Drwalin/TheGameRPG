@@ -14,7 +14,6 @@ ComponentOnUse::~ComponentOnUse() {}
 
 void ComponentOnUse::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving onuse: ", OnUse, ", ", OnUse);
 	std::string onUseCallbackName = OnUse.utf8().ptr();
 	named_callbacks::registry_entries::OnUse onUseEntry{
 		onUseCallbackName, onUseCallbackName, {}, nullptr, nullptr};

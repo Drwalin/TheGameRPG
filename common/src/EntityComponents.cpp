@@ -106,13 +106,11 @@ __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 	s.op(trans);
 	switch (type) {
 	case VERTBOX: {
-		printf("DeSerialize vertbox\n");
 		Collision3D::VertBox v;
 		op(s, v);
 		shape = v;
 	} break;
 	case CYLINDER: {
-		printf("DeSerialize cyl\n");
 		Collision3D::Cylinder v;
 		op(s, v);
 		shape = v;
@@ -146,13 +144,11 @@ __InnerShape::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 		s.op(trans);
 		break;
 	case 0:
-		printf("Serialize vertbox\n");
 		s.op((uint8_t)VERTBOX);
 		s.op(trans);
 		op(s, std::get<0>(shape));
 		break;
 	case 1:
-		printf("Serialize cyl\n");
 		s.op((uint8_t)CYLINDER);
 		s.op(trans);
 		op(s, std::get<1>(shape));

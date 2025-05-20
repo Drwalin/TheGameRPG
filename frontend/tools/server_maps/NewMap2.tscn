@@ -108,7 +108,7 @@ relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935,
 
 [node name="Door3" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.7495, -3.99761, 45.1971)
+transform = Transform3D(0.0267353, 0, 0.999643, 0, 1, 0, -0.999643, 0, 0.0267353, -53.7495, -3.99761, 45.1971)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
@@ -116,10 +116,40 @@ visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door3"]
-transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.7495, -3.99761, 45.1971)
+transformClosed = Transform3D(0.0267353, 0, 0.999643, 0, 1, 0, -0.999643, 0, 0.0267353, -53.7495, -3.99761, 45.1971)
 relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
 
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door3"]
+
+[node name="Door4" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
+transform = Transform3D(-0.996643, 0, -0.0818689, 0, 1, 0, 0.0818689, 0, -0.996643, -56.007, -3.99761, 42.8803)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
+visible = false
+size = Vector3(1.04132, 2.00153, 0.0661621)
+
+[node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door4"]
+transformClosed = Transform3D(-0.996643, 0, -0.0818689, 0, 1, 0, 0.0818689, 0, -0.996643, -56.007, -3.99761, 42.8803)
+relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
+
+[node name="ComponentOnUse" type="ComponentOnUse" parent="Door4"]
+
+[node name="Door5" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
+transform = Transform3D(0.063853, 0, -0.997959, 0, 1, 0, 0.997959, 0, 0.063853, -58.1109, -3.99761, 45.1971)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
+visible = false
+size = Vector3(1.04132, 2.00153, 0.0661621)
+
+[node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door5"]
+transformClosed = Transform3D(0.063853, 0, -0.997959, 0, 1, 0, 0.997959, 0, 0.063853, -58.1109, -3.99761, 45.1971)
+relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
+
+[node name="ComponentOnUse" type="ComponentOnUse" parent="Door5"]
 
 [editable path="Spawner/ComponentSpawner/PrefabServerNPC"]
 [editable path="Spawner/ComponentSpawner/PrefabServerNPC2"]

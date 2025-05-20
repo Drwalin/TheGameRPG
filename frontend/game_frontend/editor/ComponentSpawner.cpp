@@ -17,7 +17,6 @@ ComponentSpawner::~ComponentSpawner() {}
 
 void ComponentSpawner::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving spawner");
 	::ComponentSpawner spawner;
 	spawner.maxAmount = maxAmount;
 	spawner.spawnCooldown = spawnCooldown;
@@ -67,19 +66,9 @@ void ComponentSpawner::_bind_methods()
 
 void ComponentSpawner::_ready()
 {
-	if (renderSphere == nullptr) {
-		renderSphere = memnew(CSGSphere3D);
-		renderSphere->set_use_collision(true);
-		add_child(renderSphere);
-		renderSphere->set_owner(this);
-	}
 }
 
 void ComponentSpawner::_process(double dt)
 {
-	renderSphere->set_visible(GameEditorConfig::render_triggers);
-	if (GameEditorConfig::render_triggers) {
-		renderSphere->set_radius(0.5);
-	}
 }
 } // namespace editor

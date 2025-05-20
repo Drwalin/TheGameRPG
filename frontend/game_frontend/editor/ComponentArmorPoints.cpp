@@ -13,7 +13,6 @@ ComponentArmorPoints::~ComponentArmorPoints() {}
 
 void ComponentArmorPoints::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving armor points");
 	ComponentCharacterSheet_Protection prot;
 	prot.armorPoints = armorPoints;
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,

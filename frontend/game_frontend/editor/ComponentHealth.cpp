@@ -13,7 +13,6 @@ ComponentHealth::~ComponentHealth() {}
 
 void ComponentHealth::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving health");
 	reg::Registry::SerializePersistent(
 		GameClientFrontend::singleton->realm,
 		ComponentCharacterSheet_Health(initialMaxHp, initialHp), writer);
