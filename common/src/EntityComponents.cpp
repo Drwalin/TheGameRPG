@@ -116,9 +116,9 @@ __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)
 		shape = v;
 	} break;
 	case HEIGHTMAP: {
-		Collision3D::HeightMap<float> v;
+		Collision3D::HeightMap<float, uint8_t> v;
 		op(s, v);
-		shape = v;
+		shape = std::move(v);
 	} break;
 	case COMPOUND_SHAPE: {
 		CompoundShape v;
