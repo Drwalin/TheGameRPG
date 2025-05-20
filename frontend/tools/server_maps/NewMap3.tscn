@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=3 uid="uid://bb5upk4bbvrqe"]
+
+[ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_g3sqi"]
+[ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="2_y70i0"]
+[ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="3_fpgg1"]
+[ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_1v38s"]
+
+[node name="NewMap2" type="GameEditorConfig"]
+save_map_file_path = "../game_assets/maps/Forest.map"
+
+[node name="Floor" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("1_g3sqi")
+transform = Transform3D(145.197, 0, 0, 0, 1, 0, 0, 0, 361.766, 0, -8, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0563965, 0.717794, 0)
+visible = false
+size = Vector3(1.91846, 6.49707, 1)
+
+[node name="Spawner" type="EntityBase" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.3844, 2.91309, 0)
+
+[node name="ComponentSpawner" type="ComponentSpawner" parent="Spawner"]
+
+[node name="PrefabServerNPC" parent="Spawner/ComponentSpawner" instance=ExtResource("3_fpgg1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
+
+[node name="ComponentCharacterSheet" parent="Spawner/ComponentSpawner/PrefabServerNPC" index="2"]
+initialXp = 10
+
+[node name="ComponentName" parent="Spawner/ComponentSpawner/PrefabServerNPC" index="5"]
+name = "Mad King 2"
+
+[node name="PrefabServerNPC2" parent="Spawner/ComponentSpawner" instance=ExtResource("3_fpgg1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
+
+[node name="ComponentCharacterSheet" parent="Spawner/ComponentSpawner/PrefabServerNPC2" index="2"]
+initialXp = 100
+
+[node name="ComponentName" parent="Spawner/ComponentSpawner/PrefabServerNPC2" index="5"]
+name = "Mad King 3"
+
+[node name="PrefabServerNPC" parent="." instance=ExtResource("3_fpgg1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4799, -3.9354, -1.21175)
+
+[node name="Door" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("2_y70i0")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37401, -3.99761, 3.45194)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
+visible = false
+size = Vector3(1.04132, 2.00153, 0.0661621)
+
+[node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door"]
+transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.37401, -3.99761, 3.45194)
+relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
+
+[node name="ComponentOnUse" type="ComponentOnUse" parent="Door"]
+
+[node name="TeleportLocal" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("4_1v38s")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.78971, -3.52437, -7.33986)
+
+[node name="ComponentTrigger" type="ComponentTrigger" parent="TeleportLocal"]
+onTriggerEnter = "TriggerTeleportPlayer"
+onTriggerExit = "TriggerTeleportPlayer"
+
+[node name="ComponentTeleport" type="ComponentTeleport" parent="TeleportLocal"]
+teleportRealm = "Castle"
+teleportPosition = Vector3(-80, 50, 50)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="TeleportLocal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.078949, 0.253845, -0.0136719)
+visible = false
+size = Vector3(1.85687, 1.50769, 2.11133)
+
+[editable path="Spawner/ComponentSpawner/PrefabServerNPC"]
+[editable path="Spawner/ComponentSpawner/PrefabServerNPC2"]
