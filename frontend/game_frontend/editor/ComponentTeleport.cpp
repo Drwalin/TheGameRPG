@@ -14,7 +14,6 @@ ComponentTeleport::~ComponentTeleport() {}
 
 void ComponentTeleport::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving teleport");
 	std::string realmName = teleportRealm.utf8().ptr();
 	::ComponentTeleport teleport;
 	teleport.realmName = realmName;

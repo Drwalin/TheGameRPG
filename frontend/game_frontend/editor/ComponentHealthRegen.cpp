@@ -13,7 +13,6 @@ ComponentHealthRegen::~ComponentHealthRegen() {}
 
 void ComponentHealthRegen::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving health regen");
 	ComponentCharacterSheet_HealthRegen regen;
 	regen.cooldown = regenCooldown;
 	regen.amount = regenAmount;

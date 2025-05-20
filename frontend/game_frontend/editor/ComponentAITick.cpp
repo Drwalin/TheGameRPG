@@ -14,7 +14,6 @@ ComponentAITick::~ComponentAITick() {}
 
 void ComponentAITick::Serialize(icon7::ByteWriter &writer)
 {
-	UtilityFunctions::print("Saving aitick");
 	std::string onAiTick = aiTickName.utf8().ptr();
 	named_callbacks::registry_entries::AiBehaviorTick aiTickEntry{
 		onAiTick, onAiTick, {}, nullptr, nullptr};

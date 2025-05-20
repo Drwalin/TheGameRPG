@@ -13,15 +13,12 @@
 #include "EntityBase.hpp"
 #include "EditorConfig.hpp"
 
-#include "ComponentTrigger.hpp"
-
 int RegisterEntityGameComponents(flecs::world &ecs);
 
 namespace editor
 {
 bool GameEditorConfig::render_graphic = true;
 bool GameEditorConfig::render_collision = false;
-bool GameEditorConfig::render_triggers = false;
 
 void GameEditorConfig::_bind_methods()
 {
@@ -34,8 +31,6 @@ void GameEditorConfig::_bind_methods()
 					  "render graphics");
 	REGISTER_PROPERTY(GameEditorConfig, render_collision, Variant::Type::BOOL,
 					  "render collision");
-	REGISTER_PROPERTY(GameEditorConfig, render_triggers, Variant::Type::BOOL,
-					  "render triggers");
 	REGISTER_PROPERTY(GameEditorConfig, save_file, Variant::Type::BOOL,
 					  "save file");
 	REGISTER_PROPERTY_WITH_HINT(
@@ -47,7 +42,6 @@ void GameEditorConfig::_ready()
 {
 	set_render_graphic(render_graphic);
 	set_render_collision(render_collision);
-	set_render_triggers(render_triggers);
 }
 
 void GameEditorConfig::_process(double dt)
@@ -156,24 +150,9 @@ void GameEditorConfig::set_render_collision(bool v)
 	render_collision = v;
 	ForEachNode(
 		this, false, +[](Node *n, bool isInsideEntity) {
-			if (isInsideEntity) {// && !IsTrigger(n)) {
+			if (isInsideEntity) {
 				if (auto csg = Object::cast_to<CSGPrimitive3D>(n)) {
-					// TODO: if not trigger
 					csg->set_visible(render_collision);
-				}
-			}
-		});
-}
-
-void GameEditorConfig::set_render_triggers(bool v)
-{
-	render_triggers = v;
-	ForEachNode(
-		this, false, +[](Node *n, bool isInsideEntity) {
-			if (isInsideEntity) {// && IsTrigger(n)) {
-				if (auto csg = Object::cast_to<CSGPrimitive3D>(n)) {
-					// TODO: if not trigger
-					csg->set_visible(render_triggers);
 				}
 			}
 		});

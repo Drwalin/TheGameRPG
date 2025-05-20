@@ -20,10 +20,6 @@ public: // Godot bound functions
 	virtual void Serialize(icon7::ByteWriter &writer) override;
 
 public: // variables
-	class CSGSphere3D *renderSphere = nullptr;
-	class CSGSphere3D *get_renderSphere() { return renderSphere; }
-	void set_renderSphere(class CSGSphere3D *v) { renderSphere = v; }
-
 	int64_t maxAmount = 10;
 	int64_t get_maxAmount() { return maxAmount; }
 	void set_maxAmount(int64_t v) { maxAmount = v; }
