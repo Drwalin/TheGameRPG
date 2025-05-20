@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://blksreeowfk4n"]
+[gd_scene load_steps=5 format=3 uid="uid://blksreeowfk4n"]
 
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_6gys2"]
 [ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="2_yfy02"]
 [ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="3_l4sn5"]
+[ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_tk4hp"]
 
 [node name="NewMap2" type="GameEditorConfig"]
 save_map_file_path = "../game_assets/maps/Castle.map"
@@ -18,7 +19,7 @@ size = Vector3(1.91846, 6.49707, 1)
 
 [node name="Door" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.99761, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.2616, -3.99761, 44.4622)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
@@ -26,7 +27,7 @@ visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door"]
-transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.99761, 0)
+transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.2616, -3.99761, 44.4622)
 relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
 
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door"]
@@ -55,6 +56,70 @@ initialXp = 100
 
 [node name="ComponentName" parent="Spawner/ComponentSpawner/PrefabServerNPC2" index="5"]
 name = "Mad King 3"
+
+[node name="TeleportLocal" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("4_tk4hp")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.6773, -3.52437, 39.4456)
+
+[node name="ComponentTrigger" type="ComponentTrigger" parent="TeleportLocal"]
+onTriggerEnter = "TriggerTeleportPlayer"
+onTriggerExit = "TriggerTeleportPlayer"
+
+[node name="ComponentTeleport" type="ComponentTeleport" parent="TeleportLocal"]
+teleportRealm = "Castle"
+teleportPosition = Vector3(-80, 50, 50)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="TeleportLocal"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.078949, 0.253845, -0.0136719)
+visible = false
+size = Vector3(1.85687, 1.50769, 2.11133)
+
+[node name="TeleportForest" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("4_tk4hp")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.193, -3.52437, 44.8232)
+
+[node name="ComponentTrigger" type="ComponentTrigger" parent="TeleportForest"]
+onTriggerEnter = "TriggerTeleportPlayer"
+onTriggerExit = "TriggerTeleportPlayer"
+
+[node name="ComponentTeleport" type="ComponentTeleport" parent="TeleportForest"]
+teleportRealm = "Forest"
+teleportPosition = Vector3(0, 50, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="TeleportForest"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.078949, 0.253845, -0.0136719)
+visible = false
+size = Vector3(1.85687, 1.50769, 2.11133)
+
+[node name="Door2" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.1901, -3.99761, 46.6843)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
+visible = false
+size = Vector3(1.04132, 2.00153, 0.0661621)
+
+[node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door2"]
+transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.1901, -3.99761, 46.6843)
+relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
+
+[node name="ComponentOnUse" type="ComponentOnUse" parent="Door2"]
+
+[node name="Door3" type="EntityBase" parent="."]
+graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.7495, -3.99761, 45.1971)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Door3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
+visible = false
+size = Vector3(1.04132, 2.00153, 0.0661621)
+
+[node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door3"]
+transformClosed = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.7495, -3.99761, 45.1971)
+relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
+
+[node name="ComponentOnUse" type="ComponentOnUse" parent="Door3"]
 
 [editable path="Spawner/ComponentSpawner/PrefabServerNPC"]
 [editable path="Spawner/ComponentSpawner/PrefabServerNPC2"]
