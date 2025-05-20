@@ -157,7 +157,7 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 	} break;
 	case __InnerShape::HEIGHTMAP: {
 		LOG_FATAL("heightmap");
-		auto s = std::get<Collision3D::HeightMap<float>>(shape.shape);
+		auto s = std::get<Collision3D::HeightMap<float, uint8_t>>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
 		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
 		btHeightfieldTerrainShape *bs = new btHeightfieldTerrainShape(

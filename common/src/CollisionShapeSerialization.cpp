@@ -34,7 +34,7 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 	return s;
 }
 
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::HeightMap<float> &shape)
+ByteReader<true> &op(ByteReader<true> &s, Collision3D::HeightMap<float, uint8_t> &shape)
 {
 	glm::vec3 size, scale;
 	int width, height;
@@ -44,17 +44,19 @@ ByteReader<true> &op(ByteReader<true> &s, Collision3D::HeightMap<float> &shape)
 	s.op(height);
 	shape.InitValues(width, height, scale, size);
 	s.op(shape.mipmap[0].heights);
+	s.op(shape.material.heights);
 	shape.GenerateMipmap();
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::HeightMap<float> &shape)
+								  const Collision3D::HeightMap<float, uint8_t> &shape)
 {
 	s.op(shape.size);
 	s.op(shape.scale);
 	s.op(shape.width);
 	s.op(shape.height);
 	s.op(shape.mipmap[0].heights);
+	s.op(shape.material.heights);
 	return s;
 }
 

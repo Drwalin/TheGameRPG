@@ -126,7 +126,7 @@ struct __InnerShape {
 	ComponentStaticTransform trans;
 
 	std::variant<Collision3D::VertBox, Collision3D::Cylinder,
-				 Collision3D::HeightMap<float>, CompoundShape>
+				 Collision3D::HeightMap<float, uint8_t>, CompoundShape>
 		shape;
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
