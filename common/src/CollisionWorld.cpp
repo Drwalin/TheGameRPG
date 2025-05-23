@@ -12,11 +12,14 @@
 #include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCompoundShape.h"
 #include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 
+#include "../../common/include/EntityComponents.hpp"
+
 #include "../include/GlmBullet.hpp"
 #include "../include/EntityComponents.hpp"
 #include "../include/Realm.hpp"
 
 #include "bullet/BulletPhysicsCallbacks.hpp"
+
 #include "../include/CollisionWorld.hpp"
 
 uint64_t CollisionWorld::GetObjectEntityID(const btCollisionObject *object)
@@ -198,11 +201,11 @@ void CollisionWorld::OnStaticCollisionShape(
 		object->setCollisionShape(btShape);
 		object->setWorldTransform(
 			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
-		object->setUserIndex(FILTER_TERRAIN);
+		object->setUserIndex(shape.mask);
 		object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
 		object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
 		collisionWorld->addCollisionObject(object,
-										   btBroadphaseProxy::StaticFilter);
+										   shape.mask &FILTER_TRIGGER ? btBroadphaseProxy::SensorTrigger : btBroadphaseProxy::StaticFilter);
 		collisionWorld->updateSingleAabb(object);
 		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
 		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
@@ -245,22 +248,6 @@ void CollisionWorld::OnAddEntity(flecs::entity entity,
 	entity.set<ComponentBulletCollisionObject>({object});
 }
 
-void CollisionWorld::OnAddTrigger(flecs::entity entity,
-								  const ComponentStaticTransform &transform)
-{
-	btBoxShape *_shape = new btBoxShape({0.5, 0.5, 0.5});
-	btCollisionObject *object = AllocateNewCollisionObject();
-	object->setCollisionShape(_shape);
-	object->setUserIndex(FILTER_TRIGGER);
-	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
-	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
-	collisionWorld->addCollisionObject(
-		object, btBroadphaseProxy::CollisionFilterGroups::SensorTrigger);
-	ComponentBulletCollisionObject obj{object};
-	EntitySetTransform(obj, transform);
-	entity.set<ComponentBulletCollisionObject>(obj);
-}
-
 void CollisionWorld::UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
 									  ComponentShape shape, glm::vec3 pos)
 {
@@ -300,7 +287,7 @@ void CollisionWorld::GetObjectsInAABB(
 	std::vector<btCollisionObject *> *objects) const
 {
 	int f = 0;
-	if (filter & FILTER_TERRAIN) {
+	if (filter & (FILTER_TERRAIN | FILTER_STATIC_OBJECT)) {
 		f |= btBroadphaseProxy::StaticFilter;
 	}
 	if (filter & FILTER_CHARACTER) {

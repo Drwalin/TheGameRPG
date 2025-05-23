@@ -19,7 +19,7 @@
 size_t
 CollisionWorld::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 									std::vector<uint64_t> *testedEntityIds,
-									int32_t filter) const
+									CollisionFilter filter) const
 {
 	std::vector<btCollisionObject *> objects;
 	GetObjectsInAABB(min, max, filter, &objects);
@@ -37,7 +37,7 @@ CollisionWorld::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 
 extern size_t CollisionWorld::TestForEntitiesBox(
 	glm::vec3 center, glm::vec3 halfExtents, glm::quat rotation,
-	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
+	std::vector<uint64_t> *testedEntityIds, CollisionFilter filter) const
 {
 	btBoxShape shape(ToBullet(halfExtents));
 	btTransform trans(ToBullet(rotation), ToBullet(center));
@@ -48,7 +48,7 @@ extern size_t CollisionWorld::TestForEntitiesBox(
 extern size_t
 CollisionWorld::TestForEntitiesSphere(glm::vec3 center, float radius,
 									  std::vector<uint64_t> *testedEntityIds,
-									  int32_t filter) const
+									  CollisionFilter filter) const
 {
 	btSphereShape shape(radius);
 	btTransform trans(btMatrix3x3::getIdentity(), ToBullet(center));
@@ -58,7 +58,7 @@ CollisionWorld::TestForEntitiesSphere(glm::vec3 center, float radius,
 
 extern size_t CollisionWorld::TestForEntitiesCylinder(
 	glm::vec3 centerBottom, float radius, float height,
-	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
+	std::vector<uint64_t> *testedEntityIds, CollisionFilter filter) const
 {
 	btCylinderShape shape(btVector3(radius, height / 2.0, radius));
 	btTransform trans(btMatrix3x3(),
@@ -70,7 +70,7 @@ extern size_t CollisionWorld::TestForEntitiesCylinder(
 /*
 size_t CollisionWorld::TestForEntitiesCone(
 	glm::vec3 peak, glm::vec3 axis, float radius, float height,
-	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
+	std::vector<uint64_t> *testedEntityIds, CollisionFilter filter) const
 {
 	LOG_FATAL("CollisionWorld::TestForEntitiesCone not implemented.");
 	return 0;
@@ -79,7 +79,7 @@ size_t CollisionWorld::TestForEntitiesCone(
 
 size_t CollisionWorld::InternalTestConvexShapeForEntities(
 	btConvexShape *shape, btTransform &trans,
-	std::vector<uint64_t> *testedEntityIds, int32_t filter) const
+	std::vector<uint64_t> *testedEntityIds, CollisionFilter filter) const
 {
 	btCollisionObject obj;
 	obj.setCollisionShape(shape);

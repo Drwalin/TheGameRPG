@@ -9,6 +9,8 @@
 
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
 
+
+#include "CollisionFilters.hpp"
 #include "ComponentsUtility.hpp"
 
 struct ComponentShape {
@@ -134,9 +136,10 @@ struct __InnerShape {
 
 struct ComponentCollisionShape {
 	__InnerShape shape;
+	uint32_t mask = FILTER_STATIC_OBJECT;
 
 	ComponentCollisionShape(__InnerShape shape) : shape(shape) {}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape, MV(shape));
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape, {MV(shape) MV(mask)});
 };

@@ -94,7 +94,7 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentStaticTransform, {
 });
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCollisionShape,
-											{ s.op(shape); });
+											{ s.op(shape); s.op(mask); });
 
 bitscpp::ByteReader<true> &
 __InnerShape::__ByteStream_op(bitscpp::ByteReader<true> &s)

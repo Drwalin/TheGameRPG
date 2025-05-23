@@ -9,6 +9,8 @@
 
 #include "../include/EntityComponents.hpp"
 
+#include "CollisionFilters.hpp"
+
 struct ComponentBulletCollisionObject {
 	class btCollisionObject *object;
 };
@@ -48,8 +50,6 @@ public:
 								const ComponentStaticTransform &transform);
 	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
 					 glm::vec3 pos);
-	void OnAddTrigger(flecs::entity entity,
-					  const ComponentStaticTransform &transform);
 
 	void UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
 						  ComponentShape shape, glm::vec3 pos);
@@ -93,22 +93,22 @@ public:
 
 	size_t TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 							   std::vector<uint64_t> *testedEntityIds,
-							   int32_t filter) const;
+							   CollisionFilter filter) const;
 	size_t TestForEntitiesBox(glm::vec3 center, glm::vec3 halfExtents,
 							  glm::quat rotation,
 							  std::vector<uint64_t> *testedEntityIds,
-							  int32_t filter) const;
+							  CollisionFilter filter) const;
 	size_t TestForEntitiesSphere(glm::vec3 center, float radius,
 								 std::vector<uint64_t> *testedEntityIds,
-								 int32_t filter) const;
+								 CollisionFilter filter) const;
 	size_t TestForEntitiesCylinder(glm::vec3 centerBottom, float radius,
 								   float height,
 								   std::vector<uint64_t> *testedEntityIds,
-								   int32_t filter) const;
+								   CollisionFilter filter) const;
 	size_t TestForEntitiesCone(glm::vec3 peak, glm::vec3 axis, float radius,
 							   float height,
 							   std::vector<uint64_t> *testedEntityIds,
-							   int32_t filter) const;
+							   CollisionFilter filter) const;
 
 	void TriggerTestBoxForCharacters(flecs::entity entity,
 									 std::vector<uint64_t> &entities);
@@ -156,7 +156,7 @@ private:
 
 	size_t InternalTestConvexShapeForEntities(
 		class btConvexShape *shape, class btTransform &trans,
-		std::vector<uint64_t> *testedEntityIds, int32_t filter) const;
+		std::vector<uint64_t> *testedEntityIds, CollisionFilter filter) const;
 
 private:
 	CollisionWorld(CollisionWorld &) = delete;
@@ -169,13 +169,6 @@ private:
 	friend class BroadphaseAabbAgregate;
 
 private:
-public:
-	inline const static int32_t FILTER_ALL =
-		1 | 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256;
-	inline const static int32_t FILTER_TERRAIN = 1;
-	inline const static int32_t FILTER_CHARACTER = 2;
-	inline const static int32_t FILTER_STATIC_OBJECT = 4;
-	inline const static int32_t FILTER_TRIGGER = 8;
 
 private:
 	void RemoveAndDestroyCollisionObject(btCollisionObject *object);
@@ -191,3 +184,4 @@ private:
 
 	int dynamicUpdateCounter = 0;
 };
+
