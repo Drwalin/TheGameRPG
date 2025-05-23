@@ -25,6 +25,7 @@ int RegisterEntityGameComponents(flecs::world &ecs)
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentTeleport, "TELEPORT");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentTrigger, "TRIGGER");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentAITick, "AITICK");
+	REGISTER_COMPONENT_NO_SERIALISATION(ecs, TagPrivateEntity);
 
 	reg::ComponentConstructor<ComponentCharacterSheet_HealthRegen>::singleton
 		->callbackDeserializePersistent =

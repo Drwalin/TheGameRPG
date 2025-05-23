@@ -72,12 +72,35 @@ void RealmServer::RegisterObservers()
 				this, entity, transform, model, shape);
 		});
 
-	ecs.observer<const ComponentStaticTransform, ComponentTrigger>()
+	ecs.observer<ComponentTrigger>()
 		.event(flecs::OnAdd)
-		.each([this](flecs::entity entity,
-					 const ComponentStaticTransform &transform,
-					 ComponentTrigger &trigger) {
-			collisionWorld.OnAddTrigger(entity, transform);
+		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
+			entity.add<TagPrivateEntity>();
+			ClientRpcProxy::Broadcast_DeleteEntity(this, entity.id());
+		});
+
+	ecs.observer<ComponentTrigger>()
+		.event(flecs::OnSet)
+		.each(+[](flecs::entity entity, const ComponentTrigger &) {
+			if (auto shape = entity.get_mut<ComponentCollisionShape>()) {
+				shape->mask = FILTER_TRIGGER;
+				ComponentCollisionShape s = *shape;
+				entity.set(s);
+				LOG_INFO("Setting trigger shape filter");
+			}
+		});
+
+	ecs.observer<ComponentCollisionShape>()
+		.event(flecs::OnSet)
+		.each(+[](flecs::entity entity, ComponentCollisionShape shape) {
+			if (entity.get<ComponentTrigger>()) {
+				if (shape.mask & FILTER_TRIGGER) {
+					return;
+				}
+				shape.mask = FILTER_TRIGGER;
+				entity.set(shape);
+				LOG_INFO("Setting trigger shape filter");
+			}
 		});
 
 	ecs.observer<ComponentTrigger>()

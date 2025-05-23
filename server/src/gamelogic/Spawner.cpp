@@ -44,7 +44,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 	std::vector<uint64_t> entities;
 	realm->collisionWorld.TestForEntitiesSphere(
 		transform.pos, spawner.radiusToCheckAmountEntities, &entities,
-		CollisionWorld::FILTER_CHARACTER);
+		FILTER_CHARACTER);
 
 	int counter = 0;
 	for (uint64_t id : entities) {

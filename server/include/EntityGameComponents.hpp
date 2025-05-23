@@ -79,3 +79,6 @@ struct ComponentSpawner {
 			 MV(radiusToCheckAmountEntities) MV(lastSpawnedTimestamp)
 				 MV(prefabsData) MV(prefabsOffset)});
 };
+
+// Prevents from sending entity with this component to players
+struct TagPrivateEntity {};

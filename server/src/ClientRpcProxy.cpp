@@ -2,10 +2,12 @@
 #include <icon7/RPCEnvironment.hpp>
 
 #include "../../common/include/ClientRpcFunctionNames.hpp"
+#include "../../common/include/EntityComponents.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 #include "../include/RealmServer.hpp"
 
+#include "../include/EntityGameComponents.hpp"
 #include "../include/ClientRpcProxy.hpp"
 
 namespace ClientRpcProxy
@@ -254,6 +256,9 @@ void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
 								   const ComponentModelName &model,
 								   const ComponentCollisionShape &shape)
 {
+	if (realm->HasComponent<TagPrivateEntity>(entityId)) {
+		return;
+	}
 	realm->BroadcastReliable(ClientRpcFunctionNames::SpawnStaticEntities,
 							 entityId, transform, model, shape);
 }

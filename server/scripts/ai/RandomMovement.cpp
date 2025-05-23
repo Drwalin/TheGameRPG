@@ -1,8 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_trigonometric.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtc/quaternion.hpp"
-#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/vector_angle.hpp"
-#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/quaternion.hpp"
 
 #include <flecs.h>
 
@@ -63,7 +61,7 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 	std::vector<uint64_t> entities;
 	realm->collisionWorld.TestForEntitiesSphere(
 		state->pos, searchDistance, &entities,
-		CollisionWorld::FILTER_CHARACTER);
+		FILTER_CHARACTER);
 
 	uint64_t found = 0;
 	glm::vec3 targetPos;
