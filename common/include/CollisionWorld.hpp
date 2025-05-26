@@ -2,31 +2,11 @@
 
 #include <vector>
 
-#include <flecs.h>
-
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
 
-#include "../include/EntityComponents.hpp"
-
 #include "CollisionFilters.hpp"
-
-struct ComponentBulletCollisionObject {
-	class btCollisionObject *object;
-};
-
-class btCollisionShape;
-class btCylinderShape;
-class btCapsuleShape;
-class btSphereShape;
-class btBvhTriangleMeshShape;
-class btCollisionObject;
-
-class Realm;
-
-struct ComponentCollisionShape;
-struct ComponentStaticTransform;
-struct ComponentShape;
+#include "ForwardDeclarations.hpp"
 
 class CollisionWorld
 {

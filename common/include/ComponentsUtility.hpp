@@ -31,17 +31,6 @@
 		return s;                                                              \
 	}
 
-namespace bitscpp
-{
-template <bool V> class ByteReader;
-template <typename T> class ByteWriter;
-} // namespace bitscpp
-
-namespace icon7
-{
-class ByteBuffer;
-class ByteReader;
-class ByteWriter;
-} // namespace icon7
+#include "ForwardDeclarations.hpp"
 
 #include "GlmSerialization.hpp"

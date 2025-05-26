@@ -1,4 +1,5 @@
 #include "../../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
+#include "../../../thirdparty/flecs/include/flecs.h"
 
 #include <icon7/Debug.hpp>
 
