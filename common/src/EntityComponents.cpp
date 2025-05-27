@@ -88,8 +88,7 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentModelName,
 											{ s.op(modelName); });
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentStaticTransform, {
-	s.op(pos);
-	s.op(rot);
+	s.op(trans);
 	s.op(scale);
 });
 

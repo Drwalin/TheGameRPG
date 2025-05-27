@@ -136,33 +136,37 @@ btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
 
 btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 {
+	btVector3 sc{shape.trans.scale, shape.trans.scale, shape.trans.scale};
 	switch (shape.type) {
 	case __InnerShape::VERTBOX: {
 		LOG_FATAL("vertbox");
 		auto s = std::get<Collision3D::VertBox>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btTransform trans{ToBullet(shape.trans.trans.rot),
+						  ToBullet(shape.trans.trans.pos)};
 		btBoxShape *bs = new btBoxShape(ToBullet(s.halfExtents));
 		cs->addChildShape(trans, bs);
-		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		cs->setLocalScaling(sc);
 		return cs;
 	} break;
 	case __InnerShape::CYLINDER: {
 		LOG_FATAL("cylinder");
 		auto s = std::get<Collision3D::Cylinder>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btTransform trans{ToBullet(shape.trans.trans.rot),
+						  ToBullet(shape.trans.trans.pos)};
 		btCylinderShape *bs =
 			new btCylinderShape({s.radius, s.height / 2.0f, s.radius});
 		cs->addChildShape(trans, bs);
-		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		cs->setLocalScaling(sc);
 		return cs;
 	} break;
 	case __InnerShape::HEIGHTMAP: {
 		LOG_FATAL("heightmap");
 		auto s = std::get<Collision3D::HeightMap<float, uint8_t>>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
+		btTransform trans{ToBullet(shape.trans.trans.rot),
+						  ToBullet(shape.trans.trans.pos)};
 		btHeightfieldTerrainShape *bs = new btHeightfieldTerrainShape(
 			s.width, s.height, (void *)s.mipmap[0].heights.data(), s.scale.y,
 			-10000.0f, 100000.0f, 1, PHY_FLOAT, false);
@@ -175,8 +179,9 @@ btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
 		LOG_FATAL("compound start");
 		auto s = std::get<CompoundShape>(shape.shape);
 		btCompoundShape *cs = new btCompoundShape(false, s.shapes->size());
-		btTransform trans{ToBullet(shape.trans.rot), ToBullet(shape.trans.pos)};
-		cs->setLocalScaling(ToBullet(shape.trans.scale));
+		btTransform trans{ToBullet(shape.trans.trans.rot),
+						  ToBullet(shape.trans.trans.pos)};
+		cs->setLocalScaling(sc);
 		for (const auto &ss : *s.shapes) {
 			cs->addChildShape(trans, CreateBtShape(ss));
 		}
@@ -195,17 +200,20 @@ void CollisionWorld::OnStaticCollisionShape(
 {
 	btCollisionShape *btShape = CreateBtShape(shape.shape);
 	if (btShape) {
-		btShape->setLocalScaling(btShape->getLocalScaling() *
-								 ToBullet(transform.scale));
+		btShape->setLocalScaling(
+			btShape->getLocalScaling() *
+			btVector3(transform.scale, transform.scale, transform.scale));
 		btCollisionObject *object = AllocateNewCollisionObject();
 		object->setCollisionShape(btShape);
-		object->setWorldTransform(
-			btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
+		object->setWorldTransform(btTransform(ToBullet(transform.trans.rot),
+											  ToBullet(transform.trans.pos)));
 		object->setUserIndex(shape.mask);
 		object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
 		object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
-		collisionWorld->addCollisionObject(object,
-										   shape.mask &FILTER_TRIGGER ? btBroadphaseProxy::SensorTrigger : btBroadphaseProxy::StaticFilter);
+		collisionWorld->addCollisionObject(
+			object, shape.mask & FILTER_TRIGGER
+						? btBroadphaseProxy::SensorTrigger
+						: btBroadphaseProxy::StaticFilter);
 		collisionWorld->updateSingleAabb(object);
 		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
 		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
@@ -223,7 +231,7 @@ void CollisionWorld::OnStaticCollisionShape(
 		}
 	} else {
 		LOG_ERROR("Failed to construct btCollisionShape from "
-				 "ComponentCollisionShape");
+				  "ComponentCollisionShape");
 	}
 }
 
@@ -274,9 +282,10 @@ void CollisionWorld::EntitySetTransform(
 	const ComponentBulletCollisionObject obj,
 	const ComponentStaticTransform &transform)
 {
-	obj.object->setWorldTransform(
-		btTransform(ToBullet(transform.rot), ToBullet(transform.pos)));
-	obj.object->getCollisionShape()->setLocalScaling(ToBullet(transform.scale));
+	obj.object->setWorldTransform(btTransform(ToBullet(transform.trans.rot),
+											  ToBullet(transform.trans.pos)));
+	obj.object->getCollisionShape()->setLocalScaling(
+		btVector3(transform.scale, transform.scale, transform.scale));
 	collisionWorld->updateSingleAabb(obj.object);
 	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
 	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
@@ -380,13 +389,13 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentBulletCollisionObject &obj) {
 			EntitySetTransform(obj, transform);
 		});
-	
+
 	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
 		.event(flecs::OnSet)
-		.each(
-			[this](flecs::entity entity, const ComponentCollisionShape &shape, const ComponentStaticTransform &transform) {
-				OnStaticCollisionShape(entity, shape, transform);
-			});
+		.each([this](flecs::entity entity, const ComponentCollisionShape &shape,
+					 const ComponentStaticTransform &transform) {
+			OnStaticCollisionShape(entity, shape, transform);
+		});
 }
 
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)

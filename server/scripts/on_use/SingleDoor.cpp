@@ -9,10 +9,11 @@
 inline float TransformDistance(const ComponentStaticTransform &l,
 							   const ComponentStaticTransform &r)
 {
-	glm::vec3 a = l.pos - r.pos;
-	glm::quat b = l.rot - r.rot;
-	glm::vec3 c = l.scale - r.scale;
-	return glm::dot(a, a) + glm::dot(b, b) + glm::dot(c, c);
+	glm::vec3 a = l.trans.pos - r.trans.pos;
+	float dr =
+		abs(l.trans.rot.value - r.trans.rot.value) * M_PI * 2.0f / 240.0f;
+	float c = fabs(l.scale - r.scale);
+	return glm::dot(a, a) + dr + c;
 }
 
 void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,

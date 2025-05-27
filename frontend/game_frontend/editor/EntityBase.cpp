@@ -23,6 +23,7 @@
 #include "ComponentBase.hpp"
 #include "ComponentTrigger.hpp"
 #include "ComponentCharacterSheet.hpp"
+#include "godot_cpp/variant/utility_functions.hpp"
 #include "EntityBase.hpp"
 
 namespace editor
@@ -136,7 +137,8 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 
 __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 {
-	Transform3D trans = inv * primitive->get_global_transform();
+	Transform3D trans =
+		primitive->get_transform(); // inv * primitive->get_global_transform();
 
 	__InnerShape shape;
 	if (auto *cyl = Object::cast_to<CSGCylinder3D>(primitive)) {
@@ -153,6 +155,7 @@ __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 		s.halfExtents = ToGlm(box->get_size()) * 0.5f;
 		// 		trans = trans.translated(Vector3(0, s.halfExtents.y, 0));
 		shape.type = __InnerShape::VERTBOX;
+		trans = trans.scaled(Vector3(1, 1, 1) / trans.get_basis().get_scale());
 		shape.shape = s;
 	} else if (/*auto *sphere =*/Object::cast_to<CSGSphere3D>(primitive)) {
 		UtilityFunctions::print(
@@ -169,7 +172,7 @@ __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 			primitive->to_string());
 	}
 
-	shape.trans = {ToGame(trans)};
+	shape.trans = ToGame(trans);
 	return shape;
 }
 
@@ -266,15 +269,16 @@ void EntityBase::set_graphic_Mesh_or_PackedScene(Ref<Resource> v)
 
 godot::Transform3D ToGodot(ComponentStaticTransform t)
 {
-	return Transform3D(Basis(::ToGodot(t.rot), ::ToGodot(t.scale)),
-					   ::ToGodot(t.pos));
+	return ::ToGodot(t.trans).scaled({t.scale, t.scale, t.scale});
+	;
 }
 
 ComponentStaticTransform ToGame(godot::Transform3D t)
 {
-	return {ToGlm(t.get_origin()),
-			ToGlm(t.get_basis().get_rotation_quaternion()),
-			ToGlm(t.get_basis().get_scale())};
+	return {{ToGlm(t.get_origin()),
+			 Collision3D::Rotation::FromRadians(
+				 t.get_basis().get_quaternion().get_euler().y)},
+			glm::maxcomp(ToGlm(t.get_basis().get_scale()))};
 }
 
 bool EntityBase::IsTrigger()

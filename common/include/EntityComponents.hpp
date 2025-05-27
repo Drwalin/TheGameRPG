@@ -5,10 +5,8 @@
 #include <variant>
 
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
-#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
 
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
-
 
 #include "CollisionFilters.hpp"
 #include "ComponentsUtility.hpp"
@@ -95,18 +93,17 @@ struct ComponentModelName {
 };
 
 struct ComponentStaticTransform {
-	glm::vec3 pos = {0, 0, 0};
-	glm::quat rot = {0, 0, 0, 1};
-	glm::vec3 scale = {1, 1, 1};
+	Collision3D::Transform trans;
+	float scale = 1.0f;
 
-	ComponentStaticTransform(glm::vec3 pos, glm::quat rot, glm::vec3 scale)
-		: pos(pos), rot(rot), scale(scale)
+	ComponentStaticTransform(Collision3D::Transform trans, float scale)
+		: trans(trans), scale(scale)
 	{
 	}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticTransform,
-								  {MV(pos) MV(rot) MV(scale)});
+								  {MV(trans) MV(scale)});
 };
 
 struct __InnerShape;
@@ -141,5 +138,6 @@ struct ComponentCollisionShape {
 	ComponentCollisionShape(__InnerShape shape) : shape(shape) {}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape, {MV(shape) MV(mask)});
+	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape,
+								  {MV(shape) MV(mask)});
 };
