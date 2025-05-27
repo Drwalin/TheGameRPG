@@ -6,15 +6,15 @@
 [ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_tk4hp"]
 
 [node name="NewMap2" type="GameEditorConfig"]
+render_collision = true
 save_map_file_path = "../game_assets/maps/Castle.map"
 
 [node name="Floor" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("1_6gys2")
-transform = Transform3D(145.197, 0, 0, 0, 1, 0, 0, 0, 361.766, 0, -8, 0)
+transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, -1199.33, 0)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0563965, 0.717794, 0)
-visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.056, 0.736, 0)
 size = Vector3(1.91846, 6.49707, 1)
 
 [node name="Door" type="EntityBase" parent="."]
@@ -23,7 +23,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68.2616, -3.99761, 44.4622)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
-visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door"]
@@ -71,7 +70,6 @@ teleportPosition = Vector3(-80, 50, 50)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="TeleportLocal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.078949, 0.253845, -0.0136719)
-visible = false
 size = Vector3(1.85687, 1.50769, 2.11133)
 
 [node name="TeleportForest" type="EntityBase" parent="."]
@@ -88,7 +86,6 @@ teleportPosition = Vector3(0, 50, 0)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="TeleportForest"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.078949, 0.253845, -0.0136719)
-visible = false
 size = Vector3(1.85687, 1.50769, 2.11133)
 
 [node name="Door2" type="EntityBase" parent="."]
@@ -97,7 +94,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -56.1901, -3.99761, 46.6843)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
-visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door2"]
@@ -112,7 +108,6 @@ transform = Transform3D(0.0267353, 0, 0.999643, 0, 1, 0, -0.999643, 0, 0.0267353
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
-visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door3"]
@@ -127,7 +122,6 @@ transform = Transform3D(-0.996643, 0, -0.0818689, 0, 1, 0, 0.0818689, 0, -0.9966
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
-visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door4"]
@@ -142,7 +136,6 @@ transform = Transform3D(0.063853, 0, -0.997959, 0, 1, 0, 0.997959, 0, 0.063853, 
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
-visible = false
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door5"]

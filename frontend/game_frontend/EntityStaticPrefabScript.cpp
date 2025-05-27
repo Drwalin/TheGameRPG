@@ -67,9 +67,8 @@ void EntityStaticPrefabScript::Init(uint64_t localEntityId,
 void EntityStaticPrefabScript::SetTransform(
 	const ComponentStaticTransform &transform)
 {
-	set_transform(
-		Transform3D{Basis(ToGodot(transform.rot)), ToGodot(transform.pos)});
-	set_scale(ToGodot(transform.scale));
+	set_transform(ToGodot(transform.trans));
+	set_scale({transform.scale, transform.scale, transform.scale});
 }
 
 EntityStaticPrefabScript *EntityStaticPrefabScript::CreateNew()

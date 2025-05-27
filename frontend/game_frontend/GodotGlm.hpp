@@ -6,6 +6,10 @@
 #include <godot_cpp/variant/quaternion.hpp>
 #include <godot_cpp/variant/vector2.hpp>
 #include <godot_cpp/variant/vector3.hpp>
+#include <godot_cpp/variant/transform3d.hpp>
+
+#include "../../thirdparty/Collision3D/include/collision3d/Transform.hpp"
+#include "godot_cpp/variant/transform3d.hpp"
 
 inline godot::Vector3 ToGodot(glm::vec3 vec) { return {vec.x, vec.y, vec.z}; }
 
@@ -23,4 +27,14 @@ inline glm::quat ToGlm(godot::Quaternion q)
 inline godot::Quaternion ToGodot(glm::quat q)
 {
 	return godot::Quaternion(q.x, q.y, q.z, q.w);
+}
+
+inline godot::Quaternion ToGodot(Collision3D::Rotation r)
+{
+	return godot::Quaternion(godot::Vector3{0, 1, 0}, r.ToRadians());
+}
+
+inline godot::Transform3D ToGodot(Collision3D::Transform t)
+{
+	return godot::Transform3D{godot::Basis(ToGodot(t.rot)), ToGodot(t.pos)};
 }

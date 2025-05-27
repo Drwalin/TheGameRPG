@@ -1,6 +1,4 @@
 #define GLM_ENABLE_EXPERIMENTAL
-#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/vector_angle.hpp"
-#include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtx/quaternion.hpp"
 
 #include <icon7/Peer.hpp>
 #include <icon7/Flags.hpp>
@@ -95,7 +93,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 
 					ClientRpcProxy::Broadcast_PlayFX(
 						this, {"fx/Blood.tscn"},
-						{targetPos, {1, 0, 0, 0}, {1, 1, 1}}, timer.currentTick,
+						{{targetPos, {}}, 1}, timer.currentTick,
 						0, 5000);
 
 					if (hp.hp <= 0) {

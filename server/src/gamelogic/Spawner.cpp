@@ -43,7 +43,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 
 	std::vector<uint64_t> entities;
 	realm->collisionWorld.TestForEntitiesSphere(
-		transform.pos, spawner.radiusToCheckAmountEntities, &entities,
+		transform.trans.pos, spawner.radiusToCheckAmountEntities, &entities,
 		FILTER_CHARACTER);
 
 	int counter = 0;
@@ -80,7 +80,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 		} while (glm::dot(pos, pos) > 1.0);
 		pos.x *= spawner.spawnRadius;
 		pos.z *= spawner.spawnRadius;
-		pos += transform.pos;
+		pos += transform.trans.pos;
 
 		glm::vec3 hitPoint;
 		if (realm->collisionWorld.RayTestFirstHitTerrain(
@@ -115,7 +115,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 			} else if (auto _ts =
 						   spawnedEntity.get<ComponentStaticTransform>()) {
 				auto ts = *_ts;
-				ts.pos = pos;
+				ts.trans.pos = pos;
 				spawnedEntity.set<ComponentStaticTransform>(ts);
 			} else {
 				LOG_INFO("Spawned entity from spawner does not have "

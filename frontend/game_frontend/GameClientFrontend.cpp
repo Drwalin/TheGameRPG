@@ -336,9 +336,9 @@ void GameClientFrontend::PlayFX(ComponentModelName modelName,
 				frontend->entitiesContainer->add_child(node3d);
 			}
 
-			node3d->set_transform(Transform3D{Basis(ToGodot(transform.rot)),
-											  ToGodot(transform.pos)});
-			node3d->set_scale(ToGodot(transform.scale));
+			node3d->set_transform(ToGodot(transform.trans));
+			node3d->set_scale(
+				{transform.scale, transform.scale, transform.scale});
 
 			if (ttlMs != 0) {
 
