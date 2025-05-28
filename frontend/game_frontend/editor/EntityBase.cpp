@@ -3,6 +3,7 @@
 
 #include <godot_cpp/variant/transform3d.hpp>
 #include <godot_cpp/variant/basis.hpp>
+#include "godot_cpp/variant/utility_functions.hpp"
 #include <godot_cpp/classes/csg_primitive3d.hpp>
 #include <godot_cpp/classes/csg_sphere3d.hpp>
 #include <godot_cpp/classes/csg_box3d.hpp>
@@ -23,7 +24,6 @@
 #include "ComponentBase.hpp"
 #include "ComponentTrigger.hpp"
 #include "ComponentCharacterSheet.hpp"
-#include "godot_cpp/variant/utility_functions.hpp"
 #include "EntityBase.hpp"
 
 namespace editor
@@ -45,6 +45,7 @@ void EntityBase::_process(double dt)
 	if (lastCheck > 1.0f) {
 		CheckRemoveUnneededChildren();
 	}
+	CheckRotationAndScale();
 }
 
 void EntityBase::CheckRemoveUnneededChildren()
@@ -63,6 +64,45 @@ void EntityBase::CheckRemoveUnneededChildren()
 		}
 		remove_child(n);
 		--i;
+	}
+}
+
+void EntityBase::CheckRotationAndScale()
+{
+	Transform3D trans = get_global_transform();
+	
+	if (trans == lastGlobalTransform) {
+		return;
+	}
+			
+	lastGlobalTransform = trans;
+	
+	Basis basis = trans.get_basis();
+	glm::vec3 s = ToGlm(basis.get_scale_local());
+	
+	Vector3 axis;
+	float angle;
+	basis.get_rotation_axis_angle(axis, angle);
+	glm::vec3 a = glm::abs(ToGlm(axis));
+	
+	bool mod = false;
+	
+	if (a.x > 0.0001 || a.z > 0.0001) {
+		Vector3 euler = basis.get_euler();
+		euler.x = euler.z = 0;
+		basis = Basis::from_euler(euler);
+		mod = true;
+	}
+	
+	if (s.x != s.y || s.x != s.z || mod) {
+		float sf = glm::maxcomp(glm::abs(s));
+		if (!mod) {
+			mod = true;
+			basis = basis.get_rotation_quaternion();
+		}
+		basis = basis.scaled(Vector3(sf, sf, sf));
+		trans.set_basis(basis);
+		this->set_global_transform(trans);
 	}
 }
 
