@@ -55,6 +55,7 @@ private:
 	bool IsMovingCharacter();
 	
 	void CheckRemoveUnneededChildren();
+	void CheckRotationAndScale();
 
 private:
 	void SerializeGraphics(icon7::ByteWriter &writer);
@@ -67,6 +68,7 @@ private:
 	__InnerShape GetShape(CSGPrimitive3D *primitive, Transform3D invTransform);
 	
 	float lastCheck = 0.0;
+	Transform3D lastGlobalTransform;
 };
 
 extern godot::Transform3D ToGodot(ComponentStaticTransform t);
