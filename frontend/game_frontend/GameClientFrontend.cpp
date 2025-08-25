@@ -85,7 +85,7 @@ void GameClientFrontend::RegisterObservers()
 	realm->RegisterObserver(
 		flecs::OnSet, +[](flecs::entity entity, const ComponentName &name) {
 			ComponentGodotNode *node =
-				(ComponentGodotNode *)entity.get<ComponentGodotNode>();
+				(ComponentGodotNode *)entity.try_get<ComponentGodotNode>();
 			if (node) {
 				if (node->node) {
 					node->node->SetName(name);
@@ -114,10 +114,10 @@ void GameClientFrontend::RegisterObservers()
 	realm->RegisterObserver(
 		flecs::OnSet,
 		[this](flecs::entity entity, const ComponentModelName &model) {
-			auto transform = entity.get<ComponentStaticTransform>();
+			auto transform = entity.try_get<ComponentStaticTransform>();
 			if (transform) {
 				ComponentStaticGodotNode node;
-				if (auto n = entity.get<ComponentStaticGodotNode>()) {
+				if (auto n = entity.try_get<ComponentStaticGodotNode>()) {
 					node = *n;
 				}
 				if (node.node == nullptr) {
@@ -129,7 +129,7 @@ void GameClientFrontend::RegisterObservers()
 				return;
 			}
 			ComponentGodotNode *node =
-				(ComponentGodotNode *)entity.get<ComponentGodotNode>();
+				(ComponentGodotNode *)entity.try_get<ComponentGodotNode>();
 			if (node) {
 				node->node->SetModel(model);
 			}
@@ -138,7 +138,7 @@ void GameClientFrontend::RegisterObservers()
 	realm->RegisterObserver(
 		flecs::OnSet,
 		+[](flecs::entity entity, const ComponentStaticTransform &transform) {
-			if (auto node = entity.get<ComponentStaticGodotNode>()) {
+			if (auto node = entity.try_get<ComponentStaticGodotNode>()) {
 				node->node->SetTransform(transform);
 			}
 		});
@@ -261,7 +261,7 @@ void GameClientFrontend::PlayAnimation_virtual(
 		return;
 	}
 	ComponentGodotNode *node =
-		(ComponentGodotNode *)entity.get<ComponentGodotNode>();
+		(ComponentGodotNode *)entity.try_get<ComponentGodotNode>();
 	if (node) {
 		if (node->node) {
 			node->node->oneShotAnimations.push_back(currentAnimation);
@@ -307,14 +307,14 @@ void GameClientFrontend::PlayFX(ComponentModelName modelName,
 					if (entity.is_valid() && entity.is_alive()) {
 
 						bool has = false;
-						if (auto gn = entity.get<ComponentGodotNode>()) {
+						if (auto gn = entity.try_get<ComponentGodotNode>()) {
 							if (gn->node) {
 								has = true;
 								gn->node->add_child(node3d);
 							}
 						}
 
-						if (auto gsn = entity.get<ComponentStaticGodotNode>()) {
+						if (auto gsn = entity.try_get<ComponentStaticGodotNode>()) {
 							if (gsn->node) {
 								has = true;
 								gsn->node->add_child(node3d);

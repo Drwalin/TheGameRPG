@@ -20,8 +20,8 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 	if (trigger.has<ComponentTeleport>()) {
 		if (entity.has<ComponentPlayerConnectionPeer>()) {
 			const ComponentPlayerConnectionPeer *_peer =
-				entity.get<ComponentPlayerConnectionPeer>();
-			const ComponentTeleport *tp = trigger.get<ComponentTeleport>();
+				entity.try_get<ComponentPlayerConnectionPeer>();
+			const ComponentTeleport *tp = trigger.try_get<ComponentTeleport>();
 			auto peer = _peer->peer;
 
 			PeerData *data = ((PeerData *)(peer->userPointer));

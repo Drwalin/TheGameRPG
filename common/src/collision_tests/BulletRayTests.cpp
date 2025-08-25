@@ -64,7 +64,7 @@ bool CollisionWorld::RayTestFirstHit(glm::vec3 start, glm::vec3 end,
 {
 	auto entity = realm->Entity(ignoreEntityId);
 	btCollisionObject *object = nullptr;
-	auto obj = entity.get<ComponentBulletCollisionObject>();
+	auto obj = entity.try_get<ComponentBulletCollisionObject>();
 	if (obj) {
 		object = obj->object;
 	}

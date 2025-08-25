@@ -111,7 +111,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 			if (data->useNextRealmPosition) {
 				data->useNextRealmPosition = false;
 				auto *_ls =
-					entity.get<ComponentLastAuthoritativeMovementState>();
+					entity.try_get<ComponentLastAuthoritativeMovementState>();
 				if (_ls) {
 					auto ls = *_ls;
 					ls.oldState.pos = data->nextRealmPosition;
@@ -124,7 +124,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 					}
 				}
 			}
-			if (auto cpcp = entity.get_mut<ComponentPlayerConnectionPeer>()) {
+			if (auto cpcp = entity.try_get_mut<ComponentPlayerConnectionPeer>()) {
 				cpcp->peer = nullptr;
 			}
 		}

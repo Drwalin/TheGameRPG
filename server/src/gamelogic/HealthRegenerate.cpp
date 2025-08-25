@@ -17,9 +17,9 @@ static int64_t HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
 {
 	flecs::entity entity = realm->Entity(entityId);
 	const ComponentCharacterSheet_Health *_hp =
-		entity.get<ComponentCharacterSheet_Health>();
+		entity.try_get<ComponentCharacterSheet_Health>();
 	const ComponentCharacterSheet_HealthRegen *_hpReg =
-		entity.get<ComponentCharacterSheet_HealthRegen>();
+		entity.try_get<ComponentCharacterSheet_HealthRegen>();
 	if (_hp == nullptr || _hpReg == nullptr) {
 		return 0;
 	}
@@ -60,7 +60,7 @@ void HealthRegenerateSchedule(flecs::entity entity,
 	if (hp.hp <= 0) {
 		return;
 	}
-	RealmPtr *rp = entity.world().get_mut<RealmPtr>();
+	RealmPtr *rp = entity.world().try_get_mut<RealmPtr>();
 	rp->realm->ScheduleEntityEvent(
 		entity, {hpReg.lastTimestamp + hpReg.cooldown, &eventHealthRegen});
 }

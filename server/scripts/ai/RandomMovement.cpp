@@ -78,8 +78,8 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 				target.has<ComponentMovementState>() &&
 				target.has<ComponentShape>()) {
 				const ComponentMovementState *s =
-					target.get<ComponentMovementState>();
-				const ComponentShape *sh = target.get<ComponentShape>();
+					target.try_get<ComponentMovementState>();
+				const ComponentShape *sh = target.try_get<ComponentShape>();
 
 				glm::vec3 _hitPos;
 				uint64_t _targetHitId = 0;
@@ -130,17 +130,17 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 {
 	flecs::entity entity = realm->Entity(entityId);
-	auto lastState = *entity.get<ComponentLastAuthoritativeMovementState>();
-	auto state = *entity.get<ComponentMovementState>();
-	auto params = *entity.get<ComponentMovementParameters>();
+	auto lastState = *entity.try_get<ComponentLastAuthoritativeMovementState>();
+	auto state = *entity.try_get<ComponentMovementState>();
+	auto params = *entity.try_get<ComponentMovementParameters>();
 
-	const ComponentShape *shape = entity.get<ComponentShape>();
+	const ComponentShape *shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
 		return;
 	}
 
 	ComponentMovementState currentState = lastState.oldState;
-	auto movementParams = entity.get<ComponentMovementParameters>();
+	auto movementParams = entity.try_get<ComponentMovementParameters>();
 	EntitySystems::UpdateMovement(realm, entity, *shape, currentState,
 								  lastState, *movementParams);
 

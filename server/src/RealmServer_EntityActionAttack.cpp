@@ -29,14 +29,14 @@ void RealmServer::Attack(uint64_t instigatorId,
 		flecs::entity entityInstigator = Entity(instigatorId);
 		if (entityInstigator.is_alive()) {
 			auto atck_ =
-				entityInstigator.get<ComponentCharacterSheet_AttackCooldown>();
+				entityInstigator.try_get<ComponentCharacterSheet_AttackCooldown>();
 			if (atck_) {
 				auto atck = *atck_;
 				if (atck.lastTimestamp + atck.baseCooldown >=
 					timer.currentTick) {
 					return;
 				} else {
-					auto modelName = entityInstigator.get<ComponentModelName>();
+					auto modelName = entityInstigator.try_get<ComponentModelName>();
 					if (modelName) {
 						ClientRpcProxy::Broadcast_PlayAnimation(
 							this, instigatorId, *modelName, state, "attack_1",
@@ -50,16 +50,16 @@ void RealmServer::Attack(uint64_t instigatorId,
 			}
 
 			auto str_ =
-				entityInstigator.get<ComponentCharacterSheet_Strength>();
+				entityInstigator.try_get<ComponentCharacterSheet_Strength>();
 			if (str_) {
 				auto str = *str_;
 				dmg += str.strength;
 			}
 
 			if (auto range =
-					entityInstigator.get<ComponentCharacterSheet_Ranges>()) {
+					entityInstigator.try_get<ComponentCharacterSheet_Ranges>()) {
 				glm::vec3 eyes = state.oldState.pos;
-				if (auto shape = entityInstigator.get<ComponentShape>()) {
+				if (auto shape = entityInstigator.try_get<ComponentShape>()) {
 					eyes.y += shape->height;
 				}
 
@@ -75,7 +75,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 		flecs::entity entityTarget = Entity(targetId);
 		if (entityTarget.is_alive()) {
 
-			auto ap_ = entityTarget.get<ComponentCharacterSheet_Protection>();
+			auto ap_ = entityTarget.try_get<ComponentCharacterSheet_Protection>();
 			if (ap_) {
 				auto ap = *ap_;
 				dmg -= ap.armorPoints;
@@ -85,7 +85,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 				dmg = 1;
 			}
 
-			auto hp_ = entityTarget.get<ComponentCharacterSheet_Health>();
+			auto hp_ = entityTarget.try_get<ComponentCharacterSheet_Health>();
 			if (hp_) {
 				ComponentCharacterSheet_Health hp = *hp_;
 				if (hp.hp > 0) {
@@ -102,7 +102,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 						int64_t xp = 1;
 
 						auto tlvl_ =
-							entityTarget.get<ComponentCharacterSheet_LevelXP>();
+							entityTarget.try_get<ComponentCharacterSheet_LevelXP>();
 						if (tlvl_) {
 							auto tlvl = *tlvl_;
 							xp = (tlvl.level) * (tlvl.level - 1);
@@ -117,7 +117,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 							if (entityInstigator.is_alive()) {
 								auto ilvl_ =
 									entityInstigator
-										.get<ComponentCharacterSheet_LevelXP>();
+										.try_get<ComponentCharacterSheet_LevelXP>();
 								if (ilvl_) {
 									auto ilvl = *ilvl_;
 

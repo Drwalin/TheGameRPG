@@ -110,11 +110,11 @@ public: // accessors
 	}
 	template <typename T> const T *GetComponent(uint64_t entity) const
 	{
-		return Entity(entity).get<T>();
+		return Entity(entity).try_get<T>();
 	}
 	template <typename T> T *AccessComponent(uint64_t entity) const
 	{
-		return (T *)Entity(entity).get<T>();
+		return (T *)Entity(entity).try_get<T>();
 	}
 
 	template <typename T> void RemoveComponent(uint64_t entity)

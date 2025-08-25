@@ -82,7 +82,7 @@ void RealmServer::RegisterObservers()
 	ecs.observer<ComponentTrigger>()
 		.event(flecs::OnSet)
 		.each(+[](flecs::entity entity, const ComponentTrigger &) {
-			if (auto shape = entity.get_mut<ComponentCollisionShape>()) {
+			if (auto shape = entity.try_get_mut<ComponentCollisionShape>()) {
 				shape->mask = FILTER_TRIGGER;
 				ComponentCollisionShape s = *shape;
 				entity.set(s);
@@ -93,7 +93,7 @@ void RealmServer::RegisterObservers()
 	ecs.observer<ComponentCollisionShape>()
 		.event(flecs::OnSet)
 		.each(+[](flecs::entity entity, ComponentCollisionShape shape) {
-			if (entity.get<ComponentTrigger>()) {
+			if (entity.try_get<ComponentTrigger>()) {
 				if (shape.mask & FILTER_TRIGGER) {
 					return;
 				}
@@ -119,7 +119,7 @@ void RealmServer::RegisterObservers()
 					uint64_t entityId) -> int64_t {
 					flecs::entity entity = realm->Entity(entityId);
 					if (entity.has<ComponentAITick>()) {
-						auto tick = entity.get<ComponentAITick>();
+						auto tick = entity.try_get<ComponentAITick>();
 						if (tick) {
 							if (tick->aiTick) {
 								tick->aiTick->Call((RealmServer *)realm,

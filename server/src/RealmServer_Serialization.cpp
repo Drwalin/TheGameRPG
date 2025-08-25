@@ -120,7 +120,7 @@ void RealmServer::SavePlayerEntitiesToFiles()
 void RealmServer::SavePlayerEntityToFile(flecs::entity entity)
 {
 	ComponentPlayerConnectionPeer *peer =
-		entity.get_mut<ComponentPlayerConnectionPeer>();
+		entity.try_get_mut<ComponentPlayerConnectionPeer>();
 	if (peer) {
 		if (peer->peer.get() == nullptr) {
 			LOG_FATAL(

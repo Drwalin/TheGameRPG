@@ -68,7 +68,7 @@ public:
 									icon7::ByteWriter &writer)
 	{
 		flecs::entity entity = realm->Entity(entityId);
-		const T *component = entity.get<T>();
+		const T *component = entity.try_get<T>();
 		if (component) {
 			SerializePersistent<T>(realm, *component, writer);
 		}
@@ -91,7 +91,7 @@ public:
 								  icon7::ByteWriter &writer)
 	{
 		flecs::entity entity = realm->Entity(entityId);
-		const T *component = entity.get<T>();
+		const T *component = entity.try_get<T>();
 		if (component) {
 			SerializeTemporal<T>(realm, *component, writer);
 		}

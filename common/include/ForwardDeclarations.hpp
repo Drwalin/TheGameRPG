@@ -13,10 +13,6 @@ class ByteReader;
 class ByteWriter;
 } // namespace icon7
 
-struct ComponentBulletCollisionObject {
-	class btCollisionObject *object;
-};
-
 class btCollisionShape;
 class btCylinderShape;
 class btCapsuleShape;

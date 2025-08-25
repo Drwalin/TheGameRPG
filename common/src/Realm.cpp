@@ -66,7 +66,7 @@ void Realm::RegisterObservers()
 		.each([this](flecs::entity entity,
 					 const ComponentLastAuthoritativeMovementState &lastState,
 					 const ComponentMovementParameters &movementParams) {
-			const ComponentShape *shape = entity.get<ComponentShape>();
+			const ComponentShape *shape = entity.try_get<ComponentShape>();
 			if (shape == nullptr) {
 				return;
 			}
@@ -132,7 +132,7 @@ bool Realm::OneEpoch()
 			eventsPriorityQueue.Pop();
 			auto entity = Entity(event.entityId);
 			if (entity.is_alive()) {
-				((ComponentEventsQueue *)entity.get<ComponentEventsQueue>())
+				((ComponentEventsQueue *)entity.try_get<ComponentEventsQueue>())
 					->Update(timer.currentTick, event.entityId, this);
 				++executedEvents;
 			}
@@ -187,7 +187,7 @@ uint64_t Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
 
 void Realm::ScheduleEntityEvent(flecs::entity entity, EntityEvent event)
 {
-	ComponentEventsQueue *eventsQueue = entity.get_mut<ComponentEventsQueue>();
+	ComponentEventsQueue *eventsQueue = entity.try_get_mut<ComponentEventsQueue>();
 	if (eventsQueue == nullptr) {
 		LOG_FATAL("Trying to add event `%s` to entity without event queue.",
 				  event.event->name);

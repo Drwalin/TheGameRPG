@@ -55,7 +55,7 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 			continue;
 		}
 		flecs::entity ce = cid.entity();
-		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
+		auto bp = ce.try_get<_InternalComponent_ComponentConstructorBasePointer>();
 		if (bp == nullptr) {
 			LOG_ERROR("Component %lu (%s) of an entity %lu does not have "
 					  "_InternalComponent_ComponentConstructorBasePointer",
@@ -111,7 +111,7 @@ void Registry::SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
 			continue;
 		}
 		flecs::entity ce = cid.entity();
-		auto bp = ce.get<_InternalComponent_ComponentConstructorBasePointer>();
+		auto bp = ce.try_get<_InternalComponent_ComponentConstructorBasePointer>();
 		if (bp == nullptr) {
 			LOG_ERROR("Component %lu (%s) of an entity %lu does not have "
 					  "_InternalComponent_ComponentConstructorBasePointer",

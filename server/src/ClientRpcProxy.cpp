@@ -99,11 +99,11 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 				writer.op(entityId);
 
 				writer.op(
-					*entity.get<ComponentLastAuthoritativeMovementState>());
-				writer.op(*entity.get<ComponentName>());
-				writer.op(*entity.get<ComponentModelName>());
-				writer.op(*entity.get<ComponentShape>());
-				writer.op(*entity.get<ComponentMovementParameters>());
+					*entity.try_get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.try_get<ComponentName>());
+				writer.op(*entity.try_get<ComponentModelName>());
+				writer.op(*entity.try_get<ComponentShape>());
+				writer.op(*entity.try_get<ComponentMovementParameters>());
 			}
 		} else {
 			ClientRpcProxy::DeleteEntity_ForPeer(realm, peer, entityId);
@@ -132,11 +132,11 @@ void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 				writer.op(entityId);
 
 				writer.op(
-					*entity.get<ComponentLastAuthoritativeMovementState>());
-				writer.op(*entity.get<ComponentName>());
-				writer.op(*entity.get<ComponentModelName>());
-				writer.op(*entity.get<ComponentShape>());
-				writer.op(*entity.get<ComponentMovementParameters>());
+					*entity.try_get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.try_get<ComponentName>());
+				writer.op(*entity.try_get<ComponentModelName>());
+				writer.op(*entity.try_get<ComponentShape>());
+				writer.op(*entity.try_get<ComponentMovementParameters>());
 			}
 		} else {
 			ClientRpcProxy::DeleteEntity_ForPeer(realm, peer, entityId);
@@ -163,11 +163,11 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer)
 
 			writer.op(entityId);
 
-			writer.op(*entity.get<ComponentLastAuthoritativeMovementState>());
-			writer.op(*entity.get<ComponentName>());
-			writer.op(*entity.get<ComponentModelName>());
-			writer.op(*entity.get<ComponentShape>());
-			writer.op(*entity.get<ComponentMovementParameters>());
+			writer.op(*entity.try_get<ComponentLastAuthoritativeMovementState>());
+			writer.op(*entity.try_get<ComponentName>());
+			writer.op(*entity.try_get<ComponentModelName>());
+			writer.op(*entity.try_get<ComponentShape>());
+			writer.op(*entity.try_get<ComponentMovementParameters>());
 		}
 	}
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
@@ -305,9 +305,9 @@ void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)
 {
 	auto entity = realm->Entity(entityId);
 	if (entity.is_valid() && entity.is_alive()) {
-		auto modelName = entity.get<ComponentModelName>();
-		auto state = entity.get<ComponentLastAuthoritativeMovementState>();
-		auto name = entity.get<ComponentName>();
+		auto modelName = entity.try_get<ComponentModelName>();
+		auto state = entity.try_get<ComponentLastAuthoritativeMovementState>();
+		auto name = entity.try_get<ComponentName>();
 		if (modelName == nullptr || state == nullptr || name == nullptr) {
 			LOG_INFO(
 				"Entity does not have one of: ModeLname, MovementState, Name");

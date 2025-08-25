@@ -102,25 +102,25 @@ void RealmServer::ExecuteMovementUpdate(uint64_t entityId,
 {
 	auto entity = Entity(entityId);
 
-	const ComponentShape *shape = entity.get<ComponentShape>();
+	const ComponentShape *shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
 		*state = {};
 		return;
 	}
 	ComponentMovementState *currentState =
-		(ComponentMovementState *)entity.get<ComponentMovementState>();
+		(ComponentMovementState *)entity.try_get<ComponentMovementState>();
 	if (currentState == nullptr) {
 		*state = {};
 		return;
 	}
 	const ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
-		entity.get<ComponentLastAuthoritativeMovementState>();
+		entity.try_get<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		*state = {};
 		return;
 	}
 	const ComponentMovementParameters *movementParams =
-		entity.get<ComponentMovementParameters>();
+		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
 		*state = {};
 		return;
