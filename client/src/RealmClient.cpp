@@ -81,32 +81,32 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 {
 	auto entity = Entity(entityId);
 
-	const ComponentShape *shape = entity.get<ComponentShape>();
+	const ComponentShape *shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
 		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	ComponentMovementState *currentState =
-		entity.get_mut<ComponentMovementState>();
+		entity.try_get_mut<ComponentMovementState>();
 	if (currentState == nullptr) {
 		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
-		entity.get_mut<ComponentLastAuthoritativeMovementState>();
+		entity.try_get_mut<ComponentLastAuthoritativeMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 	const ComponentMovementParameters *movementParams =
-		entity.get<ComponentMovementParameters>();
+		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
 		LOG_ERROR("Character %lu does not have shape component", entityId);
 		return;
 	}
 
 	ComponentMovementHistory *_states =
-		entity.get_mut<ComponentMovementHistory>();
+		entity.try_get_mut<ComponentMovementHistory>();
 	if (entityId != gameClient->localPlayerEntityId && _states != nullptr &&
 		_states->states.size() > 0) {
 		auto &states = _states->states;

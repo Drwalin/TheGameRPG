@@ -1,3 +1,5 @@
+#include <variant>
+
 #include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 #include "../include/RegistryComponent.inl.hpp"
@@ -33,7 +35,6 @@ int RegisterEntityComponents(flecs::world &ecs)
 		ecs, ComponentLastAuthoritativeMovementState, "AP");
 
 	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentEventsQueue);
-	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentBulletCollisionObject);
 
 	reg::ComponentConstructor<ComponentMovementState>::singleton
 		->callbackDeserializePersistent = [](class Realm *realm,

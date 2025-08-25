@@ -47,7 +47,7 @@ public:
 									   icon7::ByteWriter &writer) const override
 	{
 		if (entity.has<T>()) {
-			const T *component = entity.get<T>();
+			const T *component = entity.try_get<T>();
 			if (component) {
 				SerializePersistent(realm, *component, writer);
 				return true;
@@ -86,7 +86,7 @@ public:
 									 icon7::ByteWriter &writer) const override
 	{
 		if (entity.has<T>()) {
-			const T *component = entity.get<T>();
+			const T *component = entity.try_get<T>();
 			if (component) {
 				SerializeTemporal(realm, *component, writer);
 				return true;

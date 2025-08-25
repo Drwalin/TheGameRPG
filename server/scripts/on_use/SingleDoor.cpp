@@ -22,9 +22,9 @@ void OnUse_SingleDoor(RealmServer *realm, uint64_t instigatorId,
 	flecs::entity target = realm->Entity(receiverId);
 	if (target.has<ComponentStaticTransform>()) {
 		const ComponentSingleDoorTransformStates *states =
-			target.get<ComponentSingleDoorTransformStates>();
+			target.try_get<ComponentSingleDoorTransformStates>();
 		const ComponentStaticTransform *transform =
-			target.get<ComponentStaticTransform>();
+			target.try_get<ComponentStaticTransform>();
 
 		if (TransformDistance(*transform, states->transformOpen) >
 			TransformDistance(*transform, states->transformClosed)) {

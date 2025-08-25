@@ -22,9 +22,9 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 					   int64_t currentTick, uint64_t entityId)
 {
 	flecs::entity spawnerEntity = realm->Entity(entityId);
-	ComponentSpawner *_spawner = spawnerEntity.get_mut<ComponentSpawner>();
+	ComponentSpawner *_spawner = spawnerEntity.try_get_mut<ComponentSpawner>();
 	const ComponentStaticTransform *_transform =
-		spawnerEntity.get<ComponentStaticTransform>();
+		spawnerEntity.try_get<ComponentStaticTransform>();
 
 	if (_spawner == nullptr || _transform == nullptr) {
 		return 1000 * 12;
@@ -96,7 +96,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 		realm->TrueDeferWhenNeeded([realm, pos, spawnedEntity, yRot]() {
 			if (auto _ms =
 					spawnedEntity
-						.get<ComponentLastAuthoritativeMovementState>()) {
+						.try_get<ComponentLastAuthoritativeMovementState>()) {
 				auto ms = *_ms;
 				ms.oldState.pos = pos;
 				ms.oldState.onGround = false;
@@ -104,7 +104,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 				ms.oldState.rot.y += yRot;
 				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
 				spawnedEntity.set<ComponentMovementState>(ms.oldState);
-			} else if (auto _ms = spawnedEntity.get<ComponentMovementState>()) {
+			} else if (auto _ms = spawnedEntity.try_get<ComponentMovementState>()) {
 				auto ms = *_ms;
 				ms.pos = pos;
 				ms.onGround = false;
@@ -113,7 +113,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
 				spawnedEntity.set<ComponentMovementState>(ms);
 			} else if (auto _ts =
-						   spawnedEntity.get<ComponentStaticTransform>()) {
+						   spawnedEntity.try_get<ComponentStaticTransform>()) {
 				auto ts = *_ts;
 				ts.trans.pos = pos;
 				spawnedEntity.set<ComponentStaticTransform>(ts);
@@ -132,7 +132,7 @@ void SpawnerSchedule(flecs::entity spawnerEntity, ComponentSpawner &spawner,
 					 const ComponentStaticTransform &transform,
 					 ComponentEventsQueue &)
 {
-	RealmPtr *rp = spawnerEntity.world().get_mut<RealmPtr>();
+	RealmPtr *rp = spawnerEntity.world().try_get_mut<RealmPtr>();
 	rp->realm->ScheduleEntityEvent(
 		spawnerEntity,
 		{rp->realm->timer.currentTick + spawner.spawnCooldown, &eventSpawner});

@@ -106,36 +106,11 @@ struct ComponentStaticTransform {
 								  {MV(trans) MV(scale)});
 };
 
-struct __InnerShape;
-struct CompoundShape {
-	std::shared_ptr<std::vector<__InnerShape>> shapes;
-
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-};
-
-struct __InnerShape {
-	enum Type : uint8_t {
-		NONE = 0,
-		VERTBOX = 1,
-		CYLINDER = 2,
-		HEIGHTMAP = 3,
-		COMPOUND_SHAPE = 4,
-	};
-	Type type = NONE;
-	ComponentStaticTransform trans;
-
-	std::variant<Collision3D::VertBox, Collision3D::Cylinder,
-				 Collision3D::HeightMap<float, uint8_t>, CompoundShape>
-		shape;
-
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
-};
-
 struct ComponentCollisionShape {
-	__InnerShape shape;
+	Collision3D::AnyShape shape;
 	uint32_t mask = FILTER_STATIC_OBJECT;
 
-	ComponentCollisionShape(__InnerShape shape) : shape(shape) {}
+	ComponentCollisionShape(Collision3D::AnyShape shape) : shape(shape) {}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape,

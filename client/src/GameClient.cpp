@@ -212,7 +212,7 @@ glm::vec3 GameClient::GetRotation()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<ComponentMovementState>();
+	auto oldState = player.try_get<ComponentMovementState>();
 	if (oldState)
 		return oldState->rot;
 	LOG_TRACE("ERROR");
@@ -225,7 +225,7 @@ glm::vec3 GameClient::GetPosition()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<ComponentMovementState>();
+	auto oldState = player.try_get<ComponentMovementState>();
 	if (oldState)
 		return oldState->pos;
 	LOG_TRACE("ERROR");
@@ -238,7 +238,7 @@ glm::vec3 GameClient::GetVelocity()
 		return {0, 0, 0};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<ComponentMovementState>();
+	auto oldState = player.try_get<ComponentMovementState>();
 	if (oldState)
 		return oldState->vel;
 	LOG_TRACE("ERROR");
@@ -251,7 +251,7 @@ bool GameClient::GetOnGround()
 		return true;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<ComponentMovementState>();
+	auto oldState = player.try_get<ComponentMovementState>();
 	if (oldState)
 		return oldState->onGround;
 	LOG_TRACE("ERROR");
@@ -264,7 +264,7 @@ ComponentShape GameClient::GetShape()
 		return {1.8, 0.6};
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto shape = player.get<ComponentShape>();
+	auto shape = player.try_get<ComponentShape>();
 	if (shape)
 		return *shape;
 	LOG_TRACE("ERROR");
@@ -282,7 +282,7 @@ void GameClient::SetRotation(glm::vec3 rotation)
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto oldState = player.get<ComponentMovementState>();
+	auto oldState = player.try_get<ComponentMovementState>();
 	if (oldState) {
 		auto state = *oldState;
 		state.rot = rotation;
@@ -299,7 +299,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto stateP = player.get<ComponentMovementState>();
+	auto stateP = player.try_get<ComponentMovementState>();
 	if (stateP == nullptr) {
 		LOG_TRACE("ERROR");
 		return;
@@ -315,7 +315,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	vel.x = horizontalDirection.x;
 	vel.z = horizontalDirection.y;
 	vel *=
-		player.get<ComponentMovementParameters>()->maxMovementSpeedHorizontal;
+		player.try_get<ComponentMovementParameters>()->maxMovementSpeedHorizontal;
 
 	glm::vec3 dv = oldVel - vel;
 	dv.y = 0;
@@ -336,7 +336,7 @@ void GameClient::TryPerformJump()
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto stateP = player.get<ComponentMovementState>();
+	auto stateP = player.try_get<ComponentMovementState>();
 	if (stateP == nullptr) {
 		LOG_TRACE("ERROR");
 		return;
@@ -363,12 +363,12 @@ void GameClient::PerformInteractionUse()
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto state = player.get<ComponentMovementState>();
+	auto state = player.try_get<ComponentMovementState>();
 	if (state == nullptr) {
 		// TODO: maybe error?
 		return;
 	}
-	auto characterSheet = player.get<ComponentCharacterSheet_Ranges>();
+	auto characterSheet = player.try_get<ComponentCharacterSheet_Ranges>();
 	if (characterSheet == nullptr) {
 		// TODO: maybe error?
 		return;
@@ -393,7 +393,7 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 		return;
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
-	auto state = player.get<ComponentMovementState>();
+	auto state = player.try_get<ComponentMovementState>();
 	if (state == nullptr) {
 		// TODO: maybe error?
 		return;
@@ -464,35 +464,35 @@ std::unordered_map<std::string, std::string> GameClient::GetCharacteSheet()
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 
-	if (auto comp = player.get<ComponentCharacterSheet_Ranges>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_Ranges>()) {
 		map["attackRange"] = std::to_string(comp->attackRange);
 		map["visionRange"] = std::to_string(comp->visionRange);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_Health>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_Health>()) {
 		map["hp"] = std::to_string(comp->hp);
 		map["maxHp"] = std::to_string(comp->maxHP);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_HealthRegen>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_HealthRegen>()) {
 		map["hpRegenCooldown_ms"] = std::to_string(comp->cooldown);
 		map["hpRegenAmount"] = std::to_string(comp->amount);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_LevelXP>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_LevelXP>()) {
 		map["level"] = std::to_string(comp->level);
 		map["xp"] = std::to_string(comp->xp);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_Strength>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_Strength>()) {
 		map["strength"] = std::to_string(comp->strength);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_AttackCooldown>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_AttackCooldown>()) {
 		map["baseAttackCooldown"] = std::to_string(comp->baseCooldown);
 	}
 
-	if (auto comp = player.get<ComponentCharacterSheet_Protection>()) {
+	if (auto comp = player.try_get<ComponentCharacterSheet_Protection>()) {
 		map["armorPoints"] = std::to_string(comp->armorPoints);
 	}
 

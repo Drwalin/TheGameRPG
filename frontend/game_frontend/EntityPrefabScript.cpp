@@ -72,7 +72,7 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		LOG_ERROR("Entity %lu is not alive/not present in ecs", localEntityId);
 		return;
 	}
-	auto state = entity.get<ComponentMovementState>();
+	auto state = entity.try_get<ComponentMovementState>();
 	if (state) {
 		SetRotation(state->rot);
 		SetPosition(state->pos);

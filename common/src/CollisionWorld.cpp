@@ -1,359 +1,333 @@
+#include <queue>
+#include <thread>
+#include <atomic>
+#include <memory>
+#include <mutex>
+
 #include <icon7/Debug.hpp>
 
-#include "../../thirdparty/bullet/src/LinearMath/btVector3.h"
-#include "../../thirdparty/bullet/src/LinearMath/btTransform.h"
-#include "../../thirdparty/bullet/src/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btCollisionWorld.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btSphereShape.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btBoxShape.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCylinderShape.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCapsuleShape.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btCompoundShape.h"
-#include "../../thirdparty/bullet/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include "../../common/include/EntityComponents.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/Dbvt.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/BvhMedianSplitHeap.hpp"
+#include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/ThreeStageDbvh.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
 
-#include "../include/GlmBullet.hpp"
+#include "../include/EntityComponents.hpp"
+#include "../include/CollisionFilters.hpp"
 #include "../include/EntityComponents.hpp"
 #include "../include/Realm.hpp"
-
-#include "bullet/BulletPhysicsCallbacks.hpp"
-
 #include "../include/CollisionWorld.hpp"
 
-uint64_t CollisionWorld::GetObjectEntityID(const btCollisionObject *object)
+void EnqueueRebuildThreaded(
+	std::shared_ptr<std::atomic<bool>> fin,
+	std::shared_ptr<spp::BroadphaseBase<spp::Aabb, uint32_t, uint32_t, 0>> dbvh,
+	std::shared_ptr<void> data)
 {
-	return ((uint64_t)(object->getUserIndex2())) |
-		   (((uint64_t)(object->getUserIndex3())) << 32);
+	static std::atomic<int> size = 0;
+	static std::mutex mutex;
+	static bool done = false;
+	using Pair = std::pair<
+		std::shared_ptr<std::atomic<bool>>,
+		std::shared_ptr<spp::BroadphaseBase<spp::Aabb, uint32_t, uint32_t, 0>>>;
+	static std::queue<Pair> queue;
+	if (done == false) {
+		done = true;
+		std::thread thread = std::thread([]() {
+			while (true) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(5));
+				if (size.load() > 0) {
+					Pair p;
+					bool has = false;
+					{
+						std::lock_guard lock(mutex);
+						if (queue.empty() == false) {
+							p = queue.front();
+							queue.pop();
+							has = true;
+							--size;
+						}
+					}
+					if (has && p.second.use_count() > 1) {
+						p.second->Rebuild();
+						p.first->store(true);
+					}
+				}
+			}
+		});
+		thread.detach();
+	}
+	if (fin.get() != nullptr) {
+		std::lock_guard lock(mutex);
+		queue.push({fin, dbvh});
+		++size;
+	}
 }
 
-namespace fdkjsfldksfjldkf
-{
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj0()
-{
-	return &CollisionWorld::TestForEntitiesBox;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj1()
-{
-	return &CollisionWorld::TestForEntitiesSphere;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj2()
-{
-	return &CollisionWorld::TestForEntitiesCylinder;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj3()
-{
-	return &CollisionWorld::RayTestFirstHit;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj4()
-{
-	return &CollisionWorld::RayTestFirstHitTerrain;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj5()
-{
-	return &CollisionWorld::RayTestFirstHitTerrainVector;
-}
-extern auto ____dsafjkdlsfjklsdafjkldsjafkldj6()
-{
-	return &CollisionWorld::TestCollisionMovementRays;
-}
-} // namespace fdkjsfldksfjldkf
-
-CollisionWorld::CollisionWorld(Realm *realm)
+CollisionWorld_spp::CollisionWorld_spp(Realm *realm)
 {
 	// TODO: Replace this code with some proper *.so compilation configuration
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
 	this->realm = realm;
-	broadphase = new btDbvtBroadphase();
-	collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
-	collisionWorld =
-		new btCollisionWorld(dispatcher, broadphase, collisionConfiguration);
+
+	spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0> *tsdbvh =
+		new spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0>(
+			std::make_shared<
+				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
+				200000),
+			std::make_shared<
+				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
+				200000),
+			std::make_unique<
+				spp::Dbvt<spp::Aabb, uint32_t, uint32_t, 0, uint32_t>>());
+	tsdbvh->SetRebuildSchedulerFunction(EnqueueRebuildThreaded);
+	broadphase = tsdbvh;
 }
 
-CollisionWorld::~CollisionWorld()
+CollisionWorld_spp::~CollisionWorld_spp()
 {
 	Clear();
-	delete collisionWorld;
-	delete dispatcher;
-	delete collisionConfiguration;
 	delete broadphase;
+	broadphase = nullptr;
 }
 
-void CollisionWorld::Clear()
+void CollisionWorld_spp::Clear()
 {
-	while (collisionWorld->getNumCollisionObjects() != 0) {
-		btCollisionObject *object =
-			collisionWorld->getCollisionObjectArray()[0];
-		RemoveAndDestroyCollisionObject(object);
-	}
+	broadphase->Clear();
+	broadphase->ShrinkToFit();
 }
 
-void CollisionWorld::DestroyCollisionShape(btCollisionShape *shape)
-{
-	if (shape == nullptr) {
-		return;
-	}
-
-	if (auto *s = dynamic_cast<btCylinderShape *>(shape)) {
-		delete s;
-	} else if (auto *s = dynamic_cast<btBoxShape *>(shape)) {
-		delete s;
-	} else if (auto *s = dynamic_cast<btCapsuleShape *>(shape)) {
-		delete s;
-	} else if (auto *s = dynamic_cast<btSphereShape *>(shape)) {
-		delete s;
-	} else if (auto *s = dynamic_cast<btCompoundShape *>(shape)) {
-		for (int i = 0; i < s->getNumChildShapes(); ++i) {
-			DestroyCollisionShape(s->getChildShape(i));
-		}
-		delete s;
-	} else if (auto *s = dynamic_cast<btHeightfieldTerrainShape *>(shape)) {
-		delete s;
-	} else {
-		LOG_FATAL("Unknown btCollisionShape type: `%s`", shape->getName());
-	}
-}
-
-void CollisionWorld::RemoveAndDestroyCollisionObject(btCollisionObject *object)
-{
-	btCollisionShape *shape = object->getCollisionShape();
-	collisionWorld->removeCollisionObject(object);
-	delete object;
-	DestroyCollisionShape(shape);
-}
-
-btCollisionObject *CollisionWorld::AllocateNewCollisionObject()
-{
-	btCollisionObject *object = new btCollisionObject();
-	object->setUserIndex(0);
-	object->setUserIndex2(0);
-	object->setUserIndex3(0);
-
-	return object;
-}
-
-btCollisionShape *CollisionWorld::CreateBtShape(const __InnerShape &shape) const
-{
-	btVector3 sc{shape.trans.scale, shape.trans.scale, shape.trans.scale};
-	switch (shape.type) {
-	case __InnerShape::VERTBOX: {
-		LOG_FATAL("vertbox");
-		auto s = std::get<Collision3D::VertBox>(shape.shape);
-		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.trans.rot),
-						  ToBullet(shape.trans.trans.pos)};
-		btBoxShape *bs = new btBoxShape(ToBullet(s.halfExtents));
-		cs->addChildShape(trans, bs);
-		cs->setLocalScaling(sc);
-		return cs;
-	} break;
-	case __InnerShape::CYLINDER: {
-		LOG_FATAL("cylinder");
-		auto s = std::get<Collision3D::Cylinder>(shape.shape);
-		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.trans.rot),
-						  ToBullet(shape.trans.trans.pos)};
-		btCylinderShape *bs =
-			new btCylinderShape({s.radius, s.height / 2.0f, s.radius});
-		cs->addChildShape(trans, bs);
-		cs->setLocalScaling(sc);
-		return cs;
-	} break;
-	case __InnerShape::HEIGHTMAP: {
-		LOG_FATAL("heightmap");
-		auto s = std::get<Collision3D::HeightMap<float, uint8_t>>(shape.shape);
-		btCompoundShape *cs = new btCompoundShape(false, 1);
-		btTransform trans{ToBullet(shape.trans.trans.rot),
-						  ToBullet(shape.trans.trans.pos)};
-		btHeightfieldTerrainShape *bs = new btHeightfieldTerrainShape(
-			s.width, s.height, (void *)s.mipmap[0].heights.data(), s.scale.y,
-			-10000.0f, 100000.0f, 1, PHY_FLOAT, false);
-		cs->addChildShape(trans, bs);
-		cs->setLocalScaling(ToBullet(shape.trans.scale *
-									 glm::vec3{s.scale.x, 1.0f, s.scale.z}));
-		return cs;
-	} break;
-	case __InnerShape::COMPOUND_SHAPE: {
-		LOG_FATAL("compound start");
-		auto s = std::get<CompoundShape>(shape.shape);
-		btCompoundShape *cs = new btCompoundShape(false, s.shapes->size());
-		btTransform trans{ToBullet(shape.trans.trans.rot),
-						  ToBullet(shape.trans.trans.pos)};
-		cs->setLocalScaling(sc);
-		for (const auto &ss : *s.shapes) {
-			cs->addChildShape(trans, CreateBtShape(ss));
-		}
-		LOG_FATAL("compound   end");
-		return cs;
-	} break;
-	default:
-		LOG_FATAL("Unknown collision shape type: %i", (int)shape.type);
-		return nullptr;
-	}
-}
-
-void CollisionWorld::OnStaticCollisionShape(
+void CollisionWorld_spp::OnStaticCollisionShape(
 	flecs::entity entity, const ComponentCollisionShape &shape,
 	const ComponentStaticTransform &transform)
 {
-	btCollisionShape *btShape = CreateBtShape(shape.shape);
-	if (btShape) {
-		btShape->setLocalScaling(
-			btShape->getLocalScaling() *
-			btVector3(transform.scale, transform.scale, transform.scale));
-		btCollisionObject *object = AllocateNewCollisionObject();
-		object->setCollisionShape(btShape);
-		object->setWorldTransform(btTransform(ToBullet(transform.trans.rot),
-											  ToBullet(transform.trans.pos)));
-		object->setUserIndex(shape.mask);
-		object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
-		object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
-		collisionWorld->addCollisionObject(
-			object, shape.mask & FILTER_TRIGGER
-						? btBroadphaseProxy::SensorTrigger
-						: btBroadphaseProxy::StaticFilter);
-		collisionWorld->updateSingleAabb(object);
-		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
+	spp::Aabb aabb = shape.shape.GetAabb(transform.trans);
+	broadphase->Add(entity.id() & 0xFFFFFFFF, aabb, shape.mask);
+}
 
-		if (entity.has<ComponentBulletCollisionObject>()) {
-			ComponentBulletCollisionObject *obj =
-				(ComponentBulletCollisionObject *)
-					entity.get<ComponentBulletCollisionObject>();
-			if (obj->object) {
-				RemoveAndDestroyCollisionObject(obj->object);
+void CollisionWorld_spp::OnAddEntity(flecs::entity entity,
+									 const ComponentShape &shape, glm::vec3 pos)
+{
+	spp::Aabb aabb;
+	aabb.min = pos - glm::vec3(shape.width * 0.5f, 0, shape.width * 0.5f);
+	aabb.max = aabb.min + glm::vec3(shape.width, shape.height, shape.width);
+	broadphase->Add(entity.id() & 0xFFFFFFFF, aabb, FILTER_CHARACTER);
+}
+
+void CollisionWorld_spp::EntitySetTransform(
+	flecs::entity entity, const ComponentStaticTransform &transform,
+	const ComponentCollisionShape &shape)
+{
+	spp::Aabb aabb = shape.shape.GetAabb(transform.trans);
+	broadphase->Update(entity.id() & 0xFFFFFFFF, aabb);
+}
+
+void CollisionWorld_spp::EntitySetTransform(flecs::entity entity,
+											const glm::vec3 &pos,
+											const ComponentShape &shape)
+{
+	spp::Aabb aabb;
+	aabb.min = pos - glm::vec3(shape.width * 0.5f, 0, shape.width * 0.5f);
+	aabb.max = aabb.min + glm::vec3(shape.width, shape.height, shape.width);
+	broadphase->Update(entity.id() & 0xFFFFFFFF, aabb);
+}
+
+uint32_t
+CollisionWorld_spp::GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax,
+									 uint32_t mask,
+									 std::vector<flecs::entity> *objects) const
+{
+	struct Cb : public CallbackAabb {
+		std::vector<flecs::entity> *objects;
+		const CollisionWorld *cw;
+		uint32_t count = 0;
+	} cb;
+	cb.cw = this;
+	cb.objects = objects;
+	typedef void (*CbT)(CallbackAabb *, uint32_t);
+	cb.callback = (CbT) + [](Cb *cb, uint32_t eid) {
+		auto cw = cb->cw;
+		flecs::entity e = cw->GetAliveEntityGeneration(eid);
+		if (auto *t = e.try_get<ComponentStaticTransform>()) {
+			auto *s = e.try_get<ComponentCollisionShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentCollisionShape "
+						  "but is inside CollisionWorld",
+						  e.id());
+				return;
 			}
-			obj->object = object;
+			if (cb->IsRelevant(s->shape.GetAabb(t->trans))) {
+				cb->objects->push_back(e);
+				cb->count++;
+			}
+		} else if (auto *t = e.try_get<ComponentMovementState>()) {
+			auto *s = e.try_get<ComponentShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentShape but is "
+						  "inside CollisionWorld",
+						  e.id());
+				return;
+			}
+			Collision3D::Transform tr{t->pos, {0}};
+			Collision3D::Cylinder cyl{s->height, s->width * 0.5f};
+			if (cb->IsRelevant(cyl.GetAabb(tr))) {
+				cb->objects->push_back(e);
+				cb->count++;
+			}
 		} else {
-			entity.set<ComponentBulletCollisionObject>({object});
+			LOG_FATAL("entity %lu does not have ComponentStaticTransform nor "
+					  "ComponentMovementState but is inside CollisionWorld",
+					  e.id());
 		}
-	} else {
-		LOG_ERROR("Failed to construct btCollisionShape from "
-				  "ComponentCollisionShape");
-	}
+	};
+
+	cb.mask = mask;
+	cb.aabb = {aabbMin, aabbMax};
+	broadphase->IntersectAabb(cb);
+
+	return cb.count;
 }
 
-void CollisionWorld::OnAddEntity(flecs::entity entity,
-								 const ComponentShape &shape, glm::vec3 pos)
+flecs::entity CollisionWorld_spp::GetAliveEntityGeneration(uint32_t id) const
 {
-	pos.y += shape.height * 0.5f;
-	btCapsuleShape *_shape =
-		new btCapsuleShape(shape.width * 0.5, shape.height);
-	btCollisionObject *object = AllocateNewCollisionObject();
-	object->setCollisionShape(_shape);
-	object->setWorldTransform(
-		btTransform(btQuaternion::getIdentity(), ToBullet(pos)));
-	object->setUserIndex(FILTER_CHARACTER);
-	object->setUserIndex2(((uint32_t)(entity.id())) & 0xFFFFFFFF);
-	object->setUserIndex3(((uint32_t)(entity.id() >> 32)) & 0xFFFFFFFF);
-	collisionWorld->addCollisionObject(object,
-									   btBroadphaseProxy::CharacterFilter);
-	collisionWorld->updateSingleAabb(object);
-	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
-	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
-	entity.set<ComponentBulletCollisionObject>({object});
+	return realm->ecs.get_alive(realm->Entity(id));
 }
 
-void CollisionWorld::UpdateEntityBvh_(const ComponentBulletCollisionObject obj,
-									  ComponentShape shape, glm::vec3 pos)
+bool CollisionWorld_spp::RayTestFirstHit(
+	glm::vec3 start, glm::vec3 end, glm::vec3 *hitPosition,
+	glm::vec3 *hitNormal, flecs::entity *entity, float *travelFactor,
+	uint32_t ignoreEntityId, uint32_t mask) const
 {
-	pos.y += shape.height * 0.5f;
-	obj.object->setWorldTransform(
-		btTransform(btQuaternion::getIdentity(), ToBullet(pos)));
-	collisionWorld->updateSingleAabb(obj.object);
-	if (((++dynamicUpdateCounter) & 0x1F) == 13) {
-		((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
-		((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
-	}
-}
+	struct Cb : public CallbackRayFirstHit {
+		const CollisionWorld *cw;
+		flecs::entity entity = {};
+		uint32_t ignoreEntity;
+	} cb;
+	cb.cw = this;
+	cb.ignoreEntity = ignoreEntityId;
 
-void CollisionWorld::UpdateEntityBvh(flecs::entity entity, ComponentShape shape,
-									 glm::vec3 pos)
-{
-	auto obj = entity.get<ComponentBulletCollisionObject>();
-	if (obj) {
-		UpdateEntityBvh_(*obj, shape, pos);
-	}
-}
+	typedef spp::RayPartialResult (*CbT)(CallbackRay *, uint32_t);
+	cb.callback = (CbT) + [](Cb *cb, uint32_t eid) -> spp::RayPartialResult {
+		if (eid == cb->ignoreEntity) {
+			return {1.0f, false};
+		}
+		auto cw = cb->cw;
+		flecs::entity e = cw->GetAliveEntityGeneration(eid);
 
-void CollisionWorld::EntitySetTransform(
-	const ComponentBulletCollisionObject obj,
-	const ComponentStaticTransform &transform)
-{
-	obj.object->setWorldTransform(btTransform(ToBullet(transform.trans.rot),
-											  ToBullet(transform.trans.pos)));
-	obj.object->getCollisionShape()->setLocalScaling(
-		btVector3(transform.scale, transform.scale, transform.scale));
-	collisionWorld->updateSingleAabb(obj.object);
-	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(1);
-	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(1);
-}
+		float n = 1.0f;
+		glm::vec3 normal;
+		bool hit = false;
 
-void CollisionWorld::GetObjectsInAABB(
-	glm::vec3 aabbMin, glm::vec3 aabbMax, int filter,
-	std::vector<btCollisionObject *> *objects) const
-{
-	int f = 0;
-	if (filter & (FILTER_TERRAIN | FILTER_STATIC_OBJECT)) {
-		f |= btBroadphaseProxy::StaticFilter;
-	}
-	if (filter & FILTER_CHARACTER) {
-		f |= btBroadphaseProxy::CharacterFilter;
-	}
-	if (filter & FILTER_TRIGGER) {
-		f |= btBroadphaseProxy::SensorTrigger;
-	}
-	BroadphaseAabbAgregate broadphaseCallback(f);
-	std::swap(*objects, broadphaseCallback.objects);
+		if (auto *t = e.try_get<ComponentStaticTransform>()) {
+			auto *s = e.try_get<ComponentCollisionShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentCollisionShape "
+						  "but is inside CollisionWorld",
+						  e.id());
+				return {1.0f, false};
+			}
+			if (s->shape.RayTest(t->trans, *cb, n, normal)) {
+				hit = true;
+			}
+		} else if (auto *t = e.try_get<ComponentMovementState>()) {
+			auto *s = e.try_get<ComponentShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentShape but is "
+						  "inside CollisionWorld",
+						  e.id());
+				return {1.0f, false};
+			}
+			Collision3D::Transform tr{t->pos, {0}};
+			Collision3D::Cylinder cyl{s->height, s->width * 0.5f};
 
-	broadphase->aabbTest(ToBullet(aabbMin), ToBullet(aabbMax),
-						 broadphaseCallback);
-	std::swap(*objects, broadphaseCallback.objects);
-}
-
-void CollisionWorld::StartEpoch()
-{
-	((btDbvtBroadphase *)broadphase)->m_sets[0].optimizeIncremental(10);
-	((btDbvtBroadphase *)broadphase)->m_sets[1].optimizeIncremental(10);
-	/*
-	collisionWorld->setForceUpdateAllAabbs(true);
-	collisionWorld->updateAabbs();
-	collisionWorld->computeOverlappingPairs();
-	collisionWorld->performDiscreteCollisionDetection();
-	*/
-}
-
-void CollisionWorld::EndEpoch() {}
-
-void CollisionWorld::Debug() const
-{
-	auto objs = collisionWorld->getCollisionObjectArray();
-	for (int i = 0; i < objs.size(); ++i) {
-		auto o = objs.at(i);
-
-		auto shape = o->getCollisionShape();
-
-		if (dynamic_cast<btCylinderShape *>(shape)) {
-			LOG_INFO("shape cylinder");
-		} else if (dynamic_cast<btCapsuleShape *>(shape)) {
-			LOG_INFO("shape capsule");
-		} else if (dynamic_cast<btSphereShape *>(shape)) {
-			LOG_INFO("shape sphere");
-		} else if (dynamic_cast<btBoxShape *>(shape)) {
-			LOG_INFO("shape box");
-		} else if (dynamic_cast<btHeightfieldTerrainShape *>(shape)) {
-			LOG_INFO("shape heightmap");
-		} else if (dynamic_cast<btCompoundShape *>(shape)) {
-			LOG_INFO("shape compound: NOT PRINTING RECURSIVE");
+			if (cyl.RayTest(tr, *cb, n, normal)) {
+				hit = true;
+			}
 		} else {
-			LOG_INFO("Unknown shape used: %s", shape->getName());
+			LOG_FATAL("entity %lu does not have ComponentStaticTransform nor "
+					  "ComponentMovementState but is inside CollisionWorld",
+					  e.id());
+			return {1.0f, false};
 		}
+
+		if (hit == false) {
+			return {1.0f, false};
+		}
+
+		if (n < 0.0f) {
+			n = 0.0f;
+		}
+		bool res = false;
+
+		if (cb->hasHit == false) {
+			if (n < cb->cutFactor) {
+				res = true;
+			}
+		} else if (n < cb->cutFactor || (n - 0.000001f < cb->cutFactor &&
+										 (uint32_t)e.id() < cb->hitEntity)) {
+			res = true;
+		}
+
+		if (res) {
+			cb->cutFactor = n;
+			cb->hitPoint = cb->start + cb->dir * n;
+			cb->hitEntity = e;
+			cb->hasHit = true;
+			cb->entity = e;
+			return {n, true};
+		}
+
+		return {1.0f, false};
+	};
+
+	cb.mask = mask;
+	cb.start = start;
+	cb.end = end;
+	cb.initedVars = false;
+	broadphase->IntersectRay(cb);
+
+	if (cb.hasHit && cb.hitEntity && cb.entity.is_alive()) {
+		if (hitNormal)
+			*hitNormal = cb.hitNormal;
+		if (travelFactor)
+			*travelFactor = cb.cutFactor;
+		return true;
 	}
+
+	return false;
 }
 
-void CollisionWorld::RegisterObservers(Realm *realm)
+bool CollisionWorld_spp::RayTestFirstHitTerrain(glm::vec3 start, glm::vec3 end,
+												glm::vec3 *hitPosition,
+												glm::vec3 *hitNormal,
+												float *travelFactor,
+												flecs::entity *entity) const
+{
+	return RayTestFirstHit(start, end, hitPosition, hitNormal, entity,
+						   travelFactor, 0,
+						   FILTER_STATIC_OBJECT | FILTER_TERRAIN);
+}
+
+bool CollisionWorld_spp::RayTestFirstHitTerrainVector(
+	glm::vec3 start, glm::vec3 toEnd, glm::vec3 *hitPosition,
+	glm::vec3 *hitNormal, float *travelFactor, flecs::entity *entity) const
+{
+	return RayTestFirstHitTerrain(start, start + toEnd, hitPosition, hitNormal,
+								  travelFactor, entity);
+}
+
+size_t
+CollisionWorld_spp::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
+										std::vector<flecs::entity> *entities,
+										uint32_t mask) const
+{
+	return GetObjectsInAABB(min, max, mask, entities);
+}
+
+void CollisionWorld_spp::StartEpoch() {}
+void CollisionWorld_spp::EndEpoch() {}
+
+void CollisionWorld_spp::RegisterObservers(Realm *realm)
 {
 	auto &ecs = realm->ecs;
 	ecs.observer<ComponentShape, ComponentMovementState>()
@@ -362,44 +336,30 @@ void CollisionWorld::RegisterObservers(Realm *realm)
 					 const ComponentMovementState &state) {
 			OnAddEntity(entity, shape, state.pos);
 		});
-	ecs.observer<ComponentBulletCollisionObject>()
-		.event(flecs::OnRemove)
-		.each(
-			[this](flecs::entity entity, ComponentBulletCollisionObject &obj) {
-				if (obj.object) {
-					RemoveAndDestroyCollisionObject(obj.object);
-					obj.object = nullptr;
-				}
-			});
 
-	ecs.observer<ComponentShape, ComponentMovementState,
-				 ComponentBulletCollisionObject>()
+	ecs.observer<ComponentShape, ComponentMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const ComponentShape &shape,
-					 const ComponentMovementState &state,
-					 const ComponentBulletCollisionObject &obj) {
+					 const ComponentMovementState &state) {
 			if (entity.has<ComponentMovementState>()) {
-				UpdateEntityBvh_(obj, shape, state.pos);
+				EntitySetTransform(entity, state.pos, shape);
 			}
-		});
-	ecs.observer<ComponentStaticTransform, ComponentBulletCollisionObject>()
-		.event(flecs::OnSet)
-		.each([this](flecs::entity entity,
-					 const ComponentStaticTransform &transform,
-					 const ComponentBulletCollisionObject &obj) {
-			EntitySetTransform(obj, transform);
 		});
 
 	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
-		.event(flecs::OnSet)
+		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, const ComponentCollisionShape &shape,
 					 const ComponentStaticTransform &transform) {
 			OnStaticCollisionShape(entity, shape, transform);
 		});
+
+	ecs.observer<ComponentStaticTransform, ComponentCollisionShape>()
+		.event(flecs::OnSet)
+		.each([this](flecs::entity entity,
+					 const ComponentStaticTransform &transform,
+					 const ComponentCollisionShape &shape) {
+			EntitySetTransform(entity, transform, shape);
+		});
 }
 
-int RegisterEntityComponentsCollisionWorld(flecs::world &ecs)
-{
-	ecs.component<ComponentBulletCollisionObject>();
-	return 0;
-}
+int RegisterEntityComponentsCollisionWorld(flecs::world &ecs) { return 0; }

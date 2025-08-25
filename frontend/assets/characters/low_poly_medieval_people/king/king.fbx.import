@@ -4,12 +4,11 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cpvuuec8rkyw1"
-path="res://.godot/imported/king.fbx-22a2d535ca4822825f14e2d3caf25933.scn"
+valid=false
 
 [deps]
 
 source_file="res://assets/characters/low_poly_medieval_people/king/king.fbx"
-dest_files=["res://.godot/imported/king.fbx-22a2d535ca4822825f14e2d3caf25933.scn"]
 
 [params]
 

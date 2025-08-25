@@ -16,6 +16,27 @@ ByteReader<true> &op(ByteReader<true> &s, Collision3D::Cylinder &shape);
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 								  const Collision3D::Cylinder &shape);
 
+ByteReader<true> &op(ByteReader<true> &s, Collision3D::Sphere &shape);
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Collision3D::Sphere &shape);
+
+ByteReader<true> &op(ByteReader<true> &s, Collision3D::Rectangle &shape);
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Collision3D::Rectangle &shape);
+
+ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyPrimitive &shape);
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Collision3D::AnyPrimitive &shape);
+
+ByteReader<true> &op(ByteReader<true> &s,
+					 Collision3D::CompoundPrimitive &shape);
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Collision3D::CompoundPrimitive &shape);
+
+ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyShape &shape);
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Collision3D::AnyShape &shape);
+
 ByteReader<true> &op(ByteReader<true> &s,
 					 Collision3D::HeightMap<float, uint8_t> &shape);
 ByteWriter<icon7::ByteBuffer> &

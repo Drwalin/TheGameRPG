@@ -28,7 +28,7 @@ void RealmServer::InteractInLineOfSight(
 	forward = mat * v4;
 
 	flecs::entity entity = Entity(instigatorId);
-	const auto shape = entity.get<ComponentShape>();
+	const auto shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
 		// TODO: maybe error?
 		return;
@@ -55,7 +55,7 @@ void RealmServer::InteractInLineOfSight(
 	if (srcEntity.is_valid() && targetEntity.is_valid() &&
 		srcEntity.is_alive() && targetEntity.is_alive()) {
 		if (targetEntity.has<ComponentOnUse>()) {
-			const ComponentOnUse *onUse = targetEntity.get<ComponentOnUse>();
+			const ComponentOnUse *onUse = targetEntity.try_get<ComponentOnUse>();
 			if (onUse && onUse->entry) {
 				onUse->entry->Call(this, instigatorId, targetId, "");
 			}

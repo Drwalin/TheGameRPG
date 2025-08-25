@@ -45,7 +45,7 @@ void ServerCore::UpdatePlayer(
 			// TODO: verify movement state to prevent cheating (here implement
 			//       anti-cheat)
 
-			if (auto s = entity.get<ComponentMovementState>()) {
+			if (auto s = entity.try_get<ComponentMovementState>()) {
 				if (glm::length(s->pos - state.oldState.pos) < 5) {
 					realm->currentlyUpdatingPlayerPeerEntityMovement = true;
 					entity.set<ComponentLastAuthoritativeMovementState>(state);
@@ -107,7 +107,7 @@ _LABEL_BEGINING_CONNECT_PEER_TO_REALM:
 						data->useNextRealmPosition = false;
 						auto *_ls =
 							entity
-								.get<ComponentLastAuthoritativeMovementState>();
+								.try_get<ComponentLastAuthoritativeMovementState>();
 						if (_ls) {
 							auto ls = *_ls;
 							ls.oldState.pos = data->nextRealmPosition;
@@ -198,7 +198,7 @@ void ServerCore::InteractInLineOfSight(
 		UpdatePlayer(peer, state);
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
-			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
+			auto s = entity.try_get<ComponentLastAuthoritativeMovementState>();
 			if (s) {
 				state = *s;
 			}
@@ -218,7 +218,7 @@ void ServerCore::Attack(icon7::Peer *peer,
 		UpdatePlayer(peer, state);
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
-			auto s = entity.get<ComponentLastAuthoritativeMovementState>();
+			auto s = entity.try_get<ComponentLastAuthoritativeMovementState>();
 			if (s) {
 				state = *s;
 			}

@@ -47,12 +47,12 @@ func Rebuild():
 					#| Mesh.ARRAY_FORMAT_TEX_UV
 					);
 		#mesh.surface_set_material(0, $MeshInstance3D.material_override);
-		mesh.custom_aabb = AABB(Vector3(0,0,0), Vector3(width*scaleSize.x+1,scaleSize.y+1,depth*scaleSize.z+1));
+		var ext = Vector3(width*scaleSize.x+1,scaleSize.y*2+1,depth*scaleSize.z+1) + Vector3(100, 100, 100);
 		$MeshInstance3D.mesh = mesh;
+		mesh.custom_aabb = AABB(-ext, ext*3);
 		combinedTexture = ImageTexture.create_from_image(combinedImages);
 		oldWidth = width;
 		oldDepth = depth;
-		$MeshInstance3D.position = -(Vector3(width,0,depth) * scaleSize) / 2.0;
 		$MeshInstance3D.scale = Vector3(1,1,1);
 	else:
 		combinedTexture.update(combinedImages);
@@ -70,10 +70,10 @@ func Rebuild():
 
 func _process(delta):
 	counter = counter + 1;
-	if (counter % 60 != 7):
+	if (counter % 260 != 7):
 		return;
-	var w = 64;
-	var d = 64;
+	var w = 65;
+	var d = 65;
 	var m:PackedByteArray;
 	var h:PackedByteArray;
 	h.resize(w*d*2);
@@ -83,4 +83,4 @@ func _process(delta):
 		h[i*2+0] = v*255.0;
 		h[i*2+1] = v * 255.0 * 255.0 - int(v*255.0)*255.0;
 		m[i] = noise.get_noise_3d(i%w, 123, i/w) * 1155.0;
-	Update(h, m, w, d, Vector3(2, 1.0, 2));
+	Update(h, m, w, d, Vector3(2, 2.0, 2));

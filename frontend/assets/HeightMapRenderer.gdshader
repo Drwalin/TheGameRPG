@@ -96,7 +96,7 @@ void vertex() {
 
 	normal = vec3(0,-1,0);
 
-    VERTEX = (MODELVIEW_MATRIX * vec4(vecs[vid] * scaleSize, 1.0)).xyz;
+    VERTEX = (MODELVIEW_MATRIX * vec4(vecs[vid] * scaleSize - vec3(ivec3(size.x, 0, size.y)) * scaleSize * 0.5, 1.0)).xyz;
     NORMAL = normalize((MODELVIEW_MATRIX * vec4(normal, 0.0)).xyz);
     BINORMAL = normalize((MODELVIEW_MATRIX * vec4(binoraml, 0.0)).xyz);
     TANGENT = normalize((MODELVIEW_MATRIX * vec4(tangent, 0.0)).xyz);
@@ -106,6 +106,74 @@ void vertex() {
 	if (idBase < 0) {
 		VERTEX = (MODELVIEW_MATRIX * vec4(0,0,0, 1.0)).xyz;
 	}
+}
+
+const int[64] dither_table = int[](
+    0, 48, 12, 60, 3, 51, 15, 63,
+    32, 16, 44, 28, 35, 19, 47, 31,
+    8,  56, 4,  52, 11, 59, 7,  55,
+    40, 24, 36, 20, 43, 27, 39, 23,
+    2,  50, 14, 62, 1,  49, 13, 61,
+    34, 18, 46, 30, 33, 17, 45, 29,
+    10, 58, 6,  54, 9,  57, 5,  53,
+    42, 26, 38, 22, 41, 25, 37, 21
+);
+
+const int[10*10] matIdDither = int[](
+	0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+	0, 1, 0, 1, 1, 0, 0, 1, 3, 1,
+	0, 0, 2, 0, 1, 0, 1, 0, 1, 1,
+	0, 2, 0, 1, 2, 3, 3, 1, 3, 1,
+	0, 2, 2, 1, 3, 2, 0, 3, 3, 1,
+	2, 0, 0, 3, 1, 0, 2, 1, 1, 3,
+	2, 2, 2, 2, 0, 1, 3, 3, 3, 3,
+	2, 2, 2, 2, 3, 2, 3, 3, 3, 3,
+	2, 2, 2, 2, 3, 2, 3, 3, 3, 3,
+	2, 2, 2, 2, 2, 3, 3, 3, 3, 3
+);
+
+vec3 DitherBetween(vec3 m1, vec3 m2, ivec2 ditherPos, float factor)
+{
+	ditherPos = ditherPos & ivec2(7,7);
+	float f = float(dither_table[ditherPos.x + ditherPos.y * 8] + 1);
+	factor = factor * 64.0;
+	return f > factor ? m1 : m2;
+}
+
+vec3 Dither(vec3 m[4], ivec2 ditherPos)
+{
+	ditherPos = clamp(ditherPos, 0, 9);
+	return m[matIdDither[ditherPos.x + ditherPos.y * 10]];
+
+	int mult = 8;
+	ivec2 ditherPos2 = ditherPos & ivec2(7,7);
+	int f = dither_table[ditherPos2.x * 8 + ditherPos2.y];
+	if (ditherPos.x < 0) {
+		if (ditherPos.y < 0) {
+			return m[0];
+		} else if (ditherPos.y >= 8) {
+			return m[2];
+		} else {
+			return f > ditherPos.y*mult ? m[0] : m[2];
+		}
+	} else if (ditherPos.x >= 8) {
+		if (ditherPos.y < 0) {
+			return m[1];
+		} else if (ditherPos.y >= 8) {
+			return m[3];
+		} else {
+			return f > ditherPos.y*mult ? m[1] : m[3];
+		}
+	} else {
+		if (ditherPos.y < 0) {
+			return f > ditherPos.x*mult ? m[0] : m[1];
+		} else if (ditherPos.y >= 8) {
+			return f > ditherPos.x*mult ? m[2] : m[3];
+		} else {
+			return m[f/16];
+		}
+	}
+	return m[f/16];
 }
 
 void fragment() {
@@ -118,10 +186,35 @@ void fragment() {
 	ivec2 c;
 	c.x = materialOffset.x > 0.5 ? 1 : 0;
 	c.y = materialOffset.y > 0.5 ? 2: 0;
-
 	int s = c.x + c.y;
 
-	ALBEDO = m[s];
+	vec3 material;
+
+	vec2 v = abs(materialOffset - vec2(0.5,0.5));
+	//if ((v.x < 0.125 || v.y < 0.125) && true) {
+		vec2 factor = (materialOffset) * 32.0 - 16.0 + 5.0;
+		ivec2 ditherPos = ivec2(factor);
+		factor = vec2(ditherPos);
+		factor = clamp(factor, 0, 1);
+		vec3 m1, m2;
+
+		m1 = DitherBetween(m[0], m[1], ditherPos, factor.x);
+		m2 = DitherBetween(m[2], m[3], ditherPos, factor.x);
+		material = DitherBetween(m1, m2, ditherPos, factor.y);
+		material = Dither(m, ditherPos);
+	//} else {
+	//	int s = c.x + c.y;
+	//	material = m[s];
+	//}
+
+	ALBEDO = material;
+
+	vec2 a = abs(materialOffset-vec2(0.5,0.5)) * 500.0;
+
+
+	if (a.x < 1.0 || a.y < 1.0) {
+		ALBEDO = vec3(0,0,0);
+	}
 }
 
 //void light() {
