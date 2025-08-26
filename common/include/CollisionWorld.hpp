@@ -49,9 +49,8 @@ public:
 	bool TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,
-							   int approximationSpheresAmount, float stepHeight,
-							   float minNormalYcomponent,
-							   float maxDistancePerIteration) const;
+							   float stepHeight,
+							   float minNormalYcomponent) const;
 
 	bool TestIsOnGround(glm::vec3 pos, glm::vec3 *groundPoint,
 						glm::vec3 *normal, float stepHeight,
@@ -71,6 +70,10 @@ public:
 									  flecs::entity *entity) const;
 
 	size_t TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
+							   std::vector<flecs::entity> *entities,
+							   uint32_t mask) const;
+
+	size_t TestForEntitiesAABBApproximate(glm::vec3 min, glm::vec3 max,
 							   std::vector<flecs::entity> *entities,
 							   uint32_t mask) const;
 
@@ -98,47 +101,6 @@ public:
 	void RegisterObservers(Realm *realm);
 
 private:
-	friend class ManifoldResult;
-
-	struct Contact {
-		glm::vec3 normal;
-		glm::vec3 point;
-		float depth;
-		glm::vec3 dir;
-		float distance;
-		glm::vec3 objectPos;
-	};
-
-	/*
-	 * length(dir) == 1
-	 */
-	bool PerformObjectSweep(
-		btCollisionObject *object, glm::vec3 start, glm::vec3 dir, float step,
-		float maxDistance, const std::vector<btCollisionObject *> &otherObjects,
-		std::vector<Contact> *contacts, float *distanceTraveled) const;
-
-	bool
-	TestObjectCollision(btCollisionObject *object,
-						const std::vector<btCollisionObject *> &otherObjects,
-						std::vector<Contact> *contacts) const;
-
-	void FindCorrectTravelDistance(const std::vector<Contact> &contacts,
-								   glm::vec3 start,
-								   float currentTraveledDistance,
-								   float *correctedTravelDistance) const;
-	void FindPushoutVector(const std::vector<Contact> &contacts,
-						   glm::vec3 position, glm::vec3 *pushoutVector) const;
-
-	uint32_t GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax,
-							  uint32_t mask,
-							  std::vector<flecs::entity> *objects) const;
-	bool
-	RayTestFirstHitWithObjects(glm::vec3 start, glm::vec3 direction,
-							   glm::vec3 *hitPosition, glm::vec3 *hitNormal,
-							   float *travelFactor,
-							   const std::vector<flecs::entity> &objects) const;
-
-private:
 	flecs::entity GetAliveEntityGeneration(uint32_t id) const;
 
 private:
@@ -153,6 +115,8 @@ private:
 
 private:
 	spp::BroadphaseBase<spp::Aabb, uint32_t, uint32_t, 0> *broadphase = nullptr;
+	
+	std::vector<flecs::entity> localEntitiesStack;
 
 	class Realm *realm = nullptr;
 };

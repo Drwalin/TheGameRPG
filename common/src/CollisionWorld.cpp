@@ -132,62 +132,6 @@ void CollisionWorld_spp::EntitySetTransform(flecs::entity entity,
 	broadphase->Update(entity.id() & 0xFFFFFFFF, aabb);
 }
 
-uint32_t
-CollisionWorld_spp::GetObjectsInAABB(glm::vec3 aabbMin, glm::vec3 aabbMax,
-									 uint32_t mask,
-									 std::vector<flecs::entity> *objects) const
-{
-	struct Cb : public CallbackAabb {
-		std::vector<flecs::entity> *objects;
-		const CollisionWorld *cw;
-		uint32_t count = 0;
-	} cb;
-	cb.cw = this;
-	cb.objects = objects;
-	typedef void (*CbT)(CallbackAabb *, uint32_t);
-	cb.callback = (CbT) + [](Cb *cb, uint32_t eid) {
-		auto cw = cb->cw;
-		flecs::entity e = cw->GetAliveEntityGeneration(eid);
-		if (auto *t = e.try_get<ComponentStaticTransform>()) {
-			auto *s = e.try_get<ComponentCollisionShape>();
-			if (s == nullptr) {
-				LOG_FATAL("entity %lu does not have ComponentCollisionShape "
-						  "but is inside CollisionWorld",
-						  e.id());
-				return;
-			}
-			if (cb->IsRelevant(s->shape.GetAabb(t->trans))) {
-				cb->objects->push_back(e);
-				cb->count++;
-			}
-		} else if (auto *t = e.try_get<ComponentMovementState>()) {
-			auto *s = e.try_get<ComponentShape>();
-			if (s == nullptr) {
-				LOG_FATAL("entity %lu does not have ComponentShape but is "
-						  "inside CollisionWorld",
-						  e.id());
-				return;
-			}
-			Collision3D::Transform tr{t->pos, {0}};
-			Collision3D::Cylinder cyl{s->height, s->width * 0.5f};
-			if (cb->IsRelevant(cyl.GetAabb(tr))) {
-				cb->objects->push_back(e);
-				cb->count++;
-			}
-		} else {
-			LOG_FATAL("entity %lu does not have ComponentStaticTransform nor "
-					  "ComponentMovementState but is inside CollisionWorld",
-					  e.id());
-		}
-	};
-
-	cb.mask = mask;
-	cb.aabb = {aabbMin, aabbMax};
-	broadphase->IntersectAabb(cb);
-
-	return cb.count;
-}
-
 flecs::entity CollisionWorld_spp::GetAliveEntityGeneration(uint32_t id) const
 {
 	return realm->ecs.get_alive(realm->Entity(id));
@@ -213,6 +157,9 @@ bool CollisionWorld_spp::RayTestFirstHit(
 		}
 		auto cw = cb->cw;
 		flecs::entity e = cw->GetAliveEntityGeneration(eid);
+		if ((e.is_valid() && e.is_alive()) == false) {
+			return {1.0f, false};
+		}
 
 		float n = 1.0f;
 		glm::vec3 normal;
@@ -321,7 +268,87 @@ CollisionWorld_spp::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 										std::vector<flecs::entity> *entities,
 										uint32_t mask) const
 {
-	return GetObjectsInAABB(min, max, mask, entities);
+	struct Cb : public CallbackAabb {
+		std::vector<flecs::entity> *entities;
+		const CollisionWorld *cw;
+		uint32_t count = 0;
+	} cb;
+	cb.cw = this;
+	cb.entities = entities;
+	typedef void (*CbT)(CallbackAabb *, uint32_t);
+	cb.callback = (CbT) + [](Cb *cb, uint32_t eid) {
+		auto cw = cb->cw;
+		flecs::entity e = cw->GetAliveEntityGeneration(eid);
+		if ((e.is_valid() && e.is_alive()) == false) {
+			return;
+		}
+		if (auto *t = e.try_get<ComponentStaticTransform>()) {
+			auto *s = e.try_get<ComponentCollisionShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentCollisionShape "
+						  "but is inside CollisionWorld",
+						  e.id());
+				return;
+			}
+			if (cb->IsRelevant(s->shape.GetAabb(t->trans))) {
+				cb->entities->push_back(e);
+				cb->count++;
+			}
+		} else if (auto *t = e.try_get<ComponentMovementState>()) {
+			auto *s = e.try_get<ComponentShape>();
+			if (s == nullptr) {
+				LOG_FATAL("entity %lu does not have ComponentShape but is "
+						  "inside CollisionWorld",
+						  e.id());
+				return;
+			}
+			Collision3D::Transform tr{t->pos, {0}};
+			Collision3D::Cylinder cyl{s->height, s->width * 0.5f};
+			if (cb->IsRelevant(cyl.GetAabb(tr))) {
+				cb->entities->push_back(e);
+				cb->count++;
+			}
+		} else {
+			LOG_FATAL("entity %lu does not have ComponentStaticTransform nor "
+					  "ComponentMovementState but is inside CollisionWorld",
+					  e.id());
+		}
+	};
+
+	cb.mask = mask;
+	cb.aabb = {min, max};
+	broadphase->IntersectAabb(cb);
+
+	return cb.count;
+}
+
+size_t
+CollisionWorld_spp::TestForEntitiesAABBApproximate(glm::vec3 min, glm::vec3 max,
+										std::vector<flecs::entity> *entities,
+										uint32_t mask) const
+{
+	struct Cb : public CallbackAabb {
+		std::vector<flecs::entity> *entities;
+		const CollisionWorld *cw;
+		uint32_t count = 0;
+	} cb;
+	cb.cw = this;
+	cb.entities = entities;
+	typedef void (*CbT)(CallbackAabb *, uint32_t);
+	cb.callback = (CbT) + [](Cb *cb, uint32_t eid) {
+		auto cw = cb->cw;
+		flecs::entity e = cw->GetAliveEntityGeneration(eid);
+		if (e.is_valid() && e.is_alive()) {
+			cb->entities->push_back(e);
+			cb->count++;
+		}
+	};
+
+	cb.mask = mask;
+	cb.aabb = {min, max};
+	broadphase->IntersectAabb(cb);
+
+	return cb.count;
 }
 
 void CollisionWorld_spp::StartEpoch() {}
