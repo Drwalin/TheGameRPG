@@ -49,6 +49,7 @@ public:
 	bool TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,
+							   glm::vec3 *groundNormal,
 							   float stepHeight,
 							   float minNormalYcomponent) const;
 
@@ -77,21 +78,21 @@ public:
 							   std::vector<flecs::entity> *entities,
 							   uint32_t mask) const;
 
-	/*
-	size_t TestForEntitiesVertBox(glm::vec3 center, glm::vec3 halfExtents,
-								  glm::quat rotation,
-								  std::vector<uint32_t> *testedEntityIds,
-								  uint32_t mask) const;
 	size_t TestForEntitiesSphere(glm::vec3 center, float radius,
-								 std::vector<flecs::entity> *testedEntityIds,
+								 std::vector<flecs::entity> *testedEntities,
 								 uint32_t mask) const;
 	size_t TestForEntitiesCylinder(glm::vec3 centerBottom, float radius,
 								   float height,
-								   std::vector<flecs::entity> *testedEntityIds,
+								   std::vector<flecs::entity> *testedEntities,
 								   uint32_t mask) const;
+	/*
+	size_t TestForEntitiesVertBox(glm::vec3 center, glm::vec3 halfExtents,
+								  glm::quat rotation,
+								  std::vector<uint32_t> *testedEntities,
+								  uint32_t mask) const;
 	size_t TestForEntitiesCone(glm::vec3 peak, glm::vec3 axis, float radius,
 							   float height,
-							   std::vector<flecs::entity> *testedEntityIds,
+							   std::vector<flecs::entity> *testedEntities,
 							   uint32_t mask) const;
 	*/
 

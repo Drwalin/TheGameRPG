@@ -5,10 +5,8 @@
 
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 
-#include <flecs.h>
-
-#include <icon7/Forward.hpp>
-#include <icon7/ByteBuffer.hpp>
+#include "../../ICon7/include/icon7/Forward.hpp"
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 class RealmServer;
 

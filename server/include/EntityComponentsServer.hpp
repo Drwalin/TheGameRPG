@@ -4,7 +4,7 @@
 
 #include "../../common/include/ComponentsUtility.hpp"
 
-#include <icon7/Forward.hpp>
+#include "../../ICon7/include/icon7/Forward.hpp"
 
 struct ComponentPlayerConnectionPeer {
 	std::shared_ptr<icon7::Peer> peer;

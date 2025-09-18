@@ -2,9 +2,8 @@
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_trigonometric.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/gtc/quaternion.hpp"
 
-#include <flecs.h>
+#include "../../../thirdparty/flecs/distr/flecs.h"
 
-#include "../../../common/include/EntityComponents.hpp"
 #include "../../include/ComponentCallbackRegistry.hpp"
 #include "../../include/ComponentCallbacks.hpp"
 #include "../../../common/include/EntityComponents.hpp"
@@ -58,22 +57,21 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 							   const ComponentMovementParameters *params,
 							   float acceptableDistance, float searchDistance)
 {
-	std::vector<uint64_t> entities;
+	std::vector<flecs::entity> entities;
 	realm->collisionWorld.TestForEntitiesSphere(
 		state->pos, searchDistance, &entities,
 		FILTER_CHARACTER);
 
-	uint64_t found = 0;
+	flecs::entity foundEntity;
 	glm::vec3 targetPos;
 
 	glm::vec3 eyes = state->pos;
 	eyes.y += shape->height;
 	glm::vec3 hitPos = {100000, 100000, 100000};
-	uint64_t targetHitId = 0;
+	flecs::entity targetHit;
 
-	for (uint64_t id : entities) {
-		if (id != entityId) {
-			flecs::entity target = realm->Entity(id);
+	for (flecs::entity target : entities) {
+		if (target.id() != entityId) {
 			if (target.has<ComponentPlayerConnectionPeer>() &&
 				target.has<ComponentMovementState>() &&
 				target.has<ComponentShape>()) {
@@ -82,24 +80,24 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 				const ComponentShape *sh = target.try_get<ComponentShape>();
 
 				glm::vec3 _hitPos;
-				uint64_t _targetHitId = 0;
+				flecs::entity _targetHit;
 				if (realm->collisionWorld.RayTestFirstHit(
 						eyes, s->pos + glm::vec3(0, sh->height * 0.5f, 0),
-						&_hitPos, nullptr, &_targetHitId, nullptr, nullptr,
-						entityId)) {
-					if (_targetHitId == id) {
-						if (found) {
+						&_hitPos, nullptr, &_targetHit, nullptr, entityId,
+						FILTER_TERRAIN|FILTER_CHARACTER|FILTER_STATIC_OBJECT)) {
+					if (_targetHit == target) {
+						if (foundEntity.is_valid() && foundEntity.is_alive()) {
 							if (glm::length2(state->pos - targetPos) >
 								glm::length2(state->pos - s->pos)) {
-								found = id;
+								foundEntity = target;
 								targetPos = s->pos;
-								targetHitId = _targetHitId;
+								targetHit = _targetHit;
 								hitPos = _hitPos;
 							}
 						} else {
-							found = id;
+							foundEntity = target;
 							targetPos = s->pos;
-							targetHitId = _targetHitId;
+							targetHit = _targetHit;
 							hitPos = _hitPos;
 						}
 					}
@@ -108,18 +106,18 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 		}
 	}
 
-	if (found != 0) {
+	if (foundEntity.is_valid() && foundEntity.is_alive()) {
 		MoveTo(state, params, targetPos, acceptableDistance);
 
 		if (rand() % 10 == 0) {
 			if (glm::length2(eyes - hitPos) < 10.0f) {
 				ComponentLastAuthoritativeMovementState ls{*state};
-				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 0);
-				realm->Attack(entityId, ls, targetHitId, hitPos, 0, 0, 1);
-				// LOG_INFO("Attack %lu->%lu", entityId, targetHitId);
+				realm->Attack(entityId, ls, targetHit.id(), hitPos, 0, 0, 0);
+// 				realm->Attack(entityId, ls, targetHit.id(), hitPos, 0, 0, 1);
+				// LOG_INFO("Attack %lu->%lu", entityId, targetHit);
 			} else {
 				// LOG_INFO("Miss %lu->%lu     dist: %.2f", entityId,
-				// targetHitId, glm::length(eyes - hitPos));
+				// targetHit, glm::length(eyes - hitPos));
 			}
 		}
 		return true;

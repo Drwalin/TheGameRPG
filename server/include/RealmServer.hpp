@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include <icon7/Flags.hpp>
-#include <icon7/Forward.hpp>
-#include <icon7/CommandExecutionQueue.hpp>
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/Forward.hpp"
+#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
 
 #include "PeerData.hpp"
 

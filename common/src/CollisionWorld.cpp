@@ -4,7 +4,7 @@
 #include <memory>
 #include <mutex>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../thirdparty/flecs/distr/flecs.h"
 
@@ -349,6 +349,77 @@ CollisionWorld_spp::TestForEntitiesAABBApproximate(glm::vec3 min, glm::vec3 max,
 	broadphase->IntersectAabb(cb);
 
 	return cb.count;
+}
+
+size_t CollisionWorld_spp::TestForEntitiesSphere(glm::vec3 center, float radius,
+							 std::vector<flecs::entity> *testedEntities,
+							 uint32_t mask) const
+{
+	size_t c = TestForEntitiesAABB(center-radius, center+radius, testedEntities, mask);
+	
+	assert(c <= testedEntities->size());
+	
+	const float rad2 = radius*radius;
+	
+	for (int i=testedEntities->size()-c; i<c; ++i) {
+		flecs::entity e = (*testedEntities)[i];
+		bool remove = true;
+		if (auto *t = e.try_get<ComponentStaticTransform>()) {
+			if (auto *s = e.try_get<ComponentCollisionShape>()) {
+				spp::Aabb aabb = s->shape.GetAabb(t->trans);
+				glm::vec3 c = aabb.GetCenter();
+				glm::vec3 v = c - center;
+				if (glm::dot(v, v) <= rad2) {
+					remove = false;
+				}
+			}
+		}
+		if (remove) {
+			(*testedEntities)[i] = (*testedEntities)[testedEntities->size()-1];
+			testedEntities->resize(testedEntities->size()-1);
+			--c;
+			--i;
+		}
+	}
+	
+	return c; 
+}
+
+size_t CollisionWorld_spp::TestForEntitiesCylinder(glm::vec3 centerBottom,
+							   float radius, float height,
+							   std::vector<flecs::entity> *testedEntities,
+							   uint32_t mask) const
+{
+	size_t c = TestForEntitiesAABB(centerBottom-glm::vec3(radius, 0, radius),
+			centerBottom+glm::vec3(radius, height, radius), testedEntities, mask);
+	
+	assert(c <= testedEntities->size());
+	
+	const float rad2 = radius*radius;
+	
+	for (int i=testedEntities->size()-c; i<c; ++i) {
+		flecs::entity e = (*testedEntities)[i];
+		bool remove = true;
+		if (auto *t = e.try_get<ComponentStaticTransform>()) {
+			if (auto *s = e.try_get<ComponentCollisionShape>()) {
+				spp::Aabb aabb = s->shape.GetAabb(t->trans);
+				glm::vec3 c = aabb.GetCenter();
+				glm::vec3 v = c - centerBottom;
+				v.y = 0;
+				if (glm::dot(v, v) <= rad2 && c.y >= centerBottom.y && c.z <= centerBottom.y + height) {
+					remove = false;
+				}
+			}
+		}
+		if (remove) {
+			(*testedEntities)[i] = (*testedEntities)[testedEntities->size()-1];
+			testedEntities->resize(testedEntities->size()-1);
+			--c;
+			--i;
+		}
+	}
+	
+	return c; 
 }
 
 void CollisionWorld_spp::StartEpoch() {}

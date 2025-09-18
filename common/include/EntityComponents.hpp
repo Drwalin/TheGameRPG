@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
-#include <variant>
 
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 

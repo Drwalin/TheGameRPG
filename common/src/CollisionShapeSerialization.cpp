@@ -95,7 +95,7 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyPrimitive &shape)
 {
 	shape.~AnyPrimitive();
-	s.op(shape.type);
+	s.op(*(uint8_t*)&shape.type);
 	if (shape.type != Collision3D::AnyPrimitive::INVALID) {
 		s.op(shape.trans);
 	}
@@ -122,7 +122,7 @@ ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyPrimitive &shape)
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 								  const Collision3D::AnyPrimitive &shape)
 {
-	s.op(shape.type);
+	s.op(*(const uint8_t*)&shape.type);
 	if (shape.type != Collision3D::AnyPrimitive::INVALID) {
 		s.op(shape.trans);
 	}
@@ -160,7 +160,7 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyShape &shape)
 {
 	shape.~AnyShape();
-	s.op(shape.type);
+	s.op(*(uint8_t*)&shape.type);
 	if (shape.type != Collision3D::AnyShape::INVALID) {
 		s.op(shape.trans);
 	}
@@ -193,7 +193,7 @@ ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyShape &shape)
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 								  const Collision3D::AnyShape &shape)
 {
-	s.op(shape.type);
+	s.op(*(const uint8_t*)&shape.type);
 	if (shape.type != Collision3D::AnyShape::INVALID) {
 		s.op(shape.trans);
 	}

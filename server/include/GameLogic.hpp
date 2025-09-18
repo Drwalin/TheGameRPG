@@ -1,6 +1,6 @@
 #pragma once
 
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
 #include "../../common/include/EntityEvent.hpp"

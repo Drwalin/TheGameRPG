@@ -154,7 +154,7 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 	func(this);
 
 	ComponentCollisionShape shape;
-	__InnerShape &is = shape.shape;
+	Collision3D::AnyShape &is = shape.shape;
 
 	Transform3D inv = get_global_transform().affine_inverse();
 

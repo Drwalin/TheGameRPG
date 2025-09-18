@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
 #include "TickTimer.hpp"
 #include "CollisionWorld.hpp"

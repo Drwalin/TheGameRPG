@@ -110,7 +110,7 @@ void UpdateMovement(
 
 	glm::vec3 d = currentState.pos - prev.pos;
 	if (glm::dot(d, d) > 0.00001) {
-		realm->collisionWorld.UpdateEntityBvh(entity, shape, currentState.pos);
+		realm->collisionWorld.EntitySetTransform(entity, currentState.pos, shape);
 	}
 }
 } // namespace EntitySystems

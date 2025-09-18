@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include <icon7/Forward.hpp>
+#include "../../ICon7/include/icon7/Forward.hpp"
 
 #include "Realm.hpp"
 

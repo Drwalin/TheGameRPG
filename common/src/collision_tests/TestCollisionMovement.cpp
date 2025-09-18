@@ -1,4 +1,4 @@
-#include "../../../thirdparty/flecs/include/flecs.h"
+#include "../../../thirdparty/flecs/distr/flecs.h"
 
 #include "../../../ICon7/include/icon7/Debug.hpp"
 
@@ -8,9 +8,14 @@
 bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 						   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 						   bool *isOnGround, glm::vec3 *normal,
+						   glm::vec3 *groundNormal,
 						   float stepHeight,
 						   float minNormalYcomponent) const
 {
+	if (stepHeight > shape.height) {
+		stepHeight = shape.height;
+	}
+	
 	if (normal) {
 		*normal = glm::normalize(end - start);
 	}
@@ -45,19 +50,16 @@ bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start
 		return false;
 	}
 
-	const float heightStart = stepHeight;
-	const float heightEnd = shape.height - 0.001f;
-	const float heightDiff = heightEnd - heightStart;
-	Collision3D::Cylinder cyl{shape.height, shape.width*0.5f};
-
-	const glm::vec3 travelDirNorm = glm::normalize(end - start);
+	Collision3D::Cylinder cyl{shape.height - stepHeight, shape.width*0.5f};
 
 	bool hasCollision = false;
 	
 	float maxValidTravelDistanceFactor = 1.0f;
 	
 	Collision3D::RayInfo movement;
-	movement.Calc(start, end);
+	movement.Calc(start + stepVector, end + stepVector);
+	
+	// Test strainght along movement vector
 	
 	for (int i=0; i<count; ++i) {
 		flecs::entity e = entities[i];
@@ -74,7 +76,8 @@ bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start
 			if (s->shape.CylinderTestMovement(t->trans, travelDistanceFactor, cyl, movement, _normal)) {
 				if (maxValidTravelDistanceFactor >= travelDistanceFactor) {
 					maxValidTravelDistanceFactor = travelDistanceFactor;
-					if (normal) *normal = _normal;
+					if (normal)
+						*normal = _normal;
 				}
 			}
 		} else {
@@ -83,12 +86,20 @@ bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start
 		}
 	}
 	
+
+	
 	*finalCorrectedPosition = start + (end - start) * maxValidTravelDistanceFactor;
 	
-	float maxOffsetHeight = 0;
+
+	
+	float maxOffsetHeight = 1.0f;
+	glm::vec3 hitNormal;
+	bool hasHitOnGround = false;
 	
 	Collision3D::RayInfo toGroundRay;
-	toGroundRay.Calc(*finalCorrectedPosition, *finalCorrectedPosition - stepHeight);
+	toGroundRay.Calc(*finalCorrectedPosition + stepVector, *finalCorrectedPosition - stepVector);
+	
+	// Test on ground
 	
 	for (int i=0; i<count; ++i) {
 		flecs::entity e = entities[i];
@@ -101,9 +112,13 @@ bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start
 			}
 			
 			float near;
-			glm::vec3 n;
-			if (s->shape.RayTest(t->trans, toGroundRay, near, n)) {
-				
+			glm::vec3 norm;
+			if (s->shape.RayTest(t->trans, toGroundRay, near, norm)) {
+				hasHitOnGround = true;
+				if (near < maxOffsetHeight) {
+					maxOffsetHeight = near;
+					hitNormal = norm;
+				}
 			}
 		} else {
 			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",
@@ -111,47 +126,17 @@ bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start
 		}
 	}
 	
-	
-	
-	
-	
-	
 
-	*finalCorrectedPosition = end;
-
-	// TODO: test isOnGround
-	const glm::vec3 toHeadTop = glm::vec3(0, heightEnd, 0);
-	const glm::vec3 toMaxFeet = glm::vec3(0, stepHeight, 0);
-	const glm::vec3 toFeetBottom =
-		glm::vec3(0, -0.01, 0) +
-		((wasOnGround) ? -glm::vec3(0, stepHeight, 0) : glm::vec3(0, 0, 0));
-	const glm::vec3 toMid = toHeadTop * 0.5f;
-	const glm::vec3 toFeetStart = toMid + glm::vec3(0, 0.1, 0);
-	// const glm::vec3 toHeadStart = toMid - glm::vec3(0, 0.1, 0);
-
-	glm::vec3 hitPoint, hitNormal;
-	float travelFactor;
-
-	// test for feet collision and onGround
-	if (RayTestFirstHitWithObjects(end + toFeetStart,
-								   toFeetBottom - toFeetStart, &hitPoint,
-								   &hitNormal, &travelFactor, objects)) {
+	if (hasHitOnGround && (wasOnGround || (end.y >= start.y))) {
 		hasCollision = true;
-		if (hitPoint.y > toMaxFeet.y + end.y) {
-			// TODO: floor collision is too high, need to retrace backward, to
-			//       stop on vertical obstacle
-		}
-		*finalCorrectedPosition = end = hitPoint;
+		*finalCorrectedPosition = end = toGroundRay.start + toGroundRay.dir * maxOffsetHeight;
 		if (isOnGround) {
 			*isOnGround = (hitNormal.y >= minNormalYcomponent);
 		}
-		if (normal) {
-			if (glm::dot(hitNormal, end - start) <
-				glm::dot(*normal, end - start)) {
-				*normal = hitNormal;
-			}
+		if (groundNormal) {
+			*groundNormal = hitNormal;
 		}
 	}
-
+	
 	return hasCollision;
 }

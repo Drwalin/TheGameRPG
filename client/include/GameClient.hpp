@@ -1,7 +1,7 @@
 #pragma once
 
-#include <icon7/Forward.hpp>
-#include <icon7/CommandExecutionQueue.hpp>
+#include "../../ICon7/include/icon7/Forward.hpp"
+#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
 
 #include "RealmClient.hpp"
 
@@ -110,7 +110,7 @@ public: // client input api
 	// Returns localId of hit entity
 	uint64_t PerformRaytestFromEyes(ComponentMovementState state, float range,
 									glm::vec3 *hitPos, glm::vec3 *normal,
-									bool *hasNormal, uint64_t *serverEntityId);
+									uint64_t *serverEntityId, uint32_t mask);
 
 public:
 	RealmClient *realm;

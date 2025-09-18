@@ -65,7 +65,7 @@ private:
 	void RecreateResourceRenderer(Ref<Resource> resource);
 	void GenerateTriCollisionForAll(Node *node);
 
-	__InnerShape GetShape(CSGPrimitive3D *primitive, Transform3D invTransform);
+	Collision3D::AnyShape GetShape(CSGPrimitive3D *primitive, Transform3D invTransform);
 	
 	float lastCheck = 0.0;
 	Transform3D lastGlobalTransform;

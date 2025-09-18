@@ -2,10 +2,10 @@
 
 #include <unordered_map>
 
-#include <icon7/Flags.hpp>
-#include <icon7/Forward.hpp>
-#include <icon7/CoroutineHelper.hpp>
-#include <icon7/CommandExecutionQueue.hpp>
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/Forward.hpp"
+#include "../../ICon7/include/icon7/CoroutineHelper.hpp"
+#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
 
 #include "RealmServer.hpp"
 #include "RealmWorkThreadedManager.hpp"

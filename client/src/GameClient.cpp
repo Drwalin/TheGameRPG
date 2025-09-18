@@ -1,8 +1,8 @@
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/LoopUS.hpp>
-#include <icon7/Command.hpp>
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/PeerUStcp.hpp"
+#include "../../ICon7/include/icon7/HostUStcp.hpp"
+#include "../../ICon7/include/icon7/LoopUS.hpp"
+#include "../../ICon7/include/icon7/Command.hpp"
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
 
@@ -375,11 +375,10 @@ void GameClient::PerformInteractionUse()
 	}
 
 	glm::vec3 hitPoint, normal;
-	bool hasNormal;
 	uint64_t serverEntityId = 0;
 	uint64_t localTargetId =
 		PerformRaytestFromEyes(*state, characterSheet->attackRange, &hitPoint,
-							   &normal, &hasNormal, &serverEntityId);
+							   &normal, &serverEntityId, FILTER_TERRAIN|FILTER_CHARACTER|FILTER_STATIC_OBJECT);
 	if (localTargetId) {
 		ServerRpcProxy::InteractInLineOfSight(this, *state, serverEntityId,
 											  hitPoint, normal);
@@ -400,10 +399,9 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 	}
 
 	glm::vec3 hitPoint, normal;
-	bool hasNormal;
 	uint64_t serverEntityId = 0;
 	uint64_t localTargetId = PerformRaytestFromEyes(
-		*state, 1000.0f, &hitPoint, &normal, &hasNormal, &serverEntityId);
+		*state, 1000.0f, &hitPoint, &normal, &serverEntityId, FILTER_TERRAIN|FILTER_CHARACTER|FILTER_STATIC_OBJECT);
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
 							   attackType, attackId, argInt);
@@ -415,11 +413,10 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 
 uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 											float range, glm::vec3 *hitPos,
-											glm::vec3 *normal, bool *hasNormal,
-											uint64_t *serverEntityId)
+											glm::vec3 *normal,
+											uint64_t *serverEntityId, uint32_t mask)
 {
 	*serverEntityId = 0;
-	*hasNormal = false;
 	if (localPlayerEntityId == 0) {
 		return 0;
 	}
@@ -437,18 +434,17 @@ uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 	glm::vec3 dst = pos + forward;
 
 	float td;
-	uint64_t entityId = 0;
+	flecs::entity entity;
 	if (realm->collisionWorld.RayTestFirstHit(pos, dst, hitPos, normal,
-											  &entityId, &td, hasNormal,
-											  localPlayerEntityId)) {
-		if (entityId != 0) {
-			auto it = mapLocalEntityIdToServerEntityId.find(entityId);
+											  &entity, &td, localPlayerEntityId, mask)) {
+		if (entity.is_valid() && entity.is_alive()) {
+			auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
 			if (it != mapLocalEntityIdToServerEntityId.end()) {
 				*serverEntityId = it->second;
 			}
 		}
 	}
-	return entityId;
+	return entity.id();
 }
 
 int64_t GameClient::GetPing() { return pingMs; }

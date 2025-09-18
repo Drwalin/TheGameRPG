@@ -30,4 +30,3 @@ namespace flecs
 {
 struct entity;
 };
-struct __InnerShape;

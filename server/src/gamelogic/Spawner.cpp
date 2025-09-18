@@ -1,5 +1,6 @@
-#include <icon7/ByteReader.hpp>
 #include <random>
+
+#include "../../../ICon7/include/icon7/ByteReader.hpp"
 
 #include "../../../common/include/RegistryComponent.hpp"
 
@@ -41,14 +42,13 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 	}
 	spawner.lastSpawnedTimestamp = realm->timer.currentTick;
 
-	std::vector<uint64_t> entities;
+	std::vector<flecs::entity> entities;
 	realm->collisionWorld.TestForEntitiesSphere(
 		transform.trans.pos, spawner.radiusToCheckAmountEntities, &entities,
 		FILTER_CHARACTER);
 
 	int counter = 0;
-	for (uint64_t id : entities) {
-		flecs::entity entity = realm->Entity(id);
+	for (flecs::entity entity : entities) {
 		if (entity.is_valid() && entity.is_alive()) {
 			if (entity.has<ComponentAITick>()) {
 				++counter;
@@ -85,7 +85,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 		glm::vec3 hitPoint;
 		if (realm->collisionWorld.RayTestFirstHitTerrain(
 				pos, pos + glm::vec3(0, -1000, 0), &hitPoint, nullptr,
-				nullptr)) {
+				nullptr, nullptr)) {
 			hitPoint.y += 1.0;
 			if (pos.y > hitPoint.y) {
 				pos = hitPoint;
