@@ -36,7 +36,7 @@ if (WIN32)
 		ServerMain.cpp
 	)
 	target_link_libraries(server server_lib)
-	
+
 	target_link_libraries(scripts server_lib)
 else()
 	add_library(server_lib STATIC
@@ -47,7 +47,7 @@ else()
 		${src_files}
 	)
 	target_link_libraries(server_lib_shared PUBLIC common)
-	
+
 	add_executable(server
 		ServerMain.cpp
 	)
@@ -55,37 +55,37 @@ else()
 	# ENABLE_EXPORTS allows for dlopen(scripts) to link against symbols from within
 	# 				 server executable file
 	set_target_properties(server PROPERTIES ENABLE_EXPORTS ON)
-	
+
 	if (THEGAMERPG_SERVER_SCRIPTS_PCH)
 		add_precompiled_header_glob_recurse(scripts "scripts/BigHeader.hpp")
 	endif()
-	
+
 	if (THEGAMERPG_TIME_REPORT)
 		target_compile_options(server PUBLIC -ftime-report)
 		target_compile_options(scripts PUBLIC -ftime-report)
 	endif()
-	
+
 	if (THEGAMERPG_PRECOMPILE_HEADERS)
 		add_precompiled_header_icon7(scripts)
 		add_precompiled_header_glob_recurse(scripts "include/*.hpp")
 		add_precompiled_header_glob_recurse(scripts "../common/include/*.hpp")
-		
+
 		add_precompiled_header_icon7(server)
 		add_precompiled_header_glob_recurse(server "include/*.hpp")
 		add_precompiled_header_glob_recurse(server "../common/include/*.hpp")
-		
+
 		add_precompiled_header_icon7(server_lib_shared)
 		add_precompiled_header_glob_recurse(server_lib_shared "include/*.hpp")
 		add_precompiled_header_glob_recurse(server_lib_shared "../common/include/*.hpp")
-		
+
 		add_precompiled_header_icon7(server_lib)
 		add_precompiled_header_glob_recurse(server_lib "include/*.hpp")
 		add_precompiled_header_glob_recurse(server_lib "../common/include/*.hpp")
 	endif()
-	
+
 	add_common_precompiled_headers(server_lib)
 	add_precompiled_header_thirdparty(server_lib)
-	
+
 	add_common_precompiled_headers(server_lib_shared)
 	add_precompiled_header_thirdparty(server_lib_shared)
 endif()

@@ -27,9 +27,6 @@ target_link_libraries(game_frontend PUBLIC client)
 target_link_libraries(game_frontend PUBLIC godot::cpp)
 
 if(THEGAMERPG_PRECOMPILE_HEADERS )
-# 	add_precompiled_header_glob_recurse(game_frontend
-# 		"../thirdparty/godot-cpp/gen/include/*.hpp")
-	
 	add_precompiled_header_icon7(game_frontend)
 	add_precompiled_header_glob_recurse(game_frontend "include/*.hpp")
 	add_precompiled_header_glob_recurse(game_frontend "../common/include/*.hpp")
@@ -70,13 +67,10 @@ if (THEGAMERPG_MAP_EDITOR)
 	target_link_libraries(map_editor PUBLIC game_frontend)
 	target_link_libraries(map_editor PUBLIC server_lib_shared)
 	target_link_libraries(map_editor PUBLIC godot::cpp)
-	
+
 	target_include_directories(map_editor PUBLIC game_frontend/editor)
 
 	if(THEGAMERPG_PRECOMPILE_HEADERS )
-# 		add_precompiled_header_glob_recurse(map_editor
-# 			"../thirdparty/godot-cpp/gen/include/*.hpp")
-
 		add_precompiled_header_icon7(game_frontend)
 		add_precompiled_header_glob_recurse(game_frontend "include/*.hpp")
 		add_precompiled_header_glob_recurse(game_frontend "../common/include/*.hpp")
