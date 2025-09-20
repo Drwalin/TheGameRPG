@@ -37,9 +37,12 @@ target_link_libraries(common PUBLIC Bullet3Common)
 target_link_libraries(common PUBLIC LinearMath)
 set_target_properties(common PROPERTIES ENABLE_EXPORTS ON)
 
-if(THEGAMERPG_PRECOMPILE_HEADERS )
-	add_common_precompiled_headers(common)
+if(THEGAMERPG_PRECOMPILE_HEADERS)
+	add_precompiled_header_thirdparty(common)
 endif()
+
+add_common_precompiled_headers(common)
+add_precompiled_header_thirdparty(common)
 
 if (THEGAMERPG_TIME_REPORT)
 	target_compile_options(common PUBLIC -ftime-report)

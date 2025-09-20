@@ -1,19 +1,21 @@
-macro(add_precompiled_header_glob_recurse target pattern)
+function(add_precompiled_header_icon7 target)
+	add_precompiled_header_glob_recurse(${target} "../ICon7/include/*.hpp")
+	add_precompiled_header_glob_recurse(${target} "../ICon7/include/bitscpp/*.hpp")
+endfunction()
+
+function(add_precompiled_header_thirdparty target)
+	add_precompiled_header_glob_recurse(${target} "../thirdparty/flecs/distr/*.h")
+	target_precompile_headers(${target} PUBLIC
+		"../ICon7/concurrentqueue/concurrentqueue.h"
+	)
+endfunction()
+
+function(add_precompiled_header_godot target)
+	add_precompiled_header_glob_recurse(${target} "../thirdparty/godot-cpp/include/godot_cpp/*")
+	add_precompiled_header_glob_recurse(${target} "./thirdparty/godot-cpp/gen/include/godot_cpp/*")
+endfunction()
+
+function(add_precompiled_header_glob_recurse target pattern)
 	file(GLOB_RECURSE files ${pattern})
 	target_precompile_headers(${target} PUBLIC ${files})
-endmacro()
-
-macro(add_common_precompiled_headers target)
-	target_precompile_headers(${target} PUBLIC <map> <unordered_map> <vector>
-		<string> <functional> <string_view> <fstream> <sstream> <thread>
-		<atomic> <mutex> <queue> <list> <array> <valarray> <set>
-		<unordered_set> <algorithm> <ios> <ostream> <streambuf> <utility>
-		<stack> <new> <memory> <limits> <iterator> <complex> <bitset> <locale>
-		<ostream> <istream> <future> <tuple> <regex> <type_traits>
-		<forward_list> <initializer_list> <condition_variable> <random> <chrono>
-		<shared_mutex> <filesystem>
-		<memory_resource> <cstring>)
-	
-	add_precompiled_header_glob_recurse(${target} "../ICon7/include/*.hpp")
-	add_precompiled_header_glob_recurse(${target} "../ICon7/bitscpp/*.hpp")
-endmacro()
+endfunction()

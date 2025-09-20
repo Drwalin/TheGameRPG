@@ -24,8 +24,13 @@ add_library(client STATIC
 target_link_libraries(client PUBLIC common)
 
 if(THEGAMERPG_PRECOMPILE_HEADERS )
-	add_common_precompiled_headers(client)
+	add_precompiled_header_icon7(client)
+	add_precompiled_header_glob_recurse(client "include/*.hpp")
+	add_precompiled_header_glob_recurse(client "../common/include/*.hpp")
 endif()
+
+add_common_precompiled_headers(client)
+add_precompiled_header_thirdparty(client)
 
 if (THEGAMERPG_TIME_REPORT)
 	target_compile_options(client PUBLIC -ftime-report)

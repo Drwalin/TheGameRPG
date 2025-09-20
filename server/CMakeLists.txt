@@ -57,7 +57,7 @@ else()
 	set_target_properties(server PROPERTIES ENABLE_EXPORTS ON)
 	
 	if (THEGAMERPG_SERVER_SCRIPTS_PCH)
-		target_precompile_headers(scripts PUBLIC scripts/BigHeader.hpp)
+		add_precompiled_header_glob_recurse(scripts "scripts/BigHeader.hpp")
 	endif()
 	
 	if (THEGAMERPG_TIME_REPORT)
@@ -65,17 +65,36 @@ else()
 		target_compile_options(scripts PUBLIC -ftime-report)
 	endif()
 	
-	if (THEGAMERPG_PRECOMPILE_HEADERS )
-		add_common_precompiled_headers(scripts)
-		add_precompiled_header_glob_recurse(scripts "../ICon7/include/*.hpp")
+	if (THEGAMERPG_PRECOMPILE_HEADERS)
+		add_precompiled_header_icon7(scripts)
 		add_precompiled_header_glob_recurse(scripts "include/*.hpp")
 		add_precompiled_header_glob_recurse(scripts "../common/include/*.hpp")
+		
+		add_precompiled_header_icon7(server)
+		add_precompiled_header_glob_recurse(server "include/*.hpp")
+		add_precompiled_header_glob_recurse(server "../common/include/*.hpp")
+		
+		add_precompiled_header_icon7(server_lib_shared)
+		add_precompiled_header_glob_recurse(server_lib_shared "include/*.hpp")
+		add_precompiled_header_glob_recurse(server_lib_shared "../common/include/*.hpp")
+		
+		add_precompiled_header_icon7(server_lib)
+		add_precompiled_header_glob_recurse(server_lib "include/*.hpp")
+		add_precompiled_header_glob_recurse(server_lib "../common/include/*.hpp")
 	endif()
+	
+	add_common_precompiled_headers(server_lib)
+	add_precompiled_header_thirdparty(server_lib)
+	
+	add_common_precompiled_headers(server_lib_shared)
+	add_precompiled_header_thirdparty(server_lib_shared)
 endif()
 
-if (THEGAMERPG_PRECOMPILE_HEADERS)
-	add_common_precompiled_headers(server)
-endif()
+add_common_precompiled_headers(server)
+add_precompiled_header_thirdparty(server)
+
+add_common_precompiled_headers(scripts)
+add_precompiled_header_thirdparty(scripts)
 
 add_custom_target(game_server DEPENDS server scripts)
 
