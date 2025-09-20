@@ -1,8 +1,8 @@
-#include <icon7/Debug.hpp>
-#include <icon7/Host.hpp>
-#include <icon7/Peer.hpp>
-#include <icon7/CoroutineHelper.hpp>
-#include <icon7/CommandExecutionQueue.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Host.hpp"
+#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../ICon7/include/icon7/CoroutineHelper.hpp"
+#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
 
 #include "../include/PeerData.hpp"
 #include "../include/RealmServer.hpp"

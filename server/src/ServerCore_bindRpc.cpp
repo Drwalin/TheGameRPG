@@ -1,7 +1,7 @@
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Flags.hpp>
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
 
 #include "../../common/include/ServerRpcFunctionNames.hpp"
 

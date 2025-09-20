@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
 #include "../include/Realm.hpp"
 

@@ -1,8 +1,8 @@
 #include "../../../server/include/EntityGameComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
 
-#include <icon7/ByteWriter.hpp>
-#include <icon7/ByteReader.hpp>
+#include "../../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../../ICon7/include/icon7/ByteReader.hpp"
 
 #include "../GameClientFrontend.hpp"
 

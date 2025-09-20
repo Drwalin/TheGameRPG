@@ -1,11 +1,11 @@
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include <icon7/Peer.hpp>
-#include <icon7/Flags.hpp>
-#include <icon7/Debug.hpp>
-#include <icon7/Command.hpp>
-#include <icon7/CommandExecutionQueue.hpp>
-#include <icon7/CoroutineHelper.hpp>
+#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Command.hpp"
+#include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
+#include "../../ICon7/include/icon7/CoroutineHelper.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
 #include "../include/PeerStateTransitions.hpp"

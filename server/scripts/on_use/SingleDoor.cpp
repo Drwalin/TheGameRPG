@@ -1,4 +1,4 @@
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
 #include "../../include/ComponentCallbackRegistry.hpp"
 #include "../../include/EntityGameComponents.hpp"

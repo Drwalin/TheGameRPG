@@ -1,6 +1,6 @@
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/RegistryComponent.hpp"
 

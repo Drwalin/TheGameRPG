@@ -12,7 +12,7 @@
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/os.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../../ICon7/include/icon7/Debug.hpp"
 
 #include "EntityBase.hpp"
 

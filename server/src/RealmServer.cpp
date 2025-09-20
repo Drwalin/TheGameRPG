@@ -1,5 +1,5 @@
-#include <icon7/Flags.hpp>
-#include <icon7/ByteReader.hpp>
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp"
 
 #include "../../common/include/EntitySystems.hpp"
 

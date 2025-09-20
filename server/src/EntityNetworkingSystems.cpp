@@ -1,5 +1,5 @@
-#include <icon7/Peer.hpp>
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/RealmServer.hpp"
 

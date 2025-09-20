@@ -7,7 +7,7 @@
 #include <godot_cpp/classes/animation_tree.hpp>
 #include <godot_cpp/core/memory.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "AsyncLoadedPlaceholder.hpp"
 

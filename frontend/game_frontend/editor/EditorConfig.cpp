@@ -4,8 +4,8 @@
 #include "godot_cpp/classes/resource_saver.hpp"
 #include "godot_cpp/classes/csg_primitive3d.hpp"
 
-#include <icon7/Debug.hpp>
-#include <icon7/ByteWriter.hpp>
+#include "../../../ICon7/include/icon7/Debug.hpp"
+#include "../../../ICon7/include/icon7/ByteWriter.hpp"
 
 #include "../GameClientFrontend.hpp"
 #include "../GameFrontend.hpp"

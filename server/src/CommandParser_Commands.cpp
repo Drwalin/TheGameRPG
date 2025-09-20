@@ -1,7 +1,7 @@
 #include <fstream>
 
-#include <icon7/Debug.hpp>
-#include <icon7/Host.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Host.hpp"
 
 #include "../include/ServerCore.hpp"
 #include "../include/ConfigStorage.hpp"

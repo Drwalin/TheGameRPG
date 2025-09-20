@@ -1,7 +1,7 @@
 #include <mutex>
 #include <sstream>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/StringUtil.hpp"
 #include "../include/CommandParser.hpp"

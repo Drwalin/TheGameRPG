@@ -1,5 +1,5 @@
-#include <icon7/Flags.hpp>
-#include <icon7/RPCEnvironment.hpp>
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
 
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 #include "../../common/include/EntityComponents.hpp"

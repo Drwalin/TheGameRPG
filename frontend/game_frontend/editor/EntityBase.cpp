@@ -9,8 +9,8 @@
 #include <godot_cpp/classes/csg_box3d.hpp>
 #include <godot_cpp/classes/csg_cylinder3d.hpp>
 
-#include <icon7/ByteWriter.hpp>
-#include <icon7/ByteReader.hpp>
+#include "../../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../../ICon7/include/icon7/ByteReader.hpp"
 
 #include "../../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
 

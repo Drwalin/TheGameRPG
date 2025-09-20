@@ -2,9 +2,9 @@
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_float.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/quaternion_common.hpp"
 
-#include <icon7/ByteBuffer.hpp>
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteWriter.hpp"
 
 #include "../include/GlmSerialization.hpp"
 

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/ServerCore.hpp"
 #include "../include/StringUtil.hpp"

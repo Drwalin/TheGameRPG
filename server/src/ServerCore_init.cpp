@@ -1,10 +1,10 @@
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include <icon7/RPCEnvironment.hpp>
-#include <icon7/Flags.hpp>
-#include <icon7/PeerUStcp.hpp>
-#include <icon7/HostUStcp.hpp>
-#include <icon7/LoopUS.hpp>
+#include "../../ICon7/include/icon7/RPCEnvironment.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/PeerUStcp.hpp"
+#include "../../ICon7/include/icon7/HostUStcp.hpp"
+#include "../../ICon7/include/icon7/LoopUS.hpp"
 
 #include "../include/ServerCore.hpp"
 

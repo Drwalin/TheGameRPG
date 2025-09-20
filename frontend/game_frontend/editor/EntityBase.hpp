@@ -16,7 +16,7 @@
 
 #include <godot_cpp/classes/node3d.hpp>
 
-#include <icon7/Forward.hpp>
+#include "../../../ICon7/include/icon7/Forward.hpp"
 
 #include "../../../common/include/EntityComponents.hpp"
 

@@ -6,7 +6,7 @@
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/animation_player.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../client/include/RealmClient.hpp"
 

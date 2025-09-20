@@ -1,6 +1,6 @@
-#include <icon7/Peer.hpp>
-#include <icon7/Flags.hpp>
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../ICon7/include/icon7/Flags.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../common/include/EntitySystems.hpp"
 

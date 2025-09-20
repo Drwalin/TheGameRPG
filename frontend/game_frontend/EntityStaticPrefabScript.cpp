@@ -7,7 +7,7 @@
 #include <godot_cpp/classes/label3d.hpp>
 #include <godot_cpp/classes/mesh.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "GodotGlm.hpp"
 

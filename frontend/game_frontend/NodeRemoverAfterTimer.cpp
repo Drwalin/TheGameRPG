@@ -2,7 +2,7 @@
 #include <godot_cpp/classes/engine_debugger.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
 
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "NodeRemoverAfterTimer.hpp"
 

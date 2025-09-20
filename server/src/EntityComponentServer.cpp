@@ -1,4 +1,4 @@
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
 #include "../../common/include/RegistryComponent.inl.hpp"
 

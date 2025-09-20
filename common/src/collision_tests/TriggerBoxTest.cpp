@@ -1,4 +1,4 @@
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../include/EntityComponents.hpp"
 #include "../../include/CollisionWorld.hpp"

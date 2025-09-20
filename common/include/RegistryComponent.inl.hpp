@@ -3,11 +3,11 @@
 #include <string>
 #include <functional>
 
-#include <flecs.h>
+#include "../../thirdparty/flecs/distr/flecs.h"
 
-#include <icon7/ByteReader.hpp>
-#include <icon7/ByteWriter.hpp>
-#include <icon7/Debug.hpp>
+#include "../../ICon7/include/icon7/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "RegistryComponent.hpp"
 
