@@ -46,10 +46,14 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
 				movementParams.stepHeight, 0.7, 0.07)) {
 		}
-		*/
 		if (realm->collisionWorld.TestCollisionMovementRays(
 				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
+		}
+		*/
+		if (realm->collisionWorld.TestCollisionMovement(
+				shape, oldPos, newPos, &pos, &next.onGround, nullptr, nullptr,
+				movementParams.stepHeight, 0.7)) {
 		}
 
 		if (next.onGround) {
@@ -75,9 +79,14 @@ void UpdateMovement(
 		// test collision here:
 		glm::vec3 pos;
 		glm::vec3 normal;
+		/*
 		if (realm->collisionWorld.TestCollisionMovementRays(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
+		*/
+		if (realm->collisionWorld.TestCollisionMovement(
+				shape, oldPos, newPos, &pos, &next.onGround, &normal, nullptr,
+				movementParams.stepHeight, 0.7)) {
 			normal = glm::normalize(normal);
 			vel -= normal * glm::dot(normal, vel);
 			/*

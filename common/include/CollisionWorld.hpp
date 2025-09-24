@@ -38,14 +38,14 @@ public:
 							const ComponentShape &shape);
 
 	// returns true if any collision happens
-	bool TestCollisionMovementRays(ComponentShape shape, glm::vec3 start,
-								   glm::vec3 end,
-								   glm::vec3 *finalCorrectedPosition,
-								   bool *isOnGround, glm::vec3 *normal,
-								   int horizontalRaysCountInMovementDirection,
-								   float stepHeight, float minNormalYcomponent,
-								   int horizontalFromCenterCorrectionRaysCount,
-								   float verticalRayTestToGroundDistance) const;
+// 	bool TestCollisionMovementRays(ComponentShape shape, glm::vec3 start,
+// 								   glm::vec3 end,
+// 								   glm::vec3 *finalCorrectedPosition,
+// 								   bool *isOnGround, glm::vec3 *normal,
+// 								   int horizontalRaysCountInMovementDirection,
+// 								   float stepHeight, float minNormalYcomponent,
+// 								   int horizontalFromCenterCorrectionRaysCount,
+// 								   float verticalRayTestToGroundDistance) const;
 	bool TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 							   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 							   bool *isOnGround, glm::vec3 *normal,

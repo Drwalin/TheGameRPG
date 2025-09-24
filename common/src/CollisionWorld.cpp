@@ -11,7 +11,7 @@
 #include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/Dbvt.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/BvhMedianSplitHeap.hpp"
 #include "../../thirdparty/Collision3D/SpatialPartitioning/include/spatial_partitioning/ThreeStageDbvh.hpp"
-#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
 
 #include "../include/EntityComponents.hpp"
 #include "../include/CollisionFilters.hpp"

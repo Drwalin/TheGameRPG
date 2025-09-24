@@ -5,7 +5,7 @@
 #include "../../include/CollisionWorld.hpp"
 #include "../../include/EntityComponents.hpp"
 
-bool CollisionWorld::TestCollisionMovement(ComponentShape shape, glm::vec3 start,
+bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 						   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 						   bool *isOnGround, glm::vec3 *normal,
 						   glm::vec3 *groundNormal,
