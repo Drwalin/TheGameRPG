@@ -80,7 +80,7 @@ void EntityBase::CheckRotationAndScale()
 	lastGlobalTransform = trans;
 	
 	Basis basis = trans.get_basis();
-	glm::vec3 s = ToGlm(basis.get_scale_local());
+	glm::vec3 s = ToGlm(basis.get_scale());
 	
 	Vector3 axis;
 	float angle;
@@ -170,7 +170,7 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 		}
 		is = Collision3D::AnyShape(std::move(cs), {});
 	} else {
-		// TODO: what to do here?
+		return;
 	}
 
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,

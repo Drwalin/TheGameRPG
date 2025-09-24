@@ -183,6 +183,9 @@ void RealmServer::RegisterObservers()
 
 	RegisterObserver(
 		flecs::OnAdd, +[](flecs::entity entity, ComponentSpawner &) {
+			LOG_INFO("Spawner has collision shape: %s", entity.has<ComponentCollisionShape>()?"TRUE":"FALSE");
+			LOG_INFO("Spawner has static transform: %s", entity.has<ComponentStaticTransform>()?"TRUE":"FALSE");
+			LOG_INFO("Spawner has model name: %s", entity.has<ComponentModelName>()?"TRUE":"FALSE");
 			if (entity.has<ComponentEventsQueue>() == false) {
 				entity.add<ComponentEventsQueue>();
 			}
