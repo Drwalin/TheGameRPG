@@ -1,4 +1,7 @@
-#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_Primitives.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_HeightMap.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_HeightMapHeader.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
 
@@ -6,250 +9,235 @@
 #include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/GlmSerialization.hpp"
+
 #include "../include/CollisionShapeSerialization.hpp"
 
 namespace bitscpp
 {
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::VertBox &shape)
+using namespace Collision3D;
+
+ByteReader<true> &op(ByteReader<true> &s, Rotation &rot)
+{
+	s.op(rot.value);
+	return s;
+}
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Rotation &rot)
+{
+	s.op(rot.value);
+	return s;
+}
+
+ByteReader<true> &op(ByteReader<true> &s, Transform &trans)
+{
+	s.op(trans.pos);
+	s.op(trans.rot);
+	return s;
+}
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Transform &trans)
+{
+	s.op(trans.pos);
+	s.op(trans.rot);
+	return s;
+}
+
+ByteReader<true> &op(ByteReader<true> &s, VertBox &shape)
 {
 	s.op(shape.halfExtents);
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::VertBox &shape)
+								  const VertBox &shape)
 {
 	s.op(shape.halfExtents);
 	return s;
 }
 
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::Cylinder &shape)
+ByteReader<true> &op(ByteReader<true> &s, Cylinder &shape)
 {
 	s.op(shape.height);
 	s.op(shape.radius);
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::Cylinder &shape)
+								  const Cylinder &shape)
 {
 	s.op(shape.height);
 	s.op(shape.radius);
 	return s;
 }
 
-ByteReader<true> &op(ByteReader<true> &s,
-					 Collision3D::HeightMap<float, uint8_t> &shape)
+ByteReader<true> &op(ByteReader<true> &s, Sphere &shape)
 {
-	glm::vec3 size, scale;
-	int width, height;
-	s.op(size);
-	s.op(scale);
-	s.op(width);
-	s.op(height);
-	shape.InitValues(width, height, scale, size);
-	s.op(shape.mipmap[0].heights);
-	s.op(shape.material.heights);
-	shape.GenerateMipmap();
-	return s;
+	return s.op(shape.radius);
 }
-ByteWriter<icon7::ByteBuffer> &
-op(ByteWriter<icon7::ByteBuffer> &s,
-   const Collision3D::HeightMap<float, uint8_t> &shape)
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const Sphere &shape)
 {
-	s.op(shape.size);
-	s.op(shape.scale);
-	s.op(shape.width);
+	return s.op(shape.radius);
+}
+
+ByteReader<true> &op(ByteReader<true> &s, RampRectangle &shape)
+{
+	s.op(shape.depth);
+	s.op(shape.halfThickness);
+	s.op(shape.halfWidth);
 	s.op(shape.height);
-	s.op(shape.mipmap[0].heights);
-	s.op(shape.material.heights);
+	return s;
+}
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const RampRectangle &shape)
+{
+	s.op(shape.depth);
+	s.op(shape.halfThickness);
+	s.op(shape.halfWidth);
+	s.op(shape.height);
 	return s;
 }
 
+#define MACRO(CLASS, CODE, DEREF, SHAPE, NAME, INDEX)                          \
+	case AnyPrimitive::INDEX:                                                  \
+		return s.op(shape.NAME);
 
-
-
-
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::Sphere &shape)
-{
-	return s.op(shape.radius);
-}
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::Sphere &shape)
-{
-	return s.op(shape.radius);
-}
-
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::Rectangle &shape)
-{
-	s.op(shape.depth);
-	s.op(shape.width);
-	return s.op(shape.height);
-}
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::Rectangle &shape)
-{
-	s.op(shape.depth);
-	s.op(shape.width);
-	return s.op(shape.height);
-}
-
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyPrimitive &shape)
+ByteReader<true> &op(ByteReader<true> &s, AnyPrimitive &shape)
 {
 	shape.~AnyPrimitive();
-	s.op(*(uint8_t*)&shape.type);
-	if (shape.type != Collision3D::AnyPrimitive::INVALID) {
+	s.op(*(uint8_t *)&shape.type);
+	if (shape.type != AnyPrimitive::INVALID) {
 		s.op(shape.trans);
-	}
-	switch (shape.type) {
-	case Collision3D::AnyPrimitive::INVALID:
-		break;
-	case Collision3D::AnyPrimitive::VERTBOX:
-		return s.op(shape.vertBox);
-	case Collision3D::AnyPrimitive::CYLINDER:
-		return s.op(shape.cylinder);
-	case Collision3D::AnyPrimitive::SPHERE:
-		return s.op(shape.sphere);
-	case Collision3D::AnyPrimitive::RECTANGLE:
-		return s.op(shape.rectangle);
-	case Collision3D::AnyPrimitive::VERTICAL_TRIANGLE:
-	case Collision3D::AnyPrimitive::CAPPED_CONE:
-		LOG_FATAL("Collision shapes not implemented");
-		break;
-	default:
-		LOG_FATAL("Unknown collision shape id");
+		switch (shape.type) {
+			EACH_PRIMITIVE(AnyPrimitive, MACRO, EMPTY_CODE);
+		default:
+			LOG_FATAL("Unknown collision shape id");
+		}
 	}
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::AnyPrimitive &shape)
+								  const AnyPrimitive &shape)
 {
-	s.op(*(const uint8_t*)&shape.type);
-	if (shape.type != Collision3D::AnyPrimitive::INVALID) {
+	s.op(*(const uint8_t *)&shape.type);
+	if (shape.type != AnyPrimitive::INVALID) {
 		s.op(shape.trans);
-	}
-	switch (shape.type) {
-	case Collision3D::AnyPrimitive::INVALID:
-		break;
-	case Collision3D::AnyPrimitive::VERTBOX:
-		return s.op(shape.vertBox);
-	case Collision3D::AnyPrimitive::CYLINDER:
-		return s.op(shape.cylinder);
-	case Collision3D::AnyPrimitive::SPHERE:
-		return s.op(shape.sphere);
-	case Collision3D::AnyPrimitive::RECTANGLE:
-		return s.op(shape.rectangle);
-	case Collision3D::AnyPrimitive::VERTICAL_TRIANGLE:
-	case Collision3D::AnyPrimitive::CAPPED_CONE:
-		LOG_FATAL("Collision shapes not implemented");
-		break;
-	default:
-		LOG_FATAL("Unknown collision shape id");
+		switch (shape.type) {
+			EACH_PRIMITIVE(AnyPrimitive, MACRO, EMPTY_CODE);
+		default:
+			LOG_FATAL("Unknown collision shape id");
+		}
 	}
 	return s;
 }
 
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::CompoundPrimitive &shape)
+#undef MACRO
+
+ByteReader<true> &op(ByteReader<true> &s, CompoundPrimitive &shape)
 {
-	return s.op(shape.primitives);
+	int32_t size;
+	s.op(size);
+	shape.primitives.resize(size);
+	for (int i = 0; i < size; ++i) {
+		s.op(shape.primitives[i]);
+	}
+	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::CompoundPrimitive &shape)
+								  const CompoundPrimitive &shape)
 {
-	return s.op(shape.primitives);
+	int32_t size = shape.primitives.size();
+	s.op(size);
+	for (int i = 0; i < size; ++i) {
+		s.op(shape.primitives[i]);
+	}
+	return s;
 }
 
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::AnyShape &shape)
+ByteReader<true> &op(ByteReader<true> &s, HeightMap &shape)
+{
+	int w, h;
+	s.op(w);
+	s.op(h);
+	if (w && h) {
+		shape.Init({w, h});
+		float scalex, scaley;
+		s.op(scalex);
+		s.op(scaley);
+		shape.InitMeta(scalex, scaley);
+		auto hs = shape.AccessHeights();
+		for (int i = 0; i < w * h; ++i) {
+			s.op(hs[i]);
+		}
+		auto m = shape.AccessMaterial();
+		for (int i = 0; i < w * h; ++i) {
+			s.op(m[i]);
+		}
+	}
+	return s;
+}
+ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
+								  const HeightMap &shape)
+{
+	int w = 0, h = 0;
+	if (shape.header == nullptr) {
+		s.op(w);
+		s.op(h);
+		return s;
+	}
+	w = shape.header->resolution.x;
+	h = shape.header->resolution.y;
+	s.op(w);
+	s.op(h);
+	s.op(shape.header->scale.x);
+	s.op(shape.header->scale.y);
+	auto hs = shape.GetHeights();
+	for (int i = 0; i < w * h; ++i) {
+		s.op(hs[i]);
+	}
+	auto m = shape.GetMaterial();
+	for (int i = 0; i < w * h; ++i) {
+		s.op(m[i]);
+	}
+	return s;
+}
+
+#define MACRO(CLASS, CODE, DEREF, SHAPE, NAME, INDEX)                          \
+	case AnyShape::INDEX:                                                      \
+		return s.op(shape.NAME);
+
+ByteReader<true> &op(ByteReader<true> &s, AnyShape &shape)
 {
 	shape.~AnyShape();
-	s.op(*(uint8_t*)&shape.type);
-	if (shape.type != Collision3D::AnyShape::INVALID) {
+	s.op(*(uint8_t *)&shape.type);
+	if (shape.type != AnyShape::INVALID) {
 		s.op(shape.trans);
-	}
-	
-	switch(shape.type) {
-	case Collision3D::AnyShape::INVALID:
-		break;
-	case Collision3D::AnyShape::VERTBOX:
-		return s.op(shape.vertBox);
-	case Collision3D::AnyShape::CYLINDER:
-		return s.op(shape.cylinder);
-	case Collision3D::AnyShape::SPHERE:
-		return s.op(shape.sphere);
-	case Collision3D::AnyShape::RECTANGLE:
-		return s.op(shape.rectangle);
-	case Collision3D::AnyShape::VERTICAL_TRIANGLE:
-	case Collision3D::AnyShape::CAPPED_CONE:
-		LOG_FATAL("Collision shapes not implemented");
-		break;
-	case Collision3D::AnyShape::HEIGHT_MAP:
-		shape.heightMap = new Collision3D::HeightMap<float, uint8_t>;
-		return s.op(*shape.heightMap);
-	case Collision3D::AnyShape::COMPOUND:
-		return s.op(shape.compound);
-	default:
-		LOG_FATAL("Unknown collision shape id");
+
+		switch (shape.type) {
+		case AnyShape::INVALID:
+			break;
+			EACH_SHAPE(AnyPrimitive, MACRO, EMPTY_CODE);
+		default:
+			LOG_FATAL("Unknown collision shape id");
+		}
 	}
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::AnyShape &shape)
+								  const AnyShape &shape)
 {
-	s.op(*(const uint8_t*)&shape.type);
-	if (shape.type != Collision3D::AnyShape::INVALID) {
+	s.op(*(const uint8_t *)&shape.type);
+	if (shape.type != AnyShape::INVALID) {
 		s.op(shape.trans);
-	}
-	switch(shape.type) {
-	case Collision3D::AnyShape::INVALID:
-		break;
-	case Collision3D::AnyShape::VERTBOX:
-		return s.op(shape.vertBox);
-	case Collision3D::AnyShape::CYLINDER:
-		return s.op(shape.cylinder);
-	case Collision3D::AnyShape::SPHERE:
-		return s.op(shape.sphere);
-	case Collision3D::AnyShape::RECTANGLE:
-		return s.op(shape.rectangle);
-	case Collision3D::AnyShape::VERTICAL_TRIANGLE:
-	case Collision3D::AnyShape::CAPPED_CONE:
-		LOG_FATAL("Collision shapes not implemented");
-		break;
-	case Collision3D::AnyShape::HEIGHT_MAP:
-		return s.op(*shape.heightMap);
-	case Collision3D::AnyShape::COMPOUND:
-		return s.op(shape.compound);
-	default:
-		LOG_FATAL("Unknown collision shape id");
+		switch (shape.type) {
+		case AnyShape::INVALID:
+			break;
+			EACH_SHAPE(AnyPrimitive, MACRO, EMPTY_CODE);
+		default:
+			LOG_FATAL("Unknown collision shape id");
+		}
 	}
 	return s;
 }
 
-
-
-
-
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::Rotation &rot)
-{
-	s.op(rot.value);
-	return s;
-}
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::Rotation &rot)
-{
-	s.op(rot.value);
-	return s;
-}
-
-ByteReader<true> &op(ByteReader<true> &s, Collision3D::Transform &trans)
-{
-	s.op(trans.pos);
-	s.op(trans.rot);
-	return s;
-}
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const Collision3D::Transform &trans)
-{
-	s.op(trans.pos);
-	s.op(trans.rot);
-	return s;
-}
+#undef MACRO
 
 } // namespace bitscpp

@@ -19,7 +19,7 @@ struct OnUse;
 struct ComponentOnUse {
 	named_callbacks::registry_entries::OnUse *entry = nullptr;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentOnUse, MV(entry));
 };
 
@@ -27,7 +27,7 @@ struct ComponentSingleDoorTransformStates {
 	ComponentStaticTransform transformClosed;
 	ComponentStaticTransform transformOpen;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentSingleDoorTransformStates,
 								  {MV(transformClosed) MV(transformOpen)});
 };
@@ -41,7 +41,7 @@ struct ComponentTrigger {
 
 	void Tick(int64_t entityId, class RealmServer *realm);
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTrigger,
 								  {MV(onEnter) MV(onExit) MV(entitiesInside)
 									   MV(tickUntilIgnore)});
@@ -51,7 +51,7 @@ struct ComponentTeleport {
 	std::string realmName = "";
 	glm::vec3 position;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentTeleport,
 								  {MV(realmName) MV(position)});
 };
@@ -59,7 +59,7 @@ struct ComponentTeleport {
 struct ComponentAITick {
 	named_callbacks::registry_entries::AiBehaviorTick *aiTick = nullptr;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentAITick, MV(aiTick));
 };
 
@@ -72,7 +72,7 @@ struct ComponentSpawner {
 	std::vector<uint8_t> prefabsData;
 	std::vector<uint32_t> prefabsOffset;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(
 		ComponentSpawner,
 		{MV(maxAmount) MV(spawnCooldown) MV(spawnRadius)

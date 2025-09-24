@@ -15,7 +15,7 @@
 #define BITSCPP_BYTESTREAM_OP_DECLARATIONS()                                   \
 	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s);  \
 	bitscpp::ByteWriter<icon7::ByteBuffer> &__ByteStream_op(                   \
-		bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+		bitscpp::ByteWriter<icon7::ByteBuffer> &s);
 
 #define BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(CLASS, CODE)               \
 	bitscpp::ByteReader<true> &CLASS::__ByteStream_op(                         \

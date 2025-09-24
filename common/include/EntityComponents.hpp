@@ -15,7 +15,7 @@ struct ComponentShape {
 
 	ComponentShape(float h, float w) : height(h), width(w) {}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentShape, {MV(height) MV(width)});
 };
 
@@ -38,7 +38,7 @@ struct ComponentMovementState {
 			   rot != o.rot || onGround != o.onGround;
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementState,
 								  {MV(timestamp) MV(pos) MV(vel) MV(rot)
 									   MV(onGround)});
@@ -52,7 +52,7 @@ struct ComponentLastAuthoritativeMovementState {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentLastAuthoritativeMovementState,
 								  MV(oldState));
 };
@@ -62,7 +62,7 @@ struct ComponentName {
 
 	ComponentName(std::string name) : name(name) {}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentName, MV(name));
 };
 
@@ -70,7 +70,7 @@ struct ComponentMovementParameters {
 	float maxMovementSpeedHorizontal = 5.0f;
 	float stepHeight = 0.25f;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementParameters,
 								  {MV(maxMovementSpeedHorizontal)
 									   MV(stepHeight)});
@@ -86,7 +86,7 @@ struct ComponentModelName {
 		return modelName == o.modelName;
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentModelName, MV(modelName));
 };
 
@@ -99,7 +99,7 @@ struct ComponentStaticTransform {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentStaticTransform,
 								  {MV(trans) MV(scale)});
 };

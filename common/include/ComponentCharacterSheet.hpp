@@ -11,7 +11,7 @@ struct ComponentCharacterSheet_Ranges {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_Ranges,
 								  {MV(attackRange) MV(visionRange)});
 };
@@ -25,7 +25,7 @@ struct ComponentCharacterSheet_Health {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_Health,
 								  {MV(maxHP) MV(hp)});
 };
@@ -41,7 +41,7 @@ struct ComponentCharacterSheet_HealthRegen {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_HealthRegen,
 								  {MV(cooldown) MV(amount) MV(lastTimestamp)});
 };
@@ -55,7 +55,7 @@ struct ComponentCharacterSheet_LevelXP {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_LevelXP,
 								  {MV(xp) MV(level)});
 };
@@ -65,7 +65,7 @@ struct ComponentCharacterSheet_Strength {
 
 	ComponentCharacterSheet_Strength(int32_t strength) : strength(strength) {}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_Strength,
 								  {MV(strength)});
 };
@@ -80,7 +80,7 @@ struct ComponentCharacterSheet_AttackCooldown {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_AttackCooldown,
 								  {MV(baseCooldown) MV(lastTimestamp)});
 };
@@ -93,7 +93,7 @@ struct ComponentCharacterSheet_Protection {
 	{
 	}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCharacterSheet_Protection,
 								  {MV(armorPoints)});
 };

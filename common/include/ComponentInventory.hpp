@@ -57,21 +57,21 @@ struct ItemStack {
 	int64_t amount = 0;
 	std::string tag;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ItemStack, {MV(item) MV(amount) MV(tag)});
 };
 
 struct ComponentInventory {
 	std::vector<ItemStack> items;
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentInventory, MV(items));
 };
 
 struct ComponentEquippedInventory {
 	ItemStack equippedItems[NUMBER_OF_SLOTS];
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEquippedInventory, {
 		for (int i = 0; i < NUMBER_OF_SLOTS; ++i) {
 			MV(equippedItems[i]);

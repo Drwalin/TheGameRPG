@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../thirdparty/Collision3D/include/collision3d/ForwardDeclarations.hpp"
+
 namespace bitscpp
 {
 template <bool V> class ByteReader;

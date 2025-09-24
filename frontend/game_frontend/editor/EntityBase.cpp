@@ -10,9 +10,9 @@
 #include <godot_cpp/classes/csg_cylinder3d.hpp>
 
 #include "../../../ICon7/include/icon7/ByteWriter.hpp"
-#include "../../../ICon7/include/icon7/ByteReader.hpp"
 
-#include "../../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_Primitives.hpp"
 
 #include "../../../common/include/EntityComponents.hpp"
 #include "../../../common/include/RegistryComponent.hpp"
@@ -28,6 +28,8 @@
 
 namespace editor
 {
+using namespace Collision3D;
+
 EntityBase::EntityBase() {}
 EntityBase::~EntityBase() {}
 
@@ -162,41 +164,39 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 		CSGPrimitive3D *csg = primitives[0];
 		is = GetShape(csg, inv);
 	} else if (primitives.size() > 1) {
-		CompoundShape cs;
+		Collision3D::CompoundPrimitive cs;
 		for (CSGPrimitive3D *csg : primitives) {
-			cs.shapes->push_back(GetShape(csg, inv));
+			cs.primitives.push_back(GetShape(csg, inv));
 		}
-		is.type = __InnerShape::COMPOUND_SHAPE;
-		is.shape = cs;
-		is.trans = {};
+		is = Collision3D::AnyShape(std::move(cs), {});
+	} else {
+		// TODO: what to do here?
 	}
 
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   shape, writer);
 }
 
-__InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
+Collision3D::AnyPrimitive EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 {
 	Transform3D trans =
 		primitive->get_transform(); // inv * primitive->get_global_transform();
 
-	__InnerShape shape;
+	Collision3D::AnyPrimitive shape;
 	if (auto *cyl = Object::cast_to<CSGCylinder3D>(primitive)) {
 		UtilityFunctions::print("Creating from editor: cyl");
 		Collision3D::Cylinder s;
 		s.radius = cyl->get_radius();
 		s.height = cyl->get_height();
 		// 		trans = trans.translated(Vector3(0, s.height / 2, 0));
-		shape.type = __InnerShape::CYLINDER;
-		shape.shape = s;
+		shape = {std::move(s), {}};
 	} else if (auto *box = Object::cast_to<CSGBox3D>(primitive)) {
 		UtilityFunctions::print("Creating from editor: vertbox");
 		Collision3D::VertBox s;
 		s.halfExtents = ToGlm(box->get_size()) * 0.5f;
 		// 		trans = trans.translated(Vector3(0, s.halfExtents.y, 0));
-		shape.type = __InnerShape::VERTBOX;
+		shape = {std::move(s), {}};
 		trans = trans.scaled(Vector3(1, 1, 1) / trans.get_basis().get_scale());
-		shape.shape = s;
 	} else if (/*auto *sphere =*/Object::cast_to<CSGSphere3D>(primitive)) {
 		UtilityFunctions::print(
 			"Sphere colliion shape is not implemented yet yet");
@@ -212,7 +212,7 @@ __InnerShape EntityBase::GetShape(CSGPrimitive3D *primitive, Transform3D inv)
 			primitive->to_string());
 	}
 
-	shape.trans = ToGame(trans);
+	shape.trans = ToGame(trans).trans;
 	return shape;
 }
 
