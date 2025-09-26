@@ -12,9 +12,14 @@ var SPEED_UP_CAMERA_KEY_SENSITIVITY_FACTOR:float = 3.0;
 var animationTree:AnimationTree;
 var isInHud:bool = false;
 
+var renderPoints:MultiMeshInstance3D = preload("res://scripts/vfx/RenderPoints.tscn").instantiate();
+var renderPointsMesh:MultiMesh = renderPoints.multimesh;
+var currentPointMeshAdd:int = 0;
+
 func _ready():
 	InternalReady();
 	camera = GetPlayerCamera();
+	add_child(renderPoints);
 
 func Rotate(x: float, y: float)->void:
 	var rot = GetPlayerRotation();
@@ -83,10 +88,22 @@ func _process(dt: float)->void:
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + Vector3(0, height, 0);
 	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var camPos:Vector3 = GetCameraPosition();
+		var camDir:Vector3 = GetCameraDirectionLook();
+		var end = camPos + camDir * 1000;
+		var res:Array = RayTest(camPos, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
+		if res.size() > 0:
+			renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
+			currentPointMeshAdd += 1;
+			renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
+			currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count
+		
+	
 	if isInHud:
 		if Input.is_action_just_pressed("input_use"):
 			gameFrontend.PerformInteractionUse();
-			
+		
 		if Input.is_action_just_pressed("attack_primary", true):
 			gameFrontend.PerformAttack(0, 0, 0);
 		if Input.is_action_just_pressed("attack_primary_powerfull", true):

@@ -45,6 +45,10 @@ public: // Godot bound functions
 
 	Node *GetNodeToAddEntities();
 	Node *GetNodeToAddStaticMap();
+	
+	// ret.size() == 0 : no hit
+	// [0] - serverEntityId, [1] - normal, [2] - t in (0;1), [3] hitPos
+	Array RayTest(Vector3 start, Vector3 end, int64_t collisionFilter, bool ignorePlayer);
 
 public:
 	void OnLoginFailed(std::string reason);
@@ -57,6 +61,8 @@ public: // Call functions from godot to game
 	Vector3 GetPlayerRotation();
 	Vector3 GetPlayerPosition();
 	Vector3 GetPlayerVelocity();
+	Vector3 GetCameraPosition();
+	Vector3 GetCameraDirectionLook();
 	float GetPlayerHeight();
 	float GetPlayerWidth();
 	Camera3D *GetPlayerCamera();

@@ -9,6 +9,7 @@
 
 #include "../../common/include/EntityComponents.hpp"
 #include "../../common/include/StatsCollector.hpp"
+#include "../../common/include/CollisionFilters.hpp"
 
 #include "GodotGlm.hpp"
 
@@ -19,6 +20,12 @@
 
 #define METHOD_ARGS(CLASS, NAME, ...)                                          \
 	ClassDB::bind_method(D_METHOD(#NAME, __VA_ARGS__), &CLASS::NAME);
+
+#define INTEGER_CONSTANT(CLASS, ENUM, NAME, VALUE, IS_BITFIELD)                \
+	ClassDB::bind_integer_constant(#CLASS, ENUM, NAME, VALUE, IS_BITFIELD);
+
+#define INTEGER_CONSTANT_GLOBAL(CLASS, ENUM, NAME, IS_BITFIELD)                \
+	INTEGER_CONSTANT(CLASS, #ENUM, #NAME, ENUM::NAME, IS_BITFIELD);
 
 GameFrontend *GameFrontend::singleton = nullptr;
 
@@ -61,6 +68,8 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, GetPlayerHeight);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerWidth);
 	METHOD_NO_ARGS(GameFrontend, GetPlayerCamera);
+	METHOD_NO_ARGS(GameFrontend, GetCameraPosition);
+	METHOD_NO_ARGS(GameFrontend, GetCameraDirectionLook);
 
 	METHOD_NO_ARGS(GameFrontend, IsConnected);
 	METHOD_NO_ARGS(GameFrontend, IsDisconnected);
@@ -77,6 +86,20 @@ void GameFrontend::_bind_methods()
 	METHOD_NO_ARGS(GameFrontend, GetCurrentTick);
 
 	METHOD_NO_ARGS(GameFrontend, GetCharacterSheet);
+
+	METHOD_ARGS(GameFrontend, RayTest, "start", "end", "mask", "ignorePlayer");
+
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter, FILTER_ALL, true);
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter, FILTER_TERRAIN,
+							true);
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter, FILTER_CHARACTER,
+							true);
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter, FILTER_STATIC_OBJECT,
+							true);
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter, FILTER_TRIGGER,
+							true);
+	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter,
+							FILTER_INTERACTABLE_FOLIAGE, true);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
@@ -203,4 +226,38 @@ Dictionary GameFrontend::GetCharacterSheet()
 		dict[String::utf8(it.first.c_str())] = String::utf8(it.second.c_str());
 	}
 	return dict;
+}
+
+Array GameFrontend::RayTest(Vector3 _start, Vector3 _end,
+							int64_t collisionFilter, bool ignorePlayer)
+{
+	glm::vec3 start = ToGlm(_start);
+	glm::vec3 end = ToGlm(_end);
+
+	float td;
+	glm::vec3 normal;
+	glm::vec3 hitPos;
+	flecs::entity entity;
+	if (client->realm->collisionWorld.RayTestFirstHit(
+			start, end, &hitPos, &normal, &entity, &td,
+			ignorePlayer ? client->localPlayerEntityId : 0, collisionFilter)) {
+		if (entity.is_valid() && entity.is_alive()) {
+			auto it =
+				client->mapLocalEntityIdToServerEntityId.find(entity.id());
+			if (it != client->mapLocalEntityIdToServerEntityId.end()) {
+				return {it->second, ToGodot(normal), td, ToGodot(hitPos)};
+			}
+		}
+	}
+	return {};
+}
+
+Vector3 GameFrontend::GetCameraPosition()
+{
+	return playerCamera->get_global_position();
+}
+
+Vector3 GameFrontend::GetCameraDirectionLook()
+{
+	return playerCamera->get_global_basis().orthonormalized().rows[2].normalized();
 }
