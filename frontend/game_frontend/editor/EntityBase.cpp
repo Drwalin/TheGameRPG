@@ -192,16 +192,15 @@ Collision3D::AnyPrimitive EntityBase::GetShape(CSGPrimitive3D *primitive, Transf
 		s.height = cyl->get_height();
 		s.radius *= scale.x;
 		s.height *= scale.y;
-		// 		trans = trans.translated(Vector3(0, s.height / 2, 0));
+		trans = trans.translated(Vector3(0, -s.height / 2, 0));
 		shape = {std::move(s), {}};
 	} else if (auto *box = Object::cast_to<CSGBox3D>(primitive)) {
 		UtilityFunctions::print("Creating from editor: vertbox");
 		Collision3D::VertBox s;
 		s.halfExtents = ToGlm(box->get_size()) * 0.5f;
 		s.halfExtents *= ToGlm(scale);
-		// 		trans = trans.translated(Vector3(0, s.halfExtents.y, 0));
+		trans = trans.translated(Vector3(0, -s.halfExtents.y, 0));
 		shape = {std::move(s), {}};
-// 		trans = trans.scaled(Vector3(1, 1, 1) / trans.get_basis().get_scale());
 	} else if (/*auto *sphere =*/Object::cast_to<CSGSphere3D>(primitive)) {
 		UtilityFunctions::print(
 			"Sphere colliion shape is not implemented yet yet");
@@ -323,7 +322,7 @@ ComponentStaticTransform ToGame(godot::Transform3D t)
 	return {{ToGlm(t.get_origin()),
 			 Collision3D::Rotation::FromRadians(
 				 t.get_basis().get_quaternion().get_euler().y)},
-			glm::maxcomp(ToGlm(t.get_basis().get_scale()))};
+			1.0f};
 }
 
 bool EntityBase::IsTrigger()

@@ -22,7 +22,8 @@ bool GameEditorConfig::render_collision = false;
 
 void GameEditorConfig::_bind_methods()
 {
-	if (Engine::get_singleton()->is_editor_hint() == true) {
+// 	if (Engine::get_singleton()->is_editor_hint() == true)
+	{
 		flecs::world ecs;
 		RegisterEntityGameComponents(ecs);
 	}

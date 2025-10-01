@@ -70,6 +70,9 @@ void Realm::RegisterObservers()
 			if (shape == nullptr) {
 				return;
 			}
+			if (entity.try_get<ComponentMovementState>() == nullptr) {
+				return;
+			}
 
 			ComponentMovementState currentState = lastState.oldState;
 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,

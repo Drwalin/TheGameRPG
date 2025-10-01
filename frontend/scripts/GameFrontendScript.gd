@@ -50,16 +50,18 @@ func DrawTestRay(start:Vector3, end:Vector3):
 	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
 	if res.size() > 0:
 		print(res);
+		if (res[2] < 0.00001):
+			return;
 		renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
 		currentPointMeshAdd += 1;
 		renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
 		currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count;
 
 func RandVec()->Vector3:
-	return Vector3(randf_range(-1000,1000),randf_range(-1000,1000),randf_range(-1000,1000));
+	return Vector3(randf_range(-20,20),randf_range(-30,20),randf_range(-20,20));
 
 func TestSomeRandomRays():
-	for i in range(0,100):
+	for i in range(0,20):
 		DrawTestRay(RandVec(), RandVec());
 
 func _process(dt: float)->void:

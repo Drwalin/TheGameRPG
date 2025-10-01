@@ -114,6 +114,11 @@ void CollisionWorld_spp::OnAddEntity(flecs::entity entity,
 	broadphase->Add(entity.id() & 0xFFFFFFFF, aabb, FILTER_CHARACTER);
 }
 
+void CollisionWorld_spp::OnRemoveEntity(flecs::entity entity)
+{
+	broadphase->Remove(entity.id() & 0xFFFFFFFF);
+}
+
 void CollisionWorld_spp::EntitySetTransform(
 	flecs::entity entity, const ComponentStaticTransform &transform,
 	const ComponentCollisionShape &shape)
@@ -327,10 +332,9 @@ CollisionWorld_spp::TestForEntitiesAABB(glm::vec3 min, glm::vec3 max,
 	return cb.count;
 }
 
-size_t
-CollisionWorld_spp::TestForEntitiesAABBApproximate(glm::vec3 min, glm::vec3 max,
-										std::vector<flecs::entity> *entities,
-										uint32_t mask) const
+size_t CollisionWorld_spp::TestForEntitiesAABBApproximate(
+	glm::vec3 min, glm::vec3 max, std::vector<flecs::entity> *entities,
+	uint32_t mask) const
 {
 	struct Cb : public CallbackAabb {
 		std::vector<flecs::entity> *entities;
@@ -356,17 +360,18 @@ CollisionWorld_spp::TestForEntitiesAABBApproximate(glm::vec3 min, glm::vec3 max,
 	return cb.count;
 }
 
-size_t CollisionWorld_spp::TestForEntitiesSphere(glm::vec3 center, float radius,
-							 std::vector<flecs::entity> *testedEntities,
-							 uint32_t mask) const
+size_t CollisionWorld_spp::TestForEntitiesSphere(
+	glm::vec3 center, float radius, std::vector<flecs::entity> *testedEntities,
+	uint32_t mask) const
 {
-	size_t c = TestForEntitiesAABB(center-radius, center+radius, testedEntities, mask);
-	
+	size_t c = TestForEntitiesAABB(center - radius, center + radius,
+								   testedEntities, mask);
+
 	assert(c <= testedEntities->size());
-	
-	const float rad2 = radius*radius;
-	
-	for (int i=testedEntities->size()-c; i<c; ++i) {
+
+	const float rad2 = radius * radius;
+
+	for (int i = testedEntities->size() - c; i < c; ++i) {
 		flecs::entity e = (*testedEntities)[i];
 		bool remove = true;
 		if (auto *t = e.try_get<ComponentStaticTransform>()) {
@@ -380,29 +385,30 @@ size_t CollisionWorld_spp::TestForEntitiesSphere(glm::vec3 center, float radius,
 			}
 		}
 		if (remove) {
-			(*testedEntities)[i] = (*testedEntities)[testedEntities->size()-1];
-			testedEntities->resize(testedEntities->size()-1);
+			(*testedEntities)[i] =
+				(*testedEntities)[testedEntities->size() - 1];
+			testedEntities->resize(testedEntities->size() - 1);
 			--c;
 			--i;
 		}
 	}
-	
-	return c; 
+
+	return c;
 }
 
-size_t CollisionWorld_spp::TestForEntitiesCylinder(glm::vec3 centerBottom,
-							   float radius, float height,
-							   std::vector<flecs::entity> *testedEntities,
-							   uint32_t mask) const
+size_t CollisionWorld_spp::TestForEntitiesCylinder(
+	glm::vec3 centerBottom, float radius, float height,
+	std::vector<flecs::entity> *testedEntities, uint32_t mask) const
 {
-	size_t c = TestForEntitiesAABB(centerBottom-glm::vec3(radius, 0, radius),
-			centerBottom+glm::vec3(radius, height, radius), testedEntities, mask);
-	
+	size_t c = TestForEntitiesAABB(
+		centerBottom - glm::vec3(radius, 0, radius),
+		centerBottom + glm::vec3(radius, height, radius), testedEntities, mask);
+
 	assert(c <= testedEntities->size());
-	
-	const float rad2 = radius*radius;
-	
-	for (int i=testedEntities->size()-c; i<c; ++i) {
+
+	const float rad2 = radius * radius;
+
+	for (int i = testedEntities->size() - c; i < c; ++i) {
 		flecs::entity e = (*testedEntities)[i];
 		bool remove = true;
 		if (auto *t = e.try_get<ComponentStaticTransform>()) {
@@ -411,20 +417,22 @@ size_t CollisionWorld_spp::TestForEntitiesCylinder(glm::vec3 centerBottom,
 				glm::vec3 c = aabb.GetCenter();
 				glm::vec3 v = c - centerBottom;
 				v.y = 0;
-				if (glm::dot(v, v) <= rad2 && c.y >= centerBottom.y && c.z <= centerBottom.y + height) {
+				if (glm::dot(v, v) <= rad2 && c.y >= centerBottom.y &&
+					c.z <= centerBottom.y + height) {
 					remove = false;
 				}
 			}
 		}
 		if (remove) {
-			(*testedEntities)[i] = (*testedEntities)[testedEntities->size()-1];
-			testedEntities->resize(testedEntities->size()-1);
+			(*testedEntities)[i] =
+				(*testedEntities)[testedEntities->size() - 1];
+			testedEntities->resize(testedEntities->size() - 1);
 			--c;
 			--i;
 		}
 	}
-	
-	return c; 
+
+	return c;
 }
 
 void CollisionWorld_spp::StartEpoch() {}
@@ -448,6 +456,12 @@ void CollisionWorld_spp::RegisterObservers(Realm *realm)
 			EntitySetTransform(entity, state.pos, shape);
 		});
 
+	ecs.observer<ComponentShape, ComponentMovementState>()
+		.event(flecs::OnRemove)
+		.each(
+			[this](flecs::entity entity, const ComponentShape &,
+				   const ComponentMovementState &) { OnRemoveEntity(entity); });
+
 	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, const ComponentCollisionShape &shape,
@@ -461,6 +475,13 @@ void CollisionWorld_spp::RegisterObservers(Realm *realm)
 					 const ComponentStaticTransform &transform,
 					 const ComponentCollisionShape &shape) {
 			EntitySetTransform(entity, transform, shape);
+		});
+
+	ecs.observer<ComponentStaticTransform, ComponentCollisionShape>()
+		.event(flecs::OnRemove)
+		.each([this](flecs::entity entity, const ComponentStaticTransform &,
+					 const ComponentCollisionShape &) {
+			OnRemoveEntity(entity);
 		});
 }
 

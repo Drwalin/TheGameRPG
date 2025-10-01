@@ -30,6 +30,7 @@ public:
 								const ComponentStaticTransform &transform);
 	void OnAddEntity(flecs::entity entity, const ComponentShape &shape,
 					 glm::vec3 pos);
+	void OnRemoveEntity(flecs::entity entity);
 
 	void EntitySetTransform(flecs::entity entity,
 							const ComponentStaticTransform &trans,
