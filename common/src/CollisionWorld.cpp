@@ -221,6 +221,7 @@ bool CollisionWorld_spp::RayTestFirstHit(
 			cb->hitEntity = e;
 			cb->hasHit = true;
 			cb->entity = e;
+			cb->hitNormal = normal;
 			return {n, true};
 		}
 
@@ -238,6 +239,10 @@ bool CollisionWorld_spp::RayTestFirstHit(
 			*hitNormal = cb.hitNormal;
 		if (travelFactor)
 			*travelFactor = cb.cutFactor;
+		if (entity)
+			*entity = cb.entity;
+		if (hitPosition)
+			*hitPosition = cb.hitPoint;
 		return true;
 	}
 
@@ -439,9 +444,8 @@ void CollisionWorld_spp::RegisterObservers(Realm *realm)
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity, const ComponentShape &shape,
 					 const ComponentMovementState &state) {
-			if (entity.has<ComponentMovementState>()) {
-				EntitySetTransform(entity, state.pos, shape);
-			}
+			assert(entity.has<ComponentMovementState>());
+			EntitySetTransform(entity, state.pos, shape);
 		});
 
 	ecs.observer<ComponentCollisionShape, ComponentStaticTransform>()

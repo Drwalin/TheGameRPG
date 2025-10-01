@@ -88,7 +88,9 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, nullptr,
 				movementParams.stepHeight, 0.7)) {
 			normal = glm::normalize(normal);
-			vel -= normal * glm::dot(normal, vel);
+			if (next.onGround == false && glm::dot(vel, normal) < 0) {
+				vel -= normal * glm::dot(normal, vel);
+			}
 			/*
 			if (vel.y > 0) {
 				glm::vec3 vv = vel;
@@ -117,8 +119,7 @@ void UpdateMovement(
 		next.rot = prev.rot;
 	}
 	
-	glm::vec3 d = currentState.pos - prev.pos;
-	if (glm::dot(d, d) > 0.00001) {
+	if (currentState.pos != prev.pos) {
 		realm->collisionWorld.EntitySetTransform(entity, currentState.pos, shape);
 	}
 }

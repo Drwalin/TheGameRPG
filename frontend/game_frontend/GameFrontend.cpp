@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/label.hpp>
 
 #include "../../ICon7/include/icon7/Time.hpp"
+#include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../../common/include/EntityComponents.hpp"
 #include "../../common/include/StatsCollector.hpp"
@@ -263,12 +264,15 @@ Array GameFrontend::RayTest(Vector3 _start, Vector3 _end,
 	if (client->realm->collisionWorld.RayTestFirstHit(
 			start, end, &hitPos, &normal, &entity, &td,
 			ignorePlayer ? client->localPlayerEntityId : 0, collisionFilter)) {
+		printf("hit near %f\n", td);
 		if (entity.is_valid() && entity.is_alive()) {
 			auto it =
 				client->mapLocalEntityIdToServerEntityId.find(entity.id());
 			if (it != client->mapLocalEntityIdToServerEntityId.end()) {
 				return {it->second, ToGodot(normal), td, ToGodot(hitPos)};
 			}
+		} else {
+			LOG_ERROR("Hit entity that does not exist: %lu", entity.id());
 		}
 	}
 	return {};
@@ -281,7 +285,8 @@ Vector3 GameFrontend::GetCameraPosition()
 
 Vector3 GameFrontend::GetCameraDirectionLook()
 {
-	return playerCamera->get_global_basis().orthonormalized().rows[2].normalized();
+	return playerCamera->get_global_basis().get_quaternion().xform(Vector3(0,0,-1)).normalized();
+	return playerCamera->get_global_basis().rows[2].normalized();
 }
 
 GameFrontend *GameFrontend::GetSingleton()

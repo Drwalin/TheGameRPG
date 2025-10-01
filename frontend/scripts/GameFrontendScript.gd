@@ -19,7 +19,7 @@ var currentPointMeshAdd:int = 0;
 func _ready():
 	InternalReady();
 	camera = GetPlayerCamera();
-	add_child(renderPoints);
+	GetNodeToAddEntities().get_parent().add_child(renderPoints);
 
 func Rotate(x: float, y: float)->void:
 	var rot = GetPlayerRotation();
@@ -49,10 +49,11 @@ func IsDownOrJustReleased(action: StringName)->bool:
 func DrawTestRay(start:Vector3, end:Vector3):
 	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
 	if res.size() > 0:
+		print(res);
 		renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
 		currentPointMeshAdd += 1;
 		renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
-		currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count
+		currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count;
 
 func RandVec()->Vector3:
 	return Vector3(randf_range(-1000,1000),randf_range(-1000,1000),randf_range(-1000,1000));
@@ -69,7 +70,7 @@ func _process(dt: float)->void:
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		var camPos:Vector3 = GetCameraPosition();
 		var camDir:Vector3 = GetCameraDirectionLook();
-		var end = camPos + camDir * 1000;
+		var end = camPos + (camDir * 1000.0);
 		DrawTestRay(camPos, end);
 	
 	if IsInPlayerControl() == false:

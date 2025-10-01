@@ -176,10 +176,10 @@ void GameClient::SpawnEntity(
 
 	realm->SetComponent(localId, shape);
 	realm->SetComponent(localId, state);
+	realm->SetComponent(localId, state.oldState);
 	realm->SetComponent(localId, movementParams);
 	realm->SetComponent(localId, name);
 	realm->AssureComponent<ComponentEventsQueue>(localId);
-	realm->SetComponent(localId, state.oldState);
 	realm->SetComponent(localId, model);
 
 	if (serverId == serverPlayerEntityId) {
