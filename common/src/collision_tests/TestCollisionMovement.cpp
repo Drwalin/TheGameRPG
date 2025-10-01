@@ -101,8 +101,6 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	
 	// Test on ground
 	
-	printf("Testing collision with %lu entities \n", count);
-	
 	for (int i=0; i<count; ++i) {
 		flecs::entity e = entities[i];
 		if (auto *t = e.try_get<ComponentStaticTransform>()) {
@@ -115,28 +113,13 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			
 			float near;
 			glm::vec3 norm;
-			printf("Testing ray: %f %f %f -> %f %f %f\n",
-					toGroundRay.start.x,
-					toGroundRay.start.y,
-					toGroundRay.start.z,
-					toGroundRay.end.x,
-					toGroundRay.end.y,
-					toGroundRay.end.z);
-			bool res = false;
 			if (s->shape.RayTest(t->trans, toGroundRay, near, norm)) {
-				res = true;
 				hasHitOnGround = true;
 				if (near < maxOffsetHeight) {
 					maxOffsetHeight = near;
 					hitNormal = norm;
 				}
 			}
-			printf("result %s: near: %f,    norm: %f %f %f\n",
-					res ? "ON_GROUND" : "IN_AIR",
-					near,
-					norm.x,
-					norm.y,
-					norm.z);
 			
 		} else {
 			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",

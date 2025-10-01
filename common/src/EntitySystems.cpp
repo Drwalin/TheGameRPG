@@ -117,8 +117,6 @@ void UpdateMovement(
 		next.rot = prev.rot;
 	}
 	
-	printf("OnGround(%lu): %s\n", entity.id(), next.onGround ? "YES" : "NO");
-
 	glm::vec3 d = currentState.pos - prev.pos;
 	if (glm::dot(d, d) > 0.00001) {
 		realm->collisionWorld.EntitySetTransform(entity, currentState.pos, shape);
