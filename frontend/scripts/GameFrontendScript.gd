@@ -46,8 +46,31 @@ func _input(event)->void:
 func IsDownOrJustReleased(action: StringName)->bool:
 	return (Input.is_action_just_released(action) || Input.is_action_pressed(action)) && !Input.is_action_just_pressed(action);
 
+func DrawTestRay(start:Vector3, end:Vector3):
+	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
+	if res.size() > 0:
+		renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
+		currentPointMeshAdd += 1;
+		renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
+		currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count
+
+func RandVec()->Vector3:
+	return Vector3(randf_range(-1000,1000),randf_range(-1000,1000),randf_range(-1000,1000));
+
+func TestSomeRandomRays():
+	for i in range(0,100):
+		DrawTestRay(RandVec(), RandVec());
+
 func _process(dt: float)->void:
 	InternalProcess();
+	
+	TestSomeRandomRays();
+	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		var camPos:Vector3 = GetCameraPosition();
+		var camDir:Vector3 = GetCameraDirectionLook();
+		var end = camPos + camDir * 1000;
+		DrawTestRay(camPos, end);
 	
 	if IsInPlayerControl() == false:
 		return;
@@ -87,18 +110,6 @@ func _process(dt: float)->void:
 	camera.set_rotation(rot + Vector3(0, PI, 0));
 	var height = gameFrontend.GetPlayerHeight();
 	camera.position = pos + Vector3(0, height, 0);
-	
-	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		var camPos:Vector3 = GetCameraPosition();
-		var camDir:Vector3 = GetCameraDirectionLook();
-		var end = camPos + camDir * 1000;
-		var res:Array = RayTest(camPos, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
-		if res.size() > 0:
-			renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
-			currentPointMeshAdd += 1;
-			renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
-			currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count
-		
 	
 	if isInHud:
 		if Input.is_action_just_pressed("input_use"):

@@ -27,11 +27,18 @@
 #define INTEGER_CONSTANT_GLOBAL(CLASS, ENUM, NAME, IS_BITFIELD)                \
 	INTEGER_CONSTANT(CLASS, #ENUM, #NAME, ENUM::NAME, IS_BITFIELD);
 
-GameFrontend *GameFrontend::singleton = nullptr;
+GameFrontend *GameFrontend::singleton;// = nullptr;
 
 GameFrontend::GameFrontend()
 {
+	printf("GameFrontend CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
+	fflush(stdout);
+	
 	singleton = this;
+	
+	printf("GameFrontend CONSTRUCTOR(2)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
+	fflush(stdout);
+	
 	client = nullptr;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -40,6 +47,9 @@ GameFrontend::GameFrontend()
 
 GameFrontend::~GameFrontend()
 {
+	printf("GameFrontend DESTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
+	fflush(stdout);
+	
 	if (client) {
 		client->Destroy();
 		delete client;
@@ -100,13 +110,25 @@ void GameFrontend::_bind_methods()
 							true);
 	INTEGER_CONSTANT_GLOBAL(GameFrontend, CollisionFilter,
 							FILTER_INTERACTABLE_FOLIAGE, true);
+	
+	METHOD_NO_ARGS(GameFrontend, GetThisAsInt);
 }
 
 void GameFrontend::_ready() { InternalReady(); }
 void GameFrontend::_process(double dt) { InternalProcess(); }
 void GameFrontend::InternalReady()
 {
+	
+	if (client != nullptr) {
+		GameClientFrontend::singleton = client;
+		return;
+	}
+	
 	client = new GameClientFrontend(this);
+	GameClientFrontend::singleton = client;
+	
+	printf("GameFrontend InternalReady!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
+	fflush(stdout);
 
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -260,4 +282,18 @@ Vector3 GameFrontend::GetCameraPosition()
 Vector3 GameFrontend::GetCameraDirectionLook()
 {
 	return playerCamera->get_global_basis().orthonormalized().rows[2].normalized();
+}
+
+GameFrontend *GameFrontend::GetSingleton()
+{
+	printf("GameFrontend GetSingleton!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             (singleton ptr = %p, singleton value = %p)\n", (void*)&singleton, (void*)singleton);
+	fflush(stdout);
+	
+	if (singleton == nullptr) {
+		singleton = (GameFrontend*)(Engine::get_singleton()->get_singleton("gameFrontend"));
+
+// 		memnew(GameFrontend);
+		singleton->InternalReady();
+	}
+	return singleton;
 }

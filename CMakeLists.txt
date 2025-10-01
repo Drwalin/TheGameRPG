@@ -18,10 +18,7 @@ if(ENABLE_LTO)
 endif()
 
 include_directories(thirdparty/flecs/include)
-include_directories(thirdparty/bullet/src)
-include_directories(thirdparty/bullet/src/LinearMath)
 
-add_subdirectory(thirdparty/bullet EXCLUDE_FROM_ALL)
 add_subdirectory(thirdparty/Collision3D)
 include_directories(thirdparty/Collision3D)
 include_directories(thirdparty/Collision3D/SpatialPartitioning/glm)
@@ -55,6 +52,5 @@ add_custom_target(thirdparty_libs ALL DEPENDS
 	rpmalloc 
 	uSockets
 	flecs
-	BulletCollision Bullet3Collision Bullet3Geometry Bullet3Common LinearMath
 	godot::cpp
 )

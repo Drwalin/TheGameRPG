@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://blksreeowfk4n"]
+[gd_scene load_steps=6 format=3 uid="uid://blksreeowfk4n"]
 
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_6gys2"]
+[ext_resource type="Script" uid="uid://b0cfnlytpp75e" path="res://tools/GameEditorConfigScript.gd" id="1_ic2b8"]
 [ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="2_yfy02"]
 [ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="3_l4sn5"]
 [ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_tk4hp"]
@@ -8,14 +9,15 @@
 [node name="NewMap2" type="GameEditorConfig"]
 render_collision = true
 save_map_file_path = "../game_assets/maps/Castle.map"
+script = ExtResource("1_ic2b8")
 
 [node name="Floor" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("1_6gys2")
-transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, -1199.33, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.056, 0.736, 0)
-size = Vector3(1.91846, 6.49707, 1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47161865, 0)
+size = Vector3(1000, 11.123, 1000)
 
 [node name="Door" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
@@ -39,7 +41,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
 [node name="ComponentSpawner" type="ComponentSpawner" parent="Spawner"]
 
 [node name="PrefabServerNPC" parent="Spawner/ComponentSpawner" instance=ExtResource("3_l4sn5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
 
 [node name="ComponentCharacterSheet" parent="Spawner/ComponentSpawner/PrefabServerNPC" index="2"]
 initialXp = 10
@@ -48,7 +49,6 @@ initialXp = 10
 name = "Mad King 2"
 
 [node name="PrefabServerNPC2" parent="Spawner/ComponentSpawner" instance=ExtResource("3_l4sn5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
 
 [node name="ComponentCharacterSheet" parent="Spawner/ComponentSpawner/PrefabServerNPC2" index="2"]
 initialXp = 100
@@ -104,42 +104,42 @@ relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935,
 
 [node name="Door3" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
-transform = Transform3D(0.0267353, 0, 0.999643, 0, 1, 0, -0.999643, 0, 0.0267353, -53.7495, -3.99761, 45.1971)
+transform = Transform3D(0.02673526, 0, 0.999643, 0, 1.0000005, 0, -0.999643, 0, 0.02673526, -53.7495, -3.99761, 45.1971)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door3"]
-transformClosed = Transform3D(0.0267353, 0, 0.999643, 0, 1, 0, -0.999643, 0, 0.0267353, -53.7495, -3.99761, 45.1971)
+transformClosed = Transform3D(0.02673526, 0, 0.999643, 0, 1.0000005, 0, -0.999643, 0, 0.02673526, -53.7495, -3.99761, 45.1971)
 relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
 
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door3"]
 
 [node name="Door4" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
-transform = Transform3D(-0.996643, 0, -0.0818689, 0, 1, 0, 0.0818689, 0, -0.996643, -56.007, -3.99761, 42.8803)
+transform = Transform3D(-0.99664307, 0, -0.08186924, 0, 1, 0, 0.08186924, 0, -0.99664307, -56.007, -3.99761, 42.8803)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door4"]
-transformClosed = Transform3D(-0.996643, 0, -0.0818689, 0, 1, 0, 0.0818689, 0, -0.996643, -56.007, -3.99761, 42.8803)
+transformClosed = Transform3D(-0.99664307, 0, -0.08186924, 0, 1, 0, 0.08186924, 0, -0.99664307, -56.007, -3.99761, 42.8803)
 relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
 
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door4"]
 
 [node name="Door5" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_yfy02")
-transform = Transform3D(0.063853, 0, -0.997959, 0, 1, 0, 0.997959, 0, 0.063853, -58.1109, -3.99761, 45.1971)
+transform = Transform3D(0.063852966, 0, -0.9979593, 0, 1, 0, 0.9979593, 0, 0.063852966, -58.1109, -3.99761, 45.1971)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Door5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.503754, 0.996429, 0.000366211)
 size = Vector3(1.04132, 2.00153, 0.0661621)
 
 [node name="ComponentOpenableSingleDoor" type="ComponentOpenableSingleDoor" parent="Door5"]
-transformClosed = Transform3D(0.063853, 0, -0.997959, 0, 1, 0, 0.997959, 0, 0.063853, -58.1109, -3.99761, 45.1971)
+transformClosed = Transform3D(0.063852966, 0, -0.9979593, 0, 1, 0, 0.9979593, 0, 0.063852966, -58.1109, -3.99761, 45.1971)
 relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935, 0, 0.554873, 0, 0, 0)
 
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door5"]

@@ -73,6 +73,8 @@ public: // Call functions from godot to game
 	int64_t GetPing();
 	int64_t GetCurrentTick();
 	Dictionary GetCharacterSheet();
+	
+	int64_t GetThisAsInt() { return (int64_t)this; }
 
 	bool IsConnected();
 	bool IsDisconnected();
@@ -89,6 +91,8 @@ public: // stats
 	StatsCollector statsInternalProcessDuration = {
 		"GameFrontend total internal process time [ms]"};
 
+	static GameFrontend *GetSingleton();
+	
 public: // singleton
 	static GameFrontend *singleton;
 };

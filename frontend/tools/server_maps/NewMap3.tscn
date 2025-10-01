@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bb5upk4bbvrqe"]
+[gd_scene load_steps=6 format=3 uid="uid://bb5upk4bbvrqe"]
 
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_g3sqi"]
+[ext_resource type="Script" uid="uid://b0cfnlytpp75e" path="res://tools/GameEditorConfigScript.gd" id="1_y70i0"]
 [ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="2_y70i0"]
 [ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="3_fpgg1"]
 [ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_1v38s"]
@@ -8,14 +9,14 @@
 [node name="NewMap2" type="GameEditorConfig"]
 render_collision = true
 save_map_file_path = "../game_assets/maps/Forest.map"
+script = ExtResource("1_y70i0")
 
 [node name="Floor" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("1_g3sqi")
-transform = Transform3D(300, 0, 0, 0, 300, 0, 0, 0, 300, 0, -1209.33, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.965, 0)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Floor"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.056, 0.77, 0)
-size = Vector3(1.91846, 6.49707, 1)
+size = Vector3(1494.116, 10, 1056.205)
 
 [node name="Spawner" type="EntityBase" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.3844, 2.91309, 0)

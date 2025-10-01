@@ -31,11 +31,12 @@ void GameEditorConfig::_bind_methods()
 					  "render graphics");
 	REGISTER_PROPERTY(GameEditorConfig, render_collision, Variant::Type::BOOL,
 					  "render collision");
-	REGISTER_PROPERTY(GameEditorConfig, save_file, Variant::Type::BOOL,
-					  "save file");
 	REGISTER_PROPERTY_WITH_HINT(
 		GameEditorConfig, save_map_file_path, Variant::Type::STRING,
 		PropertyHint::PROPERTY_HINT_GLOBAL_SAVE_FILE, "", "save_map_file_path");
+	
+	METHOD_ARGS(GameEditorConfig, SaveScene, "gameFrontendSingleton");
+	METHOD_ARGS(GameEditorConfig, SaveSceneInt, "gameFrontendSingletonPtrAsInt");
 }
 
 void GameEditorConfig::_ready()
@@ -48,27 +49,33 @@ void GameEditorConfig::_process(double dt)
 {
 	set_transform({});
 	
-	if (save_file) {
-		SaveScene();
-		save_file = false;
-	}
-
 	if (Engine::get_singleton()->is_editor_hint() == false) {
 		++frameCounter;
 		if (frameCounter == 5) {
-			SaveScene();
+			SaveScene(GameFrontend::GetSingleton());
 			get_tree()->quit();
 		}
 	}
 }
 
-void GameEditorConfig::SaveScene()
+void GameEditorConfig::SaveSceneInt(int64_t gameFrontendIntegerPtrValue)
+{
+	SaveScene((GameFrontend*)gameFrontendIntegerPtrValue);
+}
+
+void GameEditorConfig::SaveScene(GameFrontend *gameFrontend)
 {
 	otherObjects.clear();
 	staticToGoSecond.clear();
+	
+	if (GameFrontend::singleton == nullptr) {
+		GameFrontend::singleton = gameFrontend;
+	} else {
+		GameFrontend::GetSingleton();
+	}
 
 	if (GameClientFrontend::singleton == nullptr) {
-		GameFrontend::singleton->InternalReady();
+		GameFrontend::GetSingleton()->InternalReady();
 	}
 
 	std::string projectPath =

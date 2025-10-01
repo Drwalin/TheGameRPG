@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/core/class_db.hpp>
@@ -68,6 +70,8 @@ namespace icon7
 class ByteWriter;
 }
 
+class GameFrontend;
+
 namespace editor
 {
 class PrefabServerStaticMesh_Base;
@@ -86,7 +90,8 @@ public: // Godot bound functions
 	virtual void _ready() override;
 	virtual void _process(double dt) override;
 
-	void SaveScene();
+	void SaveScene(GameFrontend *gameFrontend);
+	void SaveSceneInt(int64_t gameFrontendIntegerPtrValue);
 	// returns true if has any PrefabServer nodes
 	void SerializeNode(Node *node, icon7::ByteWriter &writer);
 	static Node3D *InstantiateGraphicMesh(Ref<Resource> res);
@@ -103,10 +108,6 @@ public: // variables
 	bool get_render_collision() { return render_collision; }
 	void set_render_collision(bool v);
 	
-	bool save_file = false;
-	bool get_save_file() { return save_file; }
-	void set_save_file(bool v) { save_file = v; }
-
 	String save_map_file_path;
 	String get_save_map_file_path() { return save_map_file_path; }
 	void set_save_map_file_path(String v) { save_map_file_path = v; }

@@ -20,9 +20,9 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 		*normal = glm::normalize(end - start);
 	}
 	
-	bool wasOnGround = false;
+// 	bool wasOnGround = false;
 	if (isOnGround) {
-		wasOnGround = *isOnGround;
+// 		wasOnGround = *isOnGround;
 		*isOnGround = false;
 	}
 	
@@ -97,9 +97,11 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	bool hasHitOnGround = false;
 	
 	Collision3D::RayInfo toGroundRay;
-	toGroundRay.Calc(*finalCorrectedPosition + stepVector, *finalCorrectedPosition - stepVector);
+	toGroundRay.Calc(*finalCorrectedPosition + stepVector * 2.0f, *finalCorrectedPosition - stepVector);
 	
 	// Test on ground
+	
+	printf("Testing collision with %lu entities \n", count);
 	
 	for (int i=0; i<count; ++i) {
 		flecs::entity e = entities[i];
@@ -113,25 +115,42 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			
 			float near;
 			glm::vec3 norm;
+			printf("Testing ray: %f %f %f -> %f %f %f\n",
+					toGroundRay.start.x,
+					toGroundRay.start.y,
+					toGroundRay.start.z,
+					toGroundRay.end.x,
+					toGroundRay.end.y,
+					toGroundRay.end.z);
+			bool res = false;
 			if (s->shape.RayTest(t->trans, toGroundRay, near, norm)) {
+				res = true;
 				hasHitOnGround = true;
 				if (near < maxOffsetHeight) {
 					maxOffsetHeight = near;
 					hitNormal = norm;
 				}
 			}
+			printf("result %s: near: %f,    norm: %f %f %f\n",
+					res ? "ON_GROUND" : "IN_AIR",
+					near,
+					norm.x,
+					norm.y,
+					norm.z);
+			
 		} else {
 			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",
 					  e.id());
 		}
 	}
 	
+	hitNormal = glm::normalize(hitNormal);
 
-	if (hasHitOnGround && (wasOnGround || (end.y >= start.y))) {
+	if (hasHitOnGround && (hitNormal.y >= minNormalYcomponent)) {// && (wasOnGround || (end.y >= start.y))) {
 		hasCollision = true;
 		*finalCorrectedPosition = end = toGroundRay.start + toGroundRay.dir * maxOffsetHeight;
 		if (isOnGround) {
-			*isOnGround = (hitNormal.y >= minNormalYcomponent);
+			*isOnGround = true;
 		}
 		if (groundNormal) {
 			*groundNormal = hitNormal;
