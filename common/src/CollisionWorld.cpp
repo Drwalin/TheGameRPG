@@ -384,6 +384,18 @@ size_t CollisionWorld_spp::TestForEntitiesSphere(
 				}
 			}
 		}
+		if (auto *t = e.try_get<ComponentMovementState>()) {
+			if (auto *s = e.try_get<ComponentShape>()) {
+				glm::vec3 m = {s->width, 0, s->width};
+				spp::Aabb aabb = {t->pos-m, t->pos+m};
+				aabb.min.y += s->height;
+				glm::vec3 c = aabb.GetCenter();
+				glm::vec3 v = c - center;
+				if (glm::dot(v, v) <= rad2) {
+					remove = false;
+				}
+			}
+		}
 		if (remove) {
 			(*testedEntities)[i] =
 				(*testedEntities)[testedEntities->size() - 1];
