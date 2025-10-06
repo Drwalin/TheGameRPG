@@ -66,6 +66,7 @@ void UpdateMovement(
 		next.rot = prev.rot;
 
 	} else {
+		
 		next.onGround = false;
 		const glm::vec3 acc = {0, realm->gravity, 0};
 
@@ -84,12 +85,18 @@ void UpdateMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
 				movementParams.stepHeight, 0.7, 8, 0.1)) {
 		*/
+		glm::vec3 groundNormal;
 		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, &normal, nullptr,
+				shape, oldPos, newPos, &pos, &next.onGround, &normal, &groundNormal,
 				movementParams.stepHeight, 0.7)) {
 			normal = glm::normalize(normal);
-			if (next.onGround == false && glm::dot(vel, normal) < 0) {
+			
+			if (/*next.onGround == false &&*/ glm::dot(vel, normal) < 0) {
 				vel -= normal * glm::dot(normal, vel);
+			}
+			if (next.onGround) {// && glm::dot(vel, groundNormal) < 0) {
+				vel -= groundNormal * glm::dot(groundNormal, vel);
+				vel.y = 0;
 			}
 			/*
 			if (vel.y > 0) {

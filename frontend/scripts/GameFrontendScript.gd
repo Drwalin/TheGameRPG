@@ -47,9 +47,9 @@ func IsDownOrJustReleased(action: StringName)->bool:
 	return (Input.is_action_just_released(action) || Input.is_action_pressed(action)) && !Input.is_action_just_pressed(action);
 
 func DrawTestRay(start:Vector3, end:Vector3):
-	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN, true);
+	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN|FILTER_CHARACTER, true);
 	if res.size() > 0:
-		print(res);
+		#print(res);
 		if (res[2] < 0.00001):
 			return;
 		renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));

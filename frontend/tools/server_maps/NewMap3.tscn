@@ -42,7 +42,7 @@ initialXp = 100
 name = "Mad King 3"
 
 [node name="PrefabServerNPC" parent="." instance=ExtResource("3_fpgg1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4799, -3.9354, -1.21175)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4799, -2.290255, -1.21175)
 
 [node name="Door" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("2_y70i0")

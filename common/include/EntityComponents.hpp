@@ -4,14 +4,13 @@
 
 #include "../../thirdparty/Collision3D/SpatialPartitioning/glm/glm/ext/vector_float3.hpp"
 
-#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes.hpp"
+#include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
 
 #include "CollisionFilters.hpp"
 #include "ComponentsUtility.hpp"
 
 struct ComponentShape {
-	float height = 1.65f;
-	float width = 0.5f;
+	float height = 1.65f; float width = 0.5f;
 
 	ComponentShape(float h, float w) : height(h), width(w) {}
 
@@ -110,7 +109,7 @@ struct ComponentCollisionShape {
 
 	ComponentCollisionShape(Collision3D::AnyShape shape) : shape(shape) {}
 
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS();
+	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentCollisionShape,
 								  {MV(shape) MV(mask)});
 };

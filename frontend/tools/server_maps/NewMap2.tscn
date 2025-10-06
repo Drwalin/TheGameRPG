@@ -34,7 +34,7 @@ relativeTransformOpened = Transform3D(0.554873, 0, -0.831935, 0, 1, 0, 0.831935,
 [node name="ComponentOnUse" type="ComponentOnUse" parent="Door"]
 
 [node name="PrefabServerNPC" parent="." instance=ExtResource("3_l4sn5")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.9354, -1.21175)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67076, -3.0076365, -1.21175)
 
 [node name="Spawner" type="EntityBase" parent="."]
 

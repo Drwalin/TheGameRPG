@@ -6,6 +6,7 @@
 #include "../include/EntityComponents.hpp"
 
 #include "../include/CollisionShapeSerialization.hpp"
+#include <type_traits>
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);

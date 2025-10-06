@@ -32,14 +32,7 @@ GameFrontend *GameFrontend::singleton;// = nullptr;
 
 GameFrontend::GameFrontend()
 {
-	printf("GameFrontend CONSTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
-	fflush(stdout);
-	
 	singleton = this;
-	
-	printf("GameFrontend CONSTRUCTOR(2)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
-	fflush(stdout);
-	
 	client = nullptr;
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
@@ -48,9 +41,6 @@ GameFrontend::GameFrontend()
 
 GameFrontend::~GameFrontend()
 {
-	printf("GameFrontend DESTRUCTOR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
-	fflush(stdout);
-	
 	if (client) {
 		client->Destroy();
 		delete client;
@@ -128,9 +118,6 @@ void GameFrontend::InternalReady()
 	client = new GameClientFrontend(this);
 	GameClientFrontend::singleton = client;
 	
-	printf("GameFrontend InternalReady!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             %p,   (singleton ptr = %p, singleton value = %p)\n", (void*)this, (void*)&singleton, (void*)singleton);
-	fflush(stdout);
-
 	if (Engine::get_singleton()->is_editor_hint()) {
 		return;
 	}
@@ -264,7 +251,6 @@ Array GameFrontend::RayTest(Vector3 _start, Vector3 _end,
 	if (client->realm->collisionWorld.RayTestFirstHit(
 			start, end, &hitPos, &normal, &entity, &td,
 			ignorePlayer ? client->localPlayerEntityId : 0, collisionFilter)) {
-		printf("hit near %f\n", td);
 		if (entity.is_valid() && entity.is_alive()) {
 			auto it =
 				client->mapLocalEntityIdToServerEntityId.find(entity.id());
@@ -291,13 +277,8 @@ Vector3 GameFrontend::GetCameraDirectionLook()
 
 GameFrontend *GameFrontend::GetSingleton()
 {
-	printf("GameFrontend GetSingleton!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!             (singleton ptr = %p, singleton value = %p)\n", (void*)&singleton, (void*)singleton);
-	fflush(stdout);
-	
 	if (singleton == nullptr) {
 		singleton = (GameFrontend*)(Engine::get_singleton()->get_singleton("gameFrontend"));
-
-// 		memnew(GameFrontend);
 		singleton->InternalReady();
 	}
 	return singleton;
