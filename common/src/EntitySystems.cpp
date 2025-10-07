@@ -41,19 +41,15 @@ void UpdateMovement(
 		const glm::vec3 oldPos = prev.pos;
 		const glm::vec3 movement = vel * dt;
 		const glm::vec3 newPos = oldPos + movement;
-		/*
+		
+		glm::vec3 normal, groundNormal;
 		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
-				movementParams.stepHeight, 0.7, 0.07)) {
-		}
-		if (realm->collisionWorld.TestCollisionMovementRays(
-				shape, oldPos, newPos, &pos, &next.onGround, nullptr, 4,
-				movementParams.stepHeight, 0.7, 8, 0.1)) {
-		}
-		*/
-		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, nullptr, nullptr,
+				shape, oldPos, newPos, &pos, &next.onGround, &normal, &groundNormal,
 				movementParams.stepHeight, 0.7)) {
+			if (glm::length2(pos-oldPos) < 0.00000001 && oldPos != newPos) {
+				next.onGround = false;
+			}
+			pos += normal * 0.01f;
 		}
 
 		if (next.onGround) {
@@ -80,11 +76,6 @@ void UpdateMovement(
 		// test collision here:
 		glm::vec3 pos;
 		glm::vec3 normal;
-		/*
-		if (realm->collisionWorld.TestCollisionMovementRays(
-				shape, oldPos, newPos, &pos, &next.onGround, &normal, 4,
-				movementParams.stepHeight, 0.7, 8, 0.1)) {
-		*/
 		glm::vec3 groundNormal;
 		if (realm->collisionWorld.TestCollisionMovement(
 				shape, oldPos, newPos, &pos, &next.onGround, &normal, &groundNormal,
@@ -98,6 +89,12 @@ void UpdateMovement(
 				vel -= groundNormal * glm::dot(groundNormal, vel);
 				vel.y = 0;
 			}
+			
+			if (glm::length2(pos-oldPos) < 0.00000001 && oldPos != newPos) {
+				next.onGround = false;
+			}
+			pos += normal * 0.01f;
+			
 			/*
 			if (vel.y > 0) {
 				glm::vec3 vv = vel;
