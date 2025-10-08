@@ -39,7 +39,10 @@ private: // rpc receiving methods
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t serverId);
 	void SetGravity(float gravity);
-	void Pong(int64_t localTick, int64_t remoteTick);
+	void Pong(int64_t clientLastSentTick, int64_t clientLastSentTickTimeNs,
+			  int64_t serverLastProcessedTick,
+			  int64_t serverTickStartTimeOffsetNs,
+			  int64_t clientPingSentTimeNs);
 
 	void SpawnEntity(uint64_t serverId,
 					 const ComponentLastAuthoritativeMovementState &state,
@@ -129,8 +132,7 @@ public:
 	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput = false;
 	int64_t lastTickAuthoritativeSent = 0;
-	TickTimer pingTimer;
-	int64_t lastPingTime = 0;
+	int64_t pingTickCounter = 100;
 	int64_t pingMs = 70;
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;

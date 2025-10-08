@@ -42,7 +42,7 @@ void Realm::Init(const std::string &realmName)
 	statsOneEpochDuration.SetName("One_Epoch_Duration:" + realmName + ",[ms]");
 
 	this->realmName = realmName;
-	timer.Start();
+	timer.Start(tickDuration);
 
 	ecs.set<RealmPtr>(RealmPtr{this});
 }
@@ -92,43 +92,45 @@ void Realm::RegisterObservers()
 					realm->ExecuteMovementUpdate(entityId, &currentState);
 
 					glm::vec3 v = currentState.vel;
-					int64_t dt = realm->maxMovementDeltaTicks;
+					int64_t dt = 1;
 
 					if (currentState.onGround == false) {
-						dt = realm->minMovementDeltaTicks;
+						dt = 1;
 					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
-						dt = realm->minMovementDeltaTicks;
+						dt = 1;
 					}
 
 					return dt;
 				}};
 			EntityEvent event;
-			event.dueTick = timer.currentTick + 100;
+			event.dueTick = timer.currentTick + 1;
 			event.event = &defaultMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 }
 
-bool Realm::RunOneEpoch()
+void Realm::RunOneEpoch()
 {
+	if (timer.nextTick > TickTimer::GetCurrentTimepoint()+icon7::time::milliseconds(5)) {
+		return;
+	}
+	
 	icon7::time::Point begin = icon7::time::GetTemporaryTimestamp();
-	bool ret = OneEpoch();
+	OneEpoch();
 	icon7::time::Point end = icon7::time::GetTemporaryTimestamp();
 	double duration = icon7::time::DeltaMSecBetweenTimepoints(begin, end);
 	statsOneEpochDuration.PushValue(duration);
 	statsOneEpochDuration.PrintAndResetStatsIfExpired(
 		millisecondsBetweenStatsReport);
-	return ret;
 }
 
-bool Realm::OneEpoch()
+void Realm::OneEpoch()
 {
+	timer.Update(tickDuration);
+	
 	collisionWorld.StartEpoch();
 
-	timer.Update();
-
 	// TODO: update due queued entity events
-	int executedEvents = 0;
 	while (!eventsPriorityQueue.Empty()) {
 		EntityEventEntry event = eventsPriorityQueue.Top();
 		if (event.dueTick <= timer.currentTick) {
@@ -137,31 +139,15 @@ bool Realm::OneEpoch()
 			if (entity.is_alive()) {
 				((ComponentEventsQueue *)entity.try_get<ComponentEventsQueue>())
 					->Update(timer.currentTick, event.entityId, this);
-				++executedEvents;
 			}
 		} else {
 			break;
 		}
 	}
+	
+	// TODO: execute systems here
 
-	if (executedEvents == 0) {
-		collisionWorld.EndEpoch();
-		return false;
-	} else {
-		timer.Update();
-		if (!eventsPriorityQueue.Empty()) {
-			const EntityEventEntry &event = eventsPriorityQueue.Top();
-			if (event.dueTick > timer.currentTick + 10) {
-				collisionWorld.EndEpoch();
-				return false;
-			}
-		} else {
-			collisionWorld.EndEpoch();
-			return false;
-		}
-	}
 	collisionWorld.EndEpoch();
-	return true;
 }
 
 void Realm::UpdateEntityAuthoritativeState(

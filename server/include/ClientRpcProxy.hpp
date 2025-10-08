@@ -15,7 +15,7 @@ void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId);
 
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId);
-void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data);
+void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2);
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
 
 void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,

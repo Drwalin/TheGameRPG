@@ -28,7 +28,6 @@ GameClient::GameClient()
 	host->SetRpcEnvironment(rpc);
 
 	// host->SetOnDisconnect();
-	pingTimer.Start();
 	lastTickAuthoritativeSent = 0;
 
 	RegisterObservers();
@@ -161,11 +160,12 @@ void GameClient::RunOneEpoch()
 	PerformSendPlayerMovementInput();
 	realm->RunOneEpoch();
 	PerformSendPlayerMovementInput();
-
-	pingTimer.Update();
-	if (abs(lastPingTime - pingTimer.currentTick) > 8000) {
+	
+	pingTickCounter--;
+	
+	if (pingTickCounter <= 0) {
+		pingTickCounter = 100;
 		ServerRpcProxy::Ping(this, true);
-		lastPingTime = pingTimer.currentTick;
 	}
 
 	realm->ecs.each<ComponentLastAuthoritativeStateUpdateTime>(

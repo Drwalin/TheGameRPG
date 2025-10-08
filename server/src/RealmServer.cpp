@@ -1,6 +1,3 @@
-#include "../../ICon7/include/icon7/Flags.hpp"
-#include "../../ICon7/include/icon7/ByteReader.hpp"
-
 #include "../../common/include/EntitySystems.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
@@ -62,10 +59,10 @@ void RealmServer::Init(const std::string &realmName)
 	sendEntitiesToClientsTimer = 0;
 }
 
-bool RealmServer::OneEpoch()
+void RealmServer::OneEpoch()
 {
-	bool busy = executionQueue.Execute(128) != 0;
-	busy |= Realm::OneEpoch();
+	executionQueue.Execute(16384);
+	Realm::OneEpoch();
 
 	// TODO: replace with observer inside collision world on collision
 	ecs.each([this](flecs::entity entity, ComponentTrigger &trigger) {
@@ -83,12 +80,8 @@ bool RealmServer::OneEpoch()
 		timer.currentTick) {
 		sendEntitiesToClientsTimer = timer.currentTick;
 		ClientRpcProxy::Broadcast_UpdateEntities(this);
-		FlushSavingData();
-		return true;
-	} else {
-		FlushSavingData();
-		return busy;
 	}
+	FlushSavingData();
 }
 
 void RealmServer::ExecuteOnRealmThread(

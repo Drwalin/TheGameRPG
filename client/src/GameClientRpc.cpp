@@ -15,7 +15,7 @@ void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
 		serverPlayerEntityId = 0;
 		localPlayerEntityId = 0;
 	}
-	realm->timer.Start(currentTick);
+	realm->timer.Start(currentTick, realm->tickDuration);
 	realm->Reinit(realmName);
 	SetPlayerEntityId(playerEntityId);
 }
@@ -129,31 +129,85 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 
 void GameClient::SetGravity(float gravity) { realm->gravity = gravity; }
 
-void GameClient::Pong(int64_t localTick, int64_t remoteTick)
+void GameClient::Pong(int64_t clientLastSentTick,
+					  int64_t clientLastSentTickTimeNs,
+					  int64_t serverLastProcessedTick,
+					  int64_t serverTickStartTimeOffsetNs,
+					  int64_t clientPingSentTimeNs)
 {
-	realm->timer.Update();
-	int64_t currentTick = realm->timer.currentTick;
-	pingMs = pingTimer.CalcCurrentTick() - localTick;
-	if (remoteTick != 0) {
-		// TODO: consider not adding latency?
-		int64_t newCurrentTick = remoteTick; // + pingMs / 2;
-		if (abs(newCurrentTick - currentTick) > 500) {
-			realm->timer.Start(newCurrentTick);
-		} else if (newCurrentTick < currentTick) {
-			// TODO: time error??
-			if (newCurrentTick + 5 < currentTick) {
-				newCurrentTick = currentTick - 5;
-				if (newCurrentTick + 15 < currentTick) {
-					ServerRpcProxy::Ping(this, true);
-				}
-			}
-			realm->timer.Start(newCurrentTick);
-		} else {
-			if (newCurrentTick > currentTick + 25) {
-				newCurrentTick = currentTick + 25;
-				ServerRpcProxy::Ping(this, true);
-			}
-			realm->timer.Start(newCurrentTick);
+	constexpr icon7::time::Diff oneMillisecond = icon7::time::milliseconds(1);
+	const int64_t clientCurrentTick = realm->timer.currentTick;
+	const icon7::time::Point clientCurrentTime =
+		TickTimer::GetCurrentTimepoint();
+	const icon7::time::Diff rttDuration =
+		(clientCurrentTime - icon7::time::Point(clientPingSentTimeNs));
+	const icon7::time::Diff oneWayLatencyDuration = rttDuration / 2;
+	pingMs = (pingMs * 9 + (rttDuration.ns * 7) / oneMillisecond.ns) / 16;
+	// 	pingMs = (pingMs*3 + rttDuration.ns/oneMillisecond.ns) / 4;
+	if (serverLastProcessedTick != 0) {
+		if (realm->timer.lastTick + realm->tickDuration !=
+			realm->timer.nextTick) {
+			ServerRpcProxy::Ping(this, false);
+			return;
+		}
+
+		// var: describe time difference between server tick start and an
+		//      instant that server responded to client
+		const icon7::time::Diff serverTickStartTimeOffsetDuration(
+			serverTickStartTimeOffsetNs);
+
+		// var: time point (in this computer local time) when approximetly
+		//      started tick on server before it's response
+		const icon7::time::Point serverTickStartTimeClientLocal =
+			clientCurrentTime - oneWayLatencyDuration -
+			serverTickStartTimeOffsetDuration;
+
+		// var: amount of ticks between the tick on server and current next
+		//      predicted local tick
+		const int64_t serverTicksElapsedSinceServer =
+			(clientCurrentTime - serverTickStartTimeClientLocal).ns /
+				realm->tickDuration.ns +
+			1 - RealmClient::TICKS_UPDATE_DELAY;
+
+		// var: amount of ticks between the tick on server and current next
+		//      predicted local tick with included delay (client simulation is
+		//      delayed by RealmClient::TICKS_UPDATE_DELAY)
+		const int64_t ticksToNextDelayedFromServer =
+			serverTicksElapsedSinceServer - RealmClient::TICKS_UPDATE_DELAY;
+
+		// var: amount of ticks between the tick on server and current next
+		//      local tick with included delay (client simulation is delayed by
+		//      RealmClient::TICKS_UPDATE_DELAY)
+		const int64_t targetServerTickAdvance = clientCurrentTick -
+												serverLastProcessedTick +
+												ticksToNextDelayedFromServer;
+
+		// var: time point (in local time) at which next delayed tick should be
+		const icon7::time::Point targetNextTickTimeClientLocal =
+			serverTickStartTimeClientLocal +
+			realm->tickDuration * targetServerTickAdvance;
+
+		// var: correctional delta of local timer delay
+		const icon7::time::Diff timeCorrectionDelta =
+			targetNextTickTimeClientLocal - realm->timer.nextTick;
+		const icon7::time::Diff timeCorrectionDeltaClamped = icon7::time::clamp(
+			timeCorrectionDelta, -RealmClient::BASE_MAX_CORRECTION_OF_NEXT_TICK,
+			RealmClient::BASE_MAX_CORRECTION_OF_NEXT_TICK);
+
+		const icon7::time::Diff timeCorrectionDeltaAbs =
+			abs(timeCorrectionDelta);
+
+		// Correct local timer more aggressively when desyncronisation is too
+		// severe
+		const int64_t tickErrorMagnitude =
+			timeCorrectionDelta.ns / realm->tickDuration.ns;
+		const int64_t correctionFactor = glm::clamp(tickErrorMagnitude, 1l, 4l);
+		// Correcting local timer
+		realm->timer.nextTick += timeCorrectionDeltaClamped * correctionFactor;
+
+		// Requesting next ping time correction when client is unsyncronised
+		if (timeCorrectionDeltaAbs > realm->tickDuration) {
+			ServerRpcProxy::Ping(this, false);
 		}
 	}
 }

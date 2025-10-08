@@ -1,7 +1,7 @@
 #include "../../ICon7/include/icon7/Flags.hpp"
 #include "../../ICon7/include/icon7/RPCEnvironment.hpp"
 
-#include "../../common/include/ClientRpcFunctionNames.hpp"
+#include "../../common/include/ServerRpcFunctionNames.hpp"
 
 #include "../include/RealmClient.hpp"
 #include "../include/GameClient.hpp"
@@ -39,12 +39,13 @@ void GetEntitiesData(GameClient *gameClient,
 
 void Ping(GameClient *gameClient, bool reliable)
 {
-	int64_t currentTick = gameClient->pingTimer.CalcCurrentTick();
+	int64_t currentTickStartTimeNs = gameClient->pingTimer.lastTick.ns;
+	int64_t currentTick = gameClient->pingTimer.GetCurrentTick();
 	gameClient->rpc->Send(
 		gameClient->peer.get(),
 		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |
 			icon7::FLAGS_CALL_NO_FEEDBACK,
-		ServerRpcFunctionNames::Ping, currentTick);
+		ServerRpcFunctionNames::Ping, currentTick, currentTickStartTimeNs);
 }
 
 void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,

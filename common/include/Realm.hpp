@@ -38,7 +38,7 @@ public:
 	void RegisterObservers();
 
 	// returns false if was not busy or if does not need to be busy
-	bool RunOneEpoch();
+	void RunOneEpoch();
 
 	virtual void UpdateEntityAuthoritativeState(
 		uint64_t entityId,
@@ -58,16 +58,14 @@ public:
 	void ScheduleEntityEvent(uint64_t entityId, EntityEvent event);
 
 protected:
-	// returns false if was not busy or if does not need to be busy
-	virtual bool OneEpoch();
+	virtual void OneEpoch();
 	StatsCollector statsOneEpochDuration;
 
 	icon7::time::Diff millisecondsBetweenStatsReport = icon7::time::seconds(60);
 
 public:
 	TickTimer timer;
-	int64_t minMovementDeltaTicks = 50;
-	int64_t maxMovementDeltaTicks = 200;
+	icon7::time::Diff tickDuration = icon7::time::milliseconds(50);
 
 	float gravity = -9.81f;
 

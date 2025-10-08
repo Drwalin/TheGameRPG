@@ -15,6 +15,7 @@ void UpdateMovement(
 		_lastAuthoritativeState.oldState;
 	const int64_t currentTick = realm->timer.currentTick;
 	ComponentMovementState prev = lastAuthoritativeState;
+	
 	if (currentState.timestamp > prev.timestamp + 10) {
 		prev = currentState;
 	} else {
@@ -22,12 +23,7 @@ void UpdateMovement(
 	}
 	auto &next = currentState;
 
-	const int64_t _dt = currentTick - prev.timestamp;
-	if (_dt < realm->minMovementDeltaTicks) {
-		return;
-	}
-
-	const float dt = _dt >= 500 ? 0.5f : _dt * 0.001f;
+	constexpr float dt = 0.05f;
 
 	if (next.onGround == true && prev.vel.y < 0.01) {
 		glm::vec3 vel = prev.vel;

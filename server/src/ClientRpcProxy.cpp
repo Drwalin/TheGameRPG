@@ -26,21 +26,26 @@ void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					 ClientRpcFunctionNames::SetPlayerEntityId, playerEntityId);
 }
 
-void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data)
+void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
+		  int64_t clientLocalTime)
 {
 	// TODO: verify and correct this behavior and implement both ways ping
 	//       testing
 	PeerData *peerData = ((PeerData *)(peer->userPointer));
 	int64_t currentTick = 0;
+	int64_t diffTickStartNs = 0;
 	if (peerData) {
 		auto realm = peerData->realm.lock();
 		if (realm.get() != nullptr) {
-			currentTick = realm->timer.CalcCurrentTick();
+			currentTick = realm->timer.currentTick;
+			diffTickStartNs =
+				TickTimer::GetCurrentTimepoint().ns - realm->timer.lastTick.ns;
 		}
 	}
 
 	peer->host->GetRpcEnvironment()->Send(
-		peer, flags, ClientRpcFunctionNames::Pong, data, currentTick);
+		peer, flags, ClientRpcFunctionNames::Pong, data1, data2, currentTick,
+		diffTickStartNs, clientLocalTime);
 }
 
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
@@ -163,7 +168,8 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer)
 
 			writer.op(entityId);
 
-			writer.op(*entity.try_get<ComponentLastAuthoritativeMovementState>());
+			writer.op(
+				*entity.try_get<ComponentLastAuthoritativeMovementState>());
 			writer.op(*entity.try_get<ComponentName>());
 			writer.op(*entity.try_get<ComponentModelName>());
 			writer.op(*entity.try_get<ComponentShape>());

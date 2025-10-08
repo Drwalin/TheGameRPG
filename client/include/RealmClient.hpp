@@ -12,7 +12,9 @@ public:
 	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
 
-	inline const static int64_t STATE_UPDATE_DELAY = 100;
+	inline constexpr static icon7::time::Diff STATE_UPDATE_DELAY = icon7::time::milliseconds(100);
+	inline constexpr static int64_t TICKS_UPDATE_DELAY = 2;
+	inline constexpr static icon7::time::Diff BASE_MAX_CORRECTION_OF_NEXT_TICK = -STATE_UPDATE_DELAY / 10;
 
 	virtual void Init(const std::string &realmName) override;
 	virtual void Clear() override;
@@ -30,7 +32,7 @@ public:
 
 protected:
 	// returns false if was not busy
-	virtual bool OneEpoch() override;
+	virtual void OneEpoch() override;
 
 public:
 	GameClient *gameClient;

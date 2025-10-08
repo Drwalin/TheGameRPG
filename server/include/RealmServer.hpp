@@ -51,7 +51,7 @@ public:
 
 protected:
 	// returns false if was not busy
-	virtual bool OneEpoch() override;
+	virtual void OneEpoch() override;
 
 public: // Entity Actions
 	/*

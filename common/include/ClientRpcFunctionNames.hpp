@@ -12,7 +12,7 @@ inline const std::string JoinRealm = "JoinRealm";
 inline const std::string SpawnStaticEntities = "SpawnStaticEntities";
 
 // void SpawnEntities({entityId, LastAuthoritativeMovementState, EntityName,
-// ModelName,
+//                     ModelName,
 //                     EntityShape, MovementParams}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
@@ -37,7 +37,10 @@ inline const std::string LoginFailed = "LoginFailed";
 // void LoginSuccessfull()
 inline const std::string LoginSuccessfull = "LoginSuccessfull";
 
-// void Pong(int64_t internal, int64_t serverMostCurrentTick)
+// void Pong(int64_t clientLastSentTick, int64_t clientLastSentTickTimeNs,
+//           int64_t serverLastProcessedTick,
+//           int64_t serverTickStartTimeOffsetNs,
+//           int64_t clientPingSentTimeNs)
 inline const std::string Pong = "Pong";
 
 // void GenericEntityComponentUpdate({entityId, string componentName,
