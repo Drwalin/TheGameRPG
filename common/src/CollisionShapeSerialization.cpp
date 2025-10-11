@@ -105,7 +105,8 @@ ByteReader<true> &op(ByteReader<true> &s, AnyPrimitive &shape)
 	shape.~AnyPrimitive();
 	s.op(*(uint8_t *)&shape.type);
 	if (shape.type != AnyPrimitive::INVALID) {
-		s.op(shape.trans);
+		s.op(shape.pos);
+		s.op(shape.rot);
 		switch (shape.type) {
 			EACH_PRIMITIVE(AnyPrimitive, MACRO, EMPTY_CODE);
 		default:
@@ -119,7 +120,8 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 {
 	s.op(*(const uint8_t *)&shape.type);
 	if (shape.type != AnyPrimitive::INVALID) {
-		s.op(shape.trans);
+		s.op(shape.pos);
+		s.op(shape.rot);
 		switch (shape.type) {
 			EACH_PRIMITIVE(AnyPrimitive, MACRO, EMPTY_CODE);
 		default:
@@ -209,8 +211,8 @@ ByteReader<true> &op(ByteReader<true> &s, AnyShape &shape)
 	shape.~AnyShape();
 	s.op(*(uint8_t *)&shape.type);
 	if (shape.type != AnyShape::INVALID) {
-		s.op(shape.trans);
-
+		s.op(shape.pos);
+		s.op(shape.rot);
 		switch (shape.type) {
 		case AnyShape::INVALID:
 			break;
@@ -226,7 +228,8 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 {
 	s.op(*(const uint8_t *)&shape.type);
 	if (shape.type != AnyShape::INVALID) {
-		s.op(shape.trans);
+		s.op(shape.pos);
+		s.op(shape.rot);
 		switch (shape.type) {
 		case AnyShape::INVALID:
 			break;
