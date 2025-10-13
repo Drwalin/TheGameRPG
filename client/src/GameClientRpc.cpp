@@ -10,6 +10,7 @@
 void GameClient::JoinRealm(const std::string &realmName, Tick currentTick,
 						   uint64_t playerEntityId)
 {
+	auto a = TickTimer::GetCurrentTimepoint();
 	if (serverPlayerEntityId || localPlayerEntityId) {
 		OnPlayerIdUnset();
 		serverPlayerEntityId = 0;
@@ -18,6 +19,8 @@ void GameClient::JoinRealm(const std::string &realmName, Tick currentTick,
 	realm->timer.Start(currentTick, realm->tickDuration);
 	realm->Reinit(realmName);
 	SetPlayerEntityId(playerEntityId);
+	auto b = TickTimer::GetCurrentTimepoint();
+	realm->timer.Start(currentTick + ((b-a).ns / realm->tickDuration.ns), realm->tickDuration);
 }
 
 void GameClient::SpawnEntities(icon7::ByteReader *reader)
@@ -132,14 +135,14 @@ void GameClient::Pong(Tick clientLastSentTick,
 					  int64_t clientLastSentTickTimeNs,
 					  Tick serverLastProcessedTick,
 					  int64_t serverTickStartTimeOffsetNs,
-					  int64_t clientPingSentTimeNs)
+					  icon7::time::Point clientPingSentTime)
 {
 	constexpr icon7::time::Diff oneMillisecond = icon7::time::milliseconds(1);
 	const Tick clientCurrentTick = realm->timer.currentTick;
 	const icon7::time::Point clientCurrentTime =
 		TickTimer::GetCurrentTimepoint();
 	const icon7::time::Diff rttDuration =
-		(clientCurrentTime - icon7::time::Point(clientPingSentTimeNs));
+		(clientCurrentTime - clientPingSentTime);
 	const icon7::time::Diff oneWayLatencyDuration = rttDuration / 2;
 	pingMs = (pingMs * 9 + (rttDuration.ns * 7) / oneMillisecond.ns) / 16;
 	// 	pingMs = (pingMs*3 + rttDuration.ns/oneMillisecond.ns) / 4;

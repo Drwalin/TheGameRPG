@@ -42,7 +42,7 @@ private: // rpc receiving methods
 	void Pong(Tick clientLastSentTick, int64_t clientLastSentTickTimeNs,
 			  Tick serverLastProcessedTick,
 			  int64_t serverTickStartTimeOffsetNs,
-			  int64_t clientPingSentTimeNs);
+			  icon7::time::Point clientPingSentTime);
 
 	void SpawnEntity(uint64_t serverId,
 					 const ComponentMovementState &state,

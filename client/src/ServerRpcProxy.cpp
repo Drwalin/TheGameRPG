@@ -45,7 +45,7 @@ void Ping(GameClient *gameClient, bool reliable)
 		gameClient->peer.get(),
 		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |
 			icon7::FLAGS_CALL_NO_FEEDBACK,
-		ServerRpcFunctionNames::Ping, currentTick, currentTickStartTimeNs);
+		ServerRpcFunctionNames::Ping, currentTick, currentTickStartTimeNs, TickTimer::GetCurrentTimepoint());
 }
 
 void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,
