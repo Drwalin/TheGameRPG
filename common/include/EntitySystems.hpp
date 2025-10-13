@@ -9,9 +9,10 @@ struct ComponentMovementParameters;
 
 namespace EntitySystems
 {
-void UpdateMovement(Realm *realm, flecs::entity entity,
-					const struct ::ComponentShape shape,
-					struct ::ComponentMovementState &currentState,
-					const struct ::ComponentMovementState &lastAuthoritativeState,
-					const struct ::ComponentMovementParameters &movementParams);
+void UpdateMovement(
+	Realm *realm, flecs::entity entity, const struct ::ComponentShape shape,
+	struct ::ComponentMovementState &currentState,
+	const struct ::ComponentMovementState lastAuthoritativeState,
+	const struct ::ComponentMovementParameters &movementParams,
+	float tickFactor, bool updateState);
 };

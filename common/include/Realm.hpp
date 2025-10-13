@@ -47,8 +47,7 @@ public:
 		uint64_t entityId,
 		const ComponentMovementState &state);
 
-	virtual void ExecuteMovementUpdate(uint64_t entityId,
-									   ComponentMovementState *stateOut) = 0;
+	virtual ComponentMovementState ExecuteMovementUpdate(uint64_t entityId) = 0;
 
 	uint64_t CreateStaticEntity(const ComponentStaticTransform &transform,
 								const ComponentModelName &model,

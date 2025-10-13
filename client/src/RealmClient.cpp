@@ -66,35 +66,33 @@ void RealmClient::AddNewAuthoritativeMovementState(
 
 void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 {
-	ComponentMovementState state;
-	ExecuteMovementUpdate(localId, &state);
+	ComponentMovementState state = ExecuteMovementUpdate(localId);
 	flecs::entity entity = Entity(localId);
 	entity.set<ComponentMovementState>(state);
 }
 
-void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
-										ComponentMovementState *state)
+ComponentMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 {
 	auto entity = Entity(entityId);
 
 	const ComponentShape *shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
 		LOG_ERROR("Character %lu does not have shape component", entityId);
-		return;
+		return {};
 	}
 	ComponentMovementState *currentState =
 		entity.try_get_mut<ComponentMovementState>();
 	if (currentState == nullptr) {
 		LOG_ERROR("Character %lu does not have ComponentMovementState",
 				  entityId);
-		return;
+		return {};
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
 		LOG_ERROR("Character %lu does not have ComponentMovementParameters",
 				  entityId);
-		return;
+		return {};
 	}
 
 	ComponentMovementHistory *_states =
@@ -104,6 +102,10 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 		auto &states = _states->states;
 
 		Tick currentTick = timer.currentTick;
+		
+		const float _t = timer.GetFactorToNextTick(tickDuration);
+		currentTick += glm::floor(_t);
+		const float t = _t - glm::floor(_t);
 
 		int id = states.size() - 1;
 		for (; id >= 0; --id) {
@@ -112,6 +114,7 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 			}
 		}
 
+		ComponentMovementState state;
 		if (id >= 0) {
 			if (*currentState != states[id].state__) {
 				*currentState = states[id].state__;
@@ -129,15 +132,16 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				const glm::vec3 A = prev.pos;
 				const glm::vec3 B = next.pos;
 
-				const float t = glm::clamp(
-					timer.GetFactorToNextTick(tickDuration), 0.0f, 1.0f);
-				const float dt = t * Realm::TICK_DURATION_SECONDS;
+// 				const float dt = t * Realm::TICK_DURATION_SECONDS;
+				
+// 				printf("%10.3f s:   %7.3f ->   %.3f\n", timer.GetCurrentTimepoint().sec(), (timer.currentTick.v + t) * Realm::TICK_DURATION_SECONDS, t);
 
-				const glm::vec3 p1 = A + prev.vel * dt;
+// 				const glm::vec3 p1 = A + prev.vel * dt;
 				const glm::vec3 p2 = A * (1.0f - t) + B * t;
 				currentState->vel = prev.vel * (1.0f - t) + next.vel * t;
 
-				const glm::vec3 P = p1 * (1.0f - t) + p2 * t;
+// 				const glm::vec3 P = p1 * (1.0f - t) + p2 * t;
+				const glm::vec3 P = p2;
 
 				currentState->pos = P;
 				currentState->rot = prev.rot * (1 - t) + next.rot * t;
@@ -146,21 +150,19 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				*currentState = states.back().state__;
 			}
 
-			auto las = *currentState;
-
-			EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
-										  las, *movementParams);
+			state = *currentState;
 		} else {
-			*state = states[0].state__;
+			state = states[0].state__;
 		}
 		if (id > 10) {
 			states.erase(states.begin(), states.begin() + id - 3);
 		}
+		return state;
 	} else {
 		EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
-									  *currentState, *movementParams);
+									  *currentState, *movementParams, timer.GetFactorToNextTick(tickDuration), true);
 	}
-	*state = *currentState;
+	return *currentState;
 }
 
 void RealmClient::RegisterObservers()

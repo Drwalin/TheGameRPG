@@ -5,6 +5,7 @@
 #include "../../ICon7/include/icon7/Command.hpp"
 
 #include "../../common/include/ComponentCharacterSheet.hpp"
+#include "../../common/include/EntitySystems.hpp"
 
 #include "../include/ServerRpcProxy.hpp"
 #include "../include/EntityComponentsClient.hpp"
@@ -226,6 +227,22 @@ glm::vec3 GameClient::GetPosition()
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.try_get<ComponentMovementState>();
+	
+	if (oldState) {
+		// TODO: optimize this code to be executed only once every godot frame
+		const float f =
+			realm->timer.GetFactorToNextTick(realm->tickDuration);
+		ComponentMovementState state = *oldState;
+		EntitySystems::UpdateMovement(
+				realm, player, player.get<ComponentShape>(), state, state,
+				player.get<ComponentMovementParameters>(), f, false);
+
+		return state.pos;
+	} else {
+		LOG_ERROR("Player Entity %lu has no movement state", player.id());
+	}
+	
+	
 	if (oldState)
 		return oldState->pos;
 	LOG_TRACE("ERROR");

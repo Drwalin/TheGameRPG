@@ -34,7 +34,7 @@ public:
 		return icon7::time::GetTemporaryTimestamp();
 	}
 	
-	inline float GetFactorToNextTick(icon7::time::diff tickDuration)
+	inline float GetFactorToNextTick(icon7::time::diff tickDuration) const
 	{
 		auto now = GetCurrentTimepoint();
 		return (float)((now - lastTick).ns) / (float)(tickDuration.ns);

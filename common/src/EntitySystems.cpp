@@ -8,12 +8,16 @@ namespace EntitySystems
 void UpdateMovement(Realm *realm, flecs::entity entity,
 					const ComponentShape shape,
 					ComponentMovementState &currentState,
-					const ComponentMovementState &prev,
-					const ComponentMovementParameters &movementParams)
+					const ComponentMovementState prev,
+					const ComponentMovementParameters &movementParams,
+					float tickFactor, bool updateState)
 {
 	auto &next = currentState;
 
-	constexpr float dt = 0.05f;
+	// 	printf("[%5li] : %.2f %.2f %.2f\n", entity.id(), next.pos.x, next.pos.y,
+	// next.pos.z);
+
+	const float dt = Realm::TICK_DURATION_SECONDS * tickFactor;
 
 	if (next.onGround == true && prev.vel.y < 0.01) {
 		glm::vec3 vel = prev.vel;
@@ -108,7 +112,7 @@ void UpdateMovement(Realm *realm, flecs::entity entity,
 
 	currentState = next;
 
-	if (currentState.pos != prev.pos) {
+	if (currentState.pos != prev.pos && updateState) {
 		realm->collisionWorld.EntitySetTransform(entity, next.pos, shape);
 	}
 }

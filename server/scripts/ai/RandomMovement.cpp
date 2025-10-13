@@ -143,8 +143,8 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 
 	ComponentMovementState currentState = lastState;
 	auto movementParams = entity.try_get<ComponentMovementParameters>();
-	EntitySystems::UpdateMovement(realm, entity, *shape, currentState,
-								  lastState, *movementParams);
+// 	EntitySystems::UpdateMovement(realm, entity, *shape, currentState,
+// 								  lastState, *movementParams, );
 
 	if (state.onGround) {
 		// TODO: Replace 3.0f and 15.0f with apropriate values from some

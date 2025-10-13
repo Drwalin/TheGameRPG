@@ -114,8 +114,7 @@ void Realm::RegisterObservers()
 
 void Realm::RunOneEpoch()
 {
-	if (timer.nextTick >
-		TickTimer::GetCurrentTimepoint() + icon7::time::milliseconds(5)) {
+	if (timer.nextTick > TickTimer::GetCurrentTimepoint() + icon7::time::milliseconds(2)) {
 		return;
 	}
 
@@ -153,7 +152,7 @@ void Realm::OneEpoch()
 		[this](flecs::entity entity, ComponentMovementState &state, const ComponentShape &shape,
 			   const ComponentMovementParameters &movementParams) {
 			EntitySystems::UpdateMovement(this, entity, shape, state, state,
-										  movementParams);
+										  movementParams, 1.f, true);
 		});
 
 	// TODO: execute systems here

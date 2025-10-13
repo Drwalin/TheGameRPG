@@ -40,8 +40,7 @@ public:
 
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
 
-	virtual void ExecuteMovementUpdate(uint64_t entityId,
-									   ComponentMovementState *state) override;
+	virtual ComponentMovementState ExecuteMovementUpdate(uint64_t entityId) override;
 
 	virtual uint64_t NewEntity() override;
 

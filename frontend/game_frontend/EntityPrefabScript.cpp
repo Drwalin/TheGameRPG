@@ -9,6 +9,7 @@
 #include "../../ICon7/include/icon7/Debug.hpp"
 #include "../../ICon7/include/icon7/Time.hpp"
 
+#include "EntitySystems.hpp"
 #include "GameFrontend.hpp"
 
 #include "GodotGlm.hpp"
@@ -72,12 +73,30 @@ void EntityPrefabScript::_my_internal_process(double dt)
 		LOG_ERROR("Entity %lu is not alive/not present in ecs", localEntityId);
 		return;
 	}
-	auto state = entity.try_get<ComponentMovementState>();
-	if (state) {
-		SetRotation(state->rot);
-		SetPosition(state->pos);
+
+	RealmClient *realm = GetGameFrontend()->client->realm;
+
+	realm->RunOneEpoch();
+
+	if (IsPlayer() == false) {
+		auto state = realm->ExecuteMovementUpdate(entity.id());
+		SetRotation(state.rot);
+		SetPosition(state.pos);
 	} else {
-		LOG_ERROR("Entity %lu has no movement state", localEntityId);
+		auto *_state = entity.try_get<ComponentMovementState>();
+		if (_state) {
+			const float f =
+				realm->timer.GetFactorToNextTick(realm->tickDuration);
+			ComponentMovementState state = *_state;
+			EntitySystems::UpdateMovement(
+				realm, entity, entity.get<ComponentShape>(), state, state,
+				entity.get<ComponentMovementParameters>(), f, false);
+
+			SetRotation(state.rot);
+			SetPosition(state.pos);
+		} else {
+			LOG_ERROR("Player Entity %lu has no movement state", localEntityId);
+		}
 	}
 
 	if (modelNode3D) {

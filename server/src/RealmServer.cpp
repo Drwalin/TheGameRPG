@@ -78,9 +78,11 @@ void RealmServer::OneEpoch()
 
 	if (sendEntitiesToClientsTimer + sendUpdateDeltaTicks <=
 		timer.currentTick) {
+		// TODO: instead, iterate over modified entities only to send updates
 		sendEntitiesToClientsTimer = timer.currentTick;
 		ClientRpcProxy::Broadcast_UpdateEntities(this);
 	}
+
 	FlushSavingData();
 }
 
@@ -90,37 +92,33 @@ void RealmServer::ExecuteOnRealmThread(
 	executionQueue.EnqueueCommand(std::move(command));
 }
 
-void RealmServer::ExecuteMovementUpdate(uint64_t entityId,
-										ComponentMovementState *state)
+ComponentMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
 {
 	auto entity = Entity(entityId);
 
 	const ComponentShape *shape = entity.try_get<ComponentShape>();
 	if (shape == nullptr) {
-		*state = {};
-		return;
+		return {};
 	}
 	ComponentMovementState *currentState =
 		(ComponentMovementState *)entity.try_get<ComponentMovementState>();
 	if (currentState == nullptr) {
-		*state = {};
-		return;
+		return {};
 	}
 	const ComponentMovementState *lastAuthoritativeState =
 		entity.try_get<ComponentMovementState>();
 	if (lastAuthoritativeState == nullptr) {
-		*state = {};
-		return;
+		return {};
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		*state = {};
-		return;
+		return {};
 	}
 
 	EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
-								  *lastAuthoritativeState, *movementParams);
+								  *lastAuthoritativeState, *movementParams,
+								  1.0f, true);
 
-	*state = *currentState;
+	return *currentState;
 }
