@@ -78,7 +78,7 @@ void GameClient::UpdateEntities(Tick tick, icon7::ByteReader *reader)
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(state);
-
+		
 		if (reader->is_valid()) {
 			UpdateEntity(serverId, state, tick);
 		}

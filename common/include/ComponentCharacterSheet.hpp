@@ -32,7 +32,7 @@ struct ComponentCharacterSheet_Health {
 };
 
 struct ComponentCharacterSheet_HealthRegen {
-	int32_t cooldown = 60000;
+	int32_t cooldown = 200;
 	int32_t amount = 1;
 	Tick lastTimestamp = {0};
 
@@ -72,7 +72,7 @@ struct ComponentCharacterSheet_Strength {
 };
 
 struct ComponentCharacterSheet_AttackCooldown {
-	int32_t baseCooldown = 500;
+	int32_t baseCooldown = 10;
 	Tick lastTimestamp = {0};
 
 	ComponentCharacterSheet_AttackCooldown(int32_t baseCooldown,

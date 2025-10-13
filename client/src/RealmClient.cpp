@@ -45,8 +45,8 @@ void RealmClient::Reinit(const std::string &realmName)
 void RealmClient::OneEpoch() { Realm::OneEpoch(); }
 
 void RealmClient::AddNewAuthoritativeMovementState(
-	uint64_t localId, uint64_t serverId,
-	ComponentMovementState _state, Tick tick)
+	uint64_t localId, uint64_t serverId, ComponentMovementState _state,
+	Tick tick)
 {
 	ComponentMovementState state = _state;
 	ComponentMovementHistory *movement =
@@ -85,13 +85,15 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 	ComponentMovementState *currentState =
 		entity.try_get_mut<ComponentMovementState>();
 	if (currentState == nullptr) {
-		LOG_ERROR("Character %lu does not have ComponentMovementState", entityId);
+		LOG_ERROR("Character %lu does not have ComponentMovementState",
+				  entityId);
 		return;
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		LOG_ERROR("Character %lu does not have ComponentMovementParameters", entityId);
+		LOG_ERROR("Character %lu does not have ComponentMovementParameters",
+				  entityId);
 		return;
 	}
 
@@ -124,24 +126,20 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				}
 				ComponentMovementState next = states[id + 1].state__;
 
-				{
-					EntitySystems::UpdateMovement(this, entity, *shape,
-												  *currentState, {prev},
-												  *movementParams);
-				}
-
 				const glm::vec3 A = prev.pos;
 				const glm::vec3 B = next.pos;
-				const glm::vec3 V = prev.vel;
-				const float fullDt = Realm::TICK_DURATION_SECONDS;
 
-				const glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
-				const float t = timer.GetFactorToNextTick(tickDuration);
+				const float t = glm::clamp(
+					timer.GetFactorToNextTick(tickDuration), 0.0f, 1.0f);
 				const float dt = t * Realm::TICK_DURATION_SECONDS;
 
-				currentState->vel = V + a * dt;
-				glm::vec3 P = A + V * dt + a * dt * dt * 0.5f;
-				currentState->pos = currentState->pos * (1 - t) + P * t;
+				const glm::vec3 p1 = A + prev.vel * dt;
+				const glm::vec3 p2 = A * (1.0f - t) + B * t;
+				currentState->vel = prev.vel * (1.0f - t) + next.vel * t;
+
+				const glm::vec3 P = p1 * (1.0f - t) + p2 * t;
+
+				currentState->pos = P;
 				currentState->rot = prev.rot * (1 - t) + next.rot * t;
 				currentState->onGround = next.onGround;
 			} else {
@@ -169,9 +167,9 @@ void RealmClient::RegisterObservers()
 {
 	RegisterObserver(
 		flecs::OnAdd, +[](flecs::entity entity, const ComponentMovementState &,
-						  const ComponentMovementState &,
-						  const ComponentName, const ComponentModelName,
-						  const ComponentShape, const ComponentName &name) {
+						  const ComponentMovementState &, const ComponentName,
+						  const ComponentModelName, const ComponentShape,
+						  const ComponentName &name) {
 			entity.add<ComponentMovementHistory>();
 		});
 

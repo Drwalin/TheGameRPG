@@ -114,7 +114,7 @@ public:
 	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> peers;
 
 	Tick sendEntitiesToClientsTimer = {0};
-	Tick sendUpdateDeltaTicks = {15};
+	Tick sendUpdateDeltaTicks = {2};
 	flecs::query<const ComponentMovementState>
 		queryLastAuthoritativeState;
 
