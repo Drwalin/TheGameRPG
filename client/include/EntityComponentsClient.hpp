@@ -4,10 +4,15 @@
 
 #include "../../ICon7/include/icon7/Time.hpp"
 
+#include "../../common/include/Tick.hpp"
 #include "../../common/include/EntityComponents.hpp"
 
 struct ComponentMovementHistory {
-	std::vector<ComponentMovementState> states;
+	struct TimedState {
+		ComponentMovementState state__;
+		Tick tick;
+	};
+	std::vector<TimedState> states;
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementHistory, MV(states));
 };

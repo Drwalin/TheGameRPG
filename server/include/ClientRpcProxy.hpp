@@ -32,7 +32,7 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer);
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const ComponentLastAuthoritativeMovementState &state,
+						   const ComponentMovementState &state,
 						   const ComponentShape &shape,
 						   const ComponentModelName &entityModelName,
 						   const ComponentName &entityName,
@@ -75,7 +75,7 @@ void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
 void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId);
 void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 ComponentModelName modelName,
-							 ComponentLastAuthoritativeMovementState state,
+							 ComponentMovementState state,
 							 std::string currentAnimation,
 							 Tick animationStartTick);
 void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,

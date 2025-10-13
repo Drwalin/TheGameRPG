@@ -4,6 +4,7 @@
 
 #include "ComponentCallbacks.hpp"
 
+#include "../../common/include/Tick.hpp"
 #include "../../common/include/EntityComponents.hpp"
 
 namespace named_callbacks

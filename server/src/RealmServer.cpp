@@ -106,8 +106,8 @@ void RealmServer::ExecuteMovementUpdate(uint64_t entityId,
 		*state = {};
 		return;
 	}
-	const ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
-		entity.try_get<ComponentLastAuthoritativeMovementState>();
+	const ComponentMovementState *lastAuthoritativeState =
+		entity.try_get<ComponentMovementState>();
 	if (lastAuthoritativeState == nullptr) {
 		*state = {};
 		return;

@@ -46,18 +46,13 @@ void ComponentCharacterSheet::Serialize(icon7::ByteWriter &writer)
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   movementParameters, writer);
 
-	ComponentLastAuthoritativeMovementState s;
-	s.oldState.vel = {0, 0, 0};
-	s.oldState.timestamp = {0};
-	s.oldState.rot = {0, get_global_rotation().y * M_PI / 180.0, 0};
-	s.oldState.pos = ToGlm(this->get_global_position());
-	s.oldState.onGround = false;
+	ComponentMovementState s;
+	s.vel = {0, 0, 0};
+	s.rot = {0, get_global_rotation().y * M_PI / 180.0, 0};
+	s.pos = ToGlm(this->get_global_position());
+	s.onGround = false;
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm, s,
 									   writer);
-
-	ComponentMovementState state = s.oldState;
-	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
-									   state, writer);
 
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   ComponentCharacterSheet_Ranges{},

@@ -93,24 +93,21 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 		}
 
 		float yRot = dist2pi(mt);
-		realm->TrueDeferWhenNeeded([realm, pos, spawnedEntity, yRot]() {
+		realm->TrueDeferWhenNeeded([pos, spawnedEntity, yRot]() {
 			if (auto _ms =
 					spawnedEntity
-						.try_get<ComponentLastAuthoritativeMovementState>()) {
+						.try_get<ComponentMovementState>()) {
 				auto ms = *_ms;
-				ms.oldState.pos = pos;
-				ms.oldState.onGround = false;
-				ms.oldState.timestamp = realm->timer.currentTick;
-				ms.oldState.rot.y += yRot;
-				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
-				spawnedEntity.set<ComponentMovementState>(ms.oldState);
+				ms.pos = pos;
+				ms.onGround = false;
+				ms.rot.y += yRot;
+				spawnedEntity.set<ComponentMovementState>(ms);
 			} else if (auto _ms = spawnedEntity.try_get<ComponentMovementState>()) {
 				auto ms = *_ms;
 				ms.pos = pos;
 				ms.onGround = false;
-				ms.timestamp = realm->timer.currentTick;
 				ms.rot.y += yRot;
-				spawnedEntity.set<ComponentLastAuthoritativeMovementState>(ms);
+				spawnedEntity.set<ComponentMovementState>(ms);
 				spawnedEntity.set<ComponentMovementState>(ms);
 			} else if (auto _ts =
 						   spawnedEntity.try_get<ComponentStaticTransform>()) {
@@ -119,7 +116,6 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 				spawnedEntity.set<ComponentStaticTransform>(ts);
 			} else {
 				LOG_INFO("Spawned entity from spawner does not have "
-						 "ComponentLastAuthoritativeMovementState nor "
 						 "ComponentMovementState nor "
 						 "ComponentStaticTransform.");
 			}

@@ -35,7 +35,7 @@ void ServerCore::Login(icon7::Peer *peer, const std::string &userName)
 }
 
 void ServerCore::UpdatePlayer(
-	icon7::Peer *peer, const ComponentLastAuthoritativeMovementState &state)
+	icon7::Peer *peer, const ComponentMovementState &state)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
@@ -46,13 +46,12 @@ void ServerCore::UpdatePlayer(
 			//       anti-cheat)
 
 			if (auto s = entity.try_get<ComponentMovementState>()) {
-				if (glm::length(s->pos - state.oldState.pos) < 5) {
+				if (glm::length(s->pos - state.pos) < 5) {
 					realm->currentlyUpdatingPlayerPeerEntityMovement = true;
-					entity.set<ComponentLastAuthoritativeMovementState>(state);
-					entity.set<ComponentMovementState>(state.oldState);
+					entity.set<ComponentMovementState>(state);
 					realm->currentlyUpdatingPlayerPeerEntityMovement = false;
 				} else {
-					entity.set<ComponentLastAuthoritativeMovementState>({*s});
+					entity.set<ComponentMovementState>({*s});
 					ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(),
 																peer);
 				}
@@ -107,18 +106,13 @@ _LABEL_BEGINING_CONNECT_PEER_TO_REALM:
 						data->useNextRealmPosition = false;
 						auto *_ls =
 							entity
-								.try_get<ComponentLastAuthoritativeMovementState>();
+								.try_get<ComponentMovementState>();
 						if (_ls) {
 							auto ls = *_ls;
-							ls.oldState.pos = data->nextRealmPosition;
-							ls.oldState.onGround = false;
+							ls.pos = data->nextRealmPosition;
+							ls.onGround = false;
 
-							entity.set<ComponentLastAuthoritativeMovementState>(
-								ls);
-
-							if (entity.has<ComponentMovementState>()) {
-								entity.set<ComponentMovementState>(ls.oldState);
-							}
+							entity.set<ComponentMovementState>(ls);
 						}
 
 						ClientRpcProxy::SpawnPlayerEntity_ForPlayer(realm.get(),
@@ -188,7 +182,7 @@ void ServerCore::RequestSpawnEntities(icon7::Peer *peer,
 }
 
 void ServerCore::InteractInLineOfSight(
-	icon7::Peer *peer, ComponentLastAuthoritativeMovementState state,
+	icon7::Peer *peer, ComponentMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
 	// TODO: add server side verification of raycast
@@ -198,7 +192,7 @@ void ServerCore::InteractInLineOfSight(
 		UpdatePlayer(peer, state);
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
-			auto s = entity.try_get<ComponentLastAuthoritativeMovementState>();
+			auto s = entity.try_get<ComponentMovementState>();
 			if (s) {
 				state = *s;
 			}
@@ -208,7 +202,7 @@ void ServerCore::InteractInLineOfSight(
 }
 
 void ServerCore::Attack(icon7::Peer *peer,
-						ComponentLastAuthoritativeMovementState state,
+						ComponentMovementState state,
 						uint64_t targetId, glm::vec3 targetPos,
 						int64_t attackType, int64_t attackId, int64_t argInt)
 {
@@ -218,7 +212,7 @@ void ServerCore::Attack(icon7::Peer *peer,
 		UpdatePlayer(peer, state);
 		flecs::entity entity = realm->Entity(data->entityId);
 		if (entity.is_alive()) {
-			auto s = entity.try_get<ComponentLastAuthoritativeMovementState>();
+			auto s = entity.try_get<ComponentMovementState>();
 			if (s) {
 				state = *s;
 			}

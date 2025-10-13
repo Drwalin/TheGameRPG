@@ -22,7 +22,7 @@ public:
 
 	void AddNewAuthoritativeMovementState(
 		uint64_t localId, uint64_t serverId,
-		ComponentLastAuthoritativeMovementState state);
+		ComponentMovementState state, Tick tick);
 	void UpdateEntityCurrentState(uint64_t localId, uint64_t serverId);
 
 	virtual void ExecuteMovementUpdate(uint64_t entityId,

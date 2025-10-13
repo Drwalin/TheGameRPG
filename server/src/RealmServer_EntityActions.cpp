@@ -12,7 +12,7 @@
 #include "../include/RealmServer.hpp"
 
 void RealmServer::InteractInLineOfSight(
-	uint64_t instigatorId, ComponentLastAuthoritativeMovementState state,
+	uint64_t instigatorId, ComponentMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
 	/*
@@ -64,7 +64,7 @@ void RealmServer::InteractInLineOfSight(
 }
 
 void RealmServer::InteractInLineOfSight(
-	icon7::Peer *peer, ComponentLastAuthoritativeMovementState state,
+	icon7::Peer *peer, ComponentMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));

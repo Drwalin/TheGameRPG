@@ -33,10 +33,10 @@ void RealmServer::RegisterObservers()
 		});
 
 	queryLastAuthoritativeState =
-		ecs.query<const ComponentLastAuthoritativeMovementState>();
+		ecs.query<const ComponentMovementState>();
 
 	queryEntityLongState =
-		ecs.query<const ComponentLastAuthoritativeMovementState,
+		ecs.query<const ComponentMovementState,
 				  const ComponentName, const ComponentModelName,
 				  const ComponentShape, const ComponentMovementParameters>();
 
@@ -44,10 +44,10 @@ void RealmServer::RegisterObservers()
 		ecs.query<const ComponentStaticTransform, const ComponentModelName,
 				  const ComponentCollisionShape>();
 
-	ecs.observer<ComponentLastAuthoritativeMovementState>()
+	ecs.observer<ComponentMovementState>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const ComponentLastAuthoritativeMovementState &lastState) {
+					 const ComponentMovementState &lastState) {
 			BroadcastReliable(ClientRpcFunctionNames::UpdateEntities,
 							  entity.id(), lastState);
 		});
@@ -136,10 +136,10 @@ void RealmServer::RegisterObservers()
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
 
-	ecs.observer<ComponentLastAuthoritativeMovementState>()
+	ecs.observer<ComponentMovementState>()
 		.event(flecs::OnAdd)
 		.each([](flecs::entity entity,
-				 const ComponentLastAuthoritativeMovementState &) {
+				 const ComponentMovementState &) {
 			if (entity.has<ComponentEventsQueue>() == false) {
 				entity.add<ComponentEventsQueue>();
 			}
@@ -167,11 +167,11 @@ void RealmServer::RegisterObservers()
 			}
 		});
 
-	ecs.observer<ComponentLastAuthoritativeMovementState,
+	ecs.observer<ComponentMovementState,
 				 ComponentPlayerConnectionPeer>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const ComponentLastAuthoritativeMovementState &state,
+					 const ComponentMovementState &state,
 					 ComponentPlayerConnectionPeer &peer) {
 			if (currentlyUpdatingPlayerPeerEntityMovement == false) {
 				if (peer.peer.get() != nullptr) {

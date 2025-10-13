@@ -11,7 +11,7 @@
 #include "../include/RealmServer.hpp"
 
 void RealmServer::Attack(uint64_t instigatorId,
-						 ComponentLastAuthoritativeMovementState state,
+						 ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
@@ -56,7 +56,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 
 			if (auto range =
 					entityInstigator.try_get<ComponentCharacterSheet_Ranges>()) {
-				glm::vec3 eyes = state.oldState.pos;
+				glm::vec3 eyes = state.pos;
 				if (auto shape = entityInstigator.try_get<ComponentShape>()) {
 					eyes.y += shape->height;
 				}
@@ -135,7 +135,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 }
 
 void RealmServer::Attack(icon7::Peer *peer,
-						 ComponentLastAuthoritativeMovementState state,
+						 ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {

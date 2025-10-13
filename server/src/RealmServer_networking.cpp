@@ -41,13 +41,11 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entity.set<ComponentModelName>(modelName);
 		entity.add<ComponentEventsQueue>();
 
-		ComponentLastAuthoritativeMovementState s;
-		s.oldState.timestamp = timer.currentTick;
-		s.oldState.pos = {-10, 0, 10};
-		s.oldState.vel = {0, 0, 0};
-		s.oldState.onGround = false;
-		entity.set<ComponentLastAuthoritativeMovementState>(s);
-		entity.set<ComponentMovementState>(s.oldState);
+		ComponentMovementState s;
+		s.pos = {-10, 0, 10};
+		s.vel = {0, 0, 0};
+		s.onGround = false;
+		entity.set<ComponentMovementState>(s);
 		entity.add<ComponentCharacterSheet_Ranges>();
 		entity.add<ComponentCharacterSheet_Health>();
 		entity.add<ComponentCharacterSheet_HealthRegen>();
@@ -111,17 +109,13 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 			if (data->useNextRealmPosition) {
 				data->useNextRealmPosition = false;
 				auto *_ls =
-					entity.try_get<ComponentLastAuthoritativeMovementState>();
+					entity.try_get<ComponentMovementState>();
 				if (_ls) {
 					auto ls = *_ls;
-					ls.oldState.pos = data->nextRealmPosition;
-					ls.oldState.onGround = false;
+					ls.pos = data->nextRealmPosition;
+					ls.onGround = false;
 
-					entity.set<ComponentLastAuthoritativeMovementState>(ls);
-
-					if (entity.has<ComponentMovementState>()) {
-						entity.set<ComponentMovementState>(ls.oldState);
-					}
+					entity.set<ComponentMovementState>(ls);
 				}
 			}
 			if (auto cpcp = entity.try_get_mut<ComponentPlayerConnectionPeer>()) {

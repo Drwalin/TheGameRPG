@@ -68,7 +68,7 @@ void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 										ClientRpcFunctionNames::SpawnEntities);
 	realm->queryEntityLongState.each(
 		[&](flecs::entity entity,
-			const ComponentLastAuthoritativeMovementState state,
+			const ComponentMovementState state,
 			const ComponentName name, const ComponentModelName model,
 			const ComponentShape shape,
 			const ComponentMovementParameters movementParams) {
@@ -95,7 +95,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 		reader.op(entityId);
 		flecs::entity entity = realm->Entity(entityId);
 		if (entity.is_alive()) {
-			if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+			if (entity.has<ComponentMovementState>() &&
 				entity.has<ComponentName>() &&
 				entity.has<ComponentModelName>() &&
 				entity.has<ComponentShape>() &&
@@ -103,8 +103,7 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 
 				writer.op(entityId);
 
-				writer.op(
-					*entity.try_get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.try_get<ComponentMovementState>());
 				writer.op(*entity.try_get<ComponentName>());
 				writer.op(*entity.try_get<ComponentModelName>());
 				writer.op(*entity.try_get<ComponentShape>());
@@ -128,7 +127,7 @@ void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 	for (uint64_t entityId : ids) {
 		flecs::entity entity = realm->Entity(entityId);
 		if (entity.is_alive()) {
-			if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+			if (entity.has<ComponentMovementState>() &&
 				entity.has<ComponentName>() &&
 				entity.has<ComponentModelName>() &&
 				entity.has<ComponentShape>() &&
@@ -136,8 +135,7 @@ void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 
 				writer.op(entityId);
 
-				writer.op(
-					*entity.try_get<ComponentLastAuthoritativeMovementState>());
+				writer.op(*entity.try_get<ComponentMovementState>());
 				writer.op(*entity.try_get<ComponentName>());
 				writer.op(*entity.try_get<ComponentModelName>());
 				writer.op(*entity.try_get<ComponentShape>());
@@ -161,15 +159,14 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer)
 	uint64_t entityId = data->entityId;
 	flecs::entity entity = realm->Entity(entityId);
 	if (entity.is_alive()) {
-		if (entity.has<ComponentLastAuthoritativeMovementState>() &&
+		if (entity.has<ComponentMovementState>() &&
 			entity.has<ComponentName>() && entity.has<ComponentModelName>() &&
 			entity.has<ComponentShape>() &&
 			entity.has<ComponentMovementParameters>()) {
 
 			writer.op(entityId);
 
-			writer.op(
-				*entity.try_get<ComponentLastAuthoritativeMovementState>());
+			writer.op(*entity.try_get<ComponentMovementState>());
 			writer.op(*entity.try_get<ComponentName>());
 			writer.op(*entity.try_get<ComponentModelName>());
 			writer.op(*entity.try_get<ComponentShape>());
@@ -189,7 +186,7 @@ void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 }
 
 void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
-						   const ComponentLastAuthoritativeMovementState &state,
+						   const ComponentMovementState &state,
 						   const ComponentShape &shape,
 						   const ComponentModelName &entityModelName,
 						   const ComponentName &entityName,
@@ -210,11 +207,12 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 
 	realm->queryLastAuthoritativeState.each(
 		[&](flecs::entity entity,
-			const ComponentLastAuthoritativeMovementState &state) {
+			const ComponentMovementState &state) {
 			if (written == 0) {
 				writer.Reinit(1500);
 				realm->rpc->InitializeSerializeSend(
 					writer, ClientRpcFunctionNames::UpdateEntities);
+				writer.op(realm->timer.currentTick);
 			}
 
 			writer.op((uint64_t)entity.id());
@@ -312,7 +310,7 @@ void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)
 	auto entity = realm->Entity(entityId);
 	if (entity.is_valid() && entity.is_alive()) {
 		auto modelName = entity.try_get<ComponentModelName>();
-		auto state = entity.try_get<ComponentLastAuthoritativeMovementState>();
+		auto state = entity.try_get<ComponentMovementState>();
 		auto name = entity.try_get<ComponentName>();
 		if (modelName == nullptr || state == nullptr || name == nullptr) {
 			LOG_INFO(
@@ -329,7 +327,7 @@ void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)
 
 void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 ComponentModelName modelName,
-							 ComponentLastAuthoritativeMovementState state,
+							 ComponentMovementState state,
 							 std::string currentAnimation,
 							 Tick animationStartTick)
 {

@@ -8,19 +8,10 @@ namespace EntitySystems
 void UpdateMovement(
 	Realm *realm, flecs::entity entity, const ComponentShape shape,
 	ComponentMovementState &currentState,
-	const ComponentLastAuthoritativeMovementState &_lastAuthoritativeState,
+	const ComponentMovementState &prev,
 	const ComponentMovementParameters &movementParams)
 {
-	const ComponentMovementState lastAuthoritativeState =
-		_lastAuthoritativeState.oldState;
-	const Tick currentTick = realm->timer.currentTick;
-	ComponentMovementState prev = lastAuthoritativeState;
 	
-	if (currentState.timestamp > prev.timestamp + 10) {
-		prev = currentState;
-	} else {
-		currentState = prev;
-	}
 	auto &next = currentState;
 
 	constexpr float dt = 0.05f;
@@ -29,7 +20,6 @@ void UpdateMovement(
 		glm::vec3 vel = prev.vel;
 		if (fabs(vel.x) + fabs(vel.z) + fabs(vel.y) < 0.0005) {
 			next = prev;
-			next.timestamp = currentTick;
 			return;
 		}
 
@@ -52,7 +42,6 @@ void UpdateMovement(
 			vel.y = 0;
 		}
 
-		next.timestamp = currentTick;
 		next.pos = pos;
 		next.vel = vel;
 		next.rot = prev.rot;
@@ -113,7 +102,6 @@ void UpdateMovement(
 			vel.y = 50;
 		}
 
-		next.timestamp = currentTick;
 		next.pos = pos;
 		next.vel = vel;
 		next.rot = prev.rot;

@@ -111,7 +111,7 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 
 		if (rand() % 10 == 0) {
 			if (glm::length2(eyes - hitPos) < 10.0f) {
-				ComponentLastAuthoritativeMovementState ls{*state};
+				ComponentMovementState ls{*state};
 				realm->Attack(entityId, ls, targetHit.id(), hitPos, 0, 0, 0);
 // 				realm->Attack(entityId, ls, targetHit.id(), hitPos, 0, 0, 1);
 				// LOG_INFO("Attack %lu->%lu", entityId, targetHit);
@@ -128,7 +128,7 @@ static bool TryFollowingPlayer(RealmServer *realm, uint64_t entityId,
 static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 {
 	flecs::entity entity = realm->Entity(entityId);
-	auto lastState = *entity.try_get<ComponentLastAuthoritativeMovementState>();
+	auto lastState = *entity.try_get<ComponentMovementState>();
 	auto state = *entity.try_get<ComponentMovementState>();
 	auto params = *entity.try_get<ComponentMovementParameters>();
 
@@ -136,8 +136,12 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 	if (shape == nullptr) {
 		return;
 	}
+	
+	if (entityId == 445) {
+		printf("AI [%ld] pos: %.1f %.1f %.1f\n", entityId, state.pos.x, state.pos.y, state.pos.z);
+	}
 
-	ComponentMovementState currentState = lastState.oldState;
+	ComponentMovementState currentState = lastState;
 	auto movementParams = entity.try_get<ComponentMovementParameters>();
 	EntitySystems::UpdateMovement(realm, entity, *shape, currentState,
 								  lastState, *movementParams);
@@ -158,7 +162,7 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 			state.vel = {V.x, V.y, V.z};
 		}
 	}
-	entity.set<ComponentLastAuthoritativeMovementState>({state});
+	entity.set<ComponentMovementState>({state});
 }
 
 extern "C" void

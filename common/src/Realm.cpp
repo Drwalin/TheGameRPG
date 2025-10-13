@@ -60,11 +60,12 @@ void Realm::RegisterObservers()
 {
 	collisionWorld.RegisterObservers(this);
 
-	ecs.observer<ComponentLastAuthoritativeMovementState,
+	/*
+	ecs.observer<ComponentMovementState,
 				 ComponentMovementParameters>()
 		.event(flecs::OnSet)
 		.each([this](flecs::entity entity,
-					 const ComponentLastAuthoritativeMovementState &lastState,
+					 ComponentMovementState &lastState,
 					 const ComponentMovementParameters &movementParams) {
 			const ComponentShape *shape = entity.try_get<ComponentShape>();
 			if (shape == nullptr) {
@@ -74,11 +75,16 @@ void Realm::RegisterObservers()
 				return;
 			}
 
-			ComponentMovementState currentState = lastState.oldState;
-			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
-										  lastState, movementParams);
-			entity.set<ComponentMovementState>(currentState);
+// 			ComponentMovementState currentState = lastState;
+			
+			// TODO: think about this, maybe to differentiate client and server
+			
+// 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
+// 										  lastState, movementParams);
+// 			lastState = currentState;
+// 			entity.set<ComponentMovementState>(currentState);
 		});
+	*/
 
 	ecs.observer<ComponentEventsQueue, const ComponentMovementParameters>()
 		.event(flecs::OnAdd)
@@ -142,12 +148,11 @@ void Realm::OneEpoch()
 }
 
 void Realm::UpdateEntityAuthoritativeState(
-	uint64_t entityId, const ComponentLastAuthoritativeMovementState &state)
+	uint64_t entityId, const ComponentMovementState &state)
 {
 	flecs::entity entity = Entity(entityId);
 	if (entity.is_alive()) {
-		entity.set<ComponentLastAuthoritativeMovementState>(state);
-		entity.set<ComponentMovementState>(state.oldState);
+		entity.set<ComponentMovementState>(state);
 	}
 }
 

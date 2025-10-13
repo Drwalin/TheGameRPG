@@ -23,7 +23,7 @@ void GameClient::JoinRealm(const std::string &realmName, Tick currentTick,
 void GameClient::SpawnEntities(icon7::ByteReader *reader)
 {
 	uint64_t serverId;
-	ComponentLastAuthoritativeMovementState state;
+	ComponentMovementState state;
 	ComponentName name;
 	ComponentModelName model;
 	ComponentShape shape;
@@ -68,17 +68,16 @@ void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 	}
 }
 
-void GameClient::UpdateEntities(icon7::ByteReader *reader)
+void GameClient::UpdateEntities(Tick tick, icon7::ByteReader *reader)
 {
 	uint64_t serverId;
-	ComponentLastAuthoritativeMovementState state;
+	ComponentMovementState state;
 	while (reader->get_remaining_bytes() > 8) {
 		reader->op(serverId);
 		reader->op(state);
 
 		if (reader->is_valid()) {
-			auto s = state.oldState;
-			UpdateEntity(serverId, state);
+			UpdateEntity(serverId, state, tick);
 		}
 	}
 }
@@ -213,7 +212,7 @@ void GameClient::Pong(Tick clientLastSentTick,
 }
 
 void GameClient::SpawnEntity(
-	uint64_t serverId, const ComponentLastAuthoritativeMovementState &state,
+	uint64_t serverId, const ComponentMovementState &state,
 	const ComponentName &name, const ComponentModelName &model,
 	const ComponentShape &shape,
 	const ComponentMovementParameters &movementParams)
@@ -230,7 +229,6 @@ void GameClient::SpawnEntity(
 
 	realm->SetComponent(localId, shape);
 	realm->SetComponent(localId, state);
-	realm->SetComponent(localId, state.oldState);
 	realm->SetComponent(localId, movementParams);
 	realm->SetComponent(localId, name);
 	realm->AssureComponent<ComponentEventsQueue>(localId);
@@ -257,7 +255,7 @@ void GameClient::SpawnStaticEntity(uint64_t serverId,
 }
 
 void GameClient::UpdateEntity(
-	uint64_t serverId, const ComponentLastAuthoritativeMovementState state)
+	uint64_t serverId, const ComponentMovementState state, Tick tick)
 {
 	uint64_t localId = 0;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
@@ -272,8 +270,8 @@ void GameClient::UpdateEntity(
 		realm->SetComponent<ComponentLastAuthoritativeStateUpdateTime>(
 			localId, ComponentLastAuthoritativeStateUpdateTime{
 						 icon7::time::GetTemporaryTimestamp(),
-						 realm->timer.currentTick, state.oldState.timestamp});
-		realm->AddNewAuthoritativeMovementState(localId, serverId, state);
+						 realm->timer.currentTick, tick});
+		realm->AddNewAuthoritativeMovementState(localId, serverId, state, tick);
 		realm->UpdateEntityCurrentState(localId, serverId);
 	} else {
 		// TODO: implement server authority correction of client-side player
@@ -342,14 +340,14 @@ void GameClient::GenericComponentUpdate(icon7::ByteReader *reader)
 
 void GameClient::PlayDeathAndDestroyEntity(
 	uint64_t serverId, ComponentModelName modelName,
-	ComponentLastAuthoritativeMovementState state, ComponentName name)
+	ComponentMovementState state, ComponentName name)
 {
 	RemoveEntity(serverId);
 	PlayDeathAndDestroyEntity_virtual(modelName, state, name);
 }
 
 void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
-							   ComponentLastAuthoritativeMovementState state,
+							   ComponentMovementState state,
 							   std::string currentAnimation,
 							   Tick animationStartTick)
 {
@@ -359,7 +357,7 @@ void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 		return;
 	}
 	uint64_t localId = it->second;
-	realm->AddNewAuthoritativeMovementState(localId, serverId, state);
+	realm->AddNewAuthoritativeMovementState(localId, serverId, state, animationStartTick);
 	PlayAnimation_virtual(localId, modelName, state, currentAnimation,
 						  animationStartTick);
 }

@@ -33,6 +33,12 @@ public:
 	{
 		return icon7::time::GetTemporaryTimestamp();
 	}
+	
+	inline float GetFactorToNextTick(icon7::time::diff tickDuration)
+	{
+		auto now = GetCurrentTimepoint();
+		return (float)((now - lastTick).ns) / (float)(tickDuration.ns);
+	}
 
 	/*
 	[[nodiscard]] inline int64_t CalcCurrentTick() const

@@ -38,15 +38,15 @@ public:
 	void Login(icon7::Peer *peer, const std::string &userName);
 	static void
 	UpdatePlayer(icon7::Peer *peer,
-				 const ComponentLastAuthoritativeMovementState &state);
+				 const ComponentMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
 	void InteractInLineOfSight(icon7::Peer *peer,
-							   ComponentLastAuthoritativeMovementState state,
+							   ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
 	void Attack(icon7::Peer *peer,
-				ComponentLastAuthoritativeMovementState state,
+				ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 

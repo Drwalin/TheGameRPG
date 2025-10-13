@@ -17,7 +17,6 @@ struct RealmPtr {
 struct ComponentShape;
 struct ComponentModelName;
 struct ComponentMovementState;
-struct ComponentLastAuthoritativeMovementState;
 struct ComponentMovementParameters;
 struct ComponentName;
 
@@ -46,7 +45,7 @@ public:
 
 	virtual void UpdateEntityAuthoritativeState(
 		uint64_t entityId,
-		const ComponentLastAuthoritativeMovementState &state);
+		const ComponentMovementState &state);
 
 	virtual void ExecuteMovementUpdate(uint64_t entityId,
 									   ComponentMovementState *stateOut) = 0;

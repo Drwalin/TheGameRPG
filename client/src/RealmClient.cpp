@@ -46,23 +46,22 @@ void RealmClient::OneEpoch() { Realm::OneEpoch(); }
 
 void RealmClient::AddNewAuthoritativeMovementState(
 	uint64_t localId, uint64_t serverId,
-	ComponentLastAuthoritativeMovementState _state)
+	ComponentMovementState _state, Tick tick)
 {
-	_state.oldState.timestamp += TICKS_UPDATE_DELAY;
-	ComponentMovementState state = _state.oldState;
+	ComponentMovementState state = _state;
 	ComponentMovementHistory *movement =
 		AccessComponent<ComponentMovementHistory>(localId);
 	auto &states = movement->states;
 	int i = states.size() - 1;
 	for (; i >= 0; --i) {
-		if (states[i].timestamp < state.timestamp) {
+		if (states[i].tick < tick) {
 			break;
-		} else if (states[i].timestamp == state.timestamp) {
-			states[i] = state;
+		} else if (states[i].tick == tick) {
+			states[i] = {state, tick};
 			return;
 		}
 	}
-	states.insert(states.begin() + i + 1, state);
+	states.insert(states.begin() + i + 1, {state, tick});
 }
 
 void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
@@ -71,7 +70,6 @@ void RealmClient::UpdateEntityCurrentState(uint64_t localId, uint64_t serverId)
 	ExecuteMovementUpdate(localId, &state);
 	flecs::entity entity = Entity(localId);
 	entity.set<ComponentMovementState>(state);
-	entity.set<ComponentLastAuthoritativeMovementState>({state});
 }
 
 void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
@@ -87,19 +85,13 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 	ComponentMovementState *currentState =
 		entity.try_get_mut<ComponentMovementState>();
 	if (currentState == nullptr) {
-		LOG_ERROR("Character %lu does not have shape component", entityId);
-		return;
-	}
-	ComponentLastAuthoritativeMovementState *lastAuthoritativeState =
-		entity.try_get_mut<ComponentLastAuthoritativeMovementState>();
-	if (lastAuthoritativeState == nullptr) {
-		LOG_ERROR("Character %lu does not have shape component", entityId);
+		LOG_ERROR("Character %lu does not have ComponentMovementState", entityId);
 		return;
 	}
 	const ComponentMovementParameters *movementParams =
 		entity.try_get<ComponentMovementParameters>();
 	if (movementParams == nullptr) {
-		LOG_ERROR("Character %lu does not have shape component", entityId);
+		LOG_ERROR("Character %lu does not have ComponentMovementParameters", entityId);
 		return;
 	}
 
@@ -113,25 +105,24 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 
 		int id = states.size() - 1;
 		for (; id >= 0; --id) {
-			if (states[id].timestamp <= currentTick) {
+			if (states[id].tick <= currentTick) {
 				break;
 			}
 		}
 
 		if (id >= 0) {
-			if (lastAuthoritativeState->oldState != states[id]) {
-				lastAuthoritativeState->oldState = states[id];
-				*currentState = states[id];
+			if (*currentState != states[id].state__) {
+				*currentState = states[id].state__;
 			}
 
 			if (id + 1 < states.size()) {
 				ComponentMovementState prev;
 				if (id >= 0) {
-					prev = states[id];
+					prev = states[id].state__;
 				} else {
-					prev = lastAuthoritativeState->oldState;
+					prev = *currentState;
 				}
-				ComponentMovementState next = states[id + 1];
+				ComponentMovementState next = states[id + 1].state__;
 
 				{
 					EntitySystems::UpdateMovement(this, entity, *shape,
@@ -139,41 +130,37 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 												  *movementParams);
 				}
 
-				glm::vec3 A = prev.pos;
-				glm::vec3 B = next.pos;
-				glm::vec3 V = prev.vel;
-				Tick iDt = next.timestamp - prev.timestamp;
-				float fullDt = iDt.v * TICK_DURATION_SECONDS;
+				const glm::vec3 A = prev.pos;
+				const glm::vec3 B = next.pos;
+				const glm::vec3 V = prev.vel;
+				const float fullDt = Realm::TICK_DURATION_SECONDS;
 
-				glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
-				Tick iT = currentTick - prev.timestamp;
-				float dt = iT.v * TICK_DURATION_SECONDS;
-				float t = (float)(iT.v) / (float)(iDt.v);
+				const glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
+				const float t = timer.GetFactorToNextTick(tickDuration);
+				const float dt = t * Realm::TICK_DURATION_SECONDS;
 
 				currentState->vel = V + a * dt;
 				glm::vec3 P = A + V * dt + a * dt * dt * 0.5f;
 				currentState->pos = currentState->pos * (1 - t) + P * t;
 				currentState->rot = prev.rot * (1 - t) + next.rot * t;
 				currentState->onGround = next.onGround;
-				currentState->timestamp = currentTick;
 			} else {
-				*currentState = states.back();
+				*currentState = states.back().state__;
 			}
 
-			auto las = *lastAuthoritativeState;
-			las.oldState = *currentState;
+			auto las = *currentState;
 
 			EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
 										  las, *movementParams);
 		} else {
-			*state = states[0];
+			*state = states[0].state__;
 		}
 		if (id > 10) {
 			states.erase(states.begin(), states.begin() + id - 3);
 		}
 	} else {
 		EntitySystems::UpdateMovement(this, entity, *shape, *currentState,
-									  *lastAuthoritativeState, *movementParams);
+									  *currentState, *movementParams);
 	}
 	*state = *currentState;
 }
@@ -182,7 +169,7 @@ void RealmClient::RegisterObservers()
 {
 	RegisterObserver(
 		flecs::OnAdd, +[](flecs::entity entity, const ComponentMovementState &,
-						  const ComponentLastAuthoritativeMovementState &,
+						  const ComponentMovementState &,
 						  const ComponentName, const ComponentModelName,
 						  const ComponentShape, const ComponentName &name) {
 			entity.add<ComponentMovementHistory>();

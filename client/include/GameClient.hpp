@@ -33,7 +33,7 @@ private: // rpc receiving methods
 				   uint64_t playerEntityId);
 	void SpawnEntities(icon7::ByteReader *reader);
 	void SpawnStaticEntities(icon7::ByteReader *reader);
-	void UpdateEntities(icon7::ByteReader *reader);
+	void UpdateEntities(Tick tick, icon7::ByteReader *reader);
 	void SetModel(uint64_t serverId, ComponentModelName model,
 				  ComponentShape shape);
 	void DeleteEntities(icon7::ByteReader *reader);
@@ -45,7 +45,7 @@ private: // rpc receiving methods
 			  int64_t clientPingSentTimeNs);
 
 	void SpawnEntity(uint64_t serverId,
-					 const ComponentLastAuthoritativeMovementState &state,
+					 const ComponentMovementState &state,
 					 const ComponentName &name, const ComponentModelName &model,
 					 const ComponentShape &shape,
 					 const ComponentMovementParameters &movementParams);
@@ -54,7 +54,7 @@ private: // rpc receiving methods
 						   ComponentModelName model,
 						   ComponentCollisionShape shape);
 	void UpdateEntity(uint64_t serverId,
-					  const ComponentLastAuthoritativeMovementState state);
+					  const ComponentMovementState state, Tick tick);
 	void RemoveEntity(uint64_t serverId);
 
 	void RequestSpawnOf(uint64_t serverId);
@@ -62,20 +62,20 @@ private: // rpc receiving methods
 
 	void
 	PlayDeathAndDestroyEntity(uint64_t serverId, ComponentModelName modelName,
-							  ComponentLastAuthoritativeMovementState state,
+							  ComponentMovementState state,
 							  ComponentName name);
 	void PlayAnimation(uint64_t serverId, ComponentModelName modelName,
-					   ComponentLastAuthoritativeMovementState state,
+					   ComponentMovementState state,
 					   std::string currentAnimation,
 					   Tick animationStartTick);
 
 public: // rpc callbacks
 	virtual void PlayDeathAndDestroyEntity_virtual(
 		ComponentModelName modelName,
-		ComponentLastAuthoritativeMovementState state, ComponentName name) = 0;
+		ComponentMovementState state, ComponentName name) = 0;
 	virtual void
 	PlayAnimation_virtual(uint64_t serverId, ComponentModelName modelName,
-						  ComponentLastAuthoritativeMovementState state,
+						  ComponentMovementState state,
 						  std::string currentAnimation,
 						  Tick animationStartTick) = 0;
 	virtual void PlayFX(ComponentModelName modelName,

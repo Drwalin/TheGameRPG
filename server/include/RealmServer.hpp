@@ -62,20 +62,20 @@ public: // Entity Actions
 	 *    1 - for released attack button
 	 */
 	void InteractInLineOfSight(uint64_t instigatorId,
-							   ComponentLastAuthoritativeMovementState state,
+							   ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
 	void Attack(uint64_t instigatorId,
-				ComponentLastAuthoritativeMovementState state,
+				ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
 	void InteractInLineOfSight(icon7::Peer *peer,
-							   ComponentLastAuthoritativeMovementState state,
+							   ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
 	void Attack(icon7::Peer *peer,
-				ComponentLastAuthoritativeMovementState state,
+				ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
@@ -115,10 +115,10 @@ public:
 
 	Tick sendEntitiesToClientsTimer = {0};
 	Tick sendUpdateDeltaTicks = {15};
-	flecs::query<const ComponentLastAuthoritativeMovementState>
+	flecs::query<const ComponentMovementState>
 		queryLastAuthoritativeState;
 
-	flecs::query<const ComponentLastAuthoritativeMovementState,
+	flecs::query<const ComponentMovementState,
 				 const ComponentName, const ComponentModelName,
 				 const ComponentShape, const ComponentMovementParameters>
 		queryEntityLongState;

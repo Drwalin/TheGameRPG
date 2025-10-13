@@ -25,11 +25,11 @@ public: // callbacks
 public: // rpc callbacks
 	virtual void PlayDeathAndDestroyEntity_virtual(
 		ComponentModelName modelName,
-		ComponentLastAuthoritativeMovementState state,
+		ComponentMovementState state,
 		ComponentName name) override;
 	virtual void
 	PlayAnimation_virtual(uint64_t localId, ComponentModelName modelName,
-						  ComponentLastAuthoritativeMovementState state,
+						  ComponentMovementState state,
 						  std::string currentAnimation,
 						  Tick animationStartTick) override;
 	virtual void PlayFX(ComponentModelName modelName,

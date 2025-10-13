@@ -6,7 +6,6 @@
 
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
 
-#include "Tick.hpp"
 #include "CollisionFilters.hpp"
 #include "ComponentsUtility.hpp"
 
@@ -20,7 +19,6 @@ struct ComponentShape {
 };
 
 struct ComponentMovementState {
-	Tick timestamp = {0};
 	glm::vec3 pos = {0, 0, 0};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};
@@ -28,33 +26,20 @@ struct ComponentMovementState {
 
 	inline bool operator==(const ComponentMovementState &o) const
 	{
-		return timestamp == o.timestamp && pos == o.pos && vel == o.vel &&
+		return pos == o.pos && vel == o.vel &&
 			   rot == o.rot && onGround == o.onGround;
 	}
 
 	inline bool operator!=(const ComponentMovementState &o) const
 	{
-		return timestamp != o.timestamp || pos != o.pos || vel != o.vel ||
+		return pos != o.pos || vel != o.vel ||
 			   rot != o.rot || onGround != o.onGround;
 	}
 
 	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentMovementState,
-								  {MV(timestamp) MV(pos) MV(vel) MV(rot)
+								  {MV(pos) MV(vel) MV(rot)
 									   MV(onGround)});
-};
-
-struct ComponentLastAuthoritativeMovementState {
-	ComponentMovementState oldState;
-
-	ComponentLastAuthoritativeMovementState(ComponentMovementState state)
-		: oldState(state)
-	{
-	}
-
-	BITSCPP_BYTESTREAM_OP_DECLARATIONS()
-	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentLastAuthoritativeMovementState,
-								  MV(oldState));
 };
 
 struct ComponentName {

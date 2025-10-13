@@ -30,33 +30,8 @@ int RegisterEntityComponents(flecs::world &ecs)
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentStaticTransform, "ST");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentCollisionShape, "CS");
 	REGISTER_COMPONENT_FOR_ECS_WORLD(ecs, ComponentMovementState, "CP");
-	REGISTER_COMPONENT_FOR_ECS_WORLD(
-		ecs, ComponentLastAuthoritativeMovementState, "AP");
 
 	REGISTER_COMPONENT_NO_SERIALISATION(ecs, ComponentEventsQueue);
-
-	reg::ComponentConstructor<ComponentMovementState>::singleton
-		->callbackDeserializePersistent = [](class Realm *realm,
-											 flecs::entity entity,
-											 ComponentMovementState *state) {
-		state->timestamp += realm->timer.currentTick;
-	};
-	reg::ComponentConstructor<ComponentMovementState>::singleton
-		->callbackSerializePersistent = [](class Realm *realm,
-										   ComponentMovementState *state) {
-		state->timestamp -= realm->timer.currentTick;
-	};
-
-	reg::ComponentConstructor<ComponentLastAuthoritativeMovementState>::
-		singleton->callbackDeserializePersistent =
-		[](class Realm *realm, flecs::entity entity, auto *state) {
-			state->oldState.timestamp += realm->timer.currentTick;
-		};
-	reg::ComponentConstructor<
-		ComponentLastAuthoritativeMovementState>::singleton
-		->callbackSerializePersistent = [](class Realm *realm, auto *state) {
-		state->oldState.timestamp -= realm->timer.currentTick;
-	};
 
 	return 0;
 }
@@ -67,15 +42,11 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentShape, {
 });
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentMovementState, {
-	s.op(timestamp);
 	s.op(pos);
 	s.op(vel);
 	s.op(rot);
 	s.op(onGround);
 });
-
-BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(
-	ComponentLastAuthoritativeMovementState, { s.op(oldState); });
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentName, { s.op(name); });
 

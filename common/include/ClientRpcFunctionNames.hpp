@@ -16,7 +16,7 @@ inline const std::string SpawnStaticEntities = "SpawnStaticEntities";
 //                     EntityShape, MovementParams}, ...)
 inline const std::string SpawnEntities = "SpawnEntities";
 
-// void UpdateEntities({entityId, LastAuthoritativeMovementState}, ...)
+// void UpdateEntities(Tick tick, {entityId, LastAuthoritativeMovementState}, ...)
 inline const std::string UpdateEntities = "UpdateEntities";
 
 // void SetModel(entityId, ModelName, EntityShape)

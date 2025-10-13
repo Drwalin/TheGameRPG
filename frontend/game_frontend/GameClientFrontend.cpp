@@ -172,7 +172,7 @@ void GameClientFrontend::RegisterObservers()
 }
 
 void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
-	ComponentModelName modelName, ComponentLastAuthoritativeMovementState state,
+	ComponentModelName modelName, ComponentMovementState state,
 	ComponentName name)
 {
 	if (modelName.modelName != "") {
@@ -213,8 +213,8 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 
 			frontend->entitiesContainer->add_child(node3d);
 
-			node3d->set_rotation(ToGodot({0, state.oldState.rot.y, 0}));
-			node3d->set_position(ToGodot(state.oldState.pos));
+			node3d->set_rotation(ToGodot({0, state.rot.y, 0}));
+			node3d->set_position(ToGodot(state.pos));
 			Label3D *label = memnew(Label3D);
 			label->set_text(String::utf8(name.name.c_str()));
 			node3d->add_child(label);
@@ -252,7 +252,7 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 
 void GameClientFrontend::PlayAnimation_virtual(
 	uint64_t localId, ComponentModelName modelName,
-	ComponentLastAuthoritativeMovementState state, std::string currentAnimation,
+	ComponentMovementState state, std::string currentAnimation,
 	Tick animationStartTick)
 {
 	flecs::entity entity = realm->Entity(localId);

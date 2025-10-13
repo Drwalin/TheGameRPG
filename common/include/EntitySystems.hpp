@@ -5,7 +5,6 @@
 class Realm;
 struct ComponentShape;
 struct ComponentMovementState;
-struct ComponentLastAuthoritativeMovementState;
 struct ComponentMovementParameters;
 
 namespace EntitySystems
@@ -13,7 +12,7 @@ namespace EntitySystems
 void UpdateMovement(Realm *realm, flecs::entity entity,
 					const struct ::ComponentShape shape,
 					struct ::ComponentMovementState &currentState,
-					const struct ::ComponentLastAuthoritativeMovementState
+					const struct ::ComponentMovementState
 						&lastAuthoritativeState,
 					const struct ::ComponentMovementParameters &movementParams);
 };
