@@ -24,7 +24,7 @@ public: // variables
 	int64_t get_maxAmount() { return maxAmount; }
 	void set_maxAmount(int64_t v) { maxAmount = v; }
 
-	int64_t spawnCooldown = 3000;
+	int64_t spawnCooldown = 9000;
 	int64_t get_spawnCooldown() { return spawnCooldown; }
 	void set_spawnCooldown(int64_t v) { spawnCooldown = v; }
 

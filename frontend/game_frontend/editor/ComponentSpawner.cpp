@@ -19,7 +19,7 @@ void ComponentSpawner::Serialize(icon7::ByteWriter &writer)
 {
 	::ComponentSpawner spawner;
 	spawner.maxAmount = maxAmount;
-	spawner.spawnCooldown = spawnCooldown;
+	spawner.spawnCooldown = spawnCooldown / Realm::TICK_DURATION_MILLISECONDS;
 	spawner.spawnRadius = spawnRadius;
 	spawner.radiusToCheckAmountEntities = radiusToCheckExistingEntities;
 	spawner.lastSpawnedTimestamp = {0};

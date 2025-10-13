@@ -75,19 +75,18 @@ void RealmServer::RegisterObservers()
 	ecs.observer<ComponentTrigger>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, ComponentTrigger &trigger) {
-			entity.add<TagPrivateEntity>();
 			ClientRpcProxy::Broadcast_DeleteEntity(this, entity.id());
+			entity.add<TagPrivateEntity>();
 		});
 
-	ecs.observer<ComponentTrigger>()
+	ecs.observer<ComponentTrigger, ComponentCollisionShape>()
 		.event(flecs::OnSet)
-		.each(+[](flecs::entity entity, const ComponentTrigger &) {
-			if (auto shape = entity.try_get_mut<ComponentCollisionShape>()) {
-				shape->mask = FILTER_TRIGGER;
-				ComponentCollisionShape s = *shape;
-				entity.set(s);
+		.each(+[](flecs::entity entity, const ComponentTrigger &, const ComponentCollisionShape &shape) {
+			if (shape.mask != FILTER_TRIGGER) {
+				entity.set<ComponentCollisionShape>(shape);
 				LOG_INFO("Setting trigger shape filter");
 			}
+			LOG_INFO("Trying to set trigger filter");
 		});
 
 	ecs.observer<ComponentCollisionShape>()

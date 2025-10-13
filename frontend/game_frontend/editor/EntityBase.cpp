@@ -173,6 +173,9 @@ void EntityBase::SerializeCollisions(icon7::ByteWriter &writer)
 		return;
 	}
 
+	if (IsTrigger()) {
+		shape.mask = FILTER_TRIGGER;
+	}
 	reg::Registry::SerializePersistent(GameClientFrontend::singleton->realm,
 									   shape, writer);
 }
