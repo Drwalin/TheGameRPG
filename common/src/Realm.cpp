@@ -76,9 +76,9 @@ void Realm::RegisterObservers()
 			}
 
 // 			ComponentMovementState currentState = lastState;
-			
+
 			// TODO: think about this, maybe to differentiate client and server
-			
+
 // 			EntitySystems::UpdateMovement(this, entity, *shape, currentState,
 // 										  lastState, movementParams);
 // 			lastState = currentState;
@@ -86,6 +86,7 @@ void Realm::RegisterObservers()
 		});
 	*/
 
+	/*
 	ecs.observer<ComponentEventsQueue, const ComponentMovementParameters>()
 		.event(flecs::OnAdd)
 		.each([this](flecs::entity entity, ComponentEventsQueue &eventsQueue,
@@ -104,14 +105,20 @@ void Realm::RegisterObservers()
 			event.event = &defaultMovementEvent;
 			eventsQueue.ScheduleEvent(this, entity.id(), event);
 		});
+		*/
+
+	queryMovingEntities =
+		ecs.query<ComponentMovementState, const ComponentShape,
+				  const ComponentMovementParameters>();
 }
 
 void Realm::RunOneEpoch()
 {
-	if (timer.nextTick > TickTimer::GetCurrentTimepoint()+icon7::time::milliseconds(5)) {
+	if (timer.nextTick >
+		TickTimer::GetCurrentTimepoint() + icon7::time::milliseconds(5)) {
 		return;
 	}
-	
+
 	icon7::time::Point begin = icon7::time::GetTemporaryTimestamp();
 	OneEpoch();
 	icon7::time::Point end = icon7::time::GetTemporaryTimestamp();
@@ -124,7 +131,7 @@ void Realm::RunOneEpoch()
 void Realm::OneEpoch()
 {
 	timer.Update(tickDuration);
-	
+
 	collisionWorld.StartEpoch();
 
 	// TODO: update due queued entity events
@@ -141,14 +148,21 @@ void Realm::OneEpoch()
 			break;
 		}
 	}
-	
+
+	queryMovingEntities.each(
+		[this](flecs::entity entity, ComponentMovementState &state, const ComponentShape &shape,
+			   const ComponentMovementParameters &movementParams) {
+			EntitySystems::UpdateMovement(this, entity, shape, state, state,
+										  movementParams);
+		});
+
 	// TODO: execute systems here
 
 	collisionWorld.EndEpoch();
 }
 
-void Realm::UpdateEntityAuthoritativeState(
-	uint64_t entityId, const ComponentMovementState &state)
+void Realm::UpdateEntityAuthoritativeState(uint64_t entityId,
+										   const ComponentMovementState &state)
 {
 	flecs::entity entity = Entity(entityId);
 	if (entity.is_alive()) {
@@ -172,7 +186,8 @@ uint64_t Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
 
 void Realm::ScheduleEntityEvent(flecs::entity entity, EntityEvent event)
 {
-	ComponentEventsQueue *eventsQueue = entity.try_get_mut<ComponentEventsQueue>();
+	ComponentEventsQueue *eventsQueue =
+		entity.try_get_mut<ComponentEventsQueue>();
 	if (eventsQueue == nullptr) {
 		LOG_FATAL("Trying to add event `%s` to entity without event queue.",
 				  event.event->name);

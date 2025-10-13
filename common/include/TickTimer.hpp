@@ -40,20 +40,6 @@ public:
 		return (float)((now - lastTick).ns) / (float)(tickDuration.ns);
 	}
 
-	/*
-	[[nodiscard]] inline int64_t CalcCurrentTick() const
-	{
-		const auto currentTime = icon7::time::GetTemporaryTimestamp();
-		return TicksBetween(startTickCountingTimePoint, currentTime);
-	}
-
-	inline static int64_t TicksBetween(icon7::time::Point start,
-									   icon7::time::Point end)
-	{
-		return (end - start).ns / (50'000'000ll);
-	}
-	*/
-
 public:
 	icon7::time::Point lastTick;
 	icon7::time::Point nextTick;

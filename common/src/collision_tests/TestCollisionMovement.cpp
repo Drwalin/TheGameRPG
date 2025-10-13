@@ -115,7 +115,11 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			float offsetHeight = 0;
 			glm::vec3 onGroundNormal;
 			if(s->shape.CylinderTestOnGround(t->trans, cyl, *finalCorrectedPosition, offsetHeight, &onGroundNormal)) {
-// 				printf("a: |%f| <= %f ?       trans h: %f      charPos.y: %f\n", offsetHeight, stepHeight, t->trans.pos.y, finalCorrectedPosition->y);
+// 				printf("a: |%f| <= %f ?       trans h: %f      charPos.y: %f\n",
+// 						offsetHeight,
+// 						stepHeight,
+// 						t->trans.pos.y,
+// 						finalCorrectedPosition->y);
 				if (fabs(offsetHeight) <= stepHeight) {
 // 					printf("b\n");
 					if (maxOffsetHeight <= offsetHeight) {
@@ -136,11 +140,11 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 		}
 	}
 	
-	if (count == 0) {
-// 		printf("No collision objects\n");
-	} else {
-// 		printf("NUMBER OF POTENTIAL COLLIDING OBJECTS: %lu\n", count);
-	}
+// 	if (count == 0) {
+// 		printf("no collision objects\n");
+// 	} else {
+// 		printf("number of potential colliding objects: %lu\n", count);
+// 	}
 	
 	if (hasHitOnGround) {
 		hitNormal = glm::normalize(hitNormal);

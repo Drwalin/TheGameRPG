@@ -306,6 +306,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	}
 	auto state = *stateP;
 	if (state.onGround == false) {
+// 		printf("Player is not on ground\n");
 		// TODO: no air control implemented
 		return;
 	}

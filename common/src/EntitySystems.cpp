@@ -5,13 +5,12 @@
 
 namespace EntitySystems
 {
-void UpdateMovement(
-	Realm *realm, flecs::entity entity, const ComponentShape shape,
-	ComponentMovementState &currentState,
-	const ComponentMovementState &prev,
-	const ComponentMovementParameters &movementParams)
+void UpdateMovement(Realm *realm, flecs::entity entity,
+					const ComponentShape shape,
+					ComponentMovementState &currentState,
+					const ComponentMovementState &prev,
+					const ComponentMovementParameters &movementParams)
 {
-	
 	auto &next = currentState;
 
 	constexpr float dt = 0.05f;
@@ -27,12 +26,12 @@ void UpdateMovement(
 		const glm::vec3 oldPos = prev.pos;
 		const glm::vec3 movement = vel * dt;
 		const glm::vec3 newPos = oldPos + movement;
-		
+
 		glm::vec3 normal, groundNormal;
 		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, &normal, &groundNormal,
-				movementParams.stepHeight, 0.7)) {
-			if (glm::length2(pos-oldPos) < 0.00000001 && oldPos != newPos) {
+				shape, oldPos, newPos, &pos, &next.onGround, &normal,
+				&groundNormal, movementParams.stepHeight, 0.7)) {
+			if (glm::length2(pos - oldPos) < 0.00000001 && oldPos != newPos) {
 				next.onGround = false;
 			}
 			pos += normal * 0.01f;
@@ -47,7 +46,7 @@ void UpdateMovement(
 		next.rot = prev.rot;
 
 	} else {
-		
+
 		next.onGround = false;
 		const glm::vec3 acc = {0, realm->gravity, 0};
 
@@ -63,23 +62,23 @@ void UpdateMovement(
 		glm::vec3 normal;
 		glm::vec3 groundNormal;
 		if (realm->collisionWorld.TestCollisionMovement(
-				shape, oldPos, newPos, &pos, &next.onGround, &normal, &groundNormal,
-				movementParams.stepHeight, 0.7)) {
+				shape, oldPos, newPos, &pos, &next.onGround, &normal,
+				&groundNormal, movementParams.stepHeight, 0.7)) {
 			normal = glm::normalize(normal);
-			
+
 			if (/*next.onGround == false &&*/ glm::dot(vel, normal) < 0) {
 				vel -= normal * glm::dot(normal, vel);
 			}
-			if (next.onGround) {// && glm::dot(vel, groundNormal) < 0) {
+			if (next.onGround) { // && glm::dot(vel, groundNormal) < 0) {
 				vel -= groundNormal * glm::dot(groundNormal, vel);
 				vel.y = 0;
 			}
-			
-			if (glm::length2(pos-oldPos) < 0.00000001 && oldPos != newPos) {
+
+			if (glm::length2(pos - oldPos) < 0.00000001 && oldPos != newPos) {
 				next.onGround = false;
 			}
 			pos += normal * 0.01f;
-			
+
 			/*
 			if (vel.y > 0) {
 				glm::vec3 vv = vel;
@@ -106,9 +105,11 @@ void UpdateMovement(
 		next.vel = vel;
 		next.rot = prev.rot;
 	}
-	
+
+	currentState = next;
+
 	if (currentState.pos != prev.pos) {
-		realm->collisionWorld.EntitySetTransform(entity, currentState.pos, shape);
+		realm->collisionWorld.EntitySetTransform(entity, next.pos, shape);
 	}
 }
 } // namespace EntitySystems

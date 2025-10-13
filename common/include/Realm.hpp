@@ -65,6 +65,10 @@ protected:
 	StatsCollector statsOneEpochDuration;
 
 	icon7::time::Diff millisecondsBetweenStatsReport = icon7::time::seconds(60);
+	
+private:
+	flecs::query<ComponentMovementState, const ComponentShape,
+		const ComponentMovementParameters> queryMovingEntities;
 
 public:
 	TickTimer timer;
