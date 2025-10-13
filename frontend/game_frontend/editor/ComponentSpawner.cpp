@@ -22,7 +22,7 @@ void ComponentSpawner::Serialize(icon7::ByteWriter &writer)
 	spawner.spawnCooldown = spawnCooldown;
 	spawner.spawnRadius = spawnRadius;
 	spawner.radiusToCheckAmountEntities = radiusToCheckExistingEntities;
-	spawner.lastSpawnedTimestamp = 0;
+	spawner.lastSpawnedTimestamp = {0};
 	spawner.prefabsOffset.push_back(0);
 
 	icon7::ByteWriter _writer(1024);

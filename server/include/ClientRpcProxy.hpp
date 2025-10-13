@@ -15,7 +15,8 @@ void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId);
 
 void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
 					   uint64_t playerEntityId);
-void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2);
+void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
+		  int64_t clientLocalTime);
 void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
 
 void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
@@ -76,9 +77,8 @@ void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 ComponentModelName modelName,
 							 ComponentLastAuthoritativeMovementState state,
 							 std::string currentAnimation,
-							 int64_t animationStartTick);
+							 Tick animationStartTick);
 void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
-					  ComponentStaticTransform transform,
-					  int64_t timeStartPlaying, uint64_t attachToEntityId,
-					  int32_t ttlMs);
+					  ComponentStaticTransform transform, Tick timeStartPlaying,
+					  uint64_t attachToEntityId, int32_t ttlMs);
 } // namespace ClientRpcProxy

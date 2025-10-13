@@ -8,7 +8,7 @@
 
 void ComponentEventsQueue::InsertIntoRealmSchedule(Realm *realm,
 												   uint64_t thisEntityId,
-												   int64_t dueTick)
+												   Tick dueTick)
 {
 	EntityEventEntry entry;
 	entry.dueTick = dueTick;
@@ -37,7 +37,7 @@ void ComponentEventsQueue::ScheduleEvent(Realm *realm, uint64_t thisEntityId,
 	InsertIntoRealmSchedule(realm, thisEntityId, event.dueTick);
 }
 
-void ComponentEventsQueue::Update(int64_t currentTick, uint64_t entityId,
+void ComponentEventsQueue::Update(Tick currentTick, uint64_t entityId,
 								  class Realm *realm)
 {
 	if (events.Empty()) {
@@ -60,7 +60,7 @@ void ComponentEventsQueue::Update(int64_t currentTick, uint64_t entityId,
 		EntityEvent event = events.Top();
 		if (event.dueTick <= currentTick) {
 			events.Pop();
-			int64_t dt = event.event->callback(realm, event.dueTick,
+			Tick dt = event.event->callback(realm, event.dueTick,
 											   currentTick, entityId);
 			if (dt > 0) {
 				event.dueTick = currentTick + dt;

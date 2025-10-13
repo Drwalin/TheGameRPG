@@ -6,6 +6,7 @@
 
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_AnyOrCompound.hpp"
 
+#include "Tick.hpp"
 #include "CollisionFilters.hpp"
 #include "ComponentsUtility.hpp"
 
@@ -19,7 +20,7 @@ struct ComponentShape {
 };
 
 struct ComponentMovementState {
-	int64_t timestamp = 0;
+	Tick timestamp = {0};
 	glm::vec3 pos = {0, 0, 0};
 	glm::vec3 vel = {0, 0, 0};
 	glm::vec3 rot = {0, 0, 0};

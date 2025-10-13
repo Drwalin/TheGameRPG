@@ -1,26 +1,26 @@
 #pragma once
 
-#include <cstdint>
-
 #include "../../ICon7/include/icon7/Time.hpp"
+
+#include "Tick.hpp"
 
 class TickTimer
 {
 public:
 	inline void Start(icon7::time::diff tickDuration)
 	{
-		currentTick = 0;
+		currentTick = {0};
 		lastTick = GetCurrentTimepoint();
 		nextTick = lastTick + tickDuration;
 	}
 
-	inline void Start(int64_t currentTick, icon7::time::diff tickDuration)
+	inline void Start(Tick currentTick, icon7::time::diff tickDuration)
 	{
 		Start(tickDuration);
 		this->currentTick = currentTick;
 	}
 
-	[[nodiscard]] inline int64_t GetCurrentTick() const { return currentTick; }
+	[[nodiscard]] inline Tick GetCurrentTick() const { return currentTick; }
 
 	inline void Update(icon7::time::diff tickDuration)
 	{
@@ -51,5 +51,5 @@ public:
 public:
 	icon7::time::Point lastTick;
 	icon7::time::Point nextTick;
-	int64_t currentTick = 0;
+	Tick currentTick = {0};
 };

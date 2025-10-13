@@ -32,7 +32,7 @@ void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
 	// TODO: verify and correct this behavior and implement both ways ping
 	//       testing
 	PeerData *peerData = ((PeerData *)(peer->userPointer));
-	int64_t currentTick = 0;
+	Tick currentTick = {0};
 	int64_t diffTickStartNs = 0;
 	if (peerData) {
 		auto realm = peerData->realm.lock();
@@ -331,7 +331,7 @@ void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 							 ComponentModelName modelName,
 							 ComponentLastAuthoritativeMovementState state,
 							 std::string currentAnimation,
-							 int64_t animationStartTick)
+							 Tick animationStartTick)
 {
 	// TODO: move arguments fetching to inside of this function to reduce
 	//       arguments count and error proneness
@@ -341,7 +341,7 @@ void Broadcast_PlayAnimation(RealmServer *realm, uint64_t entityId,
 
 void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 					  ComponentStaticTransform transform,
-					  int64_t timeStartPlaying, uint64_t attachToEntityId,
+					  Tick timeStartPlaying, uint64_t attachToEntityId,
 					  int32_t ttlMs)
 {
 	// TODO: verify

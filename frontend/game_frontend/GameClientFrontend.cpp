@@ -253,7 +253,7 @@ void GameClientFrontend::PlayDeathAndDestroyEntity_virtual(
 void GameClientFrontend::PlayAnimation_virtual(
 	uint64_t localId, ComponentModelName modelName,
 	ComponentLastAuthoritativeMovementState state, std::string currentAnimation,
-	int64_t animationStartTick)
+	Tick animationStartTick)
 {
 	flecs::entity entity = realm->Entity(localId);
 	if (!(entity.is_alive() && entity.is_valid())) {
@@ -276,7 +276,7 @@ void GameClientFrontend::PlayAnimation_virtual(
 
 void GameClientFrontend::PlayFX(ComponentModelName modelName,
 								ComponentStaticTransform transform,
-								int64_t timeStartPlaying,
+								Tick timeStartPlaying,
 								uint64_t attachToEntityId, int32_t ttlMs)
 {
 	if (modelName.modelName != "") {
@@ -345,8 +345,8 @@ void GameClientFrontend::PlayFX(ComponentModelName modelName,
 				NodeRemoverAfterTimer *rem =
 					Object::cast_to<NodeRemoverAfterTimer>(
 						ClassDB::instantiate("NodeRemoverAfterTimer"));
-				rem->remainingSeconds = (timeStartPlaying + (int64_t)ttlMs -
-										 realm->timer.currentTick) *
+				rem->remainingSeconds = ((timeStartPlaying -
+										 realm->timer.currentTick).v*Realm::TICK_DURATION_MILLISECONDS + (int64_t)ttlMs) *
 										0.001f;
 				node->add_child(rem);
 				rem->set_owner(node);

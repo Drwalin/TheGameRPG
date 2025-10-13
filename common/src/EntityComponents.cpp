@@ -1,12 +1,12 @@
+#include <type_traits>
+
 #include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 #include "../include/RegistryComponent.inl.hpp"
 #include "../include/Realm.hpp"
 
-#include "../include/EntityComponents.hpp"
-
 #include "../include/CollisionShapeSerialization.hpp"
-#include <type_traits>
+#include "../include/EntityComponents.hpp"
 
 int RegisterEntityEventQueueComponent(flecs::world &ecs);
 int RegisterEntityComponentsCollisionWorld(flecs::world &ecs);

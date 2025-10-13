@@ -115,8 +115,8 @@ void RealmServer::RegisterObservers()
 					 const ComponentAITick &) {
 			static EntityEventTemplate defaultAiMovementEvent{
 				"defaultAiMovementEvent",
-				+[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
-					uint64_t entityId) -> int64_t {
+				+[](Realm *realm, Tick scheduledTick, Tick currentTick,
+					uint64_t entityId) -> Tick {
 					flecs::entity entity = realm->Entity(entityId);
 					if (entity.has<ComponentAITick>()) {
 						auto tick = entity.try_get<ComponentAITick>();
@@ -128,7 +128,7 @@ void RealmServer::RegisterObservers()
 						}
 					}
 
-					return realm->maxMovementDeltaTicks;
+					return {3};
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 100;

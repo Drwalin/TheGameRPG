@@ -9,8 +9,6 @@
 
 RealmClient::RealmClient(GameClient *gameClient) : gameClient(gameClient)
 {
-	minMovementDeltaTicks = 3;
-	maxMovementDeltaTicks = 16;
 	RealmClient::RegisterObservers();
 }
 
@@ -44,13 +42,13 @@ void RealmClient::Reinit(const std::string &realmName)
 	gameClient->OnEnterRealm(realmName);
 }
 
-bool RealmClient::OneEpoch() { return Realm::OneEpoch(); }
+void RealmClient::OneEpoch() { Realm::OneEpoch(); }
 
 void RealmClient::AddNewAuthoritativeMovementState(
 	uint64_t localId, uint64_t serverId,
 	ComponentLastAuthoritativeMovementState _state)
 {
-	_state.oldState.timestamp += STATE_UPDATE_DELAY;
+	_state.oldState.timestamp += TICKS_UPDATE_DELAY;
 	ComponentMovementState state = _state.oldState;
 	ComponentMovementHistory *movement =
 		AccessComponent<ComponentMovementHistory>(localId);
@@ -111,7 +109,7 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 		_states->states.size() > 0) {
 		auto &states = _states->states;
 
-		int64_t currentTick = timer.currentTick - 20;
+		Tick currentTick = timer.currentTick;
 
 		int id = states.size() - 1;
 		for (; id >= 0; --id) {
@@ -144,13 +142,13 @@ void RealmClient::ExecuteMovementUpdate(uint64_t entityId,
 				glm::vec3 A = prev.pos;
 				glm::vec3 B = next.pos;
 				glm::vec3 V = prev.vel;
-				int64_t iDt = next.timestamp - prev.timestamp;
-				float fullDt = iDt * 0.001f;
+				Tick iDt = next.timestamp - prev.timestamp;
+				float fullDt = iDt.v * TICK_DURATION_SECONDS;
 
 				glm::vec3 a = (B - A - V * fullDt) / (fullDt * fullDt) * 2.0f;
-				int64_t iT = currentTick - prev.timestamp;
-				float dt = iT * 0.001f;
-				float t = (float)iT / (float)iDt;
+				Tick iT = currentTick - prev.timestamp;
+				float dt = iT.v * TICK_DURATION_SECONDS;
+				float t = (float)(iT.v) / (float)(iDt.v);
 
 				currentState->vel = V + a * dt;
 				glm::vec3 P = A + V * dt + a * dt * dt * 0.5f;

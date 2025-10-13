@@ -13,7 +13,7 @@ inline const std::string UpdatePlayer = "UpdatePlayer";
 // void GetEntitiesData({uint64_t entityId}, ...)
 inline const std::string GetEntitiesData = "GetEntitiesData";
 
-// void Ping(int64_t internal, int64_t internal, int64_t currentTimestamp)
+// void Ping(int64_t internal, int64_t internal, Tick currentTimestamp)
 inline const std::string Ping = "Ping";
 
 // void InteractInLineOfSight(ComponentMovementState, uint64_t targetId,

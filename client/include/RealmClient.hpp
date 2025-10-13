@@ -12,7 +12,7 @@ public:
 	RealmClient(GameClient *gameClient);
 	virtual ~RealmClient() override;
 
-	inline constexpr static icon7::time::Diff STATE_UPDATE_DELAY = icon7::time::milliseconds(100);
+	inline constexpr static icon7::time::Diff STATE_UPDATE_DELAY = icon7::time::milliseconds(TICK_DURATION_MILLISECONDS*2);
 	inline constexpr static int64_t TICKS_UPDATE_DELAY = 2;
 	inline constexpr static icon7::time::Diff BASE_MAX_CORRECTION_OF_NEXT_TICK = -STATE_UPDATE_DELAY / 10;
 

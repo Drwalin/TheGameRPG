@@ -14,11 +14,11 @@ struct ComponentMovementHistory {
 
 struct ComponentLastAuthoritativeStateUpdateTime {
 	icon7::time::Point timepoint;
-	int64_t tick;
-	int64_t tickInState;
+	Tick tick;
+	Tick tickInState;
 
 	ComponentLastAuthoritativeStateUpdateTime(icon7::time::Point tp,
-											  int64_t tick, int64_t tickInState)
+											  Tick tick, Tick tickInState)
 		: timepoint(tp), tick(tick), tickInState(tickInState)
 	{
 	}

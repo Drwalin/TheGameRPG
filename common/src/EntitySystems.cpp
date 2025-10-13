@@ -13,7 +13,7 @@ void UpdateMovement(
 {
 	const ComponentMovementState lastAuthoritativeState =
 		_lastAuthoritativeState.oldState;
-	const int64_t currentTick = realm->timer.currentTick;
+	const Tick currentTick = realm->timer.currentTick;
 	ComponentMovementState prev = lastAuthoritativeState;
 	
 	if (currentState.timestamp > prev.timestamp + 10) {

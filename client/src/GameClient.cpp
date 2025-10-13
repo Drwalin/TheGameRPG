@@ -28,7 +28,7 @@ GameClient::GameClient()
 	host->SetRpcEnvironment(rpc);
 
 	// host->SetOnDisconnect();
-	lastTickAuthoritativeSent = 0;
+	lastTickAuthoritativeSent = {0};
 
 	RegisterObservers();
 }
@@ -449,7 +449,7 @@ uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 
 int64_t GameClient::GetPing() { return pingMs; }
 
-int64_t GameClient::GetCurrentTick() { return realm->timer.currentTick; }
+Tick GameClient::GetCurrentTick() { return realm->timer.currentTick; }
 
 std::unordered_map<std::string, std::string> GameClient::GetCharacteSheet()
 {

@@ -86,21 +86,12 @@ void Realm::RegisterObservers()
 					 const ComponentMovementParameters &) {
 			static EntityEventTemplate defaultMovementEvent{
 				"ExecuteMovementUpdate",
-				+[](Realm *realm, int64_t scheduledTick, int64_t currentTick,
-					uint64_t entityId) -> int64_t {
+				+[](Realm *realm, Tick scheduledTick, Tick currentTick,
+					uint64_t entityId) -> Tick {
 					ComponentMovementState currentState;
 					realm->ExecuteMovementUpdate(entityId, &currentState);
 
-					glm::vec3 v = currentState.vel;
-					int64_t dt = 1;
-
-					if (currentState.onGround == false) {
-						dt = 1;
-					} else if (fabs(v.x) + fabs(v.y) + fabs(v.z) > 0.001) {
-						dt = 1;
-					}
-
-					return dt;
+					return {1};
 				}};
 			EntityEvent event;
 			event.dueTick = timer.currentTick + 1;

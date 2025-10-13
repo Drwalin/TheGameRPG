@@ -24,6 +24,10 @@ struct ComponentName;
 class Realm
 {
 public:
+	
+	inline constexpr static int64_t TICK_DURATION_MILLISECONDS = 50;
+	inline constexpr static float TICK_DURATION_SECONDS = TICK_DURATION_MILLISECONDS / 1000.0f;
+	
 	Realm();
 	virtual ~Realm();
 

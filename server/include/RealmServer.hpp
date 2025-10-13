@@ -16,6 +16,8 @@ class RealmServer : public Realm,
 					public std::enable_shared_from_this<RealmServer>
 {
 public:
+	inline constexpr static icon7::time::diff DEFAULT_TICK_DURATION = icon7::time::milliseconds(50);
+	
 	RealmServer();
 	virtual ~RealmServer() override;
 
@@ -111,8 +113,8 @@ public:
 
 	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> peers;
 
-	uint64_t sendEntitiesToClientsTimer = 0;
-	int64_t sendUpdateDeltaTicks = 250;
+	Tick sendEntitiesToClientsTimer = {0};
+	Tick sendUpdateDeltaTicks = {15};
 	flecs::query<const ComponentLastAuthoritativeMovementState>
 		queryLastAuthoritativeState;
 
@@ -128,7 +130,7 @@ public:
 private:
 	bool queueDestroy = false;
 
-	int64_t nextTickToSaveAllDataToFiles = 0;
+	Tick nextTickToSaveAllDataToFiles = {0};
 
 public:
 	bool currentlyUpdatingPlayerPeerEntityMovement = false;

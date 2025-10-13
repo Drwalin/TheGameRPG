@@ -1,6 +1,5 @@
 #include <filesystem>
 
-#include "../../ICon7/include/icon7/Flags.hpp"
 #include "../../ICon7/include/icon7/ByteReader.hpp"
 
 #include "../../common/include/RegistryComponent.hpp"
@@ -50,7 +49,7 @@ std::string RealmServer::GetWriteFileName()
 
 bool RealmServer::LoadFromFile()
 {
-	int64_t startingTimerTick = 0;
+	Tick startingTimerTick = {0};
 	bool isFromSavedState = false;
 	std::string fileName = GetReadFileName(&isFromSavedState);
 	icon7::ByteBuffer buffer;
@@ -61,7 +60,7 @@ bool RealmServer::LoadFromFile()
 		if (isFromSavedState) {
 			reader.op(startingTimerTick);
 		}
-		timer.Start(startingTimerTick);
+		timer.Start(startingTimerTick, RealmServer::DEFAULT_TICK_DURATION);
 		while (reader.get_remaining_bytes() > 9) {
 			uint64_t entityId = NewEntity();
 			flecs::entity entity = Entity(entityId);
@@ -72,7 +71,7 @@ bool RealmServer::LoadFromFile()
 				break;
 			}
 		}
-		timer.Start(startingTimerTick);
+		timer.Start(startingTimerTick, RealmServer::DEFAULT_TICK_DURATION);
 		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
 		return true;
 	} else {

@@ -29,7 +29,7 @@ public:
 	bool IsDisconnected();
 
 private: // rpc receiving methods
-	void JoinRealm(const std::string &realm, int64_t currentTick,
+	void JoinRealm(const std::string &realm, Tick currentTick,
 				   uint64_t playerEntityId);
 	void SpawnEntities(icon7::ByteReader *reader);
 	void SpawnStaticEntities(icon7::ByteReader *reader);
@@ -39,8 +39,8 @@ private: // rpc receiving methods
 	void DeleteEntities(icon7::ByteReader *reader);
 	void SetPlayerEntityId(uint64_t serverId);
 	void SetGravity(float gravity);
-	void Pong(int64_t clientLastSentTick, int64_t clientLastSentTickTimeNs,
-			  int64_t serverLastProcessedTick,
+	void Pong(Tick clientLastSentTick, int64_t clientLastSentTickTimeNs,
+			  Tick serverLastProcessedTick,
 			  int64_t serverTickStartTimeOffsetNs,
 			  int64_t clientPingSentTimeNs);
 
@@ -67,7 +67,7 @@ private: // rpc receiving methods
 	void PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 					   ComponentLastAuthoritativeMovementState state,
 					   std::string currentAnimation,
-					   int64_t animationStartTick);
+					   Tick animationStartTick);
 
 public: // rpc callbacks
 	virtual void PlayDeathAndDestroyEntity_virtual(
@@ -77,10 +77,10 @@ public: // rpc callbacks
 	PlayAnimation_virtual(uint64_t serverId, ComponentModelName modelName,
 						  ComponentLastAuthoritativeMovementState state,
 						  std::string currentAnimation,
-						  int64_t animationStartTick) = 0;
+						  Tick animationStartTick) = 0;
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
-						int64_t timeStartPlaying, uint64_t attachToEntityId,
+						Tick timeStartPlaying, uint64_t attachToEntityId,
 						int32_t ttlMs) = 0;
 
 public: // game output api
@@ -105,7 +105,7 @@ public: // client input api
 	void PerformInteractionUse();
 	void PerformAttack(int64_t attackType, int64_t attackId, int64_t argInt);
 	int64_t GetPing();
-	int64_t GetCurrentTick();
+	Tick GetCurrentTick();
 	std::unordered_map<std::string, std::string> GetCharacteSheet();
 
 	void PerformSendPlayerMovementInput();
@@ -131,7 +131,7 @@ public:
 
 	int64_t authdauthoritativePlayerSendDelay = 200;
 	bool needSendPlayerMovementInput = false;
-	int64_t lastTickAuthoritativeSent = 0;
+	Tick lastTickAuthoritativeSent = {0};
 	int64_t pingTickCounter = 100;
 	int64_t pingMs = 70;
 

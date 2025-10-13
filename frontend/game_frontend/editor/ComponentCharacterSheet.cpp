@@ -48,7 +48,7 @@ void ComponentCharacterSheet::Serialize(icon7::ByteWriter &writer)
 
 	ComponentLastAuthoritativeMovementState s;
 	s.oldState.vel = {0, 0, 0};
-	s.oldState.timestamp = 0;
+	s.oldState.timestamp = {0};
 	s.oldState.rot = {0, get_global_rotation().y * M_PI / 180.0, 0};
 	s.oldState.pos = ToGlm(this->get_global_position());
 	s.oldState.onGround = false;

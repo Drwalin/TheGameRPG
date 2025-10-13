@@ -4,7 +4,7 @@
 
 namespace ClientRpcFunctionNames
 {
-// void JoinRealm(string, int64_t currentTick, uint64_t playerId)
+// void JoinRealm(string, Tick currentTick, uint64_t playerId)
 inline const std::string JoinRealm = "JoinRealm";
 
 // void SpawnStaticEntities({entityId, StaticTransform, ModelName,
@@ -37,8 +37,8 @@ inline const std::string LoginFailed = "LoginFailed";
 // void LoginSuccessfull()
 inline const std::string LoginSuccessfull = "LoginSuccessfull";
 
-// void Pong(int64_t clientLastSentTick, int64_t clientLastSentTickTimeNs,
-//           int64_t serverLastProcessedTick,
+// void Pong(Tick clientLastSentTick, int64_t clientLastSentTickTimeNs,
+//           Tick serverLastProcessedTick,
 //           int64_t serverTickStartTimeOffsetNs,
 //           int64_t clientPingSentTimeNs)
 inline const std::string Pong = "Pong";
@@ -53,7 +53,7 @@ inline const std::string PlayDeathAndDestroyEntity =
 	"PlayDeathAndDestroyEntity";
 
 // void PlayAnimation(entityId, ModelName, LastAuthoritativeMovementState,
-// 					  string currentAnimation, int64_t animationStartTick)
+// 					  string currentAnimation, Tick animationStartTick)
 inline const std::string PlayAnimation = "PlayAnimation";
 
 // void PlayFX(ModelName, StaticTransform, int64_t timeStartPlaying,

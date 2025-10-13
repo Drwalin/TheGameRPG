@@ -7,7 +7,7 @@
 
 #include "../include/GameClient.hpp"
 
-void GameClient::JoinRealm(const std::string &realmName, int64_t currentTick,
+void GameClient::JoinRealm(const std::string &realmName, Tick currentTick,
 						   uint64_t playerEntityId)
 {
 	if (serverPlayerEntityId || localPlayerEntityId) {
@@ -129,14 +129,14 @@ void GameClient::SetPlayerEntityId(uint64_t serverId)
 
 void GameClient::SetGravity(float gravity) { realm->gravity = gravity; }
 
-void GameClient::Pong(int64_t clientLastSentTick,
+void GameClient::Pong(Tick clientLastSentTick,
 					  int64_t clientLastSentTickTimeNs,
-					  int64_t serverLastProcessedTick,
+					  Tick serverLastProcessedTick,
 					  int64_t serverTickStartTimeOffsetNs,
 					  int64_t clientPingSentTimeNs)
 {
 	constexpr icon7::time::Diff oneMillisecond = icon7::time::milliseconds(1);
-	const int64_t clientCurrentTick = realm->timer.currentTick;
+	const Tick clientCurrentTick = realm->timer.currentTick;
 	const icon7::time::Point clientCurrentTime =
 		TickTimer::GetCurrentTimepoint();
 	const icon7::time::Diff rttDuration =
@@ -164,28 +164,28 @@ void GameClient::Pong(int64_t clientLastSentTick,
 
 		// var: amount of ticks between the tick on server and current next
 		//      predicted local tick
-		const int64_t serverTicksElapsedSinceServer =
-			(clientCurrentTime - serverTickStartTimeClientLocal).ns /
+		const Tick serverTicksElapsedSinceServer =
+			Tick{(clientCurrentTime - serverTickStartTimeClientLocal).ns /
 				realm->tickDuration.ns +
-			1 - RealmClient::TICKS_UPDATE_DELAY;
+			1 - RealmClient::TICKS_UPDATE_DELAY};
 
 		// var: amount of ticks between the tick on server and current next
 		//      predicted local tick with included delay (client simulation is
 		//      delayed by RealmClient::TICKS_UPDATE_DELAY)
-		const int64_t ticksToNextDelayedFromServer =
+		const Tick ticksToNextDelayedFromServer =
 			serverTicksElapsedSinceServer - RealmClient::TICKS_UPDATE_DELAY;
 
 		// var: amount of ticks between the tick on server and current next
 		//      local tick with included delay (client simulation is delayed by
 		//      RealmClient::TICKS_UPDATE_DELAY)
-		const int64_t targetServerTickAdvance = clientCurrentTick -
+		const Tick targetServerTickAdvance = clientCurrentTick -
 												serverLastProcessedTick +
 												ticksToNextDelayedFromServer;
 
 		// var: time point (in local time) at which next delayed tick should be
 		const icon7::time::Point targetNextTickTimeClientLocal =
 			serverTickStartTimeClientLocal +
-			realm->tickDuration * targetServerTickAdvance;
+			realm->tickDuration * targetServerTickAdvance.v;
 
 		// var: correctional delta of local timer delay
 		const icon7::time::Diff timeCorrectionDelta =
@@ -351,7 +351,7 @@ void GameClient::PlayDeathAndDestroyEntity(
 void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 							   ComponentLastAuthoritativeMovementState state,
 							   std::string currentAnimation,
-							   int64_t animationStartTick)
+							   Tick animationStartTick)
 {
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
 	if (it == mapServerEntityIdToLocalEntityId.end()) {

@@ -39,8 +39,8 @@ void GetEntitiesData(GameClient *gameClient,
 
 void Ping(GameClient *gameClient, bool reliable)
 {
-	int64_t currentTickStartTimeNs = gameClient->pingTimer.lastTick.ns;
-	int64_t currentTick = gameClient->pingTimer.GetCurrentTick();
+	icon7::time::Point currentTickStartTimeNs = gameClient->realm->timer.lastTick;
+	Tick currentTick = gameClient->realm->timer.GetCurrentTick();
 	gameClient->rpc->Send(
 		gameClient->peer.get(),
 		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |

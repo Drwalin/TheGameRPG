@@ -1,5 +1,3 @@
-#include "../../thirdparty/flecs/distr/flecs.h"
-
 #include "../../ICon7/include/icon7/RPCEnvironment.hpp"
 #include "../../ICon7/include/icon7/Flags.hpp"
 
@@ -24,8 +22,8 @@ void ServerCore::BindRpc()
 
 	rpc->RegisterMessage(
 		ServerRpcFunctionNames::Ping,
-		[](icon7::Peer *peer, icon7::Flags flags, int64_t payload) {
-			ClientRpcProxy::Pong(peer, flags, payload);
+		[](icon7::Peer *peer, icon7::Flags flags, int64_t payload, int64_t payload2, int64_t payload3) {
+			ClientRpcProxy::Pong(peer, flags, payload, payload2, payload3);
 		},
 		nullptr, nullptr);
 

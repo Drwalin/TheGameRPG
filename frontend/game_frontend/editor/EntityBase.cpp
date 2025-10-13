@@ -216,7 +216,9 @@ Collision3D::AnyPrimitive EntityBase::GetShape(CSGPrimitive3D *primitive, Transf
 			primitive->to_string());
 	}
 
-	shape.trans = ToGame(trans).trans;
+	auto t = ToGame(trans).trans;
+	shape.pos = t.pos;
+	shape.rot = t.rot;
 	return shape;
 }
 

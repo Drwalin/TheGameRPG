@@ -146,7 +146,7 @@ ByteReader<true> &op(ByteReader<true> &s, CompoundPrimitive &shape)
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 								  const CompoundPrimitive &shape)
 {
-	int32_t size = shape.primitives.size();
+	int32_t size = shape.primitives.size;
 	s.op(size);
 	for (int i = 0; i < size; ++i) {
 		s.op(shape.primitives[i]);

@@ -56,7 +56,7 @@ void RealmServer::Init(const std::string &realmName)
 
 	LoadFromFile();
 
-	sendEntitiesToClientsTimer = 0;
+	sendEntitiesToClientsTimer = {0};
 }
 
 void RealmServer::OneEpoch()

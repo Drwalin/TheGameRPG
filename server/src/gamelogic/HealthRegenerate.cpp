@@ -29,18 +29,18 @@ static int64_t HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
 	if (hp.hp <= 0) {
 		return hpReg.cooldown;
 	}
-	int64_t count =
+	Tick count =
 		(realm->timer.currentTick - hpReg.lastTimestamp) / hpReg.cooldown;
 	hpReg.lastTimestamp += count * hpReg.cooldown;
 	if (hp.hp >= hp.maxHP) {
-		return std::max<int64_t>(10, hpReg.lastTimestamp + hpReg.cooldown -
-										 currentTick);
+		return std::max<int64_t>(10, (hpReg.lastTimestamp + hpReg.cooldown -
+										 currentTick).v);
 	}
 	if (count != 0) {
 		entity.set<ComponentCharacterSheet_HealthRegen>(hpReg);
 	}
 	if (count > 0) {
-		int64_t amount = count * hpReg.amount;
+		int64_t amount = (count * hpReg.amount).v;
 		if (hp.hp + amount > hp.maxHP) {
 			hp.hp = hp.maxHP;
 		} else {
@@ -48,8 +48,8 @@ static int64_t HealthRegenerate(RealmServer *realm, int64_t scheduledTick,
 		}
 		entity.set<ComponentCharacterSheet_Health>(hp);
 	}
-	return std::max<int64_t>(10, hpReg.lastTimestamp + hpReg.cooldown -
-									 currentTick);
+	return std::max<int64_t>(10, (hpReg.lastTimestamp + hpReg.cooldown -
+									 currentTick).v);
 }
 
 void HealthRegenerateSchedule(flecs::entity entity,

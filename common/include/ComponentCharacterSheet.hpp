@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentsUtility.hpp"
+#include "Tick.hpp"
 
 struct ComponentCharacterSheet_Ranges {
 	float attackRange = 4.0f;
@@ -33,10 +34,10 @@ struct ComponentCharacterSheet_Health {
 struct ComponentCharacterSheet_HealthRegen {
 	int32_t cooldown = 60000;
 	int32_t amount = 1;
-	int64_t lastTimestamp = 0;
+	Tick lastTimestamp = {0};
 
 	ComponentCharacterSheet_HealthRegen(int32_t cooldown, int32_t amount,
-										int64_t lastTimestamp)
+										Tick lastTimestamp)
 		: cooldown(cooldown), amount(amount), lastTimestamp(lastTimestamp)
 	{
 	}
@@ -72,10 +73,10 @@ struct ComponentCharacterSheet_Strength {
 
 struct ComponentCharacterSheet_AttackCooldown {
 	int32_t baseCooldown = 500;
-	int64_t lastTimestamp = 0;
+	Tick lastTimestamp = {0};
 
 	ComponentCharacterSheet_AttackCooldown(int32_t baseCooldown,
-										   int64_t lastTimestamp)
+										   Tick lastTimestamp)
 		: baseCooldown(baseCooldown), lastTimestamp(lastTimestamp)
 	{
 	}

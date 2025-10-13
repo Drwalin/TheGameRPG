@@ -37,7 +37,7 @@ struct ComponentTrigger {
 	named_callbacks::registry_entries::OnTriggerEnterExit *onExit = nullptr;
 
 	std::unordered_set<uint64_t> entitiesInside = {};
-	int64_t tickUntilIgnore = 0;
+	Tick tickUntilIgnore = {0};
 
 	void Tick(int64_t entityId, class RealmServer *realm);
 
@@ -68,7 +68,7 @@ struct ComponentSpawner {
 	int64_t spawnCooldown = 3000;
 	float spawnRadius = 32.0f;
 	float radiusToCheckAmountEntities = 128.0f;
-	int64_t lastSpawnedTimestamp = 0;
+	Tick lastSpawnedTimestamp = {0};
 	std::vector<uint8_t> prefabsData;
 	std::vector<uint32_t> prefabsOffset;
 

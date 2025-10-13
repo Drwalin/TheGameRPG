@@ -210,7 +210,7 @@ void GameFrontend::PerformAttack(int64_t attackType, int64_t attackId,
 }
 
 int64_t GameFrontend::GetPing() { return client->GetPing(); }
-int64_t GameFrontend::GetCurrentTick() { return client->GetCurrentTick(); }
+int64_t GameFrontend::GetCurrentTick() { return client->GetCurrentTick().v; }
 
 void GameFrontend::OnLoginFailed(std::string reason)
 {

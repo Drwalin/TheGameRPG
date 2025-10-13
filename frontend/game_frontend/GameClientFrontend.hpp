@@ -31,10 +31,10 @@ public: // rpc callbacks
 	PlayAnimation_virtual(uint64_t localId, ComponentModelName modelName,
 						  ComponentLastAuthoritativeMovementState state,
 						  std::string currentAnimation,
-						  int64_t animationStartTick) override;
+						  Tick animationStartTick) override;
 	virtual void PlayFX(ComponentModelName modelName,
 						ComponentStaticTransform transform,
-						int64_t timeStartPlaying, uint64_t attachToEntityId,
+						Tick timeStartPlaying, uint64_t attachToEntityId,
 						int32_t ttlMs) override;
 
 public:

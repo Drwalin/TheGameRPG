@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "Tick.hpp"
 #include "ComponentsUtility.hpp"
 
 struct EntityEventEntry {
@@ -12,7 +13,7 @@ struct EntityEventEntry {
 	 */
 	inline const static int64_t MAX_TICKS_TO_SCHEDULE_IN_REALM = 1000 * 60 * 10;
 
-	int64_t dueTick;
+	Tick dueTick;
 	uint64_t entityId;
 
 	struct Comparator {
@@ -29,15 +30,15 @@ struct EntityEventEntry {
  * same as application
  */
 struct EntityEventTemplate {
-	using CallbackType = int64_t (*)(class Realm *, int64_t scheduledTick,
-									 int64_t currentTick, uint64_t entityId);
+	using CallbackType = Tick (*)(class Realm *, Tick scheduledTick,
+									 Tick currentTick, uint64_t entityId);
 	const char *name;
 	const CallbackType callback;
 	const bool singleUse = false;
 };
 
 struct EntityEvent {
-	int64_t dueTick = 0;
+	Tick dueTick = {0};
 	EntityEventTemplate *event = nullptr;
 	bool scheduledInRealm = false;
 
@@ -62,9 +63,9 @@ struct ComponentEventsQueue {
 	} events;
 
 	void InsertIntoRealmSchedule(Realm *realm, uint64_t thisEntityId,
-								 int64_t dueTick);
+								 Tick dueTick);
 	void ScheduleEvent(Realm *realm, uint64_t thisEntityId, EntityEvent event);
-	void Update(int64_t currentTick, uint64_t entityId, class Realm *realm);
+	void Update(Tick currentTick, uint64_t entityId, class Realm *realm);
 
 	DEFAULT_CONSTRUCTORS_AND_MOVE(ComponentEventsQueue, MV(events));
 };
