@@ -7,38 +7,14 @@
 class TickTimer
 {
 public:
-	inline void Start(icon7::time::diff tickDuration)
-	{
-		currentTick = {0};
-		lastTick = GetCurrentTimepoint();
-		nextTick = lastTick + tickDuration;
-	}
+	void Start(icon7::time::diff tickDuration);
+	void Start(Tick currentTick, icon7::time::diff tickDuration);
 
-	inline void Start(Tick currentTick, icon7::time::diff tickDuration)
-	{
-		Start(tickDuration);
-		this->currentTick = currentTick;
-	}
+	[[nodiscard]] Tick GetCurrentTick() const;
+	void Update(icon7::time::diff tickDuration);
+	float GetFactorToNextTick(icon7::time::diff tickDuration) const;
 
-	[[nodiscard]] inline Tick GetCurrentTick() const { return currentTick; }
-
-	inline void Update(icon7::time::diff tickDuration)
-	{
-		++currentTick;
-		lastTick += tickDuration;
-		nextTick += tickDuration;
-	}
-
-	inline static icon7::time::point GetCurrentTimepoint()
-	{
-		return icon7::time::GetTemporaryTimestamp();
-	}
-	
-	inline float GetFactorToNextTick(icon7::time::diff tickDuration) const
-	{
-		auto now = GetCurrentTimepoint();
-		return (float)((now - lastTick).ns) / (float)(tickDuration.ns);
-	}
+	static icon7::time::point GetCurrentTimepoint();
 
 public:
 	icon7::time::Point lastTick;

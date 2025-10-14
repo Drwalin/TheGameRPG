@@ -465,7 +465,7 @@ uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 	return entity.id();
 }
 
-int64_t GameClient::GetPing() { return pingMs; }
+int64_t GameClient::GetPing() { return ping.msec(); }
 
 Tick GameClient::GetCurrentTick() { return realm->timer.currentTick; }
 

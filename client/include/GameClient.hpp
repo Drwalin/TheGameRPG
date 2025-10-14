@@ -133,7 +133,7 @@ public:
 	bool needSendPlayerMovementInput = false;
 	Tick lastTickAuthoritativeSent = {0};
 	int64_t pingTickCounter = 100;
-	int64_t pingMs = 70;
+	icon7::time::diff ping = icon7::time::milliseconds(70);
 
 	std::unordered_map<uint64_t, uint64_t> mapServerEntityIdToLocalEntityId;
 	std::unordered_map<uint64_t, uint64_t> mapLocalEntityIdToServerEntityId;

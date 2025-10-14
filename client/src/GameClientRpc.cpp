@@ -137,22 +137,14 @@ void GameClient::Pong(Tick clientLastSentTick,
 					  int64_t serverTickStartTimeOffsetNs,
 					  icon7::time::Point clientPingSentTime)
 {
-	constexpr icon7::time::Diff oneMillisecond = icon7::time::milliseconds(1);
 	const Tick clientCurrentTick = realm->timer.currentTick;
 	const icon7::time::Point clientCurrentTime =
 		TickTimer::GetCurrentTimepoint();
 	const icon7::time::Diff rttDuration =
 		(clientCurrentTime - clientPingSentTime);
 	const icon7::time::Diff oneWayLatencyDuration = rttDuration / 2;
-	pingMs = (pingMs * 9 + (rttDuration.ns * 7) / oneMillisecond.ns) / 16;
-	// 	pingMs = (pingMs*3 + rttDuration.ns/oneMillisecond.ns) / 4;
+	ping = (ping * 15 + rttDuration) / 16;
 	if (serverLastProcessedTick != 0) {
-		if (realm->timer.lastTick + realm->tickDuration !=
-			realm->timer.nextTick) {
-			ServerRpcProxy::Ping(this, false);
-			return;
-		}
-
 		// var: describe time difference between server tick start and an
 		//      instant that server responded to client
 		const icon7::time::Diff serverTickStartTimeOffsetDuration(
@@ -199,13 +191,8 @@ void GameClient::Pong(Tick clientLastSentTick,
 		const icon7::time::Diff timeCorrectionDeltaAbs =
 			abs(timeCorrectionDelta);
 
-		// Correct local timer more aggressively when desyncronisation is too
-		// severe
-		const int64_t tickErrorMagnitude =
-			timeCorrectionDelta.ns / realm->tickDuration.ns;
-		const int64_t correctionFactor = glm::clamp(tickErrorMagnitude, 1l, 4l);
 		// Correcting local timer
-		realm->timer.nextTick += timeCorrectionDeltaClamped * correctionFactor;
+		realm->timer.nextTick -= timeCorrectionDeltaClamped;
 
 		// Requesting next ping time correction when client is unsyncronised
 		if (timeCorrectionDeltaAbs > realm->tickDuration) {
