@@ -136,10 +136,6 @@ static void AiBehaviorTick_RandomWalk(RealmServer *realm, uint64_t entityId)
 	if (shape == nullptr) {
 		return;
 	}
-	
-	if (entityId == 445) {
-		printf("AI [%ld] pos: %.1f %.1f %.1f\n", entityId, state.pos.x, state.pos.y, state.pos.z);
-	}
 
 	ComponentMovementState currentState = lastState;
 	auto movementParams = entity.try_get<ComponentMovementParameters>();

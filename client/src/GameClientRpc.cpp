@@ -73,6 +73,7 @@ void GameClient::SpawnStaticEntities(icon7::ByteReader *reader)
 
 void GameClient::UpdateEntities(Tick tick, icon7::ByteReader *reader)
 {
+	tick += RealmClient::TICKS_UPDATE_DELAY;
 	uint64_t serverId;
 	ComponentMovementState state;
 	while (reader->get_remaining_bytes() > 8) {
@@ -153,7 +154,7 @@ void GameClient::Pong(Tick clientLastSentTick,
 		// var: time point (in this computer local time) when approximetly
 		//      started tick on server before it's response
 		const icon7::time::Point serverTickStartTimeClientLocal =
-			clientCurrentTime - oneWayLatencyDuration -
+			clientCurrentTime -// oneWayLatencyDuration -
 			serverTickStartTimeOffsetDuration;
 
 		// var: amount of ticks between the tick on server and current next
@@ -161,13 +162,13 @@ void GameClient::Pong(Tick clientLastSentTick,
 		const Tick serverTicksElapsedSinceServer =
 			Tick{(clientCurrentTime - serverTickStartTimeClientLocal).ns /
 				realm->tickDuration.ns +
-			1 - RealmClient::TICKS_UPDATE_DELAY};
+			1};// - RealmClient::TICKS_UPDATE_DELAY};
 
 		// var: amount of ticks between the tick on server and current next
 		//      predicted local tick with included delay (client simulation is
 		//      delayed by RealmClient::TICKS_UPDATE_DELAY)
 		const Tick ticksToNextDelayedFromServer =
-			serverTicksElapsedSinceServer - RealmClient::TICKS_UPDATE_DELAY;
+			serverTicksElapsedSinceServer;// - RealmClient::TICKS_UPDATE_DELAY;
 
 		// var: amount of ticks between the tick on server and current next
 		//      local tick with included delay (client simulation is delayed by
@@ -341,6 +342,7 @@ void GameClient::PlayAnimation(uint64_t serverId, ComponentModelName modelName,
 							   std::string currentAnimation,
 							   Tick animationStartTick)
 {
+	animationStartTick += RealmClient::TICKS_UPDATE_DELAY;
 	auto it = mapServerEntityIdToLocalEntityId.find(serverId);
 	if (it == mapServerEntityIdToLocalEntityId.end()) {
 		LOG_INFO("TODO: request spawn of entity here");
