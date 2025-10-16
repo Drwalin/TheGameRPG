@@ -114,7 +114,8 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			
 			float offsetHeight = 0;
 			glm::vec3 onGroundNormal;
-			if(s->shape.CylinderTestOnGround(t->trans, cyl, *finalCorrectedPosition, offsetHeight, &onGroundNormal)) {
+			bool isOnEdge = false;
+			if(s->shape.CylinderTestOnGround(t->trans, cyl, *finalCorrectedPosition, offsetHeight, &onGroundNormal, &isOnEdge)) {
 // 				printf("a: |%f| <= %f ?       trans h: %f      charPos.y: %f\n",
 // 						offsetHeight,
 // 						stepHeight,

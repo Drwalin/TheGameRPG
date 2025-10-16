@@ -138,8 +138,8 @@ ComponentMovementState RealmClient::ExecuteMovementUpdate(uint64_t entityId)
 
 // 				const float dt = t * Realm::TICK_DURATION_SECONDS;
 
-				printf("%10.3f s:   %7.3f ->   %.3f     factor: %.3f", timer.GetCurrentTimepoint().sec(), currentFloatTIck, t, f);
-				printf("         current tick: %li        last two ticks: %li %li \n", currentTick.v, states[id].tick.v, states[id+1].tick.v);
+// 				printf("%10.3f s:   %7.3f ->   %.3f     factor: %.3f", timer.GetCurrentTimepoint().sec(), currentFloatTIck, t, f);
+// 				printf("         current tick: %li        last two ticks: %li %li \n", currentTick.v, states[id].tick.v, states[id+1].tick.v);
 
 				
 // 				const glm::vec3 p1 = A + prev.vel * dt;

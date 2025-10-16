@@ -176,9 +176,9 @@ uint64_t Realm::CreateStaticEntity(const ComponentStaticTransform &transform,
 	uint64_t entityId = NewEntity();
 	flecs::entity entity = Entity(entityId);
 
+	entity.set<ComponentCollisionShape>(shape);
 	entity.set<ComponentStaticTransform>(transform);
 	entity.set<ComponentModelName>(model);
-	entity.set<ComponentCollisionShape>(shape);
 
 	return entityId;
 }

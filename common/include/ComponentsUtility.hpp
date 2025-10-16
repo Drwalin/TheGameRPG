@@ -21,12 +21,20 @@
 	bitscpp::ByteReader<true> &CLASS::__ByteStream_op(                         \
 		bitscpp::ByteReader<true> &s)                                          \
 	{                                                                          \
+		constexpr bool IS_READER = true;                                       \
+		constexpr bool IS_WRITER = false;                                      \
+		(void)IS_READER;                                                       \
+		(void)IS_WRITER;                                                       \
 		CODE;                                                                  \
 		return s;                                                              \
 	}                                                                          \
 	bitscpp::ByteWriter<icon7::ByteBuffer> &CLASS::__ByteStream_op(            \
 		bitscpp::ByteWriter<icon7::ByteBuffer> &s)                             \
 	{                                                                          \
+		constexpr bool IS_READER = false;                                      \
+		constexpr bool IS_WRITER = true;                                       \
+		(void)IS_READER;                                                       \
+		(void)IS_WRITER;                                                       \
 		CODE;                                                                  \
 		return s;                                                              \
 	}

@@ -1,5 +1,3 @@
-#include <type_traits>
-
 #include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 #include "../include/RegistryComponent.inl.hpp"
@@ -63,6 +61,7 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentStaticTransform, {
 	s.op(scale);
 });
 
-BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCollisionShape,
-											{ s.op(shape); s.op(mask); });
-
+BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentCollisionShape, {
+	s.op(shape);
+	s.op(mask);
+});
