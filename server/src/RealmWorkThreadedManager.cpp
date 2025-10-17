@@ -144,12 +144,13 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 			}
 		}
 
-		currentlyRunningRealmInThread[threadId] = realm;
 		timestampOfStartRunningCurrentRealmInThread[threadId] =
 			icon7::time::GetTimestamp();
+		currentlyRunningRealmInThread[threadId] = realm;
 
 		if (destroyRealm) {
 			realm->DisconnectAllAndDestroy();
+			currentlyRunningRealmInThread[threadId] = nullptr;
 			// delete realm;
 			realm = nullptr;
 		} else if (realm) {
@@ -204,8 +205,6 @@ void RealmWorkThreadedManager::SingleRunner(int threadId,
 	if ((--runningThreads) == 0) {
 		requestStopRunning = false;
 	}
-	currentlyRunningRealmInThread[threadId] =
-		std::shared_ptr<RealmServer>(nullptr);
 }
 
 std::vector<std::shared_ptr<RealmServer>>

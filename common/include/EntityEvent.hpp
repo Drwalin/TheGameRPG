@@ -11,7 +11,7 @@ struct EntityEventEntry {
 	/*
 	 * Next event cannot be scheduled for later than 10 minutes
 	 */
-	inline const static int64_t MAX_TICKS_TO_SCHEDULE_IN_REALM = 1000 * 60 * 10;
+	inline constexpr static int64_t MAX_TICKS_TO_SCHEDULE_IN_REALM = 1000 * 60 * 10;
 
 	Tick dueTick;
 	uint64_t entityId;

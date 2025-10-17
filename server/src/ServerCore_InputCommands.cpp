@@ -10,4 +10,5 @@ void ServerCore::RunMainThreadInteractive()
 		std::getline(std::cin, cmd);
 		commandParser.ParseSingleCommand(cmd);
 	}
+	realmManager.DestroyAllRealmsAndStop();
 }

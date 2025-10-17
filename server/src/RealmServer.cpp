@@ -34,6 +34,8 @@ void RealmServer::DisconnectAllAndDestroy()
 
 	FlushSavingData();
 	WaitForFlushedData();
+	
+	executionQueue.userSmartPtr = nullptr;
 }
 
 uint64_t RealmServer::NewEntity()

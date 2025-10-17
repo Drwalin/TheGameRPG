@@ -157,7 +157,8 @@ ServerCore::ScheduleInRealm(std::weak_ptr<RealmServer> &realm)
 	icon7::CommandExecutionQueue::CoroutineAwaitable awaitable;
 	std::shared_ptr<RealmServer> oldRealm = realm.lock();
 	if (oldRealm.get()) {
-		return oldRealm->executionQueue.Schedule(oldRealm);
+		awaitable = oldRealm->executionQueue.Schedule(oldRealm);
+		return awaitable;
 	}
 	return {};
 }
@@ -170,9 +171,10 @@ ServerCore::ScheduleInRealmOrCore(std::weak_ptr<RealmServer> &realm)
 		std::shared_ptr<RealmServer> oldRealm = realm.lock();
 		if (oldRealm.get()) {
 			awaitable = oldRealm->executionQueue.Schedule(oldRealm);
+			return awaitable;
 		} else {
 			this->host->GetCommandExecutionQueue()->Schedule(nullptr);
 		}
 	}
-	return awaitable;
+	return {};
 }

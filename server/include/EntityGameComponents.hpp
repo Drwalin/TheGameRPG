@@ -38,7 +38,7 @@ struct ComponentTrigger {
 	named_callbacks::registry_entries::OnTriggerEnterExit *onExit = nullptr;
 
 	std::unordered_set<uint64_t> entitiesInside = {};
-	Tick tickUntilIgnore = {0};
+	::Tick tickUntilIgnore = {0};
 
 	void Tick(int64_t entityId, class RealmServer *realm);
 

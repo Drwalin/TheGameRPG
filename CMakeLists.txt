@@ -49,8 +49,12 @@ add_custom_target(game ALL DEPENDS server scripts game_frontend)
 add_custom_target(editor ALL DEPENDS map_editor game_frontend)
 
 add_custom_target(thirdparty_libs ALL DEPENDS
-	rpmalloc 
 	uSockets
 	flecs
 	godot::cpp
 )
+
+if (ICON7_USE_RPMALLOC)
+	add_dependencies(thirdparty_libs rpmalloc)
+endif()
+

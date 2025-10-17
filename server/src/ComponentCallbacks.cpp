@@ -4,28 +4,23 @@
 
 namespace named_callbacks
 {
-template <>
-Registry<registry_entries::OnUse>::Map
-	Registry<registry_entries::OnUse>::registry =
-		Registry<registry_entries::OnUse>::Map{};
+#define DEFINE_NAMED_CALLBACK_METHODS(NAMED_CALLBACK_TYPE)                     \
+	template <>                                                                \
+	std::shared_mutex &                                                        \
+	Registry<registry_entries::NAMED_CALLBACK_TYPE>::SharedMutex()             \
+	{                                                                          \
+		static std::shared_mutex mutex;                                        \
+		return mutex;                                                          \
+	}                                                                          \
+	template <>                                                                \
+	Registry<registry_entries::NAMED_CALLBACK_TYPE>::Map &                     \
+	Registry<registry_entries::NAMED_CALLBACK_TYPE>::registry()                \
+	{                                                                          \
+		static Registry<registry_entries::NAMED_CALLBACK_TYPE>::Map map;       \
+		return map;                                                            \
+	}
 
-template <>
-std::shared_mutex Registry<registry_entries::OnUse>::sharedMutex = {};
-
-template <>
-Registry<registry_entries::OnTriggerEnterExit>::Map
-	Registry<registry_entries::OnTriggerEnterExit>::registry =
-		Registry<registry_entries::OnTriggerEnterExit>::Map{};
-
-template <>
-std::shared_mutex Registry<registry_entries::OnTriggerEnterExit>::sharedMutex =
-	{};
-
-template <>
-Registry<registry_entries::AiBehaviorTick>::Map
-	Registry<registry_entries::AiBehaviorTick>::registry =
-		Registry<registry_entries::AiBehaviorTick>::Map{};
-
-template <>
-std::shared_mutex Registry<registry_entries::AiBehaviorTick>::sharedMutex = {};
+DEFINE_NAMED_CALLBACK_METHODS(AiBehaviorTick);
+DEFINE_NAMED_CALLBACK_METHODS(OnUse);
+DEFINE_NAMED_CALLBACK_METHODS(OnTriggerEnterExit);
 } // namespace named_callbacks

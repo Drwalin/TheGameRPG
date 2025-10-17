@@ -36,17 +36,14 @@ public:
 	void BindRpc();
 
 	void Login(icon7::Peer *peer, const std::string &userName);
-	static void
-	UpdatePlayer(icon7::Peer *peer,
-				 const ComponentMovementState &state);
+	static void UpdatePlayer(icon7::Peer *peer,
+							 const ComponentMovementState &state);
 	static void RequestSpawnEntities(icon7::Peer *peer,
 									 icon7::ByteReader *reader);
-	void InteractInLineOfSight(icon7::Peer *peer,
-							   ComponentMovementState state,
+	void InteractInLineOfSight(icon7::Peer *peer, ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
-	void Attack(icon7::Peer *peer,
-				ComponentMovementState state,
+	void Attack(icon7::Peer *peer, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
