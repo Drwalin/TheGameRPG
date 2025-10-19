@@ -198,12 +198,40 @@ Collision3D::AnyPrimitive EntityBase::GetShape(CSGPrimitive3D *primitive, Transf
 		trans = trans.translated(Vector3(0, -s.height / 2, 0));
 		shape = {std::move(s), {}};
 	} else if (auto *box = Object::cast_to<CSGBox3D>(primitive)) {
-		UtilityFunctions::print("Creating from editor: vertbox");
-		Collision3D::VertBox s;
-		s.halfExtents = ToGlm(box->get_size()) * 0.5f;
-		s.halfExtents *= ToGlm(scale);
-		trans = trans.translated(Vector3(0, -s.halfExtents.y, 0));
-		shape = {std::move(s), {}};
+		const glm::vec3 euler = ToGlm(trans.get_basis().get_euler_normalized());
+		if (fabs(euler.x) > 0.001 || fabs(euler.z) > 0.001) {
+			UtilityFunctions::print("Creating from editor: RampTriangle");
+			
+			const int rotAxis = fabs(euler[0]) > fabs(euler[2]) ? 0 : 2;
+			const float rad = -euler[rotAxis];
+			if (fabs(rad) > 89.9999f) {
+				UtilityFunctions::print("Invalid RampRectangle rotation: ", trans.get_basis().get_euler_normalized());
+				return {};
+			}
+			
+			const glm::vec3 size = ToGlm(box->get_size());
+			
+			const float sin = std::sinf(rad);
+			const float cos = std::cosf(rad);
+			
+			UtilityFunctions::print("sin: ", sin, "      cos: ", cos, "      sizes: ", box->get_size(), "       euler: ", ::ToGodot(euler));
+			
+			Collision3D::RampRectangle r;
+			r.halfThickness = size.y * 0.5f / cos;
+			r.halfDepth = size.z * 0.5f * cos;
+			r.halfHeightSkewness = size.z * 0.5f * sin;
+			r.halfWidth = size.x * 0.5f;
+			
+// 			trans = trans.translated(Vector3(0, size.y, 0));
+			shape = {std::move(r), {}};
+		} else {
+			UtilityFunctions::print("Creating from editor: VertBox");
+			Collision3D::VertBox s;
+			s.halfExtents = ToGlm(box->get_size()) * 0.5f;
+			s.halfExtents *= ToGlm(scale);
+			trans = trans.translated(Vector3(0, -s.halfExtents.y, 0));
+			shape = {std::move(s), {}};
+		}
 	} else if (/*auto *sphere =*/Object::cast_to<CSGSphere3D>(primitive)) {
 		UtilityFunctions::print(
 			"Sphere colliion shape is not implemented yet yet");

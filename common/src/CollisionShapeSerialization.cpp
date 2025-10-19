@@ -80,19 +80,19 @@ ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 
 ByteReader<true> &op(ByteReader<true> &s, RampRectangle &shape)
 {
-	s.op(shape.depth);
+	s.op(shape.halfDepth);
 	s.op(shape.halfThickness);
 	s.op(shape.halfWidth);
-	s.op(shape.height);
+	s.op(shape.halfHeightSkewness);
 	return s;
 }
 ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
 								  const RampRectangle &shape)
 {
-	s.op(shape.depth);
+	s.op(shape.halfDepth);
 	s.op(shape.halfThickness);
 	s.op(shape.halfWidth);
-	s.op(shape.height);
+	s.op(shape.halfHeightSkewness);
 	return s;
 }
 

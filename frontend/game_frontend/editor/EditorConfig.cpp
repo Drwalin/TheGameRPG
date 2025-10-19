@@ -103,8 +103,8 @@ void GameEditorConfig::SerializeNode(Node *node, icon7::ByteWriter &writer)
 	if (auto entity = Object::cast_to<EntityBase>(node)) {
 		entity->Serialize(writer);
 	} else {
-		for (int i = 0; i < get_child_count(false); ++i) {
-			SerializeNode(get_child(i, false), writer);
+		for (int i = 0; i < node->get_child_count(false); ++i) {
+			SerializeNode(node->get_child(i, false), writer);
 		}
 	}
 }

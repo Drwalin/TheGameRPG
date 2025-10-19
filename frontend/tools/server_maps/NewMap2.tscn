@@ -1,15 +1,42 @@
-[gd_scene load_steps=6 format=3 uid="uid://blksreeowfk4n"]
+[gd_scene load_steps=7 format=3 uid="uid://blksreeowfk4n"]
 
 [ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_6gys2"]
 [ext_resource type="Script" uid="uid://b0cfnlytpp75e" path="res://tools/GameEditorConfigScript.gd" id="1_ic2b8"]
 [ext_resource type="PackedScene" uid="uid://dst1muwth8sk8" path="res://assets/meshes/Furniture/Rooms/SmallWoodenDoor.glb" id="2_yfy02"]
 [ext_resource type="PackedScene" uid="uid://cj25dpwxe5hnj" path="res://assets/characters/prefabs/king_circle_walk.tscn" id="3_l4sn5"]
 [ext_resource type="PackedScene" uid="uid://dkhmfaf5ex6x5" path="res://assets/TeleporterEffect.tscn" id="4_tk4hp"]
+[ext_resource type="PackedScene" uid="uid://cr0li27r3ln57" path="res://assets/meshes/Environmental/Stones/RotatedBigStone.tscn" id="6_3dkjo"]
 
 [node name="NewMap2" type="GameEditorConfig"]
 render_collision = true
 save_map_file_path = "../game_assets/maps/Castle.map"
 script = ExtResource("1_ic2b8")
+
+[node name="Ramps" type="Node3D" parent="."]
+
+[node name="Ramp" type="EntityBase" parent="Ramps"]
+graphic_Mesh_or_PackedScene = ExtResource("6_3dkjo")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.7866926, -4.333669, 6.7636538)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Ramps/Ramp"]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, -0.5, 0, 0.5, 0.8660254, 0.026210785, 1.0236189, -1.7114687)
+size = Vector3(1.9797133, 0.93116045, 4.0401535)
+
+[node name="Ramp2" type="EntityBase" parent="Ramps"]
+graphic_Mesh_or_PackedScene = ExtResource("6_3dkjo")
+transform = Transform3D(-0.6283025, 0, -0.7779691, 0, 1, 0, 0.7779691, 0, -0.6283025, -5.5315895, -4.333669, 10.039533)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Ramps/Ramp2"]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, -0.5, 0, 0.5, 0.8660254, 0.026210785, 1.0236189, -1.7114687)
+size = Vector3(1.9797133, 0.93116045, 4.0401535)
+
+[node name="Ramp3" type="EntityBase" parent="Ramps"]
+graphic_Mesh_or_PackedScene = ExtResource("6_3dkjo")
+transform = Transform3D(0.57714504, 0, 0.8166417, 0, 1, 0, -0.8166417, 0, 0.57714504, -0.30040517, -4.333669, 14.09712)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Ramps/Ramp3"]
+transform = Transform3D(-0.9984291, -0.027352214, 0.048900813, -2.1289193e-11, 0.87275165, 0.48816437, -0.05603072, 0.48739737, -0.8713808, 0.026210785, 1.0236189, -1.7114692)
+size = Vector3(1.9797133, 0.93116045, 4.0401535)
 
 [node name="Floor" type="EntityBase" parent="."]
 graphic_Mesh_or_PackedScene = ExtResource("1_6gys2")

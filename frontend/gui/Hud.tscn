@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://cc7kmfkyvb075"]
 
-[ext_resource type="Script" path="res://scripts/performance_monitor/FullPerformanceMonitoring.gd" id="1_hp731"]
-[ext_resource type="Script" path="res://gui/Hud.gd" id="1_qf87s"]
-[ext_resource type="Script" path="res://gui/PingValue.gd" id="2_5vsv6"]
-[ext_resource type="Script" path="res://gui/PrintPosition.gd" id="3_75hr6"]
+[ext_resource type="Script" uid="uid://bb06dk5e6xlbc" path="res://scripts/performance_monitor/FullPerformanceMonitoring.gd" id="1_hp731"]
+[ext_resource type="Script" uid="uid://bbgya8upiyg1o" path="res://gui/Hud.gd" id="1_qf87s"]
+[ext_resource type="Script" uid="uid://b0d3pwx1lcu1r" path="res://gui/PingValue.gd" id="2_5vsv6"]
+[ext_resource type="Script" uid="uid://cmsiv02x3acg4" path="res://gui/PrintPosition.gd" id="3_75hr6"]
 
 [node name="Hud" type="Control"]
 layout_mode = 3

@@ -14,7 +14,6 @@ var isInHud:bool = false;
 
 var renderPoints:MultiMeshInstance3D = preload("res://scripts/vfx/RenderPoints.tscn").instantiate();
 var renderPointsMesh:MultiMesh = renderPoints.multimesh;
-var currentPointMeshAdd:int = 0;
 
 func _ready():
 	InternalReady();
@@ -52,10 +51,9 @@ func DrawTestRay(start:Vector3, end:Vector3):
 		#print(res);
 		if (res[2] < 0.00001):
 			return;
-		renderPointsMesh.set_instance_transform(currentPointMeshAdd, Transform3D(Basis(), res[3]));
-		currentPointMeshAdd += 1;
-		renderPointsMesh.visible_instance_count = max(currentPointMeshAdd, renderPointsMesh.visible_instance_count);
-		currentPointMeshAdd = currentPointMeshAdd % renderPointsMesh.instance_count;
+		var pos:int = randi_range(0, renderPointsMesh.instance_count-1);
+		renderPointsMesh.set_instance_transform(pos, Transform3D(Basis(), res[3]));
+		renderPointsMesh.visible_instance_count = renderPointsMesh.instance_count;
 
 func RandVec()->Vector3:
 	return Vector3(randf_range(-20,20),randf_range(-30,20),randf_range(-20,20));

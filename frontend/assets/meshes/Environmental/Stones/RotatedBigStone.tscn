@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cr0li27r3ln57"]
+
+[ext_resource type="PackedScene" uid="uid://cm7f0nbpqt8mg" path="res://assets/meshes/Environmental/Stones/BigStonePillar1.glb" id="1_tciwb"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="BigStonePillar12" parent="." instance=ExtResource("1_tciwb")]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
