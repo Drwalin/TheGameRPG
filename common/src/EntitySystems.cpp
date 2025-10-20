@@ -44,6 +44,11 @@ void UpdateMovement(Realm *realm, flecs::entity entity,
 		if (next.onGround) {
 			vel.y = 0;
 		}
+		
+		float lenM = glm::length((prev.pos-pos)*glm::vec3(1,0,1));
+		
+		printf("old pos.y = %.2f\n", prev.pos.y);
+		printf("new pos.y = %.2f        %s    (len: %.2f)       (tick: %lu)\n", pos.y, updateState?"UPDATE":"NO UPDATE", lenM, realm->timer.currentTick.v);
 
 		next.pos = pos;
 		next.vel = vel;

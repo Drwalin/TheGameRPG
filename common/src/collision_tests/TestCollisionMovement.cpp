@@ -54,7 +54,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	float maxValidTravelDistanceFactor = 1.0f;
 	
 	Collision3D::RayInfo movement;
-	movement.Calc(start + stepVector, end + stepVector);
+	movement.Calc(start + stepVector*2.0f, end + stepVector*2.0f);
 	
 	// Test strainght along movement vector
 	
@@ -70,7 +70,8 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			
 			float travelDistanceFactor = 1.0;
 			glm::vec3 _normal;
-			if (s->shape.CylinderTestMovement(t->trans, travelDistanceFactor, cyl, movement, _normal)) {
+			if (s->shape.CylinderTestMovement(t->trans, travelDistanceFactor,
+											  cyl, movement, _normal)) {
 				if (maxValidTravelDistanceFactor >= travelDistanceFactor) {
 					maxValidTravelDistanceFactor = travelDistanceFactor;
 					hasCollision = true;
@@ -91,7 +92,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 
 	cyl.height = shape.height;
 	
-	float maxOffsetHeight = -stepHeight;
+	float maxOffsetHeight = stepHeight;
 	glm::vec3 hitNormal = {0,0,0};
 	bool hasHitOnGround = false;
 	
@@ -101,6 +102,8 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 // 		printf("Not checking is on ground: start.y: %f        end.y: %f\n", start.y, end.y);
 		return hasCollision;
 	}
+	
+	printf("AAA---!!!\n");
 	
 	for (int i=0; i<count; ++i) {
 		flecs::entity e = entities[i];
@@ -115,21 +118,24 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			float offsetHeight = 0;
 			glm::vec3 onGroundNormal;
 			bool isOnEdge = false;
-			if(s->shape.CylinderTestOnGround(t->trans, cyl, *finalCorrectedPosition, offsetHeight, &onGroundNormal, &isOnEdge)) {
+			if(s->shape.CylinderTestOnGround(t->trans, cyl,
+											 *finalCorrectedPosition,
+											 offsetHeight,
+											 &onGroundNormal,
+											 &isOnEdge)) {
 // 				printf("a: |%f| <= %f ?       trans h: %f      charPos.y: %f\n",
 // 						offsetHeight,
 // 						stepHeight,
 // 						t->trans.pos.y,
 // 						finalCorrectedPosition->y);
-				if (fabs(offsetHeight) <= stepHeight) {
+				printf("          offsetHeight = %.2f\n", offsetHeight);
+				if (fabs(offsetHeight) <= stepHeight+0.02f) {
 // 					printf("b\n");
-					if (maxOffsetHeight <= offsetHeight) {
+					if (maxOffsetHeight >= offsetHeight) {
 // 						printf("c\n");
 						hasHitOnGround = true;
 						maxOffsetHeight = offsetHeight;
 						hitNormal = onGroundNormal;
-						
-						assert(fabs(maxOffsetHeight) <= stepHeight);
 					}
 				}
 			} else {
@@ -141,6 +147,9 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 		}
 	}
 	
+	printf("      > offsetHeight = %.2f\n", maxOffsetHeight);
+
+	
 // 	if (count == 0) {
 // 		printf("no collision objects\n");
 // 	} else {
@@ -151,7 +160,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 		hitNormal = glm::normalize(hitNormal);
 	}
 	
-	assert(fabs(maxOffsetHeight) <= stepHeight);
+	assert(fabs(maxOffsetHeight) <= stepHeight+0.02f);
 	
 	assert(glm::length(hitNormal) < 1.1);
 	
@@ -159,6 +168,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 		if (!wasOnGround) {
 			if (start.y > end.y) {
 				if (maxOffsetHeight > 0) {
+					printf(" . . . . . Dup\n");
 					return hasCollision;
 				}
 			}
@@ -170,7 +180,9 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			}
 		}
 		hasCollision = true;
+		printf("prev final pos.y = %.2f\n", finalCorrectedPosition->y);
 		finalCorrectedPosition->y -= maxOffsetHeight;
+		printf("new final pos.y = %.2f\n", finalCorrectedPosition->y);
 		end = *finalCorrectedPosition;
 // 		printf("CORRECTED FINAL POSITION WHEN IS ON GROUND $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ maxOffsetHeight: %f,    isOnGround: %s\n", maxOffsetHeight, isOnGround?"YES":"NO");
 		if (isOnGround) {
