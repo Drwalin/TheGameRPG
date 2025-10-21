@@ -236,12 +236,10 @@ glm::vec3 GameClient::GetPosition()
 		EntitySystems::UpdateMovement(
 				realm, player, player.get<ComponentShape>(), state, state,
 				player.get<ComponentMovementParameters>(), f, false);
-
 		return state.pos;
 	} else {
 		LOG_ERROR("Player Entity %lu has no movement state", player.id());
 	}
-	
 	
 	if (oldState)
 		return oldState->pos;

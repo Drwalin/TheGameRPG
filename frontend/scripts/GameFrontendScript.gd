@@ -46,6 +46,7 @@ func IsDownOrJustReleased(action: StringName)->bool:
 	return (Input.is_action_just_released(action) || Input.is_action_pressed(action)) && !Input.is_action_just_pressed(action);
 
 func DrawTestRay(start:Vector3, end:Vector3):
+	return;
 	var res:Array = RayTest(start, end, FILTER_STATIC_OBJECT|FILTER_TERRAIN|FILTER_CHARACTER, true);
 	if res.size() > 0:
 		#print(res);

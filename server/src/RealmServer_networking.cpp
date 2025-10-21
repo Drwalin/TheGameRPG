@@ -1,4 +1,3 @@
-#include "../../ICon7/include/icon7/Flags.hpp"
 #include "../../ICon7/include/icon7/ByteReader.hpp"
 #include "../../ICon7/include/icon7/Peer.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
@@ -42,8 +41,9 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entity.add<ComponentEventsQueue>();
 
 		ComponentMovementState s;
-		s.pos = {-10, 0, 10};
+		s.pos = {-7.8, 0, 7.8};
 		s.vel = {0, 0, 0};
+		s.rot = {0, 3.141592f, 0};
 		s.onGround = false;
 		entity.set<ComponentMovementState>(s);
 		entity.add<ComponentCharacterSheet_Ranges>();

@@ -5,6 +5,9 @@
 #include "../../include/CollisionWorld.hpp"
 #include "../../include/EntityComponents.hpp"
 
+extern bool DO_PRINT;
+#define printf(...) {if(DO_PRINT){printf(__VA_ARGS__);}}
+
 bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 start,
 						   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
 						   bool *isOnGround, glm::vec3 *normal,
@@ -17,7 +20,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	}
 	
 	if (normal) {
-		*normal = glm::normalize(end - start);
+		*normal = end - start;
 	}
 	
 	bool wasOnGround = false;
@@ -54,7 +57,7 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	float maxValidTravelDistanceFactor = 1.0f;
 	
 	Collision3D::RayInfo movement;
-	movement.Calc(start + stepVector*2.0f, end + stepVector*2.0f);
+	movement.Calc(start + stepVector, end + stepVector);
 	
 	// Test strainght along movement vector
 	
@@ -83,6 +86,10 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",
 					  e.id());
 		}
+	}
+	
+	if (normal) {
+		*normal = glm::normalize(*normal);
 	}
 	
 
