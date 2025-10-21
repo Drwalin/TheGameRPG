@@ -5,33 +5,29 @@
 #include "../../include/CollisionWorld.hpp"
 #include "../../include/EntityComponents.hpp"
 
-extern bool DO_PRINT;
-#define printf(...) {if(DO_PRINT){printf(__VA_ARGS__);}}
-
-bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 start,
-						   glm::vec3 end, glm::vec3 *finalCorrectedPosition,
-						   bool *isOnGround, glm::vec3 *normal,
-						   glm::vec3 *groundNormal,
-						   float stepHeight,
-						   float minNormalYcomponent) const
+bool CollisionWorld_spp::TestCollisionMovement(
+	ComponentShape shape, glm::vec3 start, glm::vec3 end,
+	glm::vec3 *finalCorrectedPosition, bool *isOnGround, glm::vec3 *normal,
+	glm::vec3 *groundNormal, float stepHeight, float minNormalYcomponent) const
 {
 	if (stepHeight > shape.height) {
 		stepHeight = shape.height;
 	}
-	
+
 	if (normal) {
 		*normal = end - start;
 	}
-	
+
 	bool wasOnGround = false;
 	if (isOnGround) {
 		wasOnGround = *isOnGround;
 		*isOnGround = false;
 	}
-	
-	std::vector<flecs::entity> &entities = *(std::vector<flecs::entity>*)&localEntitiesStack;
+
+	std::vector<flecs::entity> &entities =
+		*(std::vector<flecs::entity> *)&localEntitiesStack;
 	entities.clear();
-	
+
 	const float radius = shape.width / 2.0;
 	const glm::vec3 safetyMarginXYZ(2, 2, 2);
 	const glm::vec3 stepVector(0, stepHeight, 0);
@@ -43,34 +39,36 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 	const glm::vec3 aabbMax =
 		glm::max(start, end) + extentFromPos + stepVector + safetyMarginXYZ;
 
-	size_t count = TestForEntitiesAABBApproximate(aabbMin, aabbMax, &entities, FILTER_TERRAIN | FILTER_STATIC_OBJECT);
-	
+	size_t count = TestForEntitiesAABBApproximate(
+		aabbMin, aabbMax, &entities, FILTER_TERRAIN | FILTER_STATIC_OBJECT);
+
 	if (count == 0) {
 		*finalCorrectedPosition = end;
 		return false;
 	}
 
-	Collision3D::Cylinder cyl{shape.height - stepHeight, shape.width*0.5f};
+	Collision3D::Cylinder cyl{shape.height - stepHeight, shape.width * 0.5f};
 
 	bool hasCollision = false;
-	
+
 	float maxValidTravelDistanceFactor = 1.0f;
-	
+
 	Collision3D::RayInfo movement;
 	movement.Calc(start + stepVector, end + stepVector);
-	
+
 	// Test strainght along movement vector
-	
-	for (int i=0; i<count; ++i) {
+	for (int i = 0; i < count; ++i) {
 		flecs::entity e = entities[i];
 		if (auto *t = e.try_get<ComponentStaticTransform>()) {
 			auto *s = e.try_get<ComponentCollisionShape>();
 			if (s == nullptr) {
-				LOG_FATAL("Static entity %lu does not have ComponentCollisionShape but is inside CollisionWorld",
-						  e.id());
+				LOG_FATAL(
+					"Static entity %lu does not have ComponentCollisionShape "
+					"but is inside CollisionWorld",
+					e.id());
 				continue;
 			}
-			
+
 			float travelDistanceFactor = 1.0;
 			glm::vec3 _normal;
 			if (s->shape.CylinderTestMovement(t->trans, travelDistanceFactor,
@@ -83,115 +81,91 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 				}
 			}
 		} else {
-			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",
-					  e.id());
+			LOG_FATAL(
+				"Static entity %lu does not have ComponentStaticTransform nor "
+				"but is inside CollisionWorld",
+				e.id());
 		}
 	}
-	
+
 	if (normal) {
 		*normal = glm::normalize(*normal);
 	}
-	
 
-	
-	*finalCorrectedPosition = start + (end - start) * maxValidTravelDistanceFactor;
-	
+	*finalCorrectedPosition =
+		start + (end - start) * maxValidTravelDistanceFactor;
 
 	cyl.height = shape.height;
-	
+
 	float maxOffsetHeight = stepHeight;
-	glm::vec3 hitNormal = {0,0,0};
+	glm::vec3 hitNormal = {0, 0, 0};
 	bool hasHitOnGround = false;
-	
+
 	// Test on ground
-	
 	if (start.y < end.y && wasOnGround == false) {
-// 		printf("Not checking is on ground: start.y: %f        end.y: %f\n", start.y, end.y);
 		return hasCollision;
 	}
-	
-	printf("AAA---!!!\n");
-	
-	for (int i=0; i<count; ++i) {
+
+	for (int i = 0; i < count; ++i) {
 		flecs::entity e = entities[i];
 		if (auto *t = e.try_get<ComponentStaticTransform>()) {
 			auto *s = e.try_get<ComponentCollisionShape>();
 			if (s == nullptr) {
-				LOG_FATAL("Static entity %lu does not have ComponentCollisionShape but is inside CollisionWorld",
-						  e.id());
+				LOG_FATAL(
+					"Static entity %lu does not have ComponentCollisionShape "
+					"but is inside CollisionWorld",
+					e.id());
 				continue;
 			}
-			
+
 			float offsetHeight = 0;
 			glm::vec3 onGroundNormal;
 			bool isOnEdge = false;
-			if(s->shape.CylinderTestOnGround(t->trans, cyl,
-											 *finalCorrectedPosition,
-											 offsetHeight,
-											 &onGroundNormal,
-											 &isOnEdge)) {
-// 				printf("a: |%f| <= %f ?       trans h: %f      charPos.y: %f\n",
-// 						offsetHeight,
-// 						stepHeight,
-// 						t->trans.pos.y,
-// 						finalCorrectedPosition->y);
-				printf("          offsetHeight = %.2f\n", offsetHeight);
-				if (fabs(offsetHeight) <= stepHeight+0.02f) {
-// 					printf("b\n");
+			if (s->shape.CylinderTestOnGround(
+					t->trans, cyl, *finalCorrectedPosition, offsetHeight,
+					&onGroundNormal, &isOnEdge)) {
+				if (fabs(offsetHeight) <= stepHeight + 0.02f) {
 					if (maxOffsetHeight >= offsetHeight) {
-// 						printf("c\n");
 						hasHitOnGround = true;
 						maxOffsetHeight = offsetHeight;
 						hitNormal = onGroundNormal;
 					}
 				}
-			} else {
-// 				printf("FAiled cylinder on ground test\n");
 			}
 		} else {
-			LOG_FATAL("Static entity %lu does not have ComponentStaticTransform nor but is inside CollisionWorld",
-					  e.id());
+			LOG_FATAL(
+				"Static entity %lu does not have ComponentStaticTransform nor "
+				"but is inside CollisionWorld",
+				e.id());
 		}
 	}
-	
-	printf("      > offsetHeight = %.2f\n", maxOffsetHeight);
 
-	
-// 	if (count == 0) {
-// 		printf("no collision objects\n");
-// 	} else {
-// 		printf("number of potential colliding objects: %lu\n", count);
-// 	}
-	
 	if (hasHitOnGround) {
 		hitNormal = glm::normalize(hitNormal);
 	}
-	
-	assert(fabs(maxOffsetHeight) <= stepHeight+0.02f);
-	
+
+	assert(fabs(maxOffsetHeight) <= stepHeight + 0.02f);
+
 	assert(glm::length(hitNormal) < 1.1);
-	
-	if (hasHitOnGround && (hitNormal.y >= minNormalYcomponent)) {// && (wasOnGround || (end.y >= start.y))) {
+
+	if (hasHitOnGround && (hitNormal.y >= minNormalYcomponent)) {
 		if (!wasOnGround) {
 			if (start.y > end.y) {
 				if (maxOffsetHeight > 0) {
-					printf(" . . . . . Dup\n");
 					return hasCollision;
 				}
 			}
 		}
-		
+
 		if (hasCollision == false) {
 			if (normal) {
 				*normal = hitNormal;
 			}
 		}
 		hasCollision = true;
-		printf("prev final pos.y = %.2f\n", finalCorrectedPosition->y);
 		finalCorrectedPosition->y -= maxOffsetHeight;
-		printf("new final pos.y = %.2f\n", finalCorrectedPosition->y);
 		end = *finalCorrectedPosition;
-// 		printf("CORRECTED FINAL POSITION WHEN IS ON GROUND $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ maxOffsetHeight: %f,    isOnGround: %s\n", maxOffsetHeight, isOnGround?"YES":"NO");
+
 		if (isOnGround) {
 			*isOnGround = true;
 		}
@@ -199,7 +173,6 @@ bool CollisionWorld_spp::TestCollisionMovement(ComponentShape shape, glm::vec3 s
 			*groundNormal = hitNormal;
 		}
 	}
-	fflush(stdout);
-	
+
 	return hasCollision;
 }
