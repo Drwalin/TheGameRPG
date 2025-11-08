@@ -98,8 +98,8 @@ void vertex() {
 
     VERTEX = (MODELVIEW_MATRIX * vec4(vecs[vid] * scaleSize - vec3(ivec3(size.x, 0, size.y)) * scaleSize * 0.5, 1.0)).xyz;
     NORMAL = normalize((MODELVIEW_MATRIX * vec4(normal, 0.0)).xyz);
-    BINORMAL = normalize((MODELVIEW_MATRIX * vec4(binoraml, 0.0)).xyz);
-    TANGENT = normalize((MODELVIEW_MATRIX * vec4(tangent, 0.0)).xyz);
+    //BINORMAL = normalize((MODELVIEW_MATRIX * vec4(binoraml, 0.0)).xyz);
+    //TANGENT = normalize((MODELVIEW_MATRIX * vec4(tangent, 0.0)).xyz);
 	UV = vecs[vid].xz / vec2(size);
 
 

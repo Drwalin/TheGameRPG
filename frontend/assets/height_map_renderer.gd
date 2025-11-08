@@ -1,5 +1,5 @@
 @tool
-extends Node3D
+extends MeshInstance3D
 
 var counter:int = 0;
 
@@ -13,28 +13,35 @@ var oldDepth:int = 0;
 var scaleSize:Vector3 = Vector3(1,1,1);
 
 func Update(_heights:PackedByteArray, _materials:PackedByteArray, _width: int, _depth: int, _scaleSize:Vector3):
+	var start = Time.get_ticks_usec();
 	width = _width;
 	depth = _depth;
 	scaleSize = _scaleSize;
 	combinedImages = Image.create(width, depth, false, Image.Format.FORMAT_RGBA8);
+	var pixels:PackedByteArray;
+	pixels.resize(width*depth*4);
+	
 	for i in range(0, width*depth):
-		var r:float = _heights[i*2+0] / 255.0;
-		var g:float = _heights[i*2+1] / 255.0;
-		var b:float = _materials[i] / 255.0;
-		combinedImages.set_pixel(i % width, i / width, Color(r, g, b, 1));
+		pixels[(i<<2)+0] = _heights[(i<<1)+0];
+		pixels[(i<<2)+1] = _heights[(i<<1)+1];
+		pixels[(i<<2)+2] = _materials[i];
+		pixels[(i<<2)+3] = 0;
+	combinedImages.set_data(width, depth, false, Image.Format.FORMAT_RGBA8, pixels);
 	Rebuild();
+	var end = Time.get_ticks_usec();
+	var duration = (end - start) / 1000000.0;
+	print("Generating: ", duration, " sec");
 
 func Rebuild():
-	var start = Time.get_ticks_usec();
 	print(width, " x ", depth)
 	if (oldWidth != width || oldDepth != depth):
-		var mesh:ArrayMesh = ArrayMesh.new();
+		var arrayMesh:ArrayMesh = ArrayMesh.new();
 		var arrays = [];
 		arrays.resize(Mesh.ARRAY_MAX);
 		var verts:PackedVector2Array;
 		verts.resize(width*depth*2*3);
 		arrays[Mesh.ARRAY_VERTEX] = verts;
-		mesh.add_surface_from_arrays(
+		arrayMesh.add_surface_from_arrays(
 					Mesh.PrimitiveType.PRIMITIVE_TRIANGLES,
 					arrays,
 					[],
@@ -46,34 +53,39 @@ func Rebuild():
 					#| Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY
 					#| Mesh.ARRAY_FORMAT_TEX_UV
 					);
-		#mesh.surface_set_material(0, $MeshInstance3D.material_override);
+		#mesh.surface_set_material(0, self.material_override);
 		var ext = Vector3(width*scaleSize.x+1,scaleSize.y*2+1,depth*scaleSize.z+1) + Vector3(100, 100, 100);
-		$MeshInstance3D.mesh = mesh;
-		mesh.custom_aabb = AABB(-ext, ext*3);
+		arrayMesh.custom_aabb = AABB(-ext, ext*3);
+		self.mesh = arrayMesh;
 		combinedTexture = ImageTexture.create_from_image(combinedImages);
 		oldWidth = width;
 		oldDepth = depth;
-		$MeshInstance3D.scale = Vector3(1,1,1);
+		self.scale = Vector3(1,1,1);
 	else:
 		combinedTexture.update(combinedImages);
-		
-	var material = $MeshInstance3D.material_override;
-	var shadMat:ShaderMaterial = material;
+	
+	var shadMat:ShaderMaterial  = ShaderMaterial.new();
+	var s = load("res://assets/HeightMapRenderer.gdshader");
+	shadMat.shader = s;
 	shadMat.set_shader_parameter("terrainData", combinedTexture);
 	shadMat.set_shader_parameter("size", Vector2i(width, depth));
 	shadMat.set_shader_parameter("materialColorsRamp", 0);
 	shadMat.set_shader_parameter("scaleSize", scaleSize);
-	var end = Time.get_ticks_usec();
-	var duration = (end - start) / 1000000.0;
-	print("Generating: ", duration, " sec");
+	self.material_override = shadMat;
 	
+	var start = Time.get_ticks_usec();
+	imdfskfdsaf = combinedTexture.get_image();
+	var end = Time.get_ticks_usec();
+	var duration = (end - start);
+	print("Getting image: ", duration, " us");
+var imdfskfdsaf;
 
-func _process(delta):
+func _process(_delta:float):
 	counter = counter + 1;
-	if (counter % 260 != 7):
+	if (counter % 660 != 7):
 		return;
-	var w = 65;
-	var d = 65;
+	var w:int = width;
+	var d:int = depth;
 	var m:PackedByteArray;
 	var h:PackedByteArray;
 	h.resize(w*d*2);

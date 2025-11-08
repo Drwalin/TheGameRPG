@@ -73,7 +73,7 @@ void ComponentEventsQueue::Update(Tick currentTick, uint64_t entityId,
 		}
 	}
 
-	{
+	if (!events.Empty()) {
 		EntityEvent &event = events.Top();
 		if (event.scheduledInRealm == false) {
 			InsertIntoRealmSchedule(realm, entityId, event.dueTick);

@@ -54,7 +54,8 @@ func DrawTestRay(start:Vector3, end:Vector3):
 			return;
 		var pos:int = randi_range(0, renderPointsMesh.instance_count-1);
 		renderPointsMesh.set_instance_transform(pos, Transform3D(Basis(), res[3]));
-		renderPointsMesh.visible_instance_count = renderPointsMesh.instance_count;
+		if (renderPointsMesh.visible_instance_count != renderPointsMesh.instance_count):
+			renderPointsMesh.visible_instance_count = renderPointsMesh.instance_count;
 
 func RandVec()->Vector3:
 	return Vector3(randf_range(-20,20),randf_range(-30,20),randf_range(-20,20));

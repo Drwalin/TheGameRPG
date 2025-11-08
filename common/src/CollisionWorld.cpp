@@ -70,18 +70,20 @@ CollisionWorld_spp::CollisionWorld_spp(Realm *realm)
 	//       that even more forces to export all symbols than ENABLE_EXPORTS
 	this->realm = realm;
 
-	spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0> *tsdbvh =
-		new spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0>(
-			std::make_shared<
-				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
-				200000),
-			std::make_shared<
-				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
-				200000),
-			std::make_unique<
-				spp::Dbvt<spp::Aabb, uint32_t, uint32_t, 0, uint32_t>>());
-	tsdbvh->SetRebuildSchedulerFunction(EnqueueRebuildThreaded);
-	broadphase = tsdbvh;
+// 	spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0> *tsdbvh =
+// 		new spp::ThreeStageDbvh<spp::Aabb, uint32_t, uint32_t, 0>(
+// 			std::make_shared<
+// 				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
+// 				200000),
+// 			std::make_shared<
+// 				spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>>(
+// 				200000),
+// 			std::make_unique<
+// 				spp::Dbvt<spp::Aabb, uint32_t, uint32_t, 0, uint32_t>>());
+// 	tsdbvh->SetRebuildSchedulerFunction(EnqueueRebuildThreaded);
+// 	broadphase = tsdbvh;
+	broadphase = new spp::BvhMedianSplitHeap<spp::Aabb, uint32_t, uint32_t, 0, 1>(
+				200000);
 }
 
 CollisionWorld_spp::~CollisionWorld_spp()
@@ -448,7 +450,9 @@ size_t CollisionWorld_spp::TestForEntitiesCylinder(
 }
 
 void CollisionWorld_spp::StartEpoch() {}
-void CollisionWorld_spp::EndEpoch() {}
+void CollisionWorld_spp::EndEpoch() {
+	broadphase->Rebuild();
+}
 
 void CollisionWorld_spp::RegisterObservers(Realm *realm)
 {
