@@ -41,12 +41,14 @@ void ServerCore::Destroy()
 
 void ServerCore::StartService()
 {
-	std::shared_ptr<icon7::uS::Loop> loop = std::make_shared<icon7::uS::Loop>();
+	std::shared_ptr<icon7::uS::Loop> loop =
+		std::make_shared<icon7::uS::Loop>("loop_server_players");
 	this->loop = loop;
 	loop->Init(3);
 	loop->userPointer = this;
 
-	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);
+	std::shared_ptr<icon7::uS::tcp::Host> host =
+		loop->CreateHost("host_server_players", false);
 	this->host = host;
 	host->userPointer = this;
 

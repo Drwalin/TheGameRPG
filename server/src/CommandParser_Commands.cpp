@@ -7,6 +7,8 @@
 #include "../include/ConfigStorage.hpp"
 #include "../include/SharedObject.hpp"
 #include "../include/commands/TeleportPlayer.hpp"
+#include "../include/EntityGameComponents.hpp"
+#include "../include/EntityComponentsServer.hpp"
 
 #include "../include/CommandParser.hpp"
 
@@ -154,6 +156,39 @@ void CommandParser::InitializeCommands()
 			com->realmName = args[2];
 			com->position = {std::stof(args[3]), std::stof(args[4]),
 							 std::stof(args[5])};
-			serverCore->host->EnqueueCommand(std::move(com));
+			std::shared_ptr<icon7::Host> host = serverCore->host;
+			host->EnqueueCommand(std::move(com));
+		});
+
+	RegisterCustomCommand(
+		{"realm_stats"}, "Show stats for all realms or for supplied realm name",
+		[this](const std::vector<std::string> &args) {
+			std::string realmName = "";
+			if (args.size() == 1) {
+			} else if (args.size() == 2) {
+				realmName = args[1];
+			} else {
+				LOG_ERROR("Invalid number of arguments to realm_stats command");
+			}
+
+			auto Func = [this](std::weak_ptr<RealmServer> _realm)
+				-> icon7::CoroutineSchedulable {
+				co_await serverCore->ScheduleInRealm(_realm);
+				std::shared_ptr<RealmServer> realm = _realm.lock();
+				int ais = realm->ecs.count<ComponentAITick>();
+				int players = realm->ecs.count<TagPlayerEntity>();
+
+				int non_player_ent = realm->ecs.count<TagNonPlayerEntity>();
+				printf("realm: `%s`,   AI count: %i,   player count: %i,   "
+					   "total entities: %i\n",
+					   realm->realmName.c_str(), ais, players,
+					   players + non_player_ent);
+				fflush(stdout);
+			};
+
+			auto realms = serverCore->realmManager.GetAllRealms();
+			for (auto it : realms) {
+				Func(it);
+			}
 		});
 }

@@ -17,12 +17,14 @@ GameClient::GameClient()
 	realm = new RealmClient(this);
 	rpc = new icon7::RPCEnvironment();
 
-	std::shared_ptr<icon7::uS::Loop> loop = std::make_shared<icon7::uS::Loop>();
+	std::shared_ptr<icon7::uS::Loop> loop =
+		std::make_shared<icon7::uS::Loop>("loop_client_player");
 	this->loop = loop;
 	loop->Init(3);
 	loop->userPointer = this;
 
-	std::shared_ptr<icon7::uS::tcp::Host> host = loop->CreateHost(false);
+	std::shared_ptr<icon7::uS::tcp::Host> host =
+		loop->CreateHost("host_client_player", false);
 	this->host = host;
 	host->userPointer = this;
 
@@ -161,9 +163,9 @@ void GameClient::RunOneEpoch()
 	PerformSendPlayerMovementInput();
 	realm->RunOneEpoch();
 	PerformSendPlayerMovementInput();
-	
+
 	pingTickCounter--;
-	
+
 	if (pingTickCounter <= 0) {
 		pingTickCounter = 100;
 		ServerRpcProxy::Ping(this, true);
@@ -227,20 +229,19 @@ glm::vec3 GameClient::GetPosition()
 	}
 	flecs::entity player = realm->Entity(localPlayerEntityId);
 	auto oldState = player.try_get<ComponentMovementState>();
-	
+
 	if (oldState) {
 		// TODO: optimize this code to be executed only once every godot frame
-		const float f =
-			realm->timer.GetFactorToNextTick(realm->tickDuration);
+		const float f = realm->timer.GetFactorToNextTick(realm->tickDuration);
 		ComponentMovementState state = *oldState;
 		EntitySystems::UpdateMovement(
-				realm, player, player.get<ComponentShape>(), state, state,
-				player.get<ComponentMovementParameters>(), f, false);
+			realm, player, player.get<ComponentShape>(), state, state,
+			player.get<ComponentMovementParameters>(), f, false);
 		return state.pos;
 	} else {
 		LOG_ERROR("Player Entity %lu has no movement state", player.id());
 	}
-	
+
 	if (oldState)
 		return oldState->pos;
 	LOG_TRACE("ERROR");
@@ -321,7 +322,7 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	}
 	auto state = *stateP;
 	if (state.onGround == false) {
-// 		printf("Player is not on ground\n");
+		// 		printf("Player is not on ground\n");
 		// TODO: no air control implemented
 		return;
 	}
@@ -330,8 +331,8 @@ void GameClient::ProvideMovementInputDirection(glm::vec2 horizontalDirection)
 	glm::vec3 vel;
 	vel.x = horizontalDirection.x;
 	vel.z = horizontalDirection.y;
-	vel *=
-		player.try_get<ComponentMovementParameters>()->maxMovementSpeedHorizontal;
+	vel *= player.try_get<ComponentMovementParameters>()
+			   ->maxMovementSpeedHorizontal;
 
 	glm::vec3 dv = oldVel - vel;
 	dv.y = 0;
@@ -392,9 +393,10 @@ void GameClient::PerformInteractionUse()
 
 	glm::vec3 hitPoint, normal;
 	uint64_t serverEntityId = 0;
-	uint64_t localTargetId =
-		PerformRaytestFromEyes(*state, characterSheet->attackRange, &hitPoint,
-							   &normal, &serverEntityId, FILTER_TERRAIN|FILTER_CHARACTER|FILTER_STATIC_OBJECT);
+	uint64_t localTargetId = PerformRaytestFromEyes(
+		*state, characterSheet->attackRange, &hitPoint, &normal,
+		&serverEntityId,
+		FILTER_TERRAIN | FILTER_CHARACTER | FILTER_STATIC_OBJECT);
 	if (localTargetId) {
 		ServerRpcProxy::InteractInLineOfSight(this, *state, serverEntityId,
 											  hitPoint, normal);
@@ -417,7 +419,8 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 	glm::vec3 hitPoint, normal;
 	uint64_t serverEntityId = 0;
 	uint64_t localTargetId = PerformRaytestFromEyes(
-		*state, 1000.0f, &hitPoint, &normal, &serverEntityId, FILTER_TERRAIN|FILTER_CHARACTER|FILTER_STATIC_OBJECT);
+		*state, 1000.0f, &hitPoint, &normal, &serverEntityId,
+		FILTER_TERRAIN | FILTER_CHARACTER | FILTER_STATIC_OBJECT);
 	if (localTargetId) {
 		ServerRpcProxy::Attack(this, *state, serverEntityId, hitPoint,
 							   attackType, attackId, argInt);
@@ -430,7 +433,8 @@ void GameClient::PerformAttack(int64_t attackType, int64_t attackId,
 uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 											float range, glm::vec3 *hitPos,
 											glm::vec3 *normal,
-											uint64_t *serverEntityId, uint32_t mask)
+											uint64_t *serverEntityId,
+											uint32_t mask)
 {
 	*serverEntityId = 0;
 	if (localPlayerEntityId == 0) {
@@ -451,8 +455,8 @@ uint64_t GameClient::PerformRaytestFromEyes(ComponentMovementState state,
 
 	float td;
 	flecs::entity entity;
-	if (realm->collisionWorld.RayTestFirstHit(pos, dst, hitPos, normal,
-											  &entity, &td, localPlayerEntityId, mask)) {
+	if (realm->collisionWorld.RayTestFirstHit(pos, dst, hitPos, normal, &entity,
+											  &td, localPlayerEntityId, mask)) {
 		if (entity.is_valid() && entity.is_alive()) {
 			auto it = mapLocalEntityIdToServerEntityId.find(entity.id());
 			if (it != mapLocalEntityIdToServerEntityId.end()) {
