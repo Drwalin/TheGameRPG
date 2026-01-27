@@ -1,28 +1,28 @@
 [gd_scene load_steps=8 format=4 uid="uid://cf10olninlwb3"]
 
-[ext_resource type="Script" uid="uid://bonh4sgkvknk1" path="res://assets/height_map_renderer.gd" id="1_gqfom"]
-[ext_resource type="Shader" uid="uid://tv4c737wgx7p" path="res://assets/HeightMapRenderer.gdshader" id="2_6fsed"]
+[ext_resource type="Shader" uid="uid://tv4c737wgx7p" path="res://assets/heightmap/v1/HeightMapRenderer.gdshader" id="1_3pg4y"]
+[ext_resource type="Script" uid="uid://bonh4sgkvknk1" path="res://assets/heightmap/v1/height_map_renderer.gd" id="1_gqfom"]
 
-[sub_resource type="Image" id="Image_gqfom"]
+[sub_resource type="Image" id="Image_3pg4y"]
 data = {
-"data": PackedByteArray("X2nUAF+y0ABgfM4AX13KAF0LwwBcKL8AXFnBAFxBxQBbwcIAXE66AF8ItQBiArQAY+CxAGUaqwBnQqgAacalAF551ABe5tAAX/zOAF7RywBdicMAXcS/AF1zwQBdkMYAXqTEAF95vQBhJ7gAY9S3AGXetABm0q0AaA6qAGloqgBc7tgAXpPQAGB3ywBgPckAX9jEAGB3wABfVcMAXvrJAGCFxwBhcb8AYti7AGVQuwBm6roAZye3AGevtABpEbQAXATiAF322ABgPc8AYa/MAGLTxwBjq8EAYg7DAGF5xwBjIsUAY5zBAGSFvwBmw78AZ/zAAGdIvgBm4LwAaGm5AFx66gBeD+IAX+XZAGH80QBkRckAZZbBAGUEvgBlbL4AZzO9AGc2vQBnfL8AaVG/AGpXvgBovLsAZ0W5AGg2twBdg+kAX7jnAGE64ABiUtMAZEfJAGY7wgBnCroAaI21AGp7twBqm7wAaqa/AGvPvgBsDbgAadC1AGhDtQBpb7EAXprhAGF44wBiVt4AYlnRAGOexwBl3MMAaGO6AGrUtABsQ7YAbK+6AG02ugBtxLcAbRSwAGpjrgBpRrAAa3etAF8P2wBhYd0AYbfZAGKozwBkcMcAZnvCAGovugBs07UAbR21AG0NtABuArEAbk6tAG12qABq4KcAaiKoAGzIpgBfMNYAYM7WAGEY1QBjL9EAZczJAGfBwQBrSLsAbca4AG3ytABtXrAAbgmqAG5ZpQBuDKUAa/ukAGtYoABtg5wAXrDXAGAC1QBhB9QAY4jSAGYSxwBoBb0Aa0K7AG49ugBvJbYAbfGzAG1srgBtmKYAbZymAGxJowBsC5wAbcOXAF4u2QBgYtUAYsbVAGTx0gBmdsYAaFe9AGrFvQBuDb8Ab+a8AG7quwBtibUAbYasAG1bqABsraMAbSycAG8cmwBfN9gAYnnWAGVj2ABntdgAaSLPAGraxQBr6MQAbejFAG9cwgBvCL4Abk23AG6crgButKoAbl6lAG8JnwBw+6AAYivbAGWc3ABoNt8AapvhAGwn2gBte9EAbRzMAG3BygBunsUAbny/AG4PuABue7EAbrauAG6dqQBvS6QAcYekAGVP4gBnMuQAaNroAGr56QBsfeEAbWPZAG0g0gBuBM0AbrXHAG44wgBtP7wAbVm1AG1MsgBtVK4Abf6pAHBJqABmH+gAZtPqAGft7ABp0+kAazHkAGve4ABsYtkAbhnRAG8QywBu58UAbfzAAG3vuQBtp7UAbWmwAG2erABu664AZg/kAGbd5QBnzucAaSnnAGnY6ABqYOkAbBLkAG6E2wBvb9UAb7DNAG7wxgBukMAAbl+6AG3JtABtCrAAbUS1AA=="),
+"data": PackedByteArray("vz8wAL/iGQDAhRMAwSmQAMHLtADCb5kAwxI3AMO0sADEV3gAxPlZAMWcCwDGPwAAxuDsAMeDSQDIJR8AyMaQAL8+owC/4QUAwIVMAMEo1ADBy+MAwm7pAMMRdADDs5gAxFejAMT5TQDFm4wAxj7MAMbgUwDHgiEAyCS0AMjFIAC/PEYAv99FAMCCRQDBJpAAwcjaAMJrnQDDD7kAw7HIAMRU5gDE9i0AxZklAMY8uADG3foAx391AMghmQDIwmAAvzgZAL/akQDAft4AwSLsAMHE4QDCZz0AwwvGAMOtcADEUPEAxPJxAMWVBgDGOJwAxtnJAMd7HQDIHV4AyL6AAL8yzAC/1ckAwHiPAMEcIADBvngAwmL5AMMFSwDDp+AAxEp0AMTslADFjxoAxjJFAMbTPQDHdvwAyBj2AMi5bQC/K9YAv81QAMBx6QDBFUEAwbduAMJanADC/XEAw6BFAMRDtgDE5XgAxYgJAMYrGQDGzL4Ax24kAMgQgQDIsR0AvyJzAL/FUADAaDAAwQxdAMGupwDCUQAAwvScAMOXBQDEOuMAxNyIAMV/4ADGItUAxsMnAMdlyADIB1wAyKh9AL8XQAC/ujwAwF4nAMEBMQDBpLgAwkeAAMLprwDDjO0AxDDoAMTS3ADFdH8AxhcBAMa5UADHWyAAx/yXAMieXQC/C70Av660AMBRPgDA9J0AwZcpAMI7pADC3QoAw4DtAMQjVQDExVQAxWj2AMYLXQDGrNEAx0/UAMfw0gDIkj0AvvwKAL+giADARGwAwOZcAMGKEwDCLTEAws+UAMNyIADEFmMAxLh1AMVa7ADF/MQAxp8DAMdBuQDH4hQAyIQYAL7tZgC/kf0AwDQlAMDXCADBeqoAwh5VAMLAmQDDYxAAxAZmAMSoFQDFS0UAxe1AAMaP6gDHMX0Ax9K5AMh0GAC+3PkAv4DZAMAj/gDAxqQAwWnxAMIMNQDCr+YAw1IoAMP0cQDEl1kAxToGAMXcNADGfhkAxyBVAMfBfgDIYzgAvsmsAL9tQQDAEC8AwLNYAMFWCADB+aEAwpzLAMM/+ADD4VQAxIRxAMUnVwDFyQgAxmvAAMcOYQDHr6MAyFHYAL613wC/WVUAv/toAMCfNADBQicAweXRAMKI6ADDK5AAw82fAMRw/QDFEwgAxbXdAMZXCgDG+JgAx5v9AMg8IQC+n0cAv0N0AL/lJADAiXEAwSzzAMHPpADCcpgAwxV5AMO3FwDEWtwAxPyEAMWf6QDGQeMAxuMsAMeFGADIJ+EAvoh0AL8rYAC/zusAwHGVAMEVpADBtzQAwlo7AML9oQDDoEwAxEOwAMTl0wDFhwUAxiqsAMbLNADHbVMAyA/BAA=="),
 "format": "RGBA8",
 "height": 16,
 "mipmaps": false,
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_6fsed"]
-image = SubResource("Image_gqfom")
+[sub_resource type="ImageTexture" id="ImageTexture_ehx6j"]
+image = SubResource("Image_3pg4y")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_6fsed"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_liv41"]
 render_priority = 0
-shader = ExtResource("2_6fsed")
-shader_parameter/terrainData = SubResource("ImageTexture_6fsed")
+shader = ExtResource("1_3pg4y")
+shader_parameter/terrainData = SubResource("ImageTexture_ehx6j")
 shader_parameter/size = Vector2i(16, 16)
 shader_parameter/scaleSize = Vector3(2, 2, 2)
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_51uvg"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_3xemt"]
 _surfaces = [{
 "2d": true,
 "aabb": AABB(0, 0, 0, 1e-05, 1e-05, 0),
@@ -44,8 +44,8 @@ fractal_gain = 0.6
 metadata/_preview_in_3d_space_ = true
 
 [node name="HeightMap" type="MeshInstance3D"]
-material_override = SubResource("ShaderMaterial_6fsed")
-mesh = SubResource("ArrayMesh_51uvg")
+material_override = SubResource("ShaderMaterial_liv41")
+mesh = SubResource("ArrayMesh_3xemt")
 script = ExtResource("1_gqfom")
 width = 16
 depth = 16

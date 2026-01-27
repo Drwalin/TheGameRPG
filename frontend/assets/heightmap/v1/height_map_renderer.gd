@@ -12,6 +12,13 @@ var oldDepth:int = 0;
 @export var noise:FastNoiseLite = FastNoiseLite.new();
 var scaleSize:Vector3 = Vector3(1,1,1);
 
+var lastTime = Time.get_ticks_usec();
+func PrintTime(text):
+	var currentTime = Time.get_ticks_usec();
+	var duration = (currentTime - lastTime) / 1000000.0;
+	print(text, " - ", duration, " sec");
+	lastTime = Time.get_ticks_usec();
+
 func Update(_heights:PackedByteArray, _materials:PackedByteArray, _width: int, _depth: int, _scaleSize:Vector3):
 	var start = Time.get_ticks_usec();
 	width = _width;
@@ -20,13 +27,16 @@ func Update(_heights:PackedByteArray, _materials:PackedByteArray, _width: int, _
 	combinedImages = Image.create(width, depth, false, Image.Format.FORMAT_RGBA8);
 	var pixels:PackedByteArray;
 	pixels.resize(width*depth*4);
+	PrintTime("resized image and byte array for pixels");
 	
 	for i in range(0, width*depth):
 		pixels[(i<<2)+0] = _heights[(i<<1)+0];
 		pixels[(i<<2)+1] = _heights[(i<<1)+1];
 		pixels[(i<<2)+2] = _materials[i];
 		pixels[(i<<2)+3] = 0;
+	PrintTime("fill pixels");
 	combinedImages.set_data(width, depth, false, Image.Format.FORMAT_RGBA8, pixels);
+	PrintTime("image.set_data");
 	Rebuild();
 	var end = Time.get_ticks_usec();
 	var duration = (end - start) / 1000000.0;
@@ -61,38 +71,60 @@ func Rebuild():
 		oldWidth = width;
 		oldDepth = depth;
 		self.scale = Vector3(1,1,1);
-	else:
-		combinedTexture.update(combinedImages);
 	
-	var shadMat:ShaderMaterial  = ShaderMaterial.new();
-	var s = load("res://assets/HeightMapRenderer.gdshader");
-	shadMat.shader = s;
-	shadMat.set_shader_parameter("terrainData", combinedTexture);
-	shadMat.set_shader_parameter("size", Vector2i(width, depth));
-	shadMat.set_shader_parameter("materialColorsRamp", 0);
-	shadMat.set_shader_parameter("scaleSize", scaleSize);
-	self.material_override = shadMat;
+		var shadMat:ShaderMaterial  = ShaderMaterial.new();
+		var s = load("res://assets/heightmap/v1/HeightMapRenderer.gdshader");
+		shadMat.shader = s;
+		shadMat.set_shader_parameter("terrainData", combinedTexture);
+		shadMat.set_shader_parameter("size", Vector2i(width, depth));
+		shadMat.set_shader_parameter("materialColorsRamp", 0);
+		shadMat.set_shader_parameter("scaleSize", scaleSize);
+		self.material_override = shadMat;
+	else:
+		var start = Time.get_ticks_usec();
+		combinedTexture.update(combinedImages);
+		var end = Time.get_ticks_usec();
+		var duration = (end - start);
+		print("Updating: ", duration, " us");
 	
 	var start = Time.get_ticks_usec();
-	imdfskfdsaf = combinedTexture.get_image();
+	#imdfskfdsaf = combinedTexture.get_image();
 	var end = Time.get_ticks_usec();
 	var duration = (end - start);
 	print("Getting image: ", duration, " us");
 var imdfskfdsaf;
 
 func _process(_delta:float):
+	var start = Time.get_ticks_usec();
+	lastTime = Time.get_ticks_usec();
 	counter = counter + 1;
 	if (counter % 660 != 7):
 		return;
+	print("\n\n");
 	var w:int = width;
 	var d:int = depth;
 	var m:PackedByteArray;
 	var h:PackedByteArray;
+	PrintTime("empty variables");
 	h.resize(w*d*2);
 	m.resize(w*d);
+	PrintTime("resize");
+	var hash:int = 2166136261;
 	for i in range(0, w*d):
-		var v = (noise.get_noise_2d(i%w, i/w) + 0.5) / 1.0;
+		if i % 73 == 0:
+			hash ^= 42178421;
+		var v = (sin((i%w)/100.0) + cos((i/w)/100.0))*0.25 + 0.5;
+		#var v = (noise.get_noise_2d(i%w, i/w) + 0.5) / 1.0;
 		h[i*2+0] = v*255.0;
 		h[i*2+1] = v * 255.0 * 255.0 - int(v*255.0)*255.0;
-		m[i] = noise.get_noise_3d(i%w, 123, i/w) * 1155.0;
+		#m[i] = noise.get_noise_3d(i%w, 123, i/w) * 1155.0;
+		hash = hash ^ (i%w);
+		hash *= 16777619;
+		hash = hash ^ (i/w);
+		hash *= 16777619;
+		m[i] = hash;#(i* 17) % 1155;#noise.get_noise_3d(i%w, 123, i/w) * 1155.0;
+	PrintTime("fill byte arrays");
 	Update(h, m, w, d, Vector3(2, 2.0, 2));
+	var end = Time.get_ticks_usec();
+	var duration = (end - start) / 1000000.0;
+	print("Total update duration: ", duration, " us");
