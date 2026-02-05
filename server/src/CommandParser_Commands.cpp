@@ -185,10 +185,15 @@ void CommandParser::InitializeCommands()
 					   players + non_player_ent);
 				fflush(stdout);
 			};
-
-			auto realms = serverCore->realmManager.GetAllRealms();
-			for (auto it : realms) {
-				Func(it);
+			
+			auto realm = serverCore->realmManager.GetRealm(realmName);
+			if (realm) {
+				Func(realm);
+			} else {
+				auto realms = serverCore->realmManager.GetAllRealms();
+				for (auto it : realms) {
+					Func(it);
+				}
 			}
 		});
 }
