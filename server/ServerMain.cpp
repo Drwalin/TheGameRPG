@@ -9,46 +9,50 @@
 
 int RegisterEntityGameComponents(flecs::world &ecs);
 
+void InitFlecs()
+{
+	flecs::world initializer;
+	RegisterEntityGameComponents(initializer);
+}
+
+void LoadDefaultConfig(ServerCore *serverCore, int argc, char **argv)
+{
+	const std::string prefix = "source ";
+	const char *paths[4] = {argc >= 2 ? argv[1] : nullptr, "default.cfg",
+							"../default.cfg", "../game_assets/default.cfg"};
+	for (auto path : paths) {
+		std::string command = prefix + "'" + path + "'";
+		if (FileOperations::FileExists(path)) {
+			serverCore->commandParser.ParseSingleCommand(command);
+			break;
+		}
+	}
+}
+
 int main(int argc, char **argv)
 {
 	LOG_INFO("Main thread started");
 	srand(time(NULL));
+
 	icon7::Initialize();
-	{
-		flecs::world initializer;
-		RegisterEntityGameComponents(initializer);
-	}
-	{
-		ServerCore serverCore;
-		serverCore.BindRpc();
+	InitFlecs();
+	ServerCore serverCore;
+	serverCore.BindRpc();
 
-		serverCore.StartService();
-		serverCore.commandParser.InitializeCommands();
+	serverCore.StartService();
+	serverCore.commandParser.InitializeCommands();
 
-		if (argc >= 2) {
-			serverCore.commandParser.ParseSingleCommand(
-				std::string("source '") + argv[1] + "'");
-		} else {
-			const std::string prefix = "source ";
-			std::vector<std::string> files = {"default.cfg", "../default.cfg",
-											  "../game_assets/default.cfg"};
-			for (std::string path : files) {
-				if (FileOperations::FileExists(path)) {
-					serverCore.commandParser.ParseSingleCommand(prefix + path);
-					break;
-				}
-			}
-		}
+	LoadDefaultConfig(&serverCore, argc, argv);
 
-		serverCore.realmManager.RunAsync(std::clamp<int64_t>(
-			serverCore.configStorage.GetOrSetInteger(
-				"config.realm_worker_manager.threads_count", 1),
-			1, std::thread::hardware_concurrency()));
+	serverCore.realmManager.RunAsync(
+		std::clamp<int64_t>(serverCore.configStorage.GetOrSetInteger(
+								"config.realm_worker_manager.threads_count", 1),
+							1, std::thread::hardware_concurrency()));
 
-		serverCore.RunNetworkLoopAsync();
+	serverCore.RunNetworkLoopAsync();
 
-		serverCore.RunMainThreadInteractive();
-	}
+	serverCore.RunMainThreadInteractive();
+
 	icon7::Deinitialize();
 	return 0;
 }
