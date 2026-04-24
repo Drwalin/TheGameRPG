@@ -8,13 +8,12 @@
 
 namespace bitscpp
 {
-ByteReader<true> &op(ByteReader<true> &s, glm::vec3 &v);
+namespace v2
+{
+void serialize(bitscpp::v2::ByteReader &s, glm::vec3 &v);
+void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const glm::vec3 &v);
 
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const glm::vec3 &v);
-
-ByteReader<true> &op(ByteReader<true> &s, glm::quat &q);
-
-ByteWriter<icon7::ByteBuffer> &op(ByteWriter<icon7::ByteBuffer> &s,
-								  const glm::quat &q);
+void serialize(bitscpp::v2::ByteReader &s, glm::quat &q);
+void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const glm::quat &q);
+} // namespace v2
 } // namespace bitscpp

@@ -4,8 +4,11 @@
 
 namespace bitscpp
 {
-template <bool V> class ByteReader;
-template <typename T> class ByteWriter;
+namespace v2
+{
+class ByteReader;
+class ByteWriter_ByteBuffer;
+} // namespace v2
 } // namespace bitscpp
 
 namespace icon7

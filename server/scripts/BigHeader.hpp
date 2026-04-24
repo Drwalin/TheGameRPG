@@ -1,6 +1,20 @@
 #pragma once
 
 /*
+ * Common include
+ */
+#include "../../common/include/ClientRpcFunctionNames.hpp"
+#include "../../common/include/CollisionWorld.hpp"
+#include "../../common/include/EntityComponents.hpp"
+#include "../../common/include/EntityEvent.hpp"
+#include "../../common/include/EntitySystems.hpp"
+#include "../../common/include/GlmSerialization.hpp"
+#include "../../common/include/Realm.hpp"
+#include "../../common/include/RegistryComponent.hpp"
+#include "../../common/include/ServerRpcFunctionNames.hpp"
+#include "../../common/include/TickTimer.hpp"
+
+/*
  * Server include
  */
 #include "../include/ClientRpcProxy.hpp"
@@ -18,20 +32,6 @@
 #include "../include/ServerCore.hpp"
 #include "../include/SharedObject.hpp"
 #include "../include/StringUtil.hpp"
-
-/*
- * Common include
- */
-#include "../../common/include/ClientRpcFunctionNames.hpp"
-#include "../../common/include/CollisionWorld.hpp"
-#include "../../common/include/EntityComponents.hpp"
-#include "../../common/include/EntityEvent.hpp"
-#include "../../common/include/EntitySystems.hpp"
-#include "../../common/include/GlmSerialization.hpp"
-#include "../../common/include/Realm.hpp"
-#include "../../common/include/RegistryComponent.hpp"
-#include "../../common/include/ServerRpcFunctionNames.hpp"
-#include "../../common/include/TickTimer.hpp"
 
 /*
  * Library includes
@@ -67,8 +67,8 @@
 #include "../../ICon7/include/icon7/Time.hpp"
 #include "../../ICon7/include/icon7/Util.hpp"
 
-#include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
+#include "../../ICon7/bitscpp/include/bitscpp/ByteReader_v2.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/ByteReaderExtensions.hpp"
-#include "../../ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
+#include "../../ICon7/bitscpp/include/bitscpp/ByteWriter_v2.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/ByteWriterExtensions.hpp"
 #include "../../ICon7/bitscpp/include/bitscpp/Endianness.hpp"

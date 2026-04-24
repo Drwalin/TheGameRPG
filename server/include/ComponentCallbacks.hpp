@@ -4,8 +4,8 @@
 #include <atomic>
 #include <string>
 
-#include "../../ICon7/bitscpp/include/bitscpp/ByteWriter.hpp"
-#include "../../ICon7/bitscpp/include/bitscpp/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp"
 #include "../../ICon7/include/icon7/ByteBuffer.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
 #include "../../ICon7/include/icon7/Time.hpp"
@@ -49,7 +49,7 @@ template <typename TFinal, typename TCb> struct EntryBase {
 		}
 	}
 
-	static inline void Deserialize(TFinal **cb, bitscpp::ByteReader<true> &s)
+	static inline void Deserialize(TFinal **cb, bitscpp::v2::ByteReader &s)
 	{
 		std::string name;
 		s.op(name);
@@ -61,7 +61,7 @@ template <typename TFinal, typename TCb> struct EntryBase {
 	}
 
 	static inline void Serialize(TFinal **cb,
-								 bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+								 bitscpp::v2::ByteWriter_ByteBuffer &s)
 	{
 		if (*cb) {
 			s.op((*cb)->shortName);

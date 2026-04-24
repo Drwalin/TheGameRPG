@@ -12,18 +12,15 @@ int RegisterEntityComponentsInventory(flecs::world &ecs)
 ItemBase::ItemBase() {}
 ItemBase::~ItemBase() {}
 
-bitscpp::ByteReader<true> &
-ItemStack::__ByteStream_op(bitscpp::ByteReader<true> &s)
+void ItemStack::serialize(bitscpp::v2::ByteReader &s)
 {
 	if (item) {
 		s.op(item->uniqueNameShort);
 		s.op(amount);
 		s.op(tag);
 	}
-	return s;
 }
-bitscpp::ByteWriter<icon7::ByteBuffer> &
-ItemStack::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+void ItemStack::serialize(bitscpp::v2::ByteWriter_ByteBuffer &s)
 {
 	std::string name;
 	s.op(name);
@@ -36,7 +33,6 @@ ItemStack::__ByteStream_op(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
 			tag = "";
 		}
 	}
-	return s;
 }
 
 BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentInventory,
@@ -46,7 +42,7 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentEquippedInventory, {
 	s.op(equippedItems, NUMBER_OF_SLOTS);
 });
 
-void ItemBase::SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s)
+void ItemBase::SerializeClientInfo(bitscpp::v2::ByteWriter_ByteBuffer &s)
 {
 	s.op(uniqueNameShort);
 	s.op(maxStackSize);

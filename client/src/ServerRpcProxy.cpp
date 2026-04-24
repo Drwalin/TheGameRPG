@@ -5,7 +5,7 @@
 
 #include "../include/RealmClient.hpp"
 #include "../include/GameClient.hpp"
-#include "ServerRpcFunctionNames.hpp"
+#include "../../common/include/ServerRpcFunctionNames.hpp"
 
 #include "../include/ServerRpcProxy.hpp"
 

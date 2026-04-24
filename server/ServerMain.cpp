@@ -21,6 +21,9 @@ void LoadDefaultConfig(ServerCore *serverCore, int argc, char **argv)
 	const char *paths[4] = {argc >= 2 ? argv[1] : nullptr, "default.cfg",
 							"../default.cfg", "../game_assets/default.cfg"};
 	for (auto path : paths) {
+		if (path == nullptr) {
+			continue;
+		}
 		std::string command = prefix + "'" + path + "'";
 		if (FileOperations::FileExists(path)) {
 			serverCore->commandParser.ParseSingleCommand(command);

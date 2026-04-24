@@ -47,7 +47,7 @@ public:
 
 	std::vector<int16_t> usableItemSlots;
 
-	void SerializeClientInfo(bitscpp::ByteWriter<icon7::ByteBuffer> &s);
+	void SerializeClientInfo(bitscpp::v2::ByteWriter_ByteBuffer &s);
 
 	static ItemBase *GetByName(const std::string &name) { return nullptr; }
 };

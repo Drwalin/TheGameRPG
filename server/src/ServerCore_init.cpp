@@ -48,12 +48,10 @@ void ServerCore::StartService()
 	loop->userPointer = this;
 
 	std::shared_ptr<icon7::uS::tcp::Host> host =
-		loop->CreateHost("host_server_players", false);
+		loop->CreateHost(rpc, "host_server_players", false);
 	this->host = host;
 	host->userPointer = this;
 
 	host->SetOnConnect(_OnPeerConnect);
 	host->SetOnDisconnect(_OnPeerDisconnect);
-
-	host->SetRpcEnvironment(rpc);
 }

@@ -24,11 +24,9 @@ GameClient::GameClient()
 	loop->userPointer = this;
 
 	std::shared_ptr<icon7::uS::tcp::Host> host =
-		loop->CreateHost("host_client_player", false);
+		loop->CreateHost(rpc, "host_client_player", false);
 	this->host = host;
 	host->userPointer = this;
-
-	host->SetRpcEnvironment(rpc);
 
 	// host->SetOnDisconnect();
 	lastTickAuthoritativeSent = {0};

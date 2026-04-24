@@ -13,30 +13,28 @@
 	inline STRUCT &operator=(STRUCT &&o) { CODE return *this; }
 
 #define BITSCPP_BYTESTREAM_OP_DECLARATIONS()                                   \
-	bitscpp::ByteReader<true> &__ByteStream_op(bitscpp::ByteReader<true> &s);  \
-	bitscpp::ByteWriter<icon7::ByteBuffer> &__ByteStream_op(                   \
-		bitscpp::ByteWriter<icon7::ByteBuffer> &s);
+	void serialize(bitscpp::v2::ByteReader &s);  \
+	void serialize(                   \
+		bitscpp::v2::ByteWriter_ByteBuffer &s);
 
 #define BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(CLASS, CODE)               \
-	bitscpp::ByteReader<true> &CLASS::__ByteStream_op(                         \
-		bitscpp::ByteReader<true> &s)                                          \
+	void CLASS::serialize(                         \
+		bitscpp::v2::ByteReader &s)                                          \
 	{                                                                          \
 		constexpr bool IS_READER = true;                                       \
 		constexpr bool IS_WRITER = false;                                      \
 		(void)IS_READER;                                                       \
 		(void)IS_WRITER;                                                       \
 		CODE;                                                                  \
-		return s;                                                              \
 	}                                                                          \
-	bitscpp::ByteWriter<icon7::ByteBuffer> &CLASS::__ByteStream_op(            \
-		bitscpp::ByteWriter<icon7::ByteBuffer> &s)                             \
+	void CLASS::serialize(            \
+		bitscpp::v2::ByteWriter_ByteBuffer &s)                             \
 	{                                                                          \
 		constexpr bool IS_READER = false;                                      \
 		constexpr bool IS_WRITER = true;                                       \
 		(void)IS_READER;                                                       \
 		(void)IS_WRITER;                                                       \
 		CODE;                                                                  \
-		return s;                                                              \
 	}
 
 #include "ForwardDeclarations.hpp"

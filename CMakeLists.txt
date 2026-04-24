@@ -17,6 +17,8 @@ if(ENABLE_LTO)
 	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
+include(./precompile_headers.cmake)
+
 include_directories(thirdparty/flecs/include)
 
 add_subdirectory(thirdparty/Collision3D)

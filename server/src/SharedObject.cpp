@@ -22,8 +22,8 @@ bool SharedObject::Open(const std::string &file)
 {
 	Close();
 	handle = LoadLibrary(file.c_str());
-	const int msgSize = 256 * 1024;
-	thread_local char msg[msgSize];
+	const int msgSize = 4 * 1024;
+	char msg[msgSize];
 	DWORD err = GetLastError();
 	if (err == 0) {
 		errorMessage = "";
