@@ -32,7 +32,7 @@ public:
 	std::atomic<uint32_t> peerState = 0;
 	uint64_t entityId = 0;
 
-	icon7::ByteBuffer storedEntityData;
+	icon7::ByteBufferWritable storedEntityData;
 
 	std::string nextRealm = "";
 	bool useNextRealmPosition = false;

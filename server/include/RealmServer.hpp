@@ -83,7 +83,7 @@ private:
 	void SetNextTickFotSavingData();
 
 public:
-	void Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId);
+	void Broadcast(icon7::ByteBufferReadable &buffer, uint64_t exceptEntityId);
 
 	template <typename... Args>
 	void BroadcastReliable(const std::string &functionName, Args &&...args);

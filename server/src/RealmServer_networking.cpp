@@ -12,6 +12,7 @@
 #include "../include/FileOperations.hpp"
 
 #include "../include/RealmServer.hpp"
+#include "icon7/ByteBuffer.hpp"
 
 void RealmServer::ConnectPeer(icon7::Peer *peer)
 {
@@ -28,7 +29,9 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entityId, ComponentPlayerConnectionPeer{peer->shared_from_this()});
 	data->entityId = entityId;
 
-	icon7::ByteReader reader(data->storedEntityData, 0);
+	bitscpp::v2::ByteReader reader(data->storedEntityData.data(), 0,
+			data->storedEntityData.size());
+// 	icon7::ByteReader reader(data->storedEntityData, 0);
 	if (!(data->storedEntityData.valid() &&
 		  data->storedEntityData.size() > 3) &&
 		(reader.has_any_more() == false || reader.is_valid() == false)) {
@@ -146,10 +149,7 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 		}
 
 		icon7::ByteWriter writer(std::move(data->storedEntityData));
-		if (writer.Buffer().valid() == false) {
-			writer.Buffer().Init(4096);
-		}
-		writer.Buffer().resize(0);
+		writer.Reinit(4064);
 		writer.op(data->nextRealm);
 		reg::Registry::Singleton().SerializePersistentEntity(this, entity,
 															 writer);
@@ -167,7 +167,7 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
 	}
 }
 
-void RealmServer::Broadcast(icon7::ByteBuffer &buffer, uint64_t exceptEntityId)
+void RealmServer::Broadcast(icon7::ByteBufferReadable &buffer, uint64_t exceptEntityId)
 {
 	for (auto it : peers) {
 		if (it.second != exceptEntityId) {

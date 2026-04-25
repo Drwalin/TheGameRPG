@@ -5,7 +5,7 @@
 
 #include "../../thirdparty/flecs/distr/flecs.h"
 
-#include "../../ICon7/include/icon7/ByteReader.hpp"
+#include "../../ICon7/bitscpp/include/bitscpp/ByteReader_v2.hpp"
 #include "../../ICon7/include/icon7/ByteWriter.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
 
@@ -31,7 +31,7 @@ public:
 
 	virtual void DeserializePersistentEntityComponent(
 		class Realm *realm, flecs::entity entity,
-		icon7::ByteReader &reader) const override
+		bitscpp::v2::ByteReader &reader) const override
 	{
 		T component;
 		reader.op(component);
@@ -70,7 +70,7 @@ public:
 
 	virtual void
 	DeserializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
-									   icon7::ByteReader &reader) const override
+									   bitscpp::v2::ByteReader &reader) const override
 	{
 		T component;
 		reader.op(component);

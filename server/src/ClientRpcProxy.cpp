@@ -3,6 +3,7 @@
 
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 #include "../../common/include/EntityComponents.hpp"
+#include "icon7/ByteBuffer.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 #include "../include/RealmServer.hpp"
@@ -223,7 +224,7 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 				icon7::Flags flags =
 					icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 				realm->rpc->FinalizeSerializeSend(writer, flags);
-				icon7::ByteBuffer buffer = std::move(writer.Buffer());
+				icon7::ByteBufferReadable buffer = std::move(writer.Buffer());
 				realm->Broadcast(buffer, 0);
 				written = 0;
 			}
@@ -232,7 +233,8 @@ void Broadcast_UpdateEntities(RealmServer *realm)
 		icon7::Flags flags =
 			icon7::FLAG_UNRELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 		realm->rpc->FinalizeSerializeSend(writer, flags);
-		realm->Broadcast(writer.Buffer(), 0);
+		icon7::ByteBufferReadable buffer = std::move(writer.Buffer());
+		realm->Broadcast(buffer, 0);
 	}
 }
 
@@ -287,7 +289,8 @@ void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 		icon7::Flags flags =
 			icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 		realm->rpc->FinalizeSerializeSend(writer, flags);
-		realm->Broadcast(writer.Buffer(), 0);
+		icon7::ByteBufferReadable buffer = std::move(writer.Buffer());
+		realm->Broadcast(buffer, 0);
 	}
 }
 

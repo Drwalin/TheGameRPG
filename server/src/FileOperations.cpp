@@ -5,11 +5,12 @@
 
 #include "../include/FileOperations.hpp"
 
-bool FileOperations::ReadFile(std::string filePath, icon7::ByteBuffer *buffer)
+bool FileOperations::ReadFile(std::string filePath, icon7::ByteBufferWritable *buffer)
 {
 	FILE *file = fopen(filePath.c_str(), "rb");
 	if (buffer->valid() == false) {
-		buffer->Init(4096);
+		buffer->clear();
+		buffer->reserve(4096);
 	}
 	if (file) {
 		const uint32_t COUNT = 4096;
@@ -32,7 +33,7 @@ bool FileOperations::ReadFile(std::string filePath, icon7::ByteBuffer *buffer)
 }
 
 bool FileOperations::WriteFile(std::string filePath,
-							   const icon7::ByteBuffer &buffer)
+							   const icon7::ByteBufferWritable &buffer)
 {
 	FILE *file = fopen(filePath.c_str(), "wb");
 	if (file) {

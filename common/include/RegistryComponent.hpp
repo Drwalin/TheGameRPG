@@ -28,14 +28,14 @@ public:
 	virtual void
 	DeserializePersistentEntityComponent(class Realm *realm,
 										 flecs::entity entity,
-										 icon7::ByteReader &reader) const = 0;
+										 bitscpp::v2::ByteReader &reader) const = 0;
 	virtual bool
 	SerializePersistentEntityComponent(class Realm *realm, flecs::entity entity,
 									   icon7::ByteWriter &writer) const = 0;
 
 	virtual void
 	DeserializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
-									   icon7::ByteReader &reader) const = 0;
+									   bitscpp::v2::ByteReader &reader) const = 0;
 	virtual bool
 	SerializeTemporalEntityComponent(class Realm *realm, flecs::entity entity,
 									 icon7::ByteWriter &writer) const = 0;
@@ -75,10 +75,10 @@ public:
 	}
 	bool DeserializePersistentEntityComponent(class Realm *realm,
 											  flecs::entity entity,
-											  icon7::ByteReader &reader);
+											  bitscpp::v2::ByteReader &reader);
 	void DeserializePersistentAllEntityComponents(class Realm *realm,
 												  flecs::entity entity,
-												  icon7::ByteReader &reader);
+												  bitscpp::v2::ByteReader &reader);
 	void SerializePersistentEntity(class Realm *realm, flecs::entity entity,
 								   icon7::ByteWriter &writer) const;
 
@@ -99,10 +99,10 @@ public:
 
 	bool DeserializeTemporalEntityComponent(class Realm *realm,
 											flecs::entity entity,
-											icon7::ByteReader &reader);
+											bitscpp::v2::ByteReader &reader);
 	void DeserializeTemporalAllEntityComponents(class Realm *realm,
 												flecs::entity entity,
-												icon7::ByteReader &reader);
+												bitscpp::v2::ByteReader &reader);
 
 	void SerializeTemporalEntity(class Realm *realm, flecs::entity entity,
 								 icon7::ByteWriter &writer) const;

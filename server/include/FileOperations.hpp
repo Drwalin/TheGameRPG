@@ -7,8 +7,9 @@
 class FileOperations
 {
 public:
-	static bool ReadFile(std::string filePath, icon7::ByteBuffer *buffer);
+	static bool ReadFile(std::string filePath,
+						 icon7::ByteBufferWritable *buffer);
 	static bool WriteFile(std::string filePath,
-						  const icon7::ByteBuffer &buffer);
+						  const icon7::ByteBufferWritable &buffer);
 	static bool FileExists(std::string filePath);
 };

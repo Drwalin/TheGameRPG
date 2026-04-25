@@ -24,11 +24,12 @@ inline void RealmServer::Broadcast(icon7::Flags flags,
 								   const std::string &functionName,
 								   Args &&...args)
 {
-	icon7::ByteBuffer buffer(1500);
+	icon7::ByteBufferWritable buffer(1500);
 	flags |= icon7::FLAGS_CALL_NO_FEEDBACK;
 	rpc->SerializeSend(buffer, flags, functionName,
 					   std::forward<Args>(args)...);
-	Broadcast(buffer, 0);
+	icon7::ByteBufferReadable _buffer = std::move(buffer);
+	Broadcast(_buffer, 0);
 }
 
 template <typename... Args>
@@ -52,9 +53,10 @@ inline void
 RealmServer::BroadcastExcept(uint64_t exceptEntityId, icon7::Flags flags,
 							 const std::string &functionName, Args &&...args)
 {
-	icon7::ByteBuffer buffer(1500);
+	icon7::ByteBufferWritable buffer(1500);
 	flags |= icon7::FLAGS_CALL_NO_FEEDBACK;
 	rpc->SerializeSend(buffer, flags, functionName,
 					   std::forward<Args>(args)...);
-	Broadcast(buffer, exceptEntityId);
+	icon7::ByteBufferReadable _buffer = std::move(buffer);
+	Broadcast(_buffer, exceptEntityId);
 }

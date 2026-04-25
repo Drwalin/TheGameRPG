@@ -52,11 +52,11 @@ bool RealmServer::LoadFromFile()
 	Tick startingTimerTick = {0};
 	bool isFromSavedState = false;
 	std::string fileName = GetReadFileName(&isFromSavedState);
-	icon7::ByteBuffer buffer;
+	icon7::ByteBufferWritable buffer;
 	if (FileOperations::ReadFile(fileName, &buffer)) {
 		LOG_INFO("Start loading realm: '%s'  (%s)", realmName.c_str(),
 				 fileName.c_str());
-		icon7::ByteReader reader(buffer, 0);
+		icon7::ByteReader reader(std::move(buffer), 0);
 		if (isFromSavedState) {
 			reader.op(startingTimerTick);
 		}
