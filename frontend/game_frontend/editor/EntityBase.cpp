@@ -119,7 +119,7 @@ void EntityBase::Serialize(icon7::ByteWriter &writer)
 	SerializeComponents(writer);
 	SerializeCollisions(writer);
 	SerializeGraphics(writer);
-	writer.op("");
+	writer.op(std::string(""));
 }
 
 void EntityBase::SerializeGraphics(icon7::ByteWriter &writer)

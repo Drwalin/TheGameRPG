@@ -34,13 +34,19 @@ public:
 		bitscpp::v2::ByteReader &reader) const override
 	{
 		T component;
+		LOG_INFO("Deserializing `%s` (reader %u, %s)", fullName.c_str(), reader.get_offset(), reader.is_valid() ? "valid" : "error");
 		reader.op(component);
+		LOG_INFO("After deserialized `%s` (reader %u, %s)", fullName.c_str(), reader.get_offset(), reader.is_valid() ? "valid" : "error");
 		if (reader.is_valid()) {
+			LOG_INFO("1");
 			if (callbackDeserializePersistent) {
+			LOG_INFO("2");
 				callbackDeserializePersistent(realm, entity, &component);
 			}
+			LOG_INFO("3");
 			entity.set<T>(component);
 		}
+		LOG_INFO("4");
 	}
 	virtual bool
 	SerializePersistentEntityComponent(class Realm *realm, flecs::entity entity,

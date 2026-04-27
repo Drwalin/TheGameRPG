@@ -61,16 +61,32 @@ bool RealmServer::LoadFromFile()
 			reader.op(startingTimerTick);
 		}
 		timer.Start(startingTimerTick, RealmServer::DEFAULT_TICK_DURATION);
-		while (reader.get_remaining_bytes() > 9) {
+		int objectsCount = 0;
+		while (reader.get_remaining_bytes() > 1) {
+			LOG_INFO("Valid");
 			uint64_t entityId = NewEntity();
 			flecs::entity entity = Entity(entityId);
+			const uint32_t offset = reader.get_offset();
+			LOG_INFO("Trying deserialization of an entity (reader %u / %u): %s",
+					reader.get_offset(),
+					reader.get_remaining_bytes(),
+					reader.is_valid() ? "valid" : "error");
 			reg::Registry::Singleton().DeserializePersistentAllEntityComponents(
 				this, entity, reader);
-			if (reader.is_valid() == false) {
+			if (reader.is_valid() == false || offset == reader.get_offset()) {
+				LOG_INFO("Ending deserialization of multiple entities (reader %u / %u): %s",
+						reader.get_offset(),
+						reader.get_remaining_bytes(),
+						reader.is_valid() ? "valid" : "error");
+				std::string next;
+				reader.op(next);
+				LOG_INFO("Next (%u): `%s`", reader.get_offset(), next.c_str());
 				RemoveEntity(entity);
 				break;
 			}
+			++objectsCount;
 		}
+		LOG_INFO("objectsCount = %i", objectsCount);
 		timer.Start(startingTimerTick, RealmServer::DEFAULT_TICK_DURATION);
 		LOG_INFO("Finished loading realm: '%s'", realmName.c_str());
 		return true;
