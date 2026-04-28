@@ -347,6 +347,7 @@ void Broadcast_PlayFX(RealmServer *realm, ComponentModelName modelName,
 {
 	// TODO: verify
 	realm->BroadcastReliable(ClientRpcFunctionNames::PlayFX, modelName,
-							 transform, timeStartPlaying, attachToEntityId);
+							 transform, timeStartPlaying, attachToEntityId,
+							 ttlMs);
 }
 } // namespace ClientRpcProxy
