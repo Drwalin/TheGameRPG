@@ -19,30 +19,12 @@ bool Registry::DeserializePersistentEntityComponent(class Realm *realm,
 													bitscpp::v2::ByteReader &reader)
 {
 	std::string n;
-	uint8_t peek = reader.get_buffer()[reader.get_offset()];
-	LOG_INFO("Trying deserialization of a component (reader %u / %u): %s ; next type: %u <- 0x%2.2X",
-			reader.get_offset(),
-			reader.get_remaining_bytes(),
-			reader.is_valid() ? "valid" : "error",
-			(uint32_t)reader.get_next_type(),
-			(uint32_t)peek
-			);
 	if (reader.is_next_string()) {
 		reader.op(n);
 	}
 	if (n == "") {
-		int64_t i = 69696969;
-	LOG_INFO("Trying deserialization of a component -- empty end of object (reader %u / %u): %s : %u ; int_instead_of_string: %li",
-			reader.get_offset(),
-			reader.get_remaining_bytes(),
-			reader.is_valid() ? "valid" : "error",
-			reader.get_errors(),
-			i
-			);
-		LOG_INFO("Empty end of object");
 		return false;
 	}
-	LOG_INFO("Trying deserialize (reader %u): %s", reader.get_offset(), n.c_str());
 	auto it = nameToComponent.find(n);
 	if (it == nameToComponent.end()) {
 		LOG_FATAL("Trying to deserialize non existing component with name: %s",
@@ -56,10 +38,7 @@ bool Registry::DeserializePersistentEntityComponent(class Realm *realm,
 void Registry::DeserializePersistentAllEntityComponents(
 	class Realm *realm, flecs::entity entity, bitscpp::v2::ByteReader &reader)
 {
-	int i=0;
 	while (reader.get_remaining_bytes() > 1) {
-		++i;
-		LOG_INFO("i = %i", i);
 		if (DeserializePersistentEntityComponent(realm, entity, reader) ==
 			false) {
 			break;
