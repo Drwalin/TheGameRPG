@@ -99,11 +99,11 @@ void ComponentTrigger::Tick(int64_t entityId, RealmServer *realm)
 	}
 }
 
-void ComponentOnUse::serialize(bitscpp::v2::ByteReader &s)
+void ComponentOnUse::serialize(icon7::ByteReaderBase &s)
 {
 	entry->Deserialize(&entry, s);
 }
-void ComponentOnUse::serialize(bitscpp::v2::ByteWriter_ByteBuffer &s)
+void ComponentOnUse::serialize(icon7::ByteWriterBase &s)
 {
 	entry->Serialize(&entry, s);
 }
@@ -119,22 +119,22 @@ BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(ComponentTeleport, {
 	s.op(position);
 });
 
-inline void ComponentTrigger::serialize(bitscpp::v2::ByteReader &s)
+inline void ComponentTrigger::serialize(icon7::ByteReaderBase &s)
 {
 	onEnter->Deserialize(&onEnter, s);
 	onExit->Deserialize(&onExit, s);
 }
-inline void ComponentTrigger::serialize(bitscpp::v2::ByteWriter_ByteBuffer &s)
+inline void ComponentTrigger::serialize(icon7::ByteWriterBase &s) const
 {
 	onEnter->Serialize(&onEnter, s);
 	onExit->Serialize(&onExit, s);
 }
 
-inline void ComponentAITick::serialize(bitscpp::v2::ByteReader &s)
+inline void ComponentAITick::serialize(icon7::ByteReaderBase &s)
 {
 	aiTick->Deserialize(&aiTick, s);
 }
-inline void ComponentAITick::serialize(bitscpp::v2::ByteWriter_ByteBuffer &s)
+inline void ComponentAITick::serialize(icon7::ByteWriterBase &s) const
 {
 	aiTick->Serialize(&aiTick, s);
 }

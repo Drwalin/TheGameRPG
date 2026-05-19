@@ -173,9 +173,9 @@ void RealmServer::RegisterObservers()
 					 const ComponentMovementState &state,
 					 ComponentPlayerConnectionPeer &peer) {
 			if (currentlyUpdatingPlayerPeerEntityMovement == false) {
-				if (peer.peer.get() != nullptr) {
+				if (peer.peer != nullptr) {
 					ClientRpcProxy::SpawnEntities_ForPeerByIdsVector(
-						this, peer.peer.get(), {entity.id()});
+						this, peer.peer->peerHandle, {entity.id()});
 				}
 			}
 		});

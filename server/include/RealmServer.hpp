@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <thread>
 
 #include "../../ICon7/include/icon7/Flags.hpp"
 #include "../../ICon7/include/icon7/Forward.hpp"
 #include "../../ICon7/include/icon7/CommandExecutionQueue.hpp"
+#include "../../ICon7/include/icon7/MapPeerHandle.hpp"
 
 #include "PeerData.hpp"
 
@@ -35,10 +37,14 @@ public:
 	void FlushSavingData();
 	void WaitForFlushedData();
 
-	void ConnectPeer(icon7::Peer *peer);
-	void DisconnectPeer(icon7::Peer *peer);
+	void ConnectPeer(icon7::PeerHandle peer);
+	void DisconnectPeer(icon7::PeerHandle peer);
 
 	void ExecuteOnRealmThread(icon7::CommandHandle<icon7::Command> &&command);
+
+	bool IsRunningOnCurrentThread() const;
+	void SetCurrentExecutingThread();
+	void ResetCurrentExecutingThread();
 
 	virtual ComponentMovementState ExecuteMovementUpdate(uint64_t entityId) override;
 
@@ -69,17 +75,17 @@ public: // Entity Actions
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
-	void InteractInLineOfSight(icon7::Peer *peer,
+	void InteractInLineOfSight(icon7::PeerHandle peer,
 							   ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
-	void Attack(icon7::Peer *peer,
+	void Attack(icon7::PeerHandle peer,
 				ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
 private:
-	void StorePlayerDataInPeerAndFile(icon7::Peer *peer);
+	void StorePlayerDataInPeerAndFile(icon7::PeerHandle peer);
 	void SetNextTickFotSavingData();
 
 public:
@@ -110,7 +116,13 @@ public:
 	icon7::RPCEnvironment *rpc;
 	icon7::CommandExecutionQueue executionQueue;
 
-	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> peers;
+	struct PeerEntryData {
+		uint64_t entity;
+		std::shared_ptr<PeerData> data;
+	};
+	icon7::MapPeerHandle<PeerEntryData> peersData_;
+// 	std::unordered_map<icon7::PeerHandle, uint64_t> peers;
+// 	std::unordered_map<icon7::PeerHandle, std::shared_ptr<PeerData>> peersData;
 
 	Tick sendEntitiesToClientsTimer = {0};
 	Tick sendUpdateDeltaTicks = {2};
@@ -130,6 +142,8 @@ private:
 	bool queueDestroy = false;
 
 	Tick nextTickToSaveAllDataToFiles = {0};
+
+	std::thread::id currentExecutingThreadId;
 
 public:
 	bool currentlyUpdatingPlayerPeerEntityMovement = false;

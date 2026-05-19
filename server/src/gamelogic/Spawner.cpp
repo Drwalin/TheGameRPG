@@ -1,12 +1,9 @@
 #include <random>
 
-#include "../../ICon7/bitscpp/include/bitscpp/ByteReader_v2.hpp"
-
 #include "../../../common/include/RegistryComponent.hpp"
 
 #include "../../include/RealmServer.hpp"
 #include "../../include/GameLogic.hpp"
-#include "icon7/ByteBuffer.hpp"
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643
@@ -62,7 +59,7 @@ static int64_t Spawner(RealmServer *realm, int64_t scheduledTick,
 		icon7::ByteBufferWritable buffer(spawner.prefabsOffset[i] + 256);
 		buffer.append(spawner.prefabsData.data() + spawner.prefabsOffset[i],
 					  spawner.prefabsOffset[i + 1] - spawner.prefabsOffset[i]);
-		bitscpp::v2::ByteReader reader(buffer.data(), 0, buffer.size());
+		icon7::ByteReaderBase reader(buffer.data(), 0, buffer.size());
 
 		flecs::entity spawnedEntity = realm->Entity(realm->NewEntity());
 

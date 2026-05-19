@@ -135,7 +135,7 @@ void RealmServer::SavePlayerEntityToFile(flecs::entity entity)
 				"ComponentPlayerConnectionPeer of entity %lu has nullptr value",
 				entity);
 		} else {
-			StorePlayerDataInPeerAndFile(peer->peer.get());
+			StorePlayerDataInPeerAndFile(peer->peer->peerHandle);
 		}
 	} else {
 		LOG_FATAL(

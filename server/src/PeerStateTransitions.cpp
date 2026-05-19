@@ -15,7 +15,7 @@
 namespace peer_transitions
 {
 icon7::CoroutineSchedulable OnReceivedLogin(ServerCore *serverCore,
-											icon7::Peer *peer,
+											icon7::PeerHandle peer,
 											const std::string &username)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));

@@ -1,7 +1,7 @@
-#include "../../thirdparty/flecs/distr/flecs.h"
+#include "../../../thirdparty/flecs/distr/flecs.h"
 
-#include "../../ICon7/include/icon7/Debug.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../../ICon7/include/icon7/Debug.hpp"
+#include "../../../ICon7/include/icon7/Peer.hpp"
 
 #include "../../include/ComponentCallbackRegistry.hpp"
 #include "../../include/EntityGameComponents.hpp"
@@ -33,7 +33,7 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 				LOG_INFO("Teleport %s into %s -> {%.1f %.1f %.1f}",
 						 data->userName.c_str(), tp->realmName.c_str(), p.x,
 						 p.y, p.z);
-				realm->serverCore->ConnectPeerToRealm(peer.get());
+				realm->serverCore->ConnectPeerToRealm(peer);
 			} else {
 				LOG_ERROR("Peer 0x%p does not have initialised userData",
 						  peer.get());

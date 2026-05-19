@@ -10,6 +10,6 @@ namespace peer_transitions
 {
 // TODO: Rename to something better, i.e.: InitiateConnectingToRealm
 icon7::CoroutineSchedulable OnReceivedLogin(ServerCore *serverCore,
-											icon7::Peer *peer,
+											icon7::PeerHandle peer,
 											const std::string &username);
 } // namespace peer_transitions

@@ -1,8 +1,8 @@
 #include "../../ICon7/include/icon7/Command.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
-#include "../../ICon7/include/icon7/Host.hpp"
-#include "../../ICon7/include/icon7/Loop.hpp"
+#include "../../ICon7/include/icon7/Peer.hpp" // IWYU pragma: keep
+#include "../../ICon7/include/icon7/Host.hpp" // IWYU pragma: keep
+#include "../../ICon7/include/icon7/Loop.hpp" // IWYU pragma: keep
 #include "../../ICon7/include/icon7/Flags.hpp"
 
 #include "../include/FunctorCommands.hpp"
@@ -19,9 +19,19 @@ void ServerCore::CreateRealm(std::string realmName)
 	spawnRealm = realmName;
 }
 
-void ServerCore::Disconnect(icon7::Peer *peer)
+void ServerCore::Disconnect(icon7::PeerHandle peer)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	LOG_WARN("TODO: verify what to do here");
+	std::shared_ptr<icon7::Peer> p = peer.GetSharedPeer();
+	if (p == nullptr) {
+		LOG_WARN("Disconnecting empty peer");
+		return;
+	}
+	std::shared_ptr<PeerData> data = std::static_pointer_cast<PeerData>(p->sharedUserPointer);
+	if (data == nullptr) {
+		LOG_WARN("peer->sharedUserPointer == nullptr ; when trying to disconnect it");
+		return;
+	}
 	std::shared_ptr<RealmServer> realm = data->realm.lock();
 	if (realm) {
 		realm->DisconnectPeer(peer);
@@ -69,20 +79,26 @@ void ServerCore::RunNetworkLoopAsync()
 			+[]() { LOG_INFO("Networking thread started"); }));
 }
 
-void ServerCore::_OnPeerConnect(icon7::Peer *peer)
+void ServerCore::_OnPeerConnect(icon7::PeerHandle peer)
 {
-	PeerData *data = new PeerData;
-	data->peer = peer->weak_from_this();
+	std::shared_ptr<PeerData> data = std::make_shared<PeerData>();
+	data->peer = peer.GetSharedPeer();
+	if (data->peer == nullptr) {
+		LOG_ERROR("Connected peer is nullptr");
+		return;
+	}
+	data->peerHandle = peer;
 	data->realm.reset();
 	data->entityId = 0;
 	data->userName = "";
 	data->peerState = WAITING_FOR_USERNAME;
-	peer->userPointer = data;
+	data->peer->sharedUserPointer = data;
+	peerHandleToData.insert({peer, data});
 }
 
-void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
+void ServerCore::_OnPeerDisconnect(icon7::PeerHandle peer)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	std::shared_ptr<PeerData> &data = peerHandleToData[peer];
 	auto realm = data->realm.lock();
 	if (realm) {
 
@@ -97,13 +113,27 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 			{
 				auto r = realmServer.lock();
 				if (r) {
-					r->DisconnectPeer(peer.get());
-					PeerData *data = ((PeerData *)(peer->userPointer));
-					data->peer.reset();
-					r->serverCore->usernameToPeer.erase(data->userName);
-					data->userName = "";
-					delete data;
-					peer->userPointer = nullptr;
+					r->DisconnectPeer(peer);
+					
+					class CommandExecutePeerOnDisconnectAfterDisconnectingFromRealm
+						: public icon7::commands::ExecuteOnPeer
+					{
+					public:
+						CommandExecutePeerOnDisconnectAfterDisconnectingFromRealm() = default;
+						~CommandExecutePeerOnDisconnectAfterDisconnectingFromRealm() = default;
+						ServerCore *serverCore = nullptr;
+						virtual void Execute() override
+						{
+							assert(serverCore);
+							serverCore->_OnPeerDisconnect(peer);
+						}
+					};
+
+					auto com =
+						icon7::CommandHandle<CommandExecutePeerOnDisconnectAfterDisconnectingFromRealm>::Create();
+					com->peer = peer;
+					com->serverCore = r->serverCore;
+					r->serverCore->loop->EnqueueCommand(std::move(com));
 				} else {
 					LOG_FATAL("Realm object already destroyed");
 				}
@@ -111,19 +141,23 @@ void ServerCore::_OnPeerDisconnect(icon7::Peer *peer)
 		};
 		auto com =
 			icon7::CommandHandle<CommandExecutePeerDisconnectOnRealm>::Create();
-		com->peer = peer->shared_from_this();
+		com->peer = peer;
 		com->realmServer = realm;
 		realm->ExecuteOnRealmThread(std::move(com));
 	} else {
-		delete data;
-		peer->userPointer = nullptr;
+		peerHandleToData.erase(peer);
+		data->peer->sharedUserPointer = nullptr;
+		data->peer = nullptr;
+		data->peerHandle = {};
+		usernameToPeer.erase(data->userName);
+		data->userName = "";
 	}
 }
 
 void ServerCore::RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
-	icon7::Peer *peer)
+	icon7::PeerHandle peer)
 {
-	if (peer == nullptr) {
+	if (!peer) {
 		LOG_FATAL("peer == nullptr");
 		return;
 	}
@@ -135,7 +169,7 @@ void ServerCore::RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
 		~DisconnectDeadPlayer() = default;
 		virtual void Execute() override
 		{
-			PeerData *data = ((PeerData *)(peer->userPointer));
+			std::shared_ptr<PeerData> &data = serverCore->peerHandleToData[peer];
 			if (data) {
 				serverCore->usernameToPeer.erase(data->userName);
 				data->userName = "";
@@ -146,7 +180,7 @@ void ServerCore::RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
 		}
 	};
 	auto com = icon7::CommandHandle<DisconnectDeadPlayer>::Create();
-	com->peer = peer->shared_from_this();
+	com->peer = peer;
 	com->serverCore = this;
 	host->GetCommandExecutionQueue()->EnqueueCommand(std::move(com));
 }

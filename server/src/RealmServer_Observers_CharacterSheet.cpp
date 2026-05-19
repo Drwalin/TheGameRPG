@@ -74,14 +74,16 @@ void RealmServer::RegisterObservers_CharacterSheet()
 					if (data == nullptr) {
 						LOG_ERROR("peer->userPointer is nullptr");
 					} else {
-						peers.erase(peer.peer);
+						LOG_INFO("TODO: removing peers from realm should not be here");
+						peers.erase(peer.peer->peerHandle);
+						peersData.erase(peer.peer->peerHandle);
 						data->realm.reset();
 						data->storedEntityData.clear();
 					}
 				}
 
 				serverCore->RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(
-					peer.peer.get());
+					peer.peer->peerHandle);
 
 				entity.destruct();
 			}

@@ -11,23 +11,23 @@ class RealmServer;
 
 namespace ClientRpcProxy
 {
-void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId);
+void JoinRealm(RealmServer *realm, icon7::PeerHandle peer, uint64_t playerEntityId);
 
-void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
+void SetPlayerEntityId(RealmServer *realm, icon7::PeerHandle peer,
 					   uint64_t playerEntityId);
-void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
+void Pong(icon7::PeerHandle peer, icon7::Flags flags, int64_t data1, int64_t data2,
 		  int64_t clientLocalTime);
-void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity);
+void SetGravity(RealmServer *realm, icon7::PeerHandle peer, float gravity);
 
-void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
+void DeleteEntity_ForPeer(RealmServer *realm, icon7::PeerHandle peer,
 						  uint64_t entityId);
 
-void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
-void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+void SpawnEntities_ForPeer(RealmServer *realm, icon7::PeerHandle peer);
+void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::PeerHandle peer,
 								icon7::ByteReader &reader);
-void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::PeerHandle peer,
 									  const std::vector<uint64_t> &ids);
-void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer);
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::PeerHandle peer);
 
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
 						const std::string &modelName, ComponentShape shape);
@@ -40,14 +40,14 @@ void Broadcast_SpawnEntity(RealmServer *realm, uint64_t entityId,
 void Broadcast_UpdateEntities(RealmServer *realm);
 void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId);
 
-void LoginSuccessfull(icon7::Peer *peer);
-void LoginFailed(icon7::Peer *peer, const std::string &reason);
+void LoginSuccessfull(icon7::PeerHandle peer);
+void LoginFailed(icon7::PeerHandle peer, const std::string &reason);
 
 void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
 								   const ComponentStaticTransform &transform,
 								   const ComponentModelName &model,
 								   const ComponentCollisionShape &shape);
-void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer);
+void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::PeerHandle peer);
 
 void GenericComponentUpdate_Start(RealmServer *realm,
 								  icon7::ByteWriter *writer);
@@ -69,7 +69,7 @@ void GenericComponentUpdate_Update(RealmServer *realm,
 	(reg::Registry::SerializeTemporal<TArgs>(realm, components, *writer), ...);
 	writer->op("");
 }
-void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
+void GenericComponentUpdate_Finish(RealmServer *realm, icon7::PeerHandle peer,
 								   icon7::ByteWriter *writer);
 
 void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId);

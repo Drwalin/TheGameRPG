@@ -134,7 +134,7 @@ void RealmServer::Attack(uint64_t instigatorId,
 	}
 }
 
-void RealmServer::Attack(icon7::Peer *peer,
+void RealmServer::Attack(icon7::PeerHandle peer,
 						 ComponentMovementState state,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)

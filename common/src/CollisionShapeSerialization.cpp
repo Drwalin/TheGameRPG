@@ -2,10 +2,9 @@
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_Primitives.hpp"
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_HeightMap.hpp"
 #include "../../thirdparty/Collision3D/include/collision3d/CollisionShapes_HeightMapHeader.hpp"
-#include "../../ICon7/include/icon7/ByteReader.hpp"
-#include "../../ICon7/include/icon7/ByteWriter.hpp"
 
-#include "../../ICon7/include/icon7/ByteBuffer.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp" // IWYU pragma: export
+#include "../../ICon7/include/icon7/ByteWriter.hpp" // IWYU pragma: export
 #include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/GlmSerialization.hpp"
@@ -18,60 +17,60 @@ namespace bitscpp
 {
 namespace v2
 {
-void serialize(bitscpp::v2::ByteReader &s, Rotation &rot) { s.op(rot.value); }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const Rotation &rot)
+void serialize(icon7::ByteReaderBase &s, Rotation &rot) { s.op(rot.value); }
+void serialize(icon7::ByteWriterBase &s, const Rotation &rot)
 {
 	s.op(rot.value);
 }
 
-void serialize(bitscpp::v2::ByteReader &s, Transform &trans)
+void serialize(icon7::ByteReaderBase &s, Transform &trans)
 {
 	s.op(trans.pos);
 	s.op(trans.rot);
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const Transform &trans)
+void serialize(icon7::ByteWriterBase &s, const Transform &trans)
 {
 	s.op(trans.pos);
 	s.op(trans.rot);
 }
 
-void serialize(bitscpp::v2::ByteReader &s, VertBox &shape)
+void serialize(icon7::ByteReaderBase &s, VertBox &shape)
 {
 	s.op(shape.halfExtents);
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const VertBox &shape)
+void serialize(icon7::ByteWriterBase &s, const VertBox &shape)
 {
 	s.op(shape.halfExtents);
 }
 
-void serialize(bitscpp::v2::ByteReader &s, Cylinder &shape)
+void serialize(icon7::ByteReaderBase &s, Cylinder &shape)
 {
 	s.op(shape.height);
 	s.op(shape.radius);
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const Cylinder &shape)
+void serialize(icon7::ByteWriterBase &s, const Cylinder &shape)
 {
 	s.op(shape.height);
 	s.op(shape.radius);
 }
 
-void serialize(bitscpp::v2::ByteReader &s, Sphere &shape)
+void serialize(icon7::ByteReaderBase &s, Sphere &shape)
 {
 	s.op(shape.radius);
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const Sphere &shape)
+void serialize(icon7::ByteWriterBase &s, const Sphere &shape)
 {
 	s.op(shape.radius);
 }
 
-void serialize(bitscpp::v2::ByteReader &s, RampRectangle &shape)
+void serialize(icon7::ByteReaderBase &s, RampRectangle &shape)
 {
 	s.op(shape.halfDepth);
 	s.op(shape.halfThickness);
 	s.op(shape.halfWidth);
 	s.op(shape.halfHeightSkewness);
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s,
+void serialize(icon7::ByteWriterBase &s,
 			   const RampRectangle &shape)
 {
 	s.op(shape.halfDepth);
@@ -85,7 +84,7 @@ void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s,
 		s.op(shape.NAME);                                                      \
 		return;
 
-void serialize(bitscpp::v2::ByteReader &s, AnyPrimitive &shape)
+void serialize(icon7::ByteReaderBase &s, AnyPrimitive &shape)
 {
 	shape.~AnyPrimitive();
 	s.op(*(uint8_t *)&shape.type);
@@ -99,7 +98,7 @@ void serialize(bitscpp::v2::ByteReader &s, AnyPrimitive &shape)
 		}
 	}
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const AnyPrimitive &shape)
+void serialize(icon7::ByteWriterBase &s, const AnyPrimitive &shape)
 {
 	s.op(*(const uint8_t *)&shape.type);
 	if (shape.type != AnyPrimitive::INVALID) {
@@ -115,7 +114,7 @@ void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const AnyPrimitive &shape)
 
 #undef MACRO
 
-void serialize(bitscpp::v2::ByteReader &s, CompoundPrimitive &shape)
+void serialize(icon7::ByteReaderBase &s, CompoundPrimitive &shape)
 {
 	int32_t size;
 	s.op(size);
@@ -124,7 +123,7 @@ void serialize(bitscpp::v2::ByteReader &s, CompoundPrimitive &shape)
 		s.op(shape.primitives[i]);
 	}
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s,
+void serialize(icon7::ByteWriterBase &s,
 			   const CompoundPrimitive &shape)
 {
 	int32_t size = shape.primitives.size;
@@ -134,7 +133,7 @@ void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s,
 	}
 }
 
-void serialize(bitscpp::v2::ByteReader &s, HeightMap &shape)
+void serialize(icon7::ByteReaderBase &s, HeightMap &shape)
 {
 	int w, h;
 	s.op(w);
@@ -155,7 +154,7 @@ void serialize(bitscpp::v2::ByteReader &s, HeightMap &shape)
 		}
 	}
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const HeightMap &shape)
+void serialize(icon7::ByteWriterBase &s, const HeightMap &shape)
 {
 	int w = 0, h = 0;
 	if (shape.header == nullptr) {
@@ -184,7 +183,7 @@ void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const HeightMap &shape)
 		s.op(shape.NAME);                                                      \
 		return;
 
-void serialize(bitscpp::v2::ByteReader &s, AnyShape &shape)
+void serialize(icon7::ByteReaderBase &s, AnyShape &shape)
 {
 	shape.~AnyShape();
 	s.op(*(uint8_t *)&shape.type);
@@ -200,7 +199,7 @@ void serialize(bitscpp::v2::ByteReader &s, AnyShape &shape)
 		}
 	}
 }
-void serialize(bitscpp::v2::ByteWriter_ByteBuffer &s, const AnyShape &shape)
+void serialize(icon7::ByteWriterBase &s, const AnyShape &shape)
 {
 	s.op(*(const uint8_t *)&shape.type);
 	if (shape.type != AnyShape::INVALID) {

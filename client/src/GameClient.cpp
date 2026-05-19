@@ -111,8 +111,7 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 	DisconnectRealmPeer();
 
 	struct X {
-		std::shared_ptr<icon7::Peer> sp;
-		std::atomic<icon7::Peer *> rp = nullptr;
+		std::atomic<icon7::PeerHandle> rp = {};
 		std::atomic<int> s = 0;
 	};
 
@@ -125,8 +124,7 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 		virtual void Execute() override
 		{
 			if (peer) {
-				v->sp = peer->shared_from_this();
-				v->rp.store(peer.get());
+				v->rp.store(peer);
 				v->s.store(1);
 			} else {
 				v->s.store(-1);
@@ -146,11 +144,11 @@ bool GameClient::ConnectToServer(const std::string &ip, uint16_t port)
 		}
 		icon7::time::Sleep(icon7::time::milliseconds(10));
 	}
-	if (state->rp.load() == nullptr) {
+	if (!state->rp.load()) {
 		return false;
 	}
 
-	peer = state->sp;
+	peer = state->rp.load().GetSharedPeer();
 	return true;
 }
 

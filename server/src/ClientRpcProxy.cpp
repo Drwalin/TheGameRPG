@@ -3,7 +3,7 @@
 
 #include "../../common/include/ClientRpcFunctionNames.hpp"
 #include "../../common/include/EntityComponents.hpp"
-#include "icon7/ByteBuffer.hpp"
+#include "../../ICon7/include/icon7/ByteBuffer.hpp"
 
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 #include "../include/RealmServer.hpp"
@@ -13,26 +13,31 @@
 
 namespace ClientRpcProxy
 {
-void JoinRealm(RealmServer *realm, icon7::Peer *peer, uint64_t playerEntityId)
+void JoinRealm(RealmServer *realm, icon7::PeerHandle peer, uint64_t playerEntityId)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::JoinRealm, realm->realmName,
 					 realm->timer.currentTick, playerEntityId);
 }
 
-void SetPlayerEntityId(RealmServer *realm, icon7::Peer *peer,
+void SetPlayerEntityId(RealmServer *realm, icon7::PeerHandle peer,
 					   uint64_t playerEntityId)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::SetPlayerEntityId, playerEntityId);
 }
 
-void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
+void Pong(icon7::PeerHandle peer, icon7::Flags flags, int64_t data1, int64_t data2,
 		  int64_t clientLocalTime)
 {
 	// TODO: verify and correct this behavior and implement both ways ping
 	//       testing
-	PeerData *peerData = ((PeerData *)(peer->userPointer));
+	auto shared = peer.GetSharedPeer();
+	if (shared == nullptr) {
+		LOG_ERROR("Received pong request from empty peer: %u:%u", peer.id, peer.version);
+		return;
+	}
+	PeerData *peerData = ((PeerData *)(shared->userPointer));
 	Tick currentTick = {0};
 	int64_t diffTickStartNs = 0;
 	if (peerData) {
@@ -44,25 +49,25 @@ void Pong(icon7::Peer *peer, icon7::Flags flags, int64_t data1, int64_t data2,
 		}
 	}
 
-	peer->host->GetRpcEnvironment()->Send(
+	icon7::RPCEnvironment::Send(
 		peer, flags, ClientRpcFunctionNames::Pong, data1, data2, currentTick,
 		diffTickStartNs, clientLocalTime);
 }
 
-void SetGravity(RealmServer *realm, icon7::Peer *peer, float gravity)
+void SetGravity(RealmServer *realm, icon7::PeerHandle peer, float gravity)
 {
 	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::SetGravity, gravity);
 }
 
-void DeleteEntity_ForPeer(RealmServer *realm, icon7::Peer *peer,
+void DeleteEntity_ForPeer(RealmServer *realm, icon7::PeerHandle peer,
 						  uint64_t entityId)
 {
-	realm->rpc->Send(peer, icon7::FLAG_RELIABLE,
+	icon7::RPCEnvironment::Send(peer, icon7::FLAG_RELIABLE,
 					 ClientRpcFunctionNames::DeleteEntities, entityId);
 }
 
-void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
+void SpawnEntities_ForPeer(RealmServer *realm, icon7::PeerHandle peer)
 {
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
@@ -82,14 +87,14 @@ void SpawnEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
 		});
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	realm->rpc->FinalizeSerializeSend(writer, flags);
-	peer->Send(std::move(writer.Buffer()));
+	icon7::Peer::Send(peer, std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
+void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::PeerHandle peer,
 								icon7::ByteReader &reader)
 {
 	icon7::ByteWriter writer(1000);
-	realm->rpc->InitializeSerializeSend(writer,
+	icon7::RPCEnvironment::InitializeSerializeSend(writer,
 										ClientRpcFunctionNames::SpawnEntities);
 	while (reader.get_remaining_bytes() >= 8) {
 		uint64_t entityId = 0;
@@ -115,15 +120,15 @@ void SpawnEntities_ForPeerByIds(RealmServer *realm, icon7::Peer *peer,
 		}
 	}
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
-	realm->rpc->FinalizeSerializeSend(writer, flags);
-	peer->Send(std::move(writer.Buffer()));
+	icon7::RPCEnvironment::FinalizeSerializeSend(writer, flags);
+	icon7::Peer::Send(peer, std::move(writer.Buffer()));
 }
 
-void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
+void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::PeerHandle peer,
 									  const std::vector<uint64_t> &ids)
 {
 	icon7::ByteWriter writer(1000);
-	realm->rpc->InitializeSerializeSend(writer,
+	icon7::RPCEnvironment::InitializeSerializeSend(writer,
 										ClientRpcFunctionNames::SpawnEntities);
 	for (uint64_t entityId : ids) {
 		flecs::entity entity = realm->Entity(entityId);
@@ -147,16 +152,21 @@ void SpawnEntities_ForPeerByIdsVector(RealmServer *realm, icon7::Peer *peer,
 		}
 	}
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
-	realm->rpc->FinalizeSerializeSend(writer, flags);
-	peer->Send(std::move(writer.Buffer()));
+	icon7::RPCEnvironment::FinalizeSerializeSend(writer, flags);
+	icon7::Peer::Send(peer, std::move(writer.Buffer()));
 }
 
-void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::Peer *peer)
+void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::PeerHandle peer)
 {
+	auto shared = peer.GetSharedPeer();
+	if (shared == nullptr) {
+		LOG_ERROR("Spawning entity for empty peer: %u:%u", peer.id, peer.version);
+		return;
+	}
+	PeerData *data = ((PeerData *)(shared->userPointer));
 	icon7::ByteWriter writer(1000);
 	realm->rpc->InitializeSerializeSend(writer,
 										ClientRpcFunctionNames::SpawnEntities);
-	PeerData *data = ((PeerData *)(peer->userPointer));
 	uint64_t entityId = data->entityId;
 	flecs::entity entity = realm->Entity(entityId);
 	if (entity.is_alive()) {
@@ -243,14 +253,14 @@ void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId)
 	realm->BroadcastReliable(ClientRpcFunctionNames::DeleteEntities, entityId);
 }
 
-void LoginSuccessfull(icon7::Peer *peer)
+void LoginSuccessfull(icon7::PeerHandle peer)
 {
 	peer->host->GetRpcEnvironment()->Send(
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 		ClientRpcFunctionNames::LoginSuccessfull);
 }
 
-void LoginFailed(icon7::Peer *peer, const std::string &reason)
+void LoginFailed(icon7::PeerHandle peer, const std::string &reason)
 {
 	peer->host->GetRpcEnvironment()->Send(
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
@@ -269,7 +279,7 @@ void Broadcast_SpawnStaticEntities(RealmServer *realm, uint64_t entityId,
 							 entityId, transform, model, shape);
 }
 
-void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::Peer *peer)
+void SpawnStaticEntities_ForPeer(RealmServer *realm, icon7::PeerHandle peer)
 {
 	icon7::ByteWriter writer(1500);
 	realm->rpc->InitializeSerializeSend(
@@ -300,7 +310,7 @@ void GenericComponentUpdate_Start(RealmServer *realm, icon7::ByteWriter *writer)
 		*writer, ClientRpcFunctionNames::GenericComponentUpdate);
 }
 
-void GenericComponentUpdate_Finish(RealmServer *realm, icon7::Peer *peer,
+void GenericComponentUpdate_Finish(RealmServer *realm, icon7::PeerHandle peer,
 								   icon7::ByteWriter *writer)
 {
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;

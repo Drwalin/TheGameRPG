@@ -1,5 +1,5 @@
-#include "../../ICon7/bitscpp/include/bitscpp/ByteReader_v2.hpp"
 #include "../../ICon7/include/icon7/ByteWriter.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
 
 #include "../include/RegistryComponent.hpp"
@@ -16,7 +16,7 @@ Registry &Registry::Singleton()
 
 bool Registry::DeserializePersistentEntityComponent(class Realm *realm,
 													flecs::entity entity,
-													bitscpp::v2::ByteReader &reader)
+													icon7::ByteReaderBase &reader)
 {
 	std::string n;
 	if (reader.is_next_string()) {
@@ -36,7 +36,7 @@ bool Registry::DeserializePersistentEntityComponent(class Realm *realm,
 }
 
 void Registry::DeserializePersistentAllEntityComponents(
-	class Realm *realm, flecs::entity entity, bitscpp::v2::ByteReader &reader)
+	class Realm *realm, flecs::entity entity, icon7::ByteReaderBase &reader)
 {
 	while (reader.get_remaining_bytes() > 1) {
 		if (DeserializePersistentEntityComponent(realm, entity, reader) ==
@@ -74,7 +74,7 @@ void Registry::SerializePersistentEntity(class Realm *realm,
 
 bool Registry::DeserializeTemporalEntityComponent(class Realm *realm,
 												  flecs::entity entity,
-												  bitscpp::v2::ByteReader &reader)
+												  icon7::ByteReaderBase &reader)
 {
 	std::string n;
 	reader.op(n);
@@ -93,7 +93,7 @@ bool Registry::DeserializeTemporalEntityComponent(class Realm *realm,
 
 void Registry::DeserializeTemporalAllEntityComponents(class Realm *realm,
 													  flecs::entity entity,
-													  bitscpp::v2::ByteReader &reader)
+													  icon7::ByteReaderBase &reader)
 {
 	while (reader.get_remaining_bytes() > 1) {
 		if (DeserializeTemporalEntityComponent(realm, entity, reader) ==

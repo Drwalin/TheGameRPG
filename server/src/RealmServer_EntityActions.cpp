@@ -64,7 +64,7 @@ void RealmServer::InteractInLineOfSight(
 }
 
 void RealmServer::InteractInLineOfSight(
-	icon7::Peer *peer, ComponentMovementState state,
+	icon7::PeerHandle peer, ComponentMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));

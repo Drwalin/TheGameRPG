@@ -13,13 +13,11 @@
 	inline STRUCT &operator=(STRUCT &&o) { CODE return *this; }
 
 #define BITSCPP_BYTESTREAM_OP_DECLARATIONS()                                   \
-	void serialize(bitscpp::v2::ByteReader &s);  \
-	void serialize(                   \
-		bitscpp::v2::ByteWriter_ByteBuffer &s);
+	void serialize(icon7::ByteReaderBase &s);                                  \
+	void serialize(icon7::ByteWriterBase &s) const;
 
 #define BITSCPP_BYTESTREAM_OP_SYMMETRIC_DEFINITIONS(CLASS, CODE)               \
-	void CLASS::serialize(                         \
-		bitscpp::v2::ByteReader &s)                                          \
+	void CLASS::serialize(icon7::ByteReaderBase &s)                            \
 	{                                                                          \
 		constexpr bool IS_READER = true;                                       \
 		constexpr bool IS_WRITER = false;                                      \
@@ -27,8 +25,7 @@
 		(void)IS_WRITER;                                                       \
 		CODE;                                                                  \
 	}                                                                          \
-	void CLASS::serialize(            \
-		bitscpp::v2::ByteWriter_ByteBuffer &s)                             \
+	void CLASS::serialize(icon7::ByteWriterBase &s) const                      \
 	{                                                                          \
 		constexpr bool IS_READER = false;                                      \
 		constexpr bool IS_WRITER = true;                                       \
@@ -37,6 +34,6 @@
 		CODE;                                                                  \
 	}
 
-#include "ForwardDeclarations.hpp"
+#include "ForwardDeclarations.hpp" // IWYU pragma: export
 
-#include "GlmSerialization.hpp"
+#include "GlmSerialization.hpp" // IWYU pragma: export

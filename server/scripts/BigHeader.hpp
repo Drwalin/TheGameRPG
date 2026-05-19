@@ -1,5 +1,8 @@
 #pragma once
 
+// IWYU pragma: keep
+// IWYU pragma: export
+
 /*
  * Common include
  */

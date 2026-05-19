@@ -52,6 +52,6 @@ void ServerCore::StartService()
 	this->host = host;
 	host->userPointer = this;
 
-	host->SetOnConnect(_OnPeerConnect);
-	host->SetOnDisconnect(_OnPeerDisconnect);
+	host->SetOnConnect([this](icon7::PeerHandle peer){_OnPeerConnect(peer);});
+	host->SetOnDisconnect([this](icon7::PeerHandle peer){_OnPeerDisconnect(peer);});
 }

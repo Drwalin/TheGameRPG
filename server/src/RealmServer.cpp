@@ -25,9 +25,9 @@ bool RealmServer::IsQueuedToDestroy() { return queueDestroy; }
 
 void RealmServer::DisconnectAllAndDestroy()
 {
-	std::unordered_map<std::shared_ptr<icon7::Peer>, uint64_t> p = peers;
+	std::unordered_map<icon7::PeerHandle, uint64_t> p = peers;
 	for (auto it : p) {
-		DisconnectPeer(it.first.get());
+		DisconnectPeer(it.first);
 	}
 
 	SaveNonPlayerEntitiesToFile();
@@ -63,6 +63,7 @@ void RealmServer::Init(const std::string &realmName)
 
 void RealmServer::OneEpoch()
 {
+	SetCurrentExecutingThread();
 	executionQueue.Execute(16384);
 	Realm::OneEpoch();
 
@@ -86,6 +87,7 @@ void RealmServer::OneEpoch()
 	}
 
 	FlushSavingData();
+	ResetCurrentExecutingThread();
 }
 
 void RealmServer::ExecuteOnRealmThread(
@@ -123,4 +125,19 @@ ComponentMovementState RealmServer::ExecuteMovementUpdate(uint64_t entityId)
 								  1.0f, true);
 
 	return *currentState;
+}
+
+bool RealmServer::IsRunningOnCurrentThread() const
+{
+	return currentExecutingThreadId == std::this_thread::get_id();
+}
+
+void RealmServer::SetCurrentExecutingThread()
+{
+	currentExecutingThreadId = std::this_thread::get_id();
+}
+
+void RealmServer::ResetCurrentExecutingThread()
+{
+	currentExecutingThreadId = {};
 }

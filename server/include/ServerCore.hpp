@@ -22,9 +22,9 @@ public:
 
 	void CreateRealm(std::string realmName);
 
-	icon7::CoroutineSchedulable ConnectPeerToRealm(icon7::Peer *peer);
+	icon7::CoroutineSchedulable ConnectPeerToRealm(icon7::PeerHandle peer);
 
-	void Disconnect(icon7::Peer *peer);
+	void Disconnect(icon7::PeerHandle peer);
 
 	void StartService();
 	void Listen(const std::string &addressInterface, uint16_t port,
@@ -35,19 +35,19 @@ public:
 
 	void BindRpc();
 
-	void Login(icon7::Peer *peer, const std::string &userName);
-	static void UpdatePlayer(icon7::Peer *peer,
+	void Login(icon7::PeerHandle peer, const std::string &userName);
+	static void UpdatePlayer(icon7::CommandExecutionQueue *queue, icon7::PeerHandle peer,
 							 const ComponentMovementState &state);
-	static void RequestSpawnEntities(icon7::Peer *peer,
+	static void RequestSpawnEntities(icon7::PeerHandle peer,
 									 icon7::ByteReader *reader);
-	void InteractInLineOfSight(icon7::Peer *peer, ComponentMovementState state,
+	void InteractInLineOfSight(icon7::PeerHandle peer, ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
 							   glm::vec3 normal);
-	void Attack(icon7::Peer *peer, ComponentMovementState state,
+	void Attack(icon7::PeerHandle peer, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 				int64_t attackId, int64_t argInt);
 
-	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::Peer *peer);
+	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::PeerHandle peer);
 
 	static icon7::CommandExecutionQueue::CoroutineAwaitable
 	ScheduleInRealm(std::weak_ptr<RealmServer> &realm);
@@ -55,20 +55,19 @@ public:
 	ScheduleInRealmOrCore(std::weak_ptr<RealmServer> &realm);
 
 private:
-	static void _OnPeerConnect(icon7::Peer *peer);
-	static void _OnPeerDisconnect(icon7::Peer *peer);
+	void _OnPeerConnect(icon7::PeerHandle peer);
+	void _OnPeerDisconnect(icon7::PeerHandle peer);
 
-	static icon7::CommandExecutionQueue *
+	icon7::CommandExecutionQueue *
 	SelectExecutionQueueByRealm(icon7::MessageConverter *messageConverter,
-								icon7::Peer *peer, icon7::ByteReader &reader,
+								icon7::PeerHandle peer, icon7::ByteReader &reader,
 								icon7::Flags flags);
 
 public:
 	volatile bool requestStop = false;
 
-	std::unordered_map<std::shared_ptr<icon7::Peer>, PeerData *> peersData;
-	std::unordered_map<std::string, std::shared_ptr<icon7::Peer>>
-		usernameToPeer;
+	std::unordered_map<icon7::PeerHandle, std::shared_ptr<PeerData>> peerHandleToData;
+	std::unordered_map<std::string, std::shared_ptr<icon7::PeerData>> usernameToPeer;
 
 	RealmWorkThreadedManager realmManager;
 

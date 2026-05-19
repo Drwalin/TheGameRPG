@@ -1,4 +1,4 @@
-#include "../../ICon7/include/icon7/ByteReader.hpp"
+#include "../../ICon7/include/icon7/ByteReader.hpp" // IWYU pragma: export
 #include "../../ICon7/include/icon7/Peer.hpp"
 #include "../../ICon7/include/icon7/Debug.hpp"
 
@@ -12,9 +12,8 @@
 #include "../include/FileOperations.hpp"
 
 #include "../include/RealmServer.hpp"
-#include "icon7/ByteBuffer.hpp"
 
-void RealmServer::ConnectPeer(icon7::Peer *peer)
+void RealmServer::ConnectPeer(icon7::PeerHandle peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	data->realm = weak_from_this();
@@ -29,7 +28,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 		entityId, ComponentPlayerConnectionPeer{peer->shared_from_this()});
 	data->entityId = entityId;
 
-	bitscpp::v2::ByteReader reader(data->storedEntityData.data(), 0,
+	icon7::ByteReaderBase reader(data->storedEntityData.data(), 0,
 			data->storedEntityData.size());
 // 	icon7::ByteReader reader(data->storedEntityData, 0);
 	if (!(data->storedEntityData.valid() &&
@@ -91,7 +90,7 @@ void RealmServer::ConnectPeer(icon7::Peer *peer)
 	ClientRpcProxy::GenericComponentUpdate_Finish(this, peer, &writer);
 }
 
-void RealmServer::DisconnectPeer(icon7::Peer *peer)
+void RealmServer::DisconnectPeer(icon7::PeerHandle peer)
 {
 	if (peer == nullptr) {
 		LOG_ERROR("peer == nullptr");
@@ -134,7 +133,7 @@ void RealmServer::DisconnectPeer(icon7::Peer *peer)
 	data->realm.reset();
 }
 
-void RealmServer::StorePlayerDataInPeerAndFile(icon7::Peer *peer)
+void RealmServer::StorePlayerDataInPeerAndFile(icon7::PeerHandle peer)
 {
 	PeerData *data = ((PeerData *)(peer->userPointer));
 	if (data == nullptr) {
