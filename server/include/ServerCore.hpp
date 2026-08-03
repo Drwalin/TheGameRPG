@@ -39,13 +39,16 @@ public:
 	static void UpdatePlayer(icon7::CommandExecutionQueue *queue, icon7::PeerHandle peer,
 							 const ComponentMovementState &state);
 	static void RequestSpawnEntities(icon7::PeerHandle peer,
-									 icon7::ByteReader *reader);
+									 icon7::ByteReader *reader,
+									 icon7::CommandExecutionQueue *queue);
 	void InteractInLineOfSight(icon7::PeerHandle peer, ComponentMovementState state,
 							   uint64_t targetId, glm::vec3 dstPos,
-							   glm::vec3 normal);
+							   glm::vec3 normal,
+							   icon7::CommandExecutionQueue *queue);
 	void Attack(icon7::PeerHandle peer, ComponentMovementState state,
 				uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
-				int64_t attackId, int64_t argInt);
+				int64_t attackId, int64_t argInt,
+				icon7::CommandExecutionQueue *queue);
 
 	void RemoveDeadPlayerNicknameAfterDestroyingEntity_Async(icon7::PeerHandle peer);
 
@@ -66,8 +69,9 @@ private:
 public:
 	volatile bool requestStop = false;
 
-	std::unordered_map<icon7::PeerHandle, std::shared_ptr<PeerData>> peerHandleToData;
-	std::unordered_map<std::string, std::shared_ptr<icon7::PeerData>> usernameToPeer;
+	icon7::MapPeerHandle<std::shared_ptr<PeerData>> peerHandleToData;
+// 	std::unordered_map<icon7::PeerHandle, std::shared_ptr<PeerData>> peerHandleToData;
+	std::unordered_map<std::string, std::shared_ptr<PeerData>> usernameToPeer;
 
 	RealmWorkThreadedManager realmManager;
 

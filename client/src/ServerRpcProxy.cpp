@@ -13,14 +13,15 @@ namespace ServerRpcProxy
 {
 void Login(GameClient *gameClient, std::string username)
 {
-	gameClient->rpc->Send(gameClient->peer.get(),
-						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
-						  ServerRpcFunctionNames::Login, username);
+	icon7::RPCEnvironment::Send(gameClient->peer->peerHandle,
+								icon7::FLAG_RELIABLE |
+									icon7::FLAGS_CALL_NO_FEEDBACK,
+								ServerRpcFunctionNames::Login, username);
 }
 
 void UpdatePlayer(GameClient *gameClient, const ComponentMovementState &state)
 {
-	gameClient->rpc->Send(gameClient->peer.get(),
+	icon7::RPCEnvironment::Send(gameClient->peer->peerHandle,
 						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						  ServerRpcFunctionNames::UpdatePlayer, state);
 }
@@ -41,8 +42,7 @@ void Ping(GameClient *gameClient, bool reliable)
 {
 	icon7::time::Point currentTickStartTimeNs = gameClient->realm->timer.lastTick;
 	Tick currentTick = gameClient->realm->timer.GetCurrentTick();
-	gameClient->rpc->Send(
-		gameClient->peer.get(),
+	icon7::RPCEnvironment::Send(gameClient->peer->peerHandle,
 		(reliable ? icon7::FLAG_RELIABLE : icon7::FLAG_UNRELIABLE) |
 			icon7::FLAGS_CALL_NO_FEEDBACK,
 		ServerRpcFunctionNames::Ping, currentTick, currentTickStartTimeNs, TickTimer::GetCurrentTimepoint());
@@ -52,7 +52,7 @@ void InteractInLineOfSight(GameClient *gameClient, ComponentMovementState state,
 						   uint64_t targetId, glm::vec3 dstPos,
 						   glm::vec3 normal)
 {
-	gameClient->rpc->Send(gameClient->peer.get(),
+	icon7::RPCEnvironment::Send(gameClient->peer->peerHandle,
 						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						  ServerRpcFunctionNames::InteractInLineOfSight, state,
 						  targetId, dstPos, normal);
@@ -62,7 +62,7 @@ void Attack(GameClient *gameClient, ComponentMovementState state,
 			uint64_t targetId, glm::vec3 targetPos, int64_t attackType,
 			int64_t attackId, int64_t argInt)
 {
-	gameClient->rpc->Send(gameClient->peer.get(),
+	icon7::RPCEnvironment::Send(gameClient->peer->peerHandle,
 						  icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 						  ServerRpcFunctionNames::Attack, state, targetId,
 						  targetPos, attackType, attackId, argInt);

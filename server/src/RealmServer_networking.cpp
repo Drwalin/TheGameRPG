@@ -15,24 +15,28 @@
 
 void RealmServer::ConnectPeer(icon7::PeerHandle peer)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	data->realm = weak_from_this();
+	assert(peersData_.Get(peer) == nullptr);
+	std::shared_ptr<icon7::Peer> p = peer.GetSharedPeer();
+	PeerEntryData &data= peersData_.Access(peer);
+	assert(data.data == nullptr);
+	data.data = std::static_pointer_cast<PeerData>(p->sharedUserPointer);
+	
+	data.data->realm = weak_from_this();
 
 	uint64_t entityId = NewEntity();
 	flecs::entity entity = Entity(entityId);
 	entity.add<TagPlayerEntity>();
 
-	auto pw = peer->shared_from_this();
-	peers[pw] = entityId;
 	SetComponent<ComponentPlayerConnectionPeer>(
-		entityId, ComponentPlayerConnectionPeer{peer->shared_from_this()});
-	data->entityId = entityId;
+entityId, ComponentPlayerConnectionPeer{p});
+	data.data->entityId = entityId;
+	data.entity = entityId;
 
-	icon7::ByteReaderBase reader(data->storedEntityData.data(), 0,
-			data->storedEntityData.size());
-// 	icon7::ByteReader reader(data->storedEntityData, 0);
-	if (!(data->storedEntityData.valid() &&
-		  data->storedEntityData.size() > 3) &&
+	icon7::ByteReaderBase reader(data.data->storedEntityData.data(), 0,
+			data.data->storedEntityData.size());
+// 	icon7::ByteReader reader(data.data->storedEntityData, 0);
+	if (!(data.data->storedEntityData.valid() &&
+		  data.data->storedEntityData.size() > 3) &&
 		(reader.has_any_more() == false || reader.is_valid() == false)) {
 		entity.add<ComponentShape>();
 		entity.add<ComponentMovementParameters>();
@@ -57,7 +61,7 @@ void RealmServer::ConnectPeer(icon7::PeerHandle peer)
 		entity.add<ComponentCharacterSheet_Protection>();
 
 		ComponentName name;
-		name.name = data->userName;
+		name.name = data.data->userName;
 		SetComponent<ComponentName>(entityId, name);
 	} else {
 		std::string_view sv;
@@ -92,29 +96,33 @@ void RealmServer::ConnectPeer(icon7::PeerHandle peer)
 
 void RealmServer::DisconnectPeer(icon7::PeerHandle peer)
 {
-	if (peer == nullptr) {
-		LOG_ERROR("peer == nullptr");
+	if (!peer) {
+		LOG_ERROR("trying to disconnect invalid peer");
 		return;
 	}
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	if (data == nullptr) {
-		LOG_ERROR("peer->userPointer is nullptr when shouldn't");
-		return;
-	}
-	auto pw = peer->shared_from_this();
-	auto it = peers.find(pw);
-	if (it != peers.end()) {
-		uint64_t entityId = it->second;
 
-		flecs::entity entity = Entity(data->entityId);
+	PeerEntryData *data = peersData_.Get(peer);
+	if (data == nullptr) {
+		LOG_FATAL("Cannot operate on peer with no stored PeerEntryData");
+		return;
+	}
+
+	if (data->data == nullptr) {
+		LOG_ERROR("PeerEntryData->data is nullptr when shouldn't");
+		return;
+	}
+	if (data != nullptr) {
+		uint64_t entityId = data->entity;
+
+		flecs::entity entity = Entity(entityId);
 		if (entity.is_alive()) {
-			if (data->useNextRealmPosition) {
-				data->useNextRealmPosition = false;
+			if (data->data->useNextRealmPosition) {
+				data->data->useNextRealmPosition = false;
 				auto *_ls =
 					entity.try_get<ComponentMovementState>();
 				if (_ls) {
 					auto ls = *_ls;
-					ls.pos = data->nextRealmPosition;
+					ls.pos = data->data->nextRealmPosition;
 					ls.onGround = false;
 
 					entity.set<ComponentMovementState>(ls);
@@ -125,17 +133,22 @@ void RealmServer::DisconnectPeer(icon7::PeerHandle peer)
 			}
 		}
 
-		peers.erase(it);
-
 		StorePlayerDataInPeerAndFile(peer);
 		RemoveEntity(entityId);
 	}
-	data->realm.reset();
+	data->data->realm.reset();
+	peersData_.Remove(peer);
 }
 
 void RealmServer::StorePlayerDataInPeerAndFile(icon7::PeerHandle peer)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	PeerEntryData *d = peersData_.Get(peer);
+	if (d == nullptr) {
+		LOG_FATAL("Cannot operate on peer with no stored PeerEntryData");
+		return;
+	}
+	PeerData *data = d->data.get();
+
 	if (data == nullptr) {
 		LOG_ERROR("peer->userPointer is nullptr when shouldn't");
 		return;
@@ -168,11 +181,10 @@ void RealmServer::StorePlayerDataInPeerAndFile(icon7::PeerHandle peer)
 
 void RealmServer::Broadcast(icon7::ByteBufferReadable &buffer, uint64_t exceptEntityId)
 {
-	for (auto it : peers) {
-		if (it.second != exceptEntityId) {
-			if (((PeerData *)(it.first->userPointer))->entityId !=
-				exceptEntityId) {
-				it.first->Send(buffer);
+	for (auto &ita : peersData_.maps.data) {
+		for (auto &it : ita.denseData) {
+			if (it.entity != exceptEntityId) {
+				it.data->peerHandle.Send(buffer);
 			}
 		}
 	}

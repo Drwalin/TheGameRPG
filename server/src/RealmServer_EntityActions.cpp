@@ -67,6 +67,11 @@ void RealmServer::InteractInLineOfSight(
 	icon7::PeerHandle peer, ComponentMovementState state,
 	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	PeerEntryData *d = peersData_.Get(peer);
+	if (d == nullptr) {
+		LOG_FATAL("Cannot operate on peer with no stored PeerEntryData");
+		return;
+	}
+	PeerData *data = d->data.get();
 	InteractInLineOfSight(data->entityId, state, targetId, dstPos, normal);
 }

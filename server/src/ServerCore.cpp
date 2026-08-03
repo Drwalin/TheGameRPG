@@ -93,7 +93,7 @@ void ServerCore::_OnPeerConnect(icon7::PeerHandle peer)
 	data->userName = "";
 	data->peerState = WAITING_FOR_USERNAME;
 	data->peer->sharedUserPointer = data;
-	peerHandleToData.insert({peer, data});
+	peerHandleToData[peer] = data;
 }
 
 void ServerCore::_OnPeerDisconnect(icon7::PeerHandle peer)
@@ -145,7 +145,7 @@ void ServerCore::_OnPeerDisconnect(icon7::PeerHandle peer)
 		com->realmServer = realm;
 		realm->ExecuteOnRealmThread(std::move(com));
 	} else {
-		peerHandleToData.erase(peer);
+		peerHandleToData.Remove(peer);
 		data->peer->sharedUserPointer = nullptr;
 		data->peer = nullptr;
 		data->peerHandle = {};

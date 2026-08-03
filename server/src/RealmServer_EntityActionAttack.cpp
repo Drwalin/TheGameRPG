@@ -139,7 +139,12 @@ void RealmServer::Attack(icon7::PeerHandle peer,
 						 uint64_t targetId, glm::vec3 targetPos,
 						 int64_t attackType, int64_t attackId, int64_t argInt)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	PeerEntryData *d = peersData_.Get(peer);
+	if (d == nullptr) {
+		LOG_FATAL("Cannot operate on peer with no stored PeerEntryData");
+		return;
+	}
+	PeerData *data = d->data.get();
 	Attack(data->entityId, state, targetId, targetPos, attackType, attackId,
 		   argInt);
 }

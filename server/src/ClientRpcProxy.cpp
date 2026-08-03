@@ -34,7 +34,7 @@ void Pong(icon7::PeerHandle peer, icon7::Flags flags, int64_t data1, int64_t dat
 	//       testing
 	auto shared = peer.GetSharedPeer();
 	if (shared == nullptr) {
-		LOG_ERROR("Received pong request from empty peer: %u:%u", peer.id, peer.version);
+		LOG_ERROR("Received pong request from empty peer: %u:%u", peer.id, peer.id.version);
 		return;
 	}
 	PeerData *peerData = ((PeerData *)(shared->userPointer));
@@ -160,7 +160,7 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::PeerHandle peer)
 {
 	auto shared = peer.GetSharedPeer();
 	if (shared == nullptr) {
-		LOG_ERROR("Spawning entity for empty peer: %u:%u", peer.id, peer.version);
+		LOG_ERROR("Spawning entity for empty peer: %u:%u", peer.id, peer.id.version);
 		return;
 	}
 	PeerData *data = ((PeerData *)(shared->userPointer));
@@ -186,7 +186,7 @@ void SpawnPlayerEntity_ForPlayer(RealmServer *realm, icon7::PeerHandle peer)
 	}
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	realm->rpc->FinalizeSerializeSend(writer, flags);
-	peer->Send(std::move(writer.Buffer()));
+	peer.Send(std::move(writer.Buffer()));
 }
 
 void Broadcast_SetModel(RealmServer *realm, uint64_t entityId,
@@ -255,14 +255,15 @@ void Broadcast_DeleteEntity(RealmServer *realm, uint64_t entityId)
 
 void LoginSuccessfull(icon7::PeerHandle peer)
 {
-	peer->host->GetRpcEnvironment()->Send(
+	
+	icon7::RPCEnvironment::Send(
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 		ClientRpcFunctionNames::LoginSuccessfull);
 }
 
 void LoginFailed(icon7::PeerHandle peer, const std::string &reason)
 {
-	peer->host->GetRpcEnvironment()->Send(
+	icon7::RPCEnvironment::Send(
 		peer, icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK,
 		ClientRpcFunctionNames::LoginFailed, reason);
 }
@@ -315,7 +316,7 @@ void GenericComponentUpdate_Finish(RealmServer *realm, icon7::PeerHandle peer,
 {
 	icon7::Flags flags = icon7::FLAG_RELIABLE | icon7::FLAGS_CALL_NO_FEEDBACK;
 	realm->rpc->FinalizeSerializeSend(*writer, flags);
-	peer->Send(std::move(writer->Buffer()));
+	peer.Send(std::move(writer->Buffer()));
 }
 
 void Broadcast_PlayDeathAndDestroyEntity(RealmServer *realm, uint64_t entityId)

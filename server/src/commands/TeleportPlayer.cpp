@@ -1,5 +1,5 @@
-#include "../../ICon7/include/icon7/Debug.hpp"
-#include "../../ICon7/include/icon7/Peer.hpp"
+#include "../../../ICon7/include/icon7/Debug.hpp"
+#include "../../../ICon7/include/icon7/Peer.hpp"
 
 #include "../../include/ServerCore.hpp"
 #include "../../include/PeerData.hpp"
@@ -13,14 +13,15 @@ void CommandTeleportPlayer::Execute()
 		LOG_INFO("No username %s found to teleport", userName.c_str());
 		return;
 	}
-	auto peer = it->second;
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	auto data = it->second;
+	if (data == nullptr) {
+		LOG_WARN("No data for username named `%s`", userName.c_str());
+		return;
+	}
 	if (data) {
 		data->nextRealm = realmName;
 		data->nextRealmPosition = position;
 		data->useNextRealmPosition = true;
-		serverCore->ConnectPeerToRealm(peer.get());
-	} else {
-		LOG_ERROR("Peer 0x%p does not have initialised userData", peer.get());
+		serverCore->ConnectPeerToRealm(data->peerHandle);
 	}
 }

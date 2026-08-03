@@ -60,7 +60,7 @@ template <typename TFinal, typename TCb> struct EntryBase {
 		}
 	}
 
-	static inline void Serialize(TFinal **cb, icon7::ByteWriterBase &s)
+	static inline void Serialize(TFinal *const*cb, icon7::ByteWriterBase &s)
 	{
 		if (*cb) {
 			s.op((*cb)->shortName);

@@ -103,7 +103,7 @@ void ComponentOnUse::serialize(icon7::ByteReaderBase &s)
 {
 	entry->Deserialize(&entry, s);
 }
-void ComponentOnUse::serialize(icon7::ByteWriterBase &s)
+void ComponentOnUse::serialize(icon7::ByteWriterBase &s) const
 {
 	entry->Serialize(&entry, s);
 }

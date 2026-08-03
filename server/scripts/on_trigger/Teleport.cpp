@@ -33,7 +33,7 @@ void OnTrigger_TeleportPlayer(RealmServer *realm, uint64_t entityId,
 				LOG_INFO("Teleport %s into %s -> {%.1f %.1f %.1f}",
 						 data->userName.c_str(), tp->realmName.c_str(), p.x,
 						 p.y, p.z);
-				realm->serverCore->ConnectPeerToRealm(peer);
+				realm->serverCore->ConnectPeerToRealm(data->peerHandle);
 			} else {
 				LOG_ERROR("Peer 0x%p does not have initialised userData",
 						  peer.get());

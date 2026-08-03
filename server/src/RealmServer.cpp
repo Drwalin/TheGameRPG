@@ -25,9 +25,14 @@ bool RealmServer::IsQueuedToDestroy() { return queueDestroy; }
 
 void RealmServer::DisconnectAllAndDestroy()
 {
-	std::unordered_map<icon7::PeerHandle, uint64_t> p = peers;
-	for (auto it : p) {
-		DisconnectPeer(it.first);
+	while (peersData_.Size() != 0) {
+		for (auto &l : peersData_.maps.data) {
+			if (l.denseData.size() != 0) {
+				icon7::PeerHandle handle = l.denseData.front().data->peerHandle;
+				DisconnectPeer(handle);
+				break;
+			}
+		}
 	}
 
 	SaveNonPlayerEntitiesToFile();

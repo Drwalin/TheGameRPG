@@ -1,5 +1,5 @@
-#include "../../ICon7/include/icon7/Peer.hpp"
-#include "../../ICon7/include/icon7/Debug.hpp"
+#include "../../ICon7/include/icon7/Peer.hpp" // IWYU pragma: keep
+#include "../../ICon7/include/icon7/Debug.hpp" // IWYU pragma: keep
 
 #include "../include/RealmServer.hpp"
 
@@ -12,8 +12,8 @@ namespace EntityNetworkingSystems
 void OnPlayerEntityConnected(RealmServer *realm, flecs::entity entity,
 							 const ComponentPlayerConnectionPeer &peer)
 {
-	ClientRpcProxy::SetGravity(realm, peer.peer.get(), realm->gravity);
-	ClientRpcProxy::JoinRealm(realm, peer.peer.get(), entity.id());
+	ClientRpcProxy::SetGravity(realm, peer.peer->peerHandle, realm->gravity);
+	ClientRpcProxy::JoinRealm(realm, peer.peer->peerHandle, entity.id());
 }
 
 void OnNewEntitySpawned(RealmServer *realm, flecs::entity entity,
@@ -40,7 +40,7 @@ void OnPeerDisconnected(RealmServer *realm, flecs::entity entity,
 
 	// TODO: check if this realm->peers.erase() is required or if it's in
 	//       observer
-	realm->peers.erase(peer.peer);
+	realm->peersData_.Remove(peer.peer->peerHandle);
 	PeerData *data = ((PeerData *)(peer.peer->userPointer));
 	data->realm.reset();
 	data->entityId = 0;

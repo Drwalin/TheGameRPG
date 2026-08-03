@@ -1,5 +1,7 @@
 #define ENABLE_REALM_SERVER_IMPLEMENTATION_TEMPLATE
 
+#include "../../ICon7/include/icon7/Peer.hpp"
+
 #include "../../common/include/ComponentCharacterSheet.hpp"
 
 #include "../include/ClientRpcProxy.hpp"
@@ -22,7 +24,7 @@
 			ClientRpcProxy::GenericComponentUpdate_Update<CLASS>(              \
 				this, &writer, entity, component);                             \
 			ClientRpcProxy::GenericComponentUpdate_Finish(                     \
-				this, peer.peer.get(), &writer);                               \
+				this, peer.peer->peerHandle, &writer);                               \
 		})
 
 void RealmServer::RegisterObservers_CharacterSheet()
@@ -75,8 +77,9 @@ void RealmServer::RegisterObservers_CharacterSheet()
 						LOG_ERROR("peer->userPointer is nullptr");
 					} else {
 						LOG_INFO("TODO: removing peers from realm should not be here");
-						peers.erase(peer.peer->peerHandle);
-						peersData.erase(peer.peer->peerHandle);
+						peersData_.Remove(peer.peer->peerHandle);
+// 						peers.erase(peer.peer->peerHandle);
+// 						peersData.erase(peer.peer->peerHandle);
 						data->realm.reset();
 						data->storedEntityData.clear();
 					}

@@ -41,6 +41,7 @@ void ServerCore::Login(icon7::PeerHandle peer, const std::string &userName)
 void ServerCore::UpdatePlayer(icon7::CommandExecutionQueue *queue,
 	icon7::PeerHandle peer, const ComponentMovementState &state)
 {
+	// TODO: assert is running on realm thread
 	RealmServer *realm = nullptr;
 	if (queue == nullptr) {
 		LOG_WARN("Queue is nullptr in ServerCore::UpdatePlayer");
@@ -75,15 +76,16 @@ void ServerCore::UpdatePlayer(icon7::CommandExecutionQueue *queue,
 	}
 	assert(realm != nullptr);
 	
-	auto it = realm->peersData.find(peer);
-	if (it == realm->peersData.end()) {
+	auto *pd = realm->peersData_.Get(peer);
+	if (pd == nullptr) {
+		LOG_FATAL("RealmServer::peersData[peerHandle] is not available.");
 		LOG_FATAL("UpdatePlayer executed for peer on wrong realm's thread.");
 		LOG_WARN("TODO: implement transfering to proper realm.");
 		return;
 	}
-	PeerData *data = it->second.get();
+	PeerData *data = pd->data.get();
 	if (data == nullptr) {
-		LOG_FATAL("RealmServer::peersData[peerHandle] present, but nullptr.");
+		LOG_FATAL("RealmServer::peersData[peerHandle].data present, but nullptr.");
 		return;
 	}
 	
@@ -111,10 +113,14 @@ void ServerCore::UpdatePlayer(icon7::CommandExecutionQueue *queue,
 
 icon7::CoroutineSchedulable ServerCore::ConnectPeerToRealm(icon7::PeerHandle peer)
 {
-	std::shared_ptr<icon7::Peer> _peerHolder = peer->shared_from_this();
+	std::shared_ptr<icon7::Peer> _peerHolder = peer.GetSharedPeer();
 	// TODO: replace ServerCore::ConnectPeerToRealm with something suitable to
 	//       use with database
-	PeerData *data = ((PeerData *)(peer->userPointer));
+	std::shared_ptr<PeerData> data = std::static_pointer_cast<PeerData>(_peerHolder->sharedUserPointer);
+	if (data == nullptr) {
+		LOG_FATAL("Peer does not have it's data.");
+		co_return;
+	}
 	if (data->userName == "") {
 		LOG_INFO("Invalid usernamne");
 		co_return;
@@ -141,7 +147,7 @@ _LABEL_BEGINING_CONNECT_PEER_TO_REALM:
 			co_await awaitable;
 
 			std::shared_ptr<RealmServer> realm = data->realm.lock();
-			PeerData *data = ((PeerData *)(peer->userPointer));
+// 			PeerData *data = ((PeerData *)(peer->userPointer));
 			if (realm && realm == data->realm.lock()) {
 				flecs::entity entity = realm->Entity(data->entityId);
 				if (entity.is_alive()) {
@@ -217,25 +223,32 @@ _LABEL_BEGINING_CONNECT_PEER_TO_REALM:
 }
 
 void ServerCore::RequestSpawnEntities(icon7::PeerHandle peer,
-									  icon7::ByteReader *reader)
+									  icon7::ByteReader *reader,
+									  icon7::CommandExecutionQueue *queue)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	std::shared_ptr<RealmServer> realm = data->realm.lock();
+	RealmServer* realm = (RealmServer*)(queue->userSmartPtr.get());
+	// TODO: assert to check if queue->userSmartPtr is an instance of
+	//       RealmServer or not
 	if (realm && reader) {
-		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm.get(), peer, *reader);
+		ClientRpcProxy::SpawnEntities_ForPeerByIds(realm, peer, *reader);
 	}
 }
 
 void ServerCore::InteractInLineOfSight(
 	icon7::PeerHandle peer, ComponentMovementState state,
-	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal)
+	uint64_t targetId, glm::vec3 dstPos, glm::vec3 normal,
+	icon7::CommandExecutionQueue *queue)
 {
 	// TODO: add server side verification of raycast
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	std::shared_ptr<RealmServer> realm = data->realm.lock();
+	RealmServer* realm = (RealmServer*)(queue->userSmartPtr.get());
 	if (realm) {
-		UpdatePlayer(peer, state);
-		flecs::entity entity = realm->Entity(data->entityId);
+		auto* data = realm->peersData_.Get(peer);
+		if (data == nullptr) {
+			LOG_FATAL("Peer which is not connected to the realm tries to interact with objects in the realm");
+			return;
+		}
+		UpdatePlayer(queue, peer, state);
+		flecs::entity entity = realm->Entity(data->entity);
 		if (entity.is_alive()) {
 			auto s = entity.try_get<ComponentMovementState>();
 			if (s) {
@@ -249,13 +262,14 @@ void ServerCore::InteractInLineOfSight(
 void ServerCore::Attack(icon7::PeerHandle peer,
 						ComponentMovementState state,
 						uint64_t targetId, glm::vec3 targetPos,
-						int64_t attackType, int64_t attackId, int64_t argInt)
+						int64_t attackType, int64_t attackId, int64_t argInt,
+						icon7::CommandExecutionQueue *queue)
 {
-	PeerData *data = ((PeerData *)(peer->userPointer));
-	std::shared_ptr<RealmServer> realm = data->realm.lock();
-	if (realm) {
-		UpdatePlayer(peer, state);
-		flecs::entity entity = realm->Entity(data->entityId);
+	RealmServer* realm = (RealmServer*)(queue->userSmartPtr.get());
+	auto* data = realm->peersData_.Get(peer);
+	if (realm && data) {
+		UpdatePlayer(queue, peer, state);
+		flecs::entity entity = realm->Entity(data->entity);
 		if (entity.is_alive()) {
 			auto s = entity.try_get<ComponentMovementState>();
 			if (s) {
